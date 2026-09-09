@@ -1,55 +1,299 @@
-A
-TEXAS A&M AGRILIFE EXTENSION
-Decision Aids · Reference Note
-← Back to A1 · Cow Bid Price
-FINANCIAL CONCEPT · 2 MIN READ
-Understanding IRR (Internal Rate of Return)
-What IRR means, how to read it against your discount rate, and exactly which cells compute it in the original A1 — Cow Bid Price and Budget spreadsheet.
-What it is
-IRR is the annualized rate of return an investment is expected to generate. More precisely, it's the discount rate at which the investment's cash flows — the money out now, the money in over time — net out to a Net Present Value of exactly zero.
-Put simply: it's the break-even interest rate for the deal. If money actually cost you that rate to borrow, this purchase would neither make nor lose you anything in present-value terms.
-How to read it
-Compare IRR to your discount rate — your cost of capital, or what you could otherwise earn on that money.
-↑
-IRR higher than your discount rate — the investment returns more than your money would earn elsewhere. NPV is positive. Good deal.
-↓
-IRR lower than your discount rate — the investment returns less than your money's opportunity cost. NPV is negative. The price is too high.
-DISCOUNT RATE
-5.0%
-VS
-IRR
-−6.4%
-Using the spreadsheet's own default numbers ($1,300 bid price): IRR sits well below the 5% discount rate, so the tool reports "Bid too high."
-Where it lives in the Excel
-Sheet "1. Cow Bid Price" of A1 — Cow Bid Price and Budget.xlsx
 
-In the spreadsheet
-B64
-Calculates IRR: =ROUND(IRR(B51:I51,+B63),3)*100
-B63
-Starting guess fed to the IRR solver
-B51:I51
-The Year 0–7 cash flow series IRR is solved over
-B55
-Turns B64 into the sentence you read on screen
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Understanding IRR</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{
+    --maroon-900:#3a0000;
+    --maroon-800:#500000;
+    --maroon-700:#6b0f0f;
+    --maroon-100:#f7e9e6;
+    --wheat-500:#b8862f;
+    --wheat-100:#f4e9d6;
+    --good-700:#276749;
+    --good-100:#e3f1e9;
+    --critical-700:#9a3412;
+    --critical-100:#fbe9e1;
+    --accent:var(--maroon-800);
+    --bg:#f6f3ee;
+    --surface:#ffffff;
+    --surface-sunken:#f0ece4;
+    --border:#e2dbcf;
+    --ink:#241c19;
+    --ink-secondary:#5a4f48;
+    --ink-muted:#8a7d73;
+    --shadow-card:0 1px 2px rgba(58,0,0,0.04), 0 4px 16px rgba(58,0,0,0.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+      --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+      --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+      --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+      --wheat-100:#33290f; --wheat-500:#d9a44a;
+      --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+    --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+    --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+    --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+    --wheat-100:#33290f; --wheat-500:#d9a44a;
+    --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+  }
 
-In the web tool
-Result panel
-"IRR" stat tile, next to NPV and Payback
-Live
-Recalculates instantly as you move the bid price or any other input
-Narrative
-Same sentence as B55, written out below the tiles
-One thing worth knowing
-SPREADSHEET QUIRK, KEPT AS-IS
-The cash flow series the Excel feeds into IRR() (B51:I51) has already been discounted by the discount rate earlier in the sheet, rather than being the raw, undiscounted cash flows an IRR calculation would normally use. That's an unusual modeling choice built into the original AgriLife spreadsheet — not something introduced in the web version. Since this project is being rebuilt with full fidelity to the source file, the web tool reproduces this exact same calculation rather than "fixing" it.
-How it fits with NPV and Payback
-The Result panel shows all three together because each answers a slightly different question.
-IRR
-What annualized rate of return does this deal actually produce?
-NPV
-In today's dollars, how much value (or loss) does this deal create at your chosen discount rate?
-Payback
-How many years until the cumulative cash flows turn positive?
-Companion reference for the A1 — Cow Bid Price decision-aid tool (Texas A&M AgriLife Extension, Phase 1 pilot). Share this alongside the calculator for anyone who wants the "why" behind the IRR number.
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Public Sans", ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric:tabular-nums;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:"Fraunces", Georgia, serif; text-wrap:balance; letter-spacing:-0.01em;}
+  code{font-family:"SFMono-Regular", Consolas, Menlo, monospace; font-size:0.92em;}
 
+  .topbar{
+    background:linear-gradient(180deg, var(--maroon-800), var(--maroon-900));
+    color:#fff;
+    padding:18px clamp(16px,4vw,40px);
+    display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
+  }
+  .wordmark{display:flex; align-items:center; gap:14px;}
+  .wordmark .mark{
+    width:44px;height:44px;border-radius:9px;
+    background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.55);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Fraunces",serif;font-weight:700;font-size:20px; flex:none;
+  }
+  .wordmark .text{line-height:1.15;}
+  .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
+  .wordmark .text .main{font-family:"Fraunces",serif;font-size:19px;font-weight:600;}
+  .eyebrow-chip{
+    font-size:12px;font-weight:700;letter-spacing:0.04em;
+    background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.4);
+    color:#fff; padding:5px 11px;border-radius:100px;
+  }
+
+  main{max-width:760px;margin:0 auto;padding:44px clamp(16px,4vw,40px) 72px;}
+
+  .doc-head{margin-bottom:36px;}
+  .doc-head h1{font-size:clamp(28px,4vw,38px);margin:10px 0 12px;}
+  .doc-head .dek{font-size:16.5px;line-height:1.6;color:var(--ink-secondary);margin:0;max-width:64ch;}
+  .doc-head .source-tag{
+    display:inline-flex;align-items:center;gap:6px;
+    font-size:12px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;
+    color:var(--accent);
+  }
+
+  section{margin:0 0 40px;}
+  section > h2{font-size:21px;margin:0 0 6px;}
+  section > .lede{font-size:13.5px;color:var(--ink-muted);margin:0 0 18px;}
+  p{font-size:15.5px;line-height:1.68;color:var(--ink-secondary);}
+  p.tight{margin-top:0;}
+  strong{color:var(--ink);}
+
+  .formula-box{
+    background:var(--surface-sunken);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px 20px;
+    margin:16px 0;
+    font-size:15px;
+    color:var(--ink);
+  }
+  .formula-box .formula{font-family:"Fraunces",serif;font-size:19px;font-weight:500;margin:0 0 6px;}
+  .formula-box .caption{font-size:12.5px;color:var(--ink-muted);margin:0;}
+
+  /* rule-of-thumb comparison */
+  .compare{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin:18px 0;}
+  @media (max-width:520px){ .compare{grid-template-columns:1fr; } .compare .vs{display:none;} }
+  .compare .tile{
+    border-radius:12px;padding:16px 18px;border:1px solid var(--border);background:var(--surface-sunken);
+  }
+  .compare .tile .k{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);}
+  .compare .tile .v{font-family:"Fraunces",serif;font-size:26px;font-weight:600;margin-top:2px;}
+  .compare .vs{font-size:12px;font-weight:800;color:var(--ink-muted);letter-spacing:0.05em;}
+  .tile.good{background:var(--good-100);border-color:color-mix(in srgb, var(--good-700) 30%, var(--good-100));}
+  .tile.good .v{color:var(--good-700);}
+  .tile.critical{background:var(--critical-100);border-color:color-mix(in srgb, var(--critical-700) 30%, var(--critical-100));}
+  .tile.critical .v{color:var(--critical-700);}
+  .compare-verdict{text-align:center;font-size:13px;color:var(--ink-muted);margin-top:10px;}
+  .compare-verdict strong{color:var(--critical-700);}
+
+  .rule-row{display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border);}
+  .rule-row:last-child{border-bottom:none;}
+  .rule-row .badge{
+    flex:none;width:26px;height:26px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:14px;font-weight:800;
+  }
+  .rule-row .badge.good{background:var(--good-100);color:var(--good-700);}
+  .rule-row .badge.bad{background:var(--critical-100);color:var(--critical-700);}
+  .rule-row .rule-text{font-size:14.5px;color:var(--ink-secondary);padding-top:3px;}
+  .rule-row .rule-text strong{color:var(--ink);}
+
+  .locator-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;}
+  @media (max-width:640px){ .locator-grid{grid-template-columns:1fr;} }
+  .locator{
+    border:1px solid var(--border);border-radius:14px;overflow:hidden;background:var(--surface);
+  }
+  .locator .locator-head{
+    background:var(--maroon-800);color:#fff;padding:11px 16px;
+    font-size:13px;font-weight:700;letter-spacing:0.02em;
+    display:flex;align-items:center;gap:8px;
+  }
+  .locator .locator-head svg{width:16px;height:16px;flex:none;}
+  .locator-body{padding:16px;}
+  .cell-row{display:flex;justify-content:space-between;gap:10px;padding:8px 0;border-bottom:1px dashed var(--border);}
+  .cell-row:last-child{border-bottom:none;}
+  .cell-row .cell-ref{
+    font-family:"SFMono-Regular",Consolas,Menlo,monospace;font-size:12.5px;font-weight:700;
+    color:var(--accent);flex:none;
+  }
+  .cell-row .cell-desc{font-size:13px;color:var(--ink-secondary);text-align:right;}
+
+  .callout{
+    border-radius:12px;padding:16px 18px;margin:18px 0;
+    border:1px solid color-mix(in srgb, var(--wheat-500) 40%, var(--border));
+    background:var(--wheat-100);
+    font-size:14px;line-height:1.6;color:var(--ink-secondary);
+  }
+  .callout strong{color:var(--ink);}
+  .callout .callout-label{
+    display:block;font-size:11.5px;font-weight:800;letter-spacing:0.05em;text-transform:uppercase;
+    color:var(--accent);margin-bottom:6px;
+  }
+
+  .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:16px;}
+  @media (max-width:640px){ .trio{grid-template-columns:1fr;} }
+  .trio .card{
+    border:1px solid var(--border);border-radius:12px;padding:16px;background:var(--surface);
+  }
+  .trio .card h3{font-size:15px;margin:0 0 6px;}
+  .trio .card p{font-size:13px;margin:0;line-height:1.55;}
+  .trio .card.current{border-color:var(--maroon-800);box-shadow:0 0 0 1px var(--maroon-800) inset;}
+
+  footer{
+    max-width:760px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 48px;
+    color:var(--ink-muted);font-size:12.5px;line-height:1.6;
+    border-top:1px solid var(--border);padding-top:24px;
+  }
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wordmark">
+    <div class="mark">A</div>
+    <div class="text">
+      <div class="top">Texas A&amp;M AgriLife Extension</div>
+      <div class="main">Decision Aids · Reference Note</div>
+    </div>
+  </div>
+  <a href="index.html" class="eyebrow-chip" style="text-decoration:none;">&larr; Back to A1 · Cow Bid Price</a>
+</header>
+
+<main>
+  <div class="doc-head">
+    <span class="source-tag">Financial concept · 2 min read</span>
+    <h1>Understanding IRR (Internal Rate of Return)</h1>
+    <p class="dek">What IRR means, how to read it against your discount rate, and exactly which cells compute it in the original <strong>A1 — Cow Bid Price and Budget</strong> spreadsheet.</p>
+  </div>
+
+  <section>
+    <h2>What it is</h2>
+    <p class="tight">IRR is the annualized rate of return an investment is expected to generate. More precisely, it's the discount rate at which the investment's cash flows — the money out now, the money in over time — net out to a Net Present Value of exactly zero.</p>
+    <p>Put simply: it's the break-even interest rate for the deal. If money actually cost you that rate to borrow, this purchase would neither make nor lose you anything in present-value terms.</p>
+  </section>
+
+  <section>
+    <h2>How to read it</h2>
+    <p class="lede">Compare IRR to your discount rate — your cost of capital, or what you could otherwise earn on that money.</p>
+
+    <div class="rule-row">
+      <span class="badge good">↑</span>
+      <span class="rule-text"><strong>IRR higher than your discount rate</strong> — the investment returns more than your money would earn elsewhere. NPV is positive. Good deal.</span>
+    </div>
+    <div class="rule-row">
+      <span class="badge bad">↓</span>
+      <span class="rule-text"><strong>IRR lower than your discount rate</strong> — the investment returns less than your money's opportunity cost. NPV is negative. The price is too high.</span>
+    </div>
+
+    <div class="compare">
+      <div class="tile"><span class="k">Discount rate</span><div class="v">5.0%</div></div>
+      <span class="vs">VS</span>
+      <div class="tile critical"><span class="k">IRR</span><div class="v">−6.4%</div></div>
+    </div>
+    <p class="compare-verdict">Using the spreadsheet's own default numbers ($1,300 bid price): IRR sits well below the 5% discount rate, so the tool reports <strong>"Bid too high."</strong></p>
+  </section>
+
+  <section>
+    <h2>Where it lives in the Excel</h2>
+    <p class="lede">Sheet "1. Cow Bid Price" of A1 — Cow Bid Price and Budget.xlsx</p>
+
+    <div class="locator-grid">
+      <div class="locator">
+        <div class="locator-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg>
+          In the spreadsheet
+        </div>
+        <div class="locator-body">
+          <div class="cell-row"><span class="cell-ref">B64</span><span class="cell-desc">Calculates IRR: <code>=ROUND(IRR(B51:I51,+B63),3)*100</code></span></div>
+          <div class="cell-row"><span class="cell-ref">B63</span><span class="cell-desc">Starting guess fed to the IRR solver</span></div>
+          <div class="cell-row"><span class="cell-ref">B51:I51</span><span class="cell-desc">The Year 0–7 cash flow series IRR is solved over</span></div>
+          <div class="cell-row"><span class="cell-ref">B55</span><span class="cell-desc">Turns B64 into the sentence you read on screen</span></div>
+        </div>
+      </div>
+      <div class="locator">
+        <div class="locator-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg>
+          In the web tool
+        </div>
+        <div class="locator-body">
+          <div class="cell-row"><span class="cell-ref">Result panel</span><span class="cell-desc">"IRR" stat tile, next to NPV and Payback</span></div>
+          <div class="cell-row"><span class="cell-ref">Live</span><span class="cell-desc">Recalculates instantly as you move the bid price or any other input</span></div>
+          <div class="cell-row"><span class="cell-ref">Narrative</span><span class="cell-desc">Same sentence as B55, written out below the tiles</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>One thing worth knowing</h2>
+    <div class="callout">
+      <span class="callout-label">Spreadsheet quirk, kept as-is</span>
+      The cash flow series the Excel feeds into <code>IRR()</code> (B51:I51) has already been discounted by the discount rate earlier in the sheet, rather than being the raw, undiscounted cash flows an IRR calculation would normally use. That's an unusual modeling choice built into the original AgriLife spreadsheet — not something introduced in the web version. Since this project is being rebuilt with full fidelity to the source file, the web tool reproduces this exact same calculation rather than "fixing" it.
+    </div>
+  </section>
+
+  <section>
+    <h2>How it fits with NPV and Payback</h2>
+    <p class="lede">The Result panel shows all three together because each answers a slightly different question.</p>
+    <div class="trio">
+      <div class="card current">
+        <h3>IRR</h3>
+        <p>What annualized rate of return does this deal actually produce?</p>
+      </div>
+      <div class="card">
+        <h3>NPV</h3>
+        <p>In today's dollars, how much value (or loss) does this deal create at your chosen discount rate?</p>
+      </div>
+      <div class="card">
+        <h3>Payback</h3>
+        <p>How many years until the cumulative cash flows turn positive?</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Companion reference for the <strong>A1 — Cow Bid Price</strong> decision-aid tool (Texas A&amp;M AgriLife Extension, Phase 1 pilot). Share this alongside the calculator for anyone who wants the "why" behind the IRR number.
+  </footer>
+</main>
+</body>
+</html>
