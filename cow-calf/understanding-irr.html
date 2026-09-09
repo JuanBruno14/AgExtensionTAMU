@@ -1,1 +1,55 @@
+A
+TEXAS A&M AGRILIFE EXTENSION
+Decision Aids · Reference Note
+← Back to A1 · Cow Bid Price
+FINANCIAL CONCEPT · 2 MIN READ
+Understanding IRR (Internal Rate of Return)
+What IRR means, how to read it against your discount rate, and exactly which cells compute it in the original A1 — Cow Bid Price and Budget spreadsheet.
+What it is
+IRR is the annualized rate of return an investment is expected to generate. More precisely, it's the discount rate at which the investment's cash flows — the money out now, the money in over time — net out to a Net Present Value of exactly zero.
+Put simply: it's the break-even interest rate for the deal. If money actually cost you that rate to borrow, this purchase would neither make nor lose you anything in present-value terms.
+How to read it
+Compare IRR to your discount rate — your cost of capital, or what you could otherwise earn on that money.
+↑
+IRR higher than your discount rate — the investment returns more than your money would earn elsewhere. NPV is positive. Good deal.
+↓
+IRR lower than your discount rate — the investment returns less than your money's opportunity cost. NPV is negative. The price is too high.
+DISCOUNT RATE
+5.0%
+VS
+IRR
+−6.4%
+Using the spreadsheet's own default numbers ($1,300 bid price): IRR sits well below the 5% discount rate, so the tool reports "Bid too high."
+Where it lives in the Excel
+Sheet "1. Cow Bid Price" of A1 — Cow Bid Price and Budget.xlsx
+
+In the spreadsheet
+B64
+Calculates IRR: =ROUND(IRR(B51:I51,+B63),3)*100
+B63
+Starting guess fed to the IRR solver
+B51:I51
+The Year 0–7 cash flow series IRR is solved over
+B55
+Turns B64 into the sentence you read on screen
+
+In the web tool
+Result panel
+"IRR" stat tile, next to NPV and Payback
+Live
+Recalculates instantly as you move the bid price or any other input
+Narrative
+Same sentence as B55, written out below the tiles
+One thing worth knowing
+SPREADSHEET QUIRK, KEPT AS-IS
+The cash flow series the Excel feeds into IRR() (B51:I51) has already been discounted by the discount rate earlier in the sheet, rather than being the raw, undiscounted cash flows an IRR calculation would normally use. That's an unusual modeling choice built into the original AgriLife spreadsheet — not something introduced in the web version. Since this project is being rebuilt with full fidelity to the source file, the web tool reproduces this exact same calculation rather than "fixing" it.
+How it fits with NPV and Payback
+The Result panel shows all three together because each answers a slightly different question.
+IRR
+What annualized rate of return does this deal actually produce?
+NPV
+In today's dollars, how much value (or loss) does this deal create at your chosen discount rate?
+Payback
+How many years until the cumulative cash flows turn positive?
+Companion reference for the A1 — Cow Bid Price decision-aid tool (Texas A&M AgriLife Extension, Phase 1 pilot). Share this alongside the calculator for anyone who wants the "why" behind the IRR number.
 
