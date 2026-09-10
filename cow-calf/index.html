@@ -133,7 +133,7 @@
     display:flex;gap:4px;
     overflow-x:auto;
   }
-  .roadmap a, .roadmap span{
+  .roadmap a, .roadmap span, .roadmap .tab-btn{
     display:inline-block;
     padding:12px 18px;
     font-size:13.5px;
@@ -142,6 +142,14 @@
     border-bottom:3px solid transparent;
     white-space:nowrap;
   }
+  .roadmap .tab-btn{
+    font-family:inherit;
+    background:none;
+    border-top:none;border-left:none;border-right:none;
+    cursor:pointer;
+  }
+  .roadmap .tab-btn:hover{color:rgba(255,255,255,0.9);}
+  .roadmap .tab-btn:focus-visible{outline:2px solid #fff;outline-offset:-2px;}
   .roadmap .active{
     color:#fff;
     border-bottom-color:var(--wheat-500);
@@ -295,6 +303,23 @@
   }
   table.grid td.readonly{color:var(--ink-muted);font-style:italic;}
   table.grid td.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
+  table.grid input[type="number"].small{width:64px;}
+
+  /* ---------- Segmented toggle (Owned/Leased) ---------- */
+  .segmented{display:inline-flex;background:var(--surface-sunken);border:1.5px solid var(--border);border-radius:9px;padding:3px;gap:2px;}
+  .segmented button{
+    font:inherit;font-weight:700;font-size:12.5px;color:var(--ink-secondary);
+    background:none;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;
+  }
+  .segmented button.active{background:var(--accent);color:#fff;}
+  .segmented button:focus-visible{outline:2px solid var(--focus);outline-offset:1px;}
+
+  /* ---------- Sub-note / read-only derived value ---------- */
+  .derived-note{font-size:11.5px;color:var(--ink-muted);margin-top:4px;}
+  .derived-note strong{color:var(--ink-secondary);}
+
+  /* ---------- Panels ---------- */
+  .tool-panel[hidden]{display:none;}
 
   /* ---------- Results ---------- */
   .stat-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -362,7 +387,7 @@
       </div>
     </a>
   </div>
-  <h1 class="tool-title">Cow Bid Price</h1>
+  <h1 class="tool-title" id="toolTitle">Cow Bid Price</h1>
   <div class="header-right">
     <a href="../index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
     <span class="phase-chip">Pilot · Phase 1</span>
@@ -370,11 +395,12 @@
 </header>
 
 <nav class="roadmap" aria-label="Phase 1 tools">
-  <span class="active">A1 · Cow Bid Price</span>
-  <span class="disabled">A2 · Calf Price for Target ROA<span class="soon">Coming soon</span></span>
+  <button type="button" class="tab-btn active" data-tab="a1" data-title="Cow Bid Price" data-source="A1 — Cow Bid Price and Budget" data-use="advise a purchase decision">A1 · Cow Bid Price</button>
+  <button type="button" class="tab-btn" data-tab="a2" data-title="Calf Price for Target ROA" data-source="A2 — Cow-Calf Cost and Necessary Calf Price for Target ROA" data-use="set a price target">A2 · Calf Price for Target ROA</button>
   <span class="disabled">C1 · Cow-Calf Budget (400 hd)<span class="soon">Coming soon</span></span>
 </nav>
 
+<div id="panel-a1" class="tool-panel">
 <section class="intro">
   <div class="intro-inner">
     <div>
@@ -598,8 +624,368 @@
     </div>
   </div>
 </div>
+</div>
 
-<footer>
+<div id="panel-a2" class="tool-panel" hidden>
+<section class="intro">
+  <div class="intro-inner">
+    <div>
+      <h1>What calf price do you need to hit your target return?</h1>
+      <p>Enter your herd's costs, investment, and your target Return on Assets: the tool works out your current Total Unit Cost and ROA, then the average — and separate steer/heifer — calf price you'd need to reach that target, just like AgriLife Extension's A2 spreadsheet, but recalculating live.</p>
+    </div>
+    <div class="intro-meta">
+      <div><strong>4 linked sheets</strong>cost, ROA, pricing &amp; equipment</div>
+      <div><strong>TUC + ROA</strong>decision criteria</div>
+      <div><strong>Editable</strong>every assumption</div>
+    </div>
+  </div>
+  <div class="fence-line"></div>
+</section>
+
+<div class="layout">
+  <div class="col-inputs">
+
+    <!-- Herd & weaning basics -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9c0-2 1.5-4 4-4s4 1.5 4 2 1.5-2 4-2 4 2 4 4-2 3-2 5v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5c0-2-2-3-2-5Z"/><circle cx="9" cy="13" r=".5" fill="currentColor"/><circle cx="15" cy="13" r=".5" fill="currentColor"/></svg>
+        <h2>Herd &amp; weaning basics</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">These set your revenue side: how many BCU you run, your weaning percentage, and the current weight and price of your steer and heifer calves.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="a2_bcu">Breeding Cow Units (BCU)</label>
+            <div class="input-wrap"><input type="number" id="a2_bcu" value="400" min="1"></div>
+          </div>
+          <div class="field">
+            <label for="a2_weanPct">Weaned calf crop</label>
+            <div class="input-wrap has-suffix"><input type="number" id="a2_weanPct" value="85" min="0" max="100"><span class="suffix">%</span></div>
+          </div>
+          <div class="field">
+            <label for="a2_premium">Premium offered by buyer</label>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_premium" value="80" min="0"></div>
+          </div>
+          <div class="field">
+            <label for="a2_steerWt">Steer weaning weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="a2_steerWt" value="560" min="0"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="a2_steerPrice">Steer price</label>
+            <div class="input-wrap has-suffix"><input type="number" id="a2_steerPrice" value="185" min="0"><span class="suffix">$/cwt</span></div>
+          </div>
+          <div class="field"></div>
+          <div class="field">
+            <label for="a2_heiferWt">Heifer weaning weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="a2_heiferWt" value="530" min="0"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="a2_heiferPrice">Heifer price</label>
+            <div class="input-wrap has-suffix"><input type="number" id="a2_heiferPrice" value="165" min="0"><span class="suffix">$/cwt</span></div>
+          </div>
+          <div class="field"></div>
+        </div>
+        <div class="field" style="margin-top:16px;">
+          <label>Land</label>
+          <div class="segmented" role="group" aria-label="Land ownership">
+            <button type="button" class="active" id="a2_landOwnedBtn" data-owned="1">Owned</button>
+            <button type="button" id="a2_landLeasedBtn" data-owned="0">Leased</button>
+          </div>
+          <p class="derived-note">Switches which land cost line applies below, and whether land counts toward your asset base.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Land costs & investment -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg>
+        <h2>Land</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Owned-land cost (tax &amp; maintenance) only applies when Owned is selected above; leased-land cost only applies when Leased is selected. The investment value (for your asset base and ROA) only counts owned land.</p>
+        <fieldset style="margin-bottom:16px;">
+          <legend>Owned land — tax &amp; maintenance</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="a2_ownedAcresPerBCU">Acres/BCU</label><div class="input-wrap"><input type="number" id="a2_ownedAcresPerBCU" value="12" min="0"></div></div>
+            <div class="field"><label for="a2_ownedRatePerAcre">Tax &amp; maint.</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_ownedRatePerAcre" value="5" min="0"></div></div>
+          </div>
+        </fieldset>
+        <fieldset style="margin-bottom:16px;">
+          <legend>Leased land — cash lease</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="a2_leasedAcresPerBCU">Acres/BCU</label><div class="input-wrap"><input type="number" id="a2_leasedAcresPerBCU" value="20" min="0"></div></div>
+            <div class="field"><label for="a2_leasedRatePerAcre">Lease rate</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_leasedRatePerAcre" value="12" min="0"></div></div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Land &amp; improvements — investment value</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="a2_landInvestAcresPerBCU">Acres/BCU</label><div class="input-wrap"><input type="number" id="a2_landInvestAcresPerBCU" value="12" min="0"></div></div>
+            <div class="field"><label for="a2_landMarketValuePerAcre">Market value</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_landMarketValuePerAcre" value="850" min="0"></div></div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+
+    <!-- Feed & other direct costs -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 7h20M2 17h20"/></svg>
+        <h2>Feed &amp; other direct costs</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">All figures are $/BCU per year unless noted.</p>
+        <fieldset style="margin-bottom:16px;">
+          <legend>Feed</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="a2_hayRolls">Hay (rolls)</label><div class="input-wrap"><input type="number" id="a2_hayRolls" value="0" min="0" step="0.1"></div></div>
+            <div class="field"><label for="a2_hayPrice">Hay price/roll</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_hayPrice" value="0" min="0"></div></div>
+            <div class="field"></div>
+            <div class="field"><label for="a2_proteinQty">Protein supplement (cwt)</label><div class="input-wrap"><input type="number" id="a2_proteinQty" value="5" min="0" step="0.1"></div></div>
+            <div class="field"><label for="a2_proteinPrice">Protein price/cwt</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_proteinPrice" value="20" min="0"></div></div>
+            <div class="field"></div>
+            <div class="field"><label for="a2_saltLbs">Salt &amp; mineral (lb)</label><div class="input-wrap"><input type="number" id="a2_saltLbs" value="30" min="0"></div></div>
+            <div class="field"><label for="a2_saltPrice">Salt/mineral price/lb</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_saltPrice" value="0.45" min="0" step="0.01"></div></div>
+            <div class="field"></div>
+            <div class="field"><label for="a2_otherFeed1Qty">Other feed (qty)</label><div class="input-wrap"><input type="number" id="a2_otherFeed1Qty" value="0" min="0"></div></div>
+            <div class="field"><label for="a2_otherFeed1Price">Price/unit</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherFeed1Price" value="0" min="0"></div></div>
+            <div class="field"></div>
+          </div>
+        </fieldset>
+        <fieldset>
+          <legend>Labor, veterinary &amp; other direct</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="a2_hiredLabor">Hired labor</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_hiredLabor" value="50" min="0"></div></div>
+            <div class="field"><label for="a2_ownerLabor">Owner labor &amp; mgmt.</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_ownerLabor" value="150" min="0"></div></div>
+            <div class="field"><label for="a2_vetMed">Vet, medicine &amp; breeding</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_vetMed" value="35" min="0"></div></div>
+            <div class="field"><label for="a2_vaccination">Vaccination &amp; precondition</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_vaccination" value="40" min="0"></div></div>
+            <div class="field"><label for="a2_otherDirect">Other direct</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherDirect" value="0" min="0"></div></div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+
+    <!-- Indirect costs -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/><path d="M7 15h4"/></svg>
+        <h2>Indirect costs &amp; finance</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Repair/maintenance and equipment depreciation are filled in automatically from the "Capital assets" card below.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label>Repair &amp; maintenance</label>
+            <div class="input-wrap has-prefix readonly-field"><span class="prefix">$</span><input type="number" id="a2_repairMaintDisplay" value="0" readonly tabindex="-1"></div>
+          </div>
+          <div class="field">
+            <label>Vehicle/equip. depreciation</label>
+            <div class="input-wrap has-prefix readonly-field"><span class="prefix">$</span><input type="number" id="a2_vehicleDeprDisplay" value="0" readonly tabindex="-1"></div>
+          </div>
+          <div class="field">
+            <label for="a2_fuelLube">Fuel &amp; lube</label>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_fuelLube" value="35" min="0"></div>
+          </div>
+          <div class="field">
+            <label for="a2_utilities">Utilities</label>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_utilities" value="10" min="0"></div>
+          </div>
+          <div class="field">
+            <label for="a2_adminGA">General &amp; admin.</label>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_adminGA" value="25" min="0"></div>
+          </div>
+          <div class="field">
+            <label for="a2_otherIndirect1">Other indirect</label>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherIndirect1" value="0" min="0"></div>
+          </div>
+          <div class="field">
+            <label for="a2_financeCost">Finance cost (interest paid)</label>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_financeCost" value="0" min="0"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breeding stock investment & depreciation -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9c0-2 1.5-4 4-4s4 1.5 4 2 1.5-2 4-2 4 2 4 4-2 3-2 5v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5c0-2-2-3-2-5Z"/></svg>
+        <h2>Breeding stock investment &amp; depreciation</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Cow and bull depreciation, and cull revenue, are calculated here and automatically feed the cost and revenue lines above.</p>
+        <fieldset style="margin-bottom:16px;">
+          <legend>Breeding cows</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="a2_cowCost">Cost/head</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="1400" min="0"></div></div>
+            <div class="field"><label for="a2_cowLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowLife" value="7" min="1"><span class="suffix">yrs</span></div></div>
+            <div class="field"><label for="a2_cowDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
+            <div class="field"><label for="a2_cullCowWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1300" min="0"><span class="suffix">lb</span></div></div>
+            <div class="field"><label for="a2_cullCowPrice">Cull price</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowPrice" value="60" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"></div>
+          </div>
+        </fieldset>
+        <fieldset style="margin-bottom:14px;">
+          <legend>Herd bull</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="a2_bullCost">Cost/head</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_bullCost" value="4000" min="0"></div></div>
+            <div class="field"><label for="a2_bullLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
+            <div class="field"><label for="a2_bullDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_bullDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
+            <div class="field"><label for="a2_cullBullWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullWt" value="1800" min="0"><span class="suffix">lb</span></div></div>
+            <div class="field"><label for="a2_cullBullPrice">Cull price</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullPrice" value="80" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="a2_cowsPerBull">Cows/bull</label><div class="input-wrap"><input type="number" id="a2_cowsPerBull" value="25" min="1"></div></div>
+          </div>
+        </fieldset>
+        <div class="stat-tile wide">
+          <span class="label">Breeding stock depreciation &amp; cull revenue per BCU</span>
+          <span class="value" id="a2_breedingDeprTotal" style="font-size:20px;">$0</span>
+          <span class="sub" id="a2_breedingBreak"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Capital assets: vehicles, machinery & equipment -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="7" width="15" height="10" rx="1"/><path d="M16 10h3l3 3v4h-6z"/><circle cx="5.5" cy="19" r="1.5"/><circle cx="17.5" cy="19" r="1.5"/></svg>
+        <h2>Capital assets — vehicles, machinery &amp; equipment</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Replacement cost, useful life, salvage %, and annual repair % for each item. "Allocation" is the share of that item's cost fairly charged to the cow-calf enterprise (vs. other uses on the place). Totals below feed "Repair &amp; maintenance" and "Vehicle/equip. depreciation" above.</p>
+        <div class="table-scroll">
+          <table class="grid" id="a2_equipTable">
+            <thead>
+              <tr>
+                <th style="text-align:left;">Item</th>
+                <th>Cost</th>
+                <th>Life (yrs)</th>
+                <th>Salvage %</th>
+                <th>Repair %</th>
+                <th>Alloc. %</th>
+              </tr>
+            </thead>
+            <tbody id="a2_equipBody"></tbody>
+          </table>
+        </div>
+        <div class="stat-tiles" style="margin-top:14px;">
+          <div class="stat-tile">
+            <span class="label">Depreciation/BCU</span>
+            <span class="value" id="a2_capDeprTotal" style="font-size:18px;">$0</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Repairs/BCU</span>
+            <span class="value" id="a2_capRepairsTotal" style="font-size:18px;">$0</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Investment/BCU</span>
+            <span class="value" id="a2_capInvestTotal" style="font-size:18px;">$0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-results">
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>
+        <h2>Result</h2>
+      </div>
+      <div class="card-body">
+        <div class="stat-tiles" style="margin-bottom:14px;">
+          <div class="stat-tile">
+            <span class="label">Total Unit Cost / BCU</span>
+            <span class="value" id="a2_tucValue" style="font-size:22px;">$0</span>
+          </div>
+          <div class="stat-tile" id="a2_roaTile">
+            <span class="label">Current ROA</span>
+            <span class="value" id="a2_roaValue" style="font-size:22px;">0%</span>
+          </div>
+        </div>
+
+        <div class="hero-field" style="margin-bottom:16px;">
+          <label for="a2_targetROA">Target Return on Assets</label>
+          <div class="hero-row">
+            <input type="range" id="a2_targetROARange" min="0" max="15" step="0.5" value="3">
+            <div class="input-wrap has-suffix"><input type="number" id="a2_targetROA" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
+          </div>
+        </div>
+
+        <div class="stat-tile wide good" id="a2_reqAvgTile" style="margin-bottom:12px;">
+          <span class="label">Required average calf price</span>
+          <span class="value" id="a2_reqAvgValue">$0.00</span>
+          <span class="sub">$/cwt, to reach your target ROA</span>
+        </div>
+
+        <div class="stat-tiles" style="margin-bottom:12px;">
+          <div class="stat-tile">
+            <span class="label">Required steer price</span>
+            <span class="value" id="a2_reqSteerValue" style="font-size:20px;">$0.00</span>
+            <span class="sub">$/cwt</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Required heifer price</span>
+            <span class="value" id="a2_reqHeiferValue" style="font-size:20px;">$0.00</span>
+            <span class="sub">$/cwt</span>
+          </div>
+        </div>
+
+        <p class="narrative" id="a2_narrativeMain"></p>
+        <p class="narrative" id="a2_narrativeSplit"></p>
+
+        <div class="stat-tiles" style="margin:14px 0 4px;">
+          <div class="stat-tile">
+            <span class="label">Breakeven steer price</span>
+            <span class="value" id="a2_breakevenSteerValue" style="font-size:16px;">$0.00</span>
+            <span class="sub">$/cwt, ROA = 0</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Breakeven heifer price</span>
+            <span class="value" id="a2_breakevenHeiferValue" style="font-size:16px;">$0.00</span>
+            <span class="sub">$/cwt, ROA = 0</span>
+          </div>
+        </div>
+
+        <div class="btn-row" style="padding:14px 0 0;">
+          <button class="btn secondary" id="a2_resetBtn" type="button">Reset A2 defaults</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 13v4M12 9v8M16 11v6"/></svg>
+        <h2>At your herd size</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Every figure above is per BCU. Here's what that means in whole-ranch dollars, at your herd size.</p>
+        <div class="stat-tiles">
+          <div class="stat-tile">
+            <span class="label">Total assets</span>
+            <span class="value" id="a2_herdAssets" style="font-size:18px;">$0</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Total Unit Cost</span>
+            <span class="value" id="a2_herdTUC" style="font-size:18px;">$0</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Net income (current prices)</span>
+            <span class="value" id="a2_herdNetIncome" style="font-size:18px;">$0</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Total revenue (current prices)</span>
+            <span class="value" id="a2_herdRevenue" style="font-size:18px;">$0</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<footer id="toolFooter">
   Based on the <strong>A1 — Cow Bid Price and Budget</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; the starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a purchase decision.
 </footer>
 
@@ -946,6 +1332,399 @@
     });
   }
 
+  /* ================================================================
+     A2 — Cow-Calf Cost & Necessary Calf Price for Target ROA
+     ================================================================ */
+  function fmtDollar(v, decimals){
+    var f = decimals===2 ? fmtMoney2 : fmtMoney0;
+    v = isFinite(v) ? v : 0;
+    return (v<0?'-':'')+'$'+f.format(Math.abs(v));
+  }
+
+  /* ---------------- Sheet 4: Capital Asset Costs ---------------- */
+  function calcCapitalAssets(rows, bcu){
+    var out = rows.map(function(r, idx){
+      var depr = round(r.life===0 ? 0 : (r.cost - r.salvagePct*0.01*r.cost)/r.life, 0);
+      var avgInvest = round((r.cost + r.salvagePct*0.01*r.cost)/2, 0);
+      var repairs = round(r.cost*r.repairPct*0.01, 0);
+      var deprAlloc = round(depr*r.allocPct*0.01, 0);
+      var investAlloc = round(avgInvest*r.allocPct*0.01, 0);
+      // Replicated Excel quirk: only row 0 (Pickups) rounds the allocated-repairs figure.
+      var repairsAlloc = idx===0 ? round(repairs*r.allocPct*0.01, 0) : (repairs*r.allocPct*0.01);
+      return {name:r.name, cost:r.cost, life:r.life, salvagePct:r.salvagePct, repairPct:r.repairPct, allocPct:r.allocPct,
+              depr:depr, avgInvest:avgInvest, repairs:repairs, deprAlloc:deprAlloc, investAlloc:investAlloc, repairsAlloc:repairsAlloc};
+    });
+    var totalDeprAlloc = out.reduce(function(a,r){return a+r.deprAlloc;},0);
+    var totalInvestAlloc = out.reduce(function(a,r){return a+r.investAlloc;},0);
+    var totalRepairsAlloc = out.reduce(function(a,r){return a+r.repairsAlloc;},0);
+    var safeBcu = bcu||1;
+    return {
+      rows: out,
+      totalDeprAlloc: totalDeprAlloc, totalInvestAlloc: totalInvestAlloc, totalRepairsAlloc: totalRepairsAlloc,
+      deprPerBCU: totalDeprAlloc/safeBcu, investPerBCU: totalInvestAlloc/safeBcu, repairsPerBCU: totalRepairsAlloc/safeBcu
+    };
+  }
+
+  /* ---------------- Breeding stock investment & depreciation ---------------- */
+  function calcBreedingStock(inp){
+    var cowLife = Math.max(inp.cowLife, 0.0001);
+    var bullLife = Math.max(inp.bullLife, 0.0001);
+    var cowsPerBull = Math.max(inp.cowsPerBull, 0.0001);
+
+    var cowSalvageGross = inp.cullCowWt*inp.cullCowPrice*0.01;
+    var cowDeprPerBCU = (inp.cowCost - cowSalvageGross)/cowLife;
+    var cowReplRate = 1/cowLife;
+    var cullCowIncome = cowSalvageGross*(cowReplRate + inp.cowDeathLoss*0.01);
+
+    var bullSalvageGross = inp.cullBullWt*inp.cullBullPrice*0.01;
+    var bullReplRate = 1/bullLife;
+    var bullDeprPerHead = (inp.bullCost - bullSalvageGross)*bullReplRate;
+    var bullDeprPerBCU = bullDeprPerHead/cowsPerBull;
+    var netCullBullIncome = bullSalvageGross*(1-inp.bullDeathLoss*0.01);
+    var cullBullIncomePerHead = netCullBullIncome*bullReplRate;
+    var cullBullPerExposedFemale = cullBullIncomePerHead/cowsPerBull;
+
+    var cullRevenuePerBCU = cullCowIncome + cullBullPerExposedFemale;
+
+    var avgCowInvestment = (inp.cowCost + cowSalvageGross)/2;
+    var avgBullInvestmentPerHead = (inp.bullCost + bullSalvageGross)/2;
+    var avgBullInvestmentPerBCU = avgBullInvestmentPerHead/cowsPerBull;
+    var totalBreedingInvestmentPerBCU = avgCowInvestment + avgBullInvestmentPerBCU;
+
+    return {
+      cowSalvageGross:cowSalvageGross, cowDeprPerBCU:cowDeprPerBCU, cullCowIncome:cullCowIncome,
+      bullSalvageGross:bullSalvageGross, bullDeprPerHead:bullDeprPerHead, bullDeprPerBCU:bullDeprPerBCU,
+      cullBullIncomePerHead:cullBullIncomePerHead, cullBullPerExposedFemale:cullBullPerExposedFemale,
+      cullRevenuePerBCU:cullRevenuePerBCU,
+      avgCowInvestment:avgCowInvestment, avgBullInvestmentPerBCU:avgBullInvestmentPerBCU,
+      totalBreedingInvestmentPerBCU:totalBreedingInvestmentPerBCU,
+      totalBreedingDeprPerBCU: cowDeprPerBCU + bullDeprPerBCU
+    };
+  }
+
+  /* ---------------- Sheet 1: Total Unit Cost & ROA ---------------- */
+  function calcSheet1(inp, cap, bs){
+    var steerRev = inp.steerWt*inp.steerPrice*0.01;
+    var heiferRev = inp.heiferWt*inp.heiferPrice*0.01;
+    var avgWt = (inp.steerWt+inp.heiferWt)*0.5;
+    var avgRevPerHead = steerRev*0.5 + heiferRev*0.5 + inp.premium; // raw premium, per original F13
+    var avgPricePerCwt = avgWt===0 ? 0 : (avgRevPerHead/avgWt)*100;
+    var lbWeanedPerExposed = avgWt*inp.weanPct*0.01;
+    var calfRevPerBCU = lbWeanedPerExposed*avgPricePerCwt*0.01;
+
+    var cullRevPerBCU = bs.cullRevenuePerBCU;
+    var totalRevPerBCU = calfRevPerBCU + cullRevPerBCU;
+
+    var landOwnedCost = inp.landOwned ? inp.ownedAcresPerBCU*inp.ownedRatePerAcre : 0;
+    var landLeasedCost = (!inp.landOwned) ? inp.leasedRatePerAcre*inp.leasedAcresPerBCU : 0;
+    var hayCost = inp.hayRolls*inp.hayPrice;
+    var proteinCost = inp.proteinQty*inp.proteinPrice;
+    var saltCost = inp.saltLbs*inp.saltPrice;
+    var otherFeed1 = inp.otherFeed1Qty*inp.otherFeed1Price;
+    var otherFeed2 = inp.otherFeed2Qty*inp.otherFeed2Price;
+    var subtotalFeed = landOwnedCost+landLeasedCost+hayCost+proteinCost+saltCost+otherFeed1+otherFeed2;
+
+    var subtotalOtherDirect = inp.hiredLabor+inp.ownerLabor+inp.vetMed+inp.vaccination+inp.otherDirect;
+
+    var cowDeprPerBCU = bs.cowDeprPerBCU;
+    var bullDeprPerBCU = bs.bullDeprPerBCU;
+    var subtotalBreedingDepr = cowDeprPerBCU + bullDeprPerBCU;
+
+    var totalDirect = subtotalFeed + subtotalOtherDirect + subtotalBreedingDepr;
+
+    var repairMaint = cap.repairsPerBCU;
+    var fuelLube = inp.fuelLube;
+    var otherIndirect1 = inp.otherIndirect1;
+    var otherIndirect2 = inp.otherIndirect2;
+    var vehicleDepr = cap.deprPerBCU;
+    var utilities = inp.utilities;
+    var adminGA = inp.adminGA;
+    var totalIndirect = repairMaint+fuelLube+otherIndirect1+otherIndirect2+vehicleDepr+utilities+adminGA;
+
+    var tucOperating = totalDirect + totalIndirect;
+    var financeCost = inp.financeCost;
+    var tucTotal = tucOperating + financeCost;
+
+    var netIncome = totalRevPerBCU - tucTotal;
+
+    return {
+      steerRev:steerRev, heiferRev:heiferRev, avgWt:avgWt, avgRevPerHead:avgRevPerHead, avgPricePerCwt:avgPricePerCwt,
+      lbWeanedPerExposed:lbWeanedPerExposed, calfRevPerBCU:calfRevPerBCU, cullRevPerBCU:cullRevPerBCU, totalRevPerBCU:totalRevPerBCU,
+      subtotalFeed:subtotalFeed, subtotalOtherDirect:subtotalOtherDirect, subtotalBreedingDepr:subtotalBreedingDepr, totalDirect:totalDirect,
+      repairMaint:repairMaint, fuelLube:fuelLube, vehicleDepr:vehicleDepr, totalIndirect:totalIndirect,
+      tucOperating:tucOperating, financeCost:financeCost, tucTotal:tucTotal, netIncome:netIncome
+    };
+  }
+
+  /* ---------------- Sheet 2: ROA & Required Average Calf Price ---------------- */
+  function calcSheet2(inp, s1, cap, bs){
+    var landInvestPerBCU = inp.landOwned ? (inp.landMarketValuePerAcre*inp.landInvestAcresPerBCU) : 0;
+    var breedingInvestPerBCU = bs.totalBreedingInvestmentPerBCU;
+    var equipInvestPerBCU = cap.investPerBCU;
+    var totalAssetsPerBCU = landInvestPerBCU + breedingInvestPerBCU + equipInvestPerBCU;
+
+    var roa = totalAssetsPerBCU===0 ? 0 : (s1.financeCost + s1.netIncome)/totalAssetsPerBCU;
+
+    var calfSalesLbPerExposed = inp.weanPct*s1.avgWt*0.01;
+    var returnNeededAtTarget = inp.targetROA*totalAssetsPerBCU*0.01;
+    var additionalIncomeNeeded = returnNeededAtTarget - s1.netIncome - s1.financeCost;
+    var additionalPerCwt = calfSalesLbPerExposed===0 ? 0 : (additionalIncomeNeeded/calfSalesLbPerExposed)*100;
+    var requiredAvgPrice = s1.avgPricePerCwt + additionalPerCwt;
+
+    return {
+      landInvestPerBCU:landInvestPerBCU, breedingInvestPerBCU:breedingInvestPerBCU, equipInvestPerBCU:equipInvestPerBCU,
+      totalAssetsPerBCU:totalAssetsPerBCU, roa:roa, calfSalesLbPerExposed:calfSalesLbPerExposed,
+      returnNeededAtTarget:returnNeededAtTarget, additionalIncomeNeeded:additionalIncomeNeeded,
+      additionalPerCwt:additionalPerCwt, requiredAvgPrice:requiredAvgPrice
+    };
+  }
+
+  /* ---------------- Sheet 3: Steer vs Heifer price split ---------------- */
+  function calcSheet3(inp, s1, s2){
+    var C7 = inp.weanPct;
+    var C9 = inp.steerWt, C10 = inp.heiferWt;
+    var D13 = inp.steerPrice - inp.heiferPrice;
+
+    var F9 = C9*C7*0.005, F10 = C10*C7*0.005;
+    var G9 = inp.steerPrice*F9*0.01, G10 = inp.heiferPrice*F10*0.01;
+    var I10 = G9+G10;
+
+    function solveHeiferPrice(totalRevenueTarget){
+      var denom = (C7*C9*0.00005) + (C7*C10*0.00005);
+      if(denom===0) return 0;
+      return (totalRevenueTarget - D13*C9*C7*0.00005) / denom;
+    }
+
+    var C25 = s2.additionalIncomeNeeded + I10;
+    var D28 = solveHeiferPrice(C25);
+    var D27 = D28 + D13;
+
+    var cullRevPlusPremium = s1.cullRevPerBCU + inp.premium;
+    var costToCover = s1.tucTotal - cullRevPlusPremium;
+    var D43 = solveHeiferPrice(costToCover);
+    var D42 = D43 + D13;
+
+    return {
+      priceDiff: D13, baseRevenuePerBCU: I10,
+      targetSteerPrice: D27, targetHeiferPrice: D28,
+      breakevenSteerPrice: D42, breakevenHeiferPrice: D43,
+      costToCoverTUC: costToCover
+    };
+  }
+
+  /* ---------------- A2 defaults & equipment table ---------------- */
+  var A2_DEFAULTS = {
+    a2_bcu:400, a2_weanPct:85, a2_premium:80, a2_steerWt:560, a2_steerPrice:185, a2_heiferWt:530, a2_heiferPrice:165,
+    a2_ownedAcresPerBCU:12, a2_ownedRatePerAcre:5, a2_leasedAcresPerBCU:20, a2_leasedRatePerAcre:12,
+    a2_landInvestAcresPerBCU:12, a2_landMarketValuePerAcre:850,
+    a2_hayRolls:0, a2_hayPrice:0, a2_proteinQty:5, a2_proteinPrice:20, a2_saltLbs:30, a2_saltPrice:0.45,
+    a2_otherFeed1Qty:0, a2_otherFeed1Price:0,
+    a2_hiredLabor:50, a2_ownerLabor:150, a2_vetMed:35, a2_vaccination:40, a2_otherDirect:0,
+    a2_fuelLube:35, a2_utilities:10, a2_adminGA:25, a2_otherIndirect1:0, a2_financeCost:0,
+    a2_cowCost:1400, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1300, a2_cullCowPrice:60,
+    a2_bullCost:4000, a2_bullLife:4, a2_bullDeathLoss:1, a2_cullBullWt:1800, a2_cullBullPrice:80, a2_cowsPerBull:25,
+    a2_targetROA:3
+  };
+
+  var A2_EQUIP_DEFAULTS = [
+    {name:'Pickups (2)', cost:80000, life:5, salvagePct:10, repairPct:5, allocPct:100},
+    {name:'Trailers (2)', cost:10000, life:10, salvagePct:0, repairPct:5, allocPct:100},
+    {name:'Tractor', cost:40000, life:10, salvagePct:10, repairPct:5, allocPct:100},
+    {name:'Feeders', cost:8000, life:7, salvagePct:0, repairPct:5, allocPct:100},
+    {name:'Cattle equipment', cost:20000, life:10, salvagePct:0, repairPct:5, allocPct:100},
+    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0},
+    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0},
+    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0},
+    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0},
+    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0},
+    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0}
+  ];
+  var a2EquipRows = A2_EQUIP_DEFAULTS.map(function(r){ return {name:r.name, cost:r.cost, life:r.life, salvagePct:r.salvagePct, repairPct:r.repairPct, allocPct:r.allocPct}; });
+  var a2LandOwned = true;
+
+  function buildA2EquipTable(){
+    var tbody = $('a2_equipBody');
+    tbody.innerHTML = '';
+    a2EquipRows.forEach(function(row, idx){
+      var tr = document.createElement('tr');
+
+      var tdName = document.createElement('td');
+      tdName.style.textAlign = 'left';
+      if(idx < 5){
+        tdName.textContent = row.name;
+      } else {
+        var nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.value = row.name;
+        nameInput.style.cssText = 'width:100%;border:none;background:none;font:inherit;color:inherit;';
+        nameInput.addEventListener('input', function(){ row.name = nameInput.value || 'Other'; });
+        tdName.appendChild(nameInput);
+      }
+      tr.appendChild(tdName);
+
+      function numCell(field, step){
+        var td = document.createElement('td');
+        var input = document.createElement('input');
+        input.type = 'number'; input.className = 'small'; input.min = '0'; input.step = step || '1';
+        input.value = row[field];
+        input.addEventListener('input', function(){
+          row[field] = parseFloat(input.value) || 0;
+          recalcA2();
+        });
+        td.appendChild(input);
+        return td;
+      }
+      tr.appendChild(numCell('cost', 100));
+      tr.appendChild(numCell('life', 1));
+      tr.appendChild(numCell('salvagePct', 1));
+      tr.appendChild(numCell('repairPct', 1));
+      tr.appendChild(numCell('allocPct', 1));
+      tbody.appendChild(tr);
+    });
+  }
+
+  function resetA2EquipRows(){
+    a2EquipRows = A2_EQUIP_DEFAULTS.map(function(r){ return {name:r.name, cost:r.cost, life:r.life, salvagePct:r.salvagePct, repairPct:r.repairPct, allocPct:r.allocPct}; });
+    buildA2EquipTable();
+  }
+
+  function gatherA2Inputs(){
+    return {
+      bcu: num('a2_bcu'), weanPct: num('a2_weanPct'),
+      steerWt: num('a2_steerWt'), steerPrice: num('a2_steerPrice'),
+      heiferWt: num('a2_heiferWt'), heiferPrice: num('a2_heiferPrice'),
+      premium: num('a2_premium'),
+      landOwned: a2LandOwned,
+      ownedAcresPerBCU: num('a2_ownedAcresPerBCU'), ownedRatePerAcre: num('a2_ownedRatePerAcre'),
+      leasedAcresPerBCU: num('a2_leasedAcresPerBCU'), leasedRatePerAcre: num('a2_leasedRatePerAcre'),
+      landInvestAcresPerBCU: num('a2_landInvestAcresPerBCU'), landMarketValuePerAcre: num('a2_landMarketValuePerAcre'),
+      hayRolls: num('a2_hayRolls'), hayPrice: num('a2_hayPrice'),
+      proteinQty: num('a2_proteinQty'), proteinPrice: num('a2_proteinPrice'),
+      saltLbs: num('a2_saltLbs'), saltPrice: num('a2_saltPrice'),
+      otherFeed1Qty: num('a2_otherFeed1Qty'), otherFeed1Price: num('a2_otherFeed1Price'),
+      otherFeed2Qty: 0, otherFeed2Price: 0,
+      hiredLabor: num('a2_hiredLabor'), ownerLabor: num('a2_ownerLabor'), vetMed: num('a2_vetMed'),
+      vaccination: num('a2_vaccination'), otherDirect: num('a2_otherDirect'),
+      fuelLube: num('a2_fuelLube'), otherIndirect1: num('a2_otherIndirect1'), otherIndirect2: 0,
+      utilities: num('a2_utilities'), adminGA: num('a2_adminGA'),
+      financeCost: num('a2_financeCost'),
+      cowCost: num('a2_cowCost'), cowLife: num('a2_cowLife'), cowDeathLoss: num('a2_cowDeathLoss'),
+      cullCowWt: num('a2_cullCowWt'), cullCowPrice: num('a2_cullCowPrice'),
+      bullCost: num('a2_bullCost'), bullLife: num('a2_bullLife'), bullDeathLoss: num('a2_bullDeathLoss'),
+      cullBullWt: num('a2_cullBullWt'), cullBullPrice: num('a2_cullBullPrice'), cowsPerBull: num('a2_cowsPerBull'),
+      targetROA: num('a2_targetROA')
+    };
+  }
+
+  function recalcA2(){
+    var inp = gatherA2Inputs();
+    var bcu = inp.bcu || 1;
+
+    var cap = calcCapitalAssets(a2EquipRows, bcu);
+    var bs = calcBreedingStock(inp);
+    var s1 = calcSheet1(inp, cap, bs);
+    var s2 = calcSheet2(inp, s1, cap, bs);
+    var s3 = calcSheet3(inp, s1, s2);
+
+    $('a2_repairMaintDisplay').value = round(cap.repairsPerBCU, 2);
+    $('a2_vehicleDeprDisplay').value = round(cap.deprPerBCU, 2);
+
+    $('a2_capDeprTotal').textContent = fmtDollar(cap.deprPerBCU, 2);
+    $('a2_capRepairsTotal').textContent = fmtDollar(cap.repairsPerBCU, 2);
+    $('a2_capInvestTotal').textContent = fmtDollar(cap.investPerBCU, 0);
+
+    $('a2_breedingDeprTotal').textContent = fmtDollar(bs.totalBreedingDeprPerBCU, 2);
+    $('a2_breedingBreak').textContent = 'Cow '+fmtDollar(bs.cowDeprPerBCU,2)+' + bull '+fmtDollar(bs.bullDeprPerBCU,2)+' /BCU · cull revenue '+fmtDollar(bs.cullRevenuePerBCU,2)+'/BCU';
+
+    $('a2_tucValue').textContent = fmtDollar(s1.tucTotal, 2);
+
+    var roaPct = s2.roa*100;
+    var targetROA = inp.targetROA;
+    var roaGood = roaPct >= targetROA;
+    $('a2_roaTile').className = 'stat-tile ' + (roaGood ? 'good' : 'critical');
+    $('a2_roaValue').textContent = (isFinite(roaPct) ? roaPct.toFixed(1) : '0.0') + '%';
+
+    $('a2_reqAvgValue').textContent = fmtDollar(s2.requiredAvgPrice, 2);
+    $('a2_reqSteerValue').textContent = fmtDollar(s3.targetSteerPrice, 2);
+    $('a2_reqHeiferValue').textContent = fmtDollar(s3.targetHeiferPrice, 2);
+    $('a2_breakevenSteerValue').textContent = fmtDollar(s3.breakevenSteerPrice, 2);
+    $('a2_breakevenHeiferValue').textContent = fmtDollar(s3.breakevenHeiferPrice, 2);
+
+    $('a2_narrativeMain').innerHTML = 'At today’s weights and prices, your average calf price is <strong>'+fmtDollar(s1.avgPricePerCwt,2)+'/cwt</strong>. To reach a <strong>'+targetROA.toFixed(1)+'% ROA</strong> on '+fmtDollar(s2.totalAssetsPerBCU,0)+' in assets/BCU, you’d need an average price of <strong>'+fmtDollar(s2.requiredAvgPrice,2)+'/cwt</strong> — a difference of '+(s2.additionalPerCwt>=0?'+':'')+fmtDollar(s2.additionalPerCwt,2)+'/cwt.';
+    $('a2_narrativeSplit').innerHTML = 'Holding the steer/heifer price differential ('+fmtDollar(Math.abs(s3.priceDiff),2)+'/cwt) constant, that means a steer price of <strong>'+fmtDollar(s3.targetSteerPrice,2)+'/cwt</strong> and a heifer price of <strong>'+fmtDollar(s3.targetHeiferPrice,2)+'/cwt</strong>.';
+
+    $('a2_herdAssets').textContent = fmtDollar(s2.totalAssetsPerBCU*bcu, 0);
+    $('a2_herdTUC').textContent = fmtDollar(s1.tucTotal*bcu, 0);
+    $('a2_herdNetIncome').textContent = fmtDollar(s1.netIncome*bcu, 0);
+    $('a2_herdRevenue').textContent = fmtDollar(s1.totalRevPerBCU*bcu, 0);
+
+    $('a2_targetROARange').value = targetROA;
+  }
+
+  function initA2(){
+    buildA2EquipTable();
+
+    Object.keys(A2_DEFAULTS).forEach(function(id){
+      if(id === 'a2_targetROA') return; // handled by the slider pair below
+      var el = $(id);
+      if(el) el.addEventListener('input', recalcA2);
+    });
+
+    $('a2_targetROARange').addEventListener('input', function(){
+      $('a2_targetROA').value = this.value; recalcA2();
+    });
+    $('a2_targetROA').addEventListener('input', function(){
+      var v = Math.max(0, Math.min(15, num('a2_targetROA')));
+      $('a2_targetROARange').value = v;
+      recalcA2();
+    });
+
+    var ownedBtn = $('a2_landOwnedBtn'), leasedBtn = $('a2_landLeasedBtn');
+    ownedBtn.addEventListener('click', function(){
+      a2LandOwned = true;
+      ownedBtn.classList.add('active'); leasedBtn.classList.remove('active');
+      recalcA2();
+    });
+    leasedBtn.addEventListener('click', function(){
+      a2LandOwned = false;
+      leasedBtn.classList.add('active'); ownedBtn.classList.remove('active');
+      recalcA2();
+    });
+
+    $('a2_resetBtn').addEventListener('click', function(){
+      Object.keys(A2_DEFAULTS).forEach(function(id){ var el = $(id); if(el) el.value = A2_DEFAULTS[id]; });
+      $('a2_targetROARange').value = A2_DEFAULTS.a2_targetROA;
+      a2LandOwned = true;
+      ownedBtn.classList.add('active'); leasedBtn.classList.remove('active');
+      resetA2EquipRows();
+      recalcA2();
+    });
+
+    recalcA2();
+  }
+
+  /* ---------------- Tab switching (A1 / A2) ---------------- */
+  function initTabs(){
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+    buttons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var tab = btn.dataset.tab;
+        buttons.forEach(function(b){ b.classList.toggle('active', b === btn); });
+        document.querySelectorAll('.tool-panel').forEach(function(panel){
+          panel.hidden = (panel.id !== 'panel-' + tab);
+        });
+        var titleEl = $('toolTitle');
+        if(titleEl && btn.dataset.title) titleEl.textContent = btn.dataset.title;
+        var footerEl = $('toolFooter');
+        if(footerEl && btn.dataset.source){
+          footerEl.innerHTML = 'Based on the <strong>' + btn.dataset.source + '</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; the starting values are the spreadsheet\'s original assumptions, not a real producer\'s data. Always verify results before using them to ' + btn.dataset.use + '.';
+        }
+        if(tab === 'a2') recalcA2();
+        if(tab === 'a1') recalc();
+      });
+    });
+  }
+
   function init(){
     buildYearGrid();
     var ids = Object.keys(DEFAULTS);
@@ -971,6 +1750,9 @@
       });
       recalc();
     });
+
+    initA2();
+    initTabs();
 
     recalc();
 
