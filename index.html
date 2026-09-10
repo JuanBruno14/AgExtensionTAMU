@@ -1,9 +1,10 @@
+
 <!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cow Bid Price</title>
+<title>Beef Cattle Decision Aids</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap">
 <style>
   :root{
@@ -30,40 +31,20 @@
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#1b1512;
-      --surface:#241c19;
-      --surface-sunken:#2c221e;
-      --border:#3a2d27;
-      --ink:#f3ece5;
-      --ink-secondary:#cabdb3;
-      --ink-muted:#96877c;
-      --maroon-100:#3a1f1f;
-      --good-100:#193225;
-      --good-700:#5fbf8e;
-      --critical-100:#3a2013;
-      --critical-700:#e2895f;
-      --accent:#e2897c;
-      --wheat-100:#3a2d15;
-      --wheat-500:#d9a44a;
+      --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+      --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+      --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+      --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+      --wheat-100:#33290f; --wheat-500:#d9a44a;
       --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
     }
   }
   :root[data-theme="dark"]{
-    --bg:#1b1512;
-    --surface:#241c19;
-    --surface-sunken:#2c221e;
-    --border:#3a2d27;
-    --ink:#f3ece5;
-    --ink-secondary:#cabdb3;
-    --ink-muted:#96877c;
-    --maroon-100:#3a1f1f;
-    --good-100:#193225;
-    --good-700:#5fbf8e;
-    --critical-100:#3a2013;
-    --critical-700:#e2895f;
-    --accent:#e2897c;
-    --wheat-100:#3a2d15;
-    --wheat-500:#d9a44a;
+    --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+    --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+    --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+    --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+    --wheat-100:#33290f; --wheat-500:#d9a44a;
     --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
   }
 
@@ -76,1693 +57,194 @@
     font-variant-numeric:tabular-nums;
     -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3,.display{
-    font-family:"Fraunces", Georgia, serif;
-    text-wrap:balance;
-    letter-spacing:-0.01em;
-  }
+  h1,h2,h3{font-family:"Fraunces", Georgia, serif; text-wrap:balance; letter-spacing:-0.01em;}
   a{color:inherit;}
 
-  /* ---------- Header ---------- */
   .topbar{
     background:linear-gradient(180deg, var(--maroon-800), var(--maroon-900));
     color:#fff;
     padding:18px clamp(16px,4vw,40px);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:24px;
-    flex-wrap:wrap;
+    display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
   }
-  .wordmark{
-    display:flex;
-    align-items:center;
-    gap:14px;
-  }
+  .wordmark{display:flex; align-items:center; gap:14px;}
   .wordmark .mark{
     width:44px;height:44px;border-radius:9px;
-    background:rgba(255,255,255,0.12);
-    border:1.5px solid rgba(255,255,255,0.55);
+    background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.55);
     display:flex;align-items:center;justify-content:center;
-    font-family:"Fraunces",serif;font-weight:700;font-size:20px;
-    flex:none;
+    font-family:"Fraunces",serif;font-weight:700;font-size:20px; flex:none;
   }
   .wordmark .text{line-height:1.15;}
   .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
   .wordmark .text .main{font-family:"Fraunces",serif;font-size:19px;font-weight:600;}
-  .tool-title{
-    font-family:"Fraunces",serif;
-    font-size:clamp(18px,2.4vw,26px);
-    font-weight:600;
-    margin:0;
-  }
-  .header-right{display:flex;align-items:center;gap:10px;}
-  .phase-chip{
-    font-size:12px;font-weight:700;letter-spacing:0.04em;
-    background:rgba(255,255,255,0.14);
-    border:1px solid rgba(255,255,255,0.4);
-    color:#fff;
-    padding:5px 11px;border-radius:100px;
-  }
 
-  /* ---------- Roadmap tabs ---------- */
-  .roadmap{
-    background:var(--maroon-700);
-    padding:0 clamp(16px,4vw,40px);
-    display:flex;gap:4px;
-    overflow-x:auto;
-  }
-  .roadmap a, .roadmap span, .roadmap .tab-btn{
-    display:inline-block;
-    padding:12px 18px;
-    font-size:13.5px;
-    font-weight:600;
-    color:rgba(255,255,255,0.68);
-    border-bottom:3px solid transparent;
-    white-space:nowrap;
-  }
-  .roadmap .tab-btn{
-    font-family:inherit;
-    background:none;
-    border-top:none;border-left:none;border-right:none;
-    cursor:pointer;
-  }
-  .roadmap .tab-btn:hover{color:rgba(255,255,255,0.9);}
-  .roadmap .tab-btn:focus-visible{outline:2px solid #fff;outline-offset:-2px;}
-  .roadmap .active{
-    color:#fff;
-    border-bottom-color:var(--wheat-500);
-  }
-  .roadmap .disabled{
-    color:rgba(255,255,255,0.4);
-    cursor:not-allowed;
-  }
-  .roadmap .soon{
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:0.05em;
-    background:rgba(255,255,255,0.12);
-    padding:1px 6px;
-    border-radius:100px;
-    margin-left:6px;
-    vertical-align:1px;
-  }
-
-  /* ---------- Intro strip ---------- */
-  .intro{
+  .hero{
     position:relative;
     overflow:hidden;
     background:var(--surface);
     border-bottom:1px solid var(--border);
   }
-  .intro-inner{
+  .hero-inner{
     max-width:1180px;margin:0 auto;
-    padding:30px clamp(16px,4vw,40px) 26px;
-    display:flex;
-    gap:28px;
-    align-items:flex-end;
-    justify-content:space-between;
-    flex-wrap:wrap;
+    padding:40px clamp(16px,4vw,40px) 32px;
   }
-  .intro h1{font-size:clamp(22px,2.8vw,30px);margin:0 0 8px;color:var(--ink);}
-  .intro p{margin:0;max-width:62ch;color:var(--ink-secondary);font-size:15px;line-height:1.55;}
-  .intro-meta{
-    display:flex;gap:22px;flex-wrap:wrap;
-  }
-  .intro-meta div{font-size:12.5px;color:var(--ink-muted);}
-  .intro-meta strong{display:block;color:var(--ink);font-size:14px;font-weight:700;}
+  .hero h1{font-size:clamp(26px,4vw,38px);margin:0 0 12px;color:var(--ink);}
+  .hero p{margin:0;max-width:70ch;color:var(--ink-secondary);font-size:15.5px;line-height:1.6;}
+  .hero-meta{display:flex;gap:24px;flex-wrap:wrap;margin-top:22px;}
+  .hero-meta div{font-size:12.5px;color:var(--ink-muted);}
+  .hero-meta strong{display:block;color:var(--ink);font-size:15px;font-weight:700;}
   .fence-line{
     position:absolute;left:0;right:0;bottom:0;height:10px;
     background-image:repeating-linear-gradient(90deg, var(--wheat-500) 0 26px, transparent 26px 52px);
     opacity:0.55;
   }
 
-  /* ---------- Layout ---------- */
-  .layout{
-    max-width:1180px;margin:0 auto;
-    padding:28px clamp(16px,4vw,40px) 64px;
-    display:grid;
-    grid-template-columns: 1.55fr 1fr;
-    gap:22px;
-    align-items:start;
+  main{max-width:1180px;margin:0 auto;padding:32px clamp(16px,4vw,40px) 64px;}
+  .section-label{
+    font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--ink-muted);margin:0 0 14px;
   }
-  @media (max-width:920px){
-    .layout{grid-template-columns:1fr;}
-  }
-  .col-inputs{display:flex;flex-direction:column;gap:18px;min-width:0;}
-  .col-results{position:sticky;top:16px;display:flex;flex-direction:column;gap:18px;min-width:0;}
-  @media (max-width:920px){ .col-results{position:static;} }
 
-  /* ---------- Card ---------- */
-  .card{
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(258px, 1fr));
+    gap:14px;
+  }
+
+  .cat-card{
+    display:block;
     background:var(--surface);
     border:1px solid var(--border);
     border-radius:14px;
     box-shadow:var(--shadow-card);
-    overflow:hidden;
+    padding:18px 18px 16px;
+    text-decoration:none;
+    color:inherit;
+    position:relative;
+    transition:transform 0.12s ease, box-shadow 0.12s ease;
   }
-  .card-head{
-    background:var(--maroon-800);
-    color:#fff;
-    padding:13px 20px;
-    display:flex;align-items:center;gap:10px;
-  }
-  .card-head svg{flex:none;width:18px;height:18px;}
-  .card-head h2{font-size:15.5px;font-weight:600;margin:0;letter-spacing:0.01em;}
-  .card-body{padding:20px;}
-  .card-note{font-size:12.5px;color:var(--ink-muted);margin:0 0 16px;line-height:1.5;}
+  .cat-card.live{cursor:pointer;}
+  .cat-card.live:hover{transform:translateY(-2px);box-shadow:0 4px 18px rgba(58,0,0,0.12);}
+  .cat-card.live:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .cat-card.disabled{opacity:0.62;cursor:default;}
 
-  /* ---------- Fields ---------- */
-  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;}
-  .field-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
-  @media (max-width:520px){ .field-grid, .field-grid.cols-3{grid-template-columns:1fr 1fr;} }
-  .field{display:flex;flex-direction:column;gap:6px;min-width:0;}
-  .field label{font-size:12.5px;font-weight:600;color:var(--ink-secondary);}
-  .field .hint{font-size:11px;color:var(--ink-muted);margin-top:-2px;}
-  .input-wrap{position:relative;display:flex;align-items:center;}
-  .input-wrap .prefix, .input-wrap .suffix{
-    position:absolute;font-size:12px;color:var(--ink-muted);pointer-events:none;white-space:nowrap;
-  }
-  .input-wrap .prefix{left:11px;}
-  .input-wrap .suffix{right:10px;}
-  input[type="number"]{
-    width:100%;
-    font:inherit;font-weight:600;font-size:14.5px;color:var(--ink);
-    background:var(--surface-sunken);
-    border:1.5px solid var(--border);
-    border-radius:9px;
-    padding:9px 11px;
-    font-variant-numeric:tabular-nums;
-  }
-  .input-wrap.has-prefix input{padding-left:22px;}
-  .input-wrap.has-suffix input{padding-right:40px;}
-  input[type="number"]:focus{outline:2px solid var(--focus);outline-offset:1px;border-color:var(--focus);}
-  input[type="number"]::-webkit-outer-spin-button,
-  input[type="number"]::-webkit-inner-spin-button{opacity:0.5;}
-
-  .hero-field{
+  .cat-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
+  .cat-num{
+    font-family:"Fraunces",serif;font-weight:600;font-size:13px;
+    color:var(--accent);
     background:var(--maroon-100);
-    border:1.5px solid var(--accent);
-    border-radius:12px;
-    padding:14px 16px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
+    width:28px;height:28px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
   }
-  .hero-field label{font-size:13px;font-weight:700;color:var(--accent);}
-  .hero-row{display:flex;align-items:center;gap:14px;}
-  .hero-row input[type="range"]{flex:1;accent-color:var(--accent);}
-  .hero-row .input-wrap{width:118px;flex:none;}
-  .hero-row .input-wrap input{
-    background:var(--surface);
-    font-size:17px;font-weight:800;color:var(--accent);
-    border-color:var(--accent);
+  .cat-card.disabled .cat-num{background:var(--surface-sunken);color:var(--ink-muted);}
+
+  .status-pill{
+    font-size:10.5px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;
+    padding:3px 9px;border-radius:100px;white-space:nowrap;
   }
+  .status-pill.live{background:var(--good-100);color:var(--good-700);}
+  .status-pill.progress{background:var(--wheat-100);color:var(--wheat-500);}
+  .status-pill.soon{background:var(--surface-sunken);color:var(--ink-muted);}
 
-  fieldset{border:none;padding:0;margin:0;}
-  legend{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;padding:0;}
+  .cat-card h3{font-size:15px;margin:0 0 6px;line-height:1.3;color:var(--ink);}
+  .cat-card.disabled h3{color:var(--ink-secondary);}
+  .cat-card p{font-size:12.5px;color:var(--ink-muted);margin:0;line-height:1.5;}
 
-  /* ---------- Year grid table ---------- */
-  .table-scroll{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
-  table.grid{width:100%;border-collapse:collapse;min-width:640px;background:var(--surface);}
-  table.grid th, table.grid td{padding:9px 10px;border-bottom:1px solid var(--border);text-align:right;font-size:13px;}
-  table.grid th{
-    background:var(--surface-sunken);
-    color:var(--ink-secondary);
-    font-weight:700;
-    text-align:right;
-    position:sticky;top:0;
+  .cat-card .go{
+    display:inline-flex;align-items:center;gap:4px;
+    font-size:12.5px;font-weight:700;color:var(--accent);margin-top:12px;
   }
-  table.grid th:first-child, table.grid td:first-child{
-    text-align:left;position:sticky;left:0;background:var(--surface-sunken);z-index:1;min-width:170px;
-  }
-  table.grid td:first-child{background:var(--surface);font-weight:600;color:var(--ink-secondary);font-size:12.5px;}
-  table.grid input[type="number"]{
-    width:82px;padding:6px 7px;font-size:13px;text-align:right;border-radius:7px;
-  }
-  table.grid td.readonly{color:var(--ink-muted);font-style:italic;}
-  table.grid td.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
-  table.grid input[type="number"].small{width:64px;}
-
-  /* ---------- Segmented toggle (Owned/Leased) ---------- */
-  .segmented{display:inline-flex;background:var(--surface-sunken);border:1.5px solid var(--border);border-radius:9px;padding:3px;gap:2px;}
-  .segmented button{
-    font:inherit;font-weight:700;font-size:12.5px;color:var(--ink-secondary);
-    background:none;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;
-  }
-  .segmented button.active{background:var(--accent);color:#fff;}
-  .segmented button:focus-visible{outline:2px solid var(--focus);outline-offset:1px;}
-
-  /* ---------- Sub-note / read-only derived value ---------- */
-  .derived-note{font-size:11.5px;color:var(--ink-muted);margin-top:4px;}
-  .derived-note strong{color:var(--ink-secondary);}
-
-  /* ---------- Panels ---------- */
-  .tool-panel[hidden]{display:none;}
-
-  /* ---------- Results ---------- */
-  .stat-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .stat-tile{
-    background:var(--surface-sunken);
-    border:1px solid var(--border);
-    border-radius:12px;
-    padding:14px 16px;
-    display:flex;flex-direction:column;gap:4px;
-  }
-  .stat-tile.wide{grid-column:1 / -1;}
-  .stat-tile .label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);}
-  .stat-tile .value{font-family:"Fraunces",serif;font-size:28px;font-weight:600;line-height:1.1;}
-  .stat-tile .sub{font-size:12px;color:var(--ink-muted);}
-  .stat-tile.good{background:var(--good-100);border-color:color-mix(in srgb, var(--good-700) 30%, var(--good-100));}
-  .stat-tile.good .value{color:var(--good-700);}
-  .stat-tile.critical{background:var(--critical-100);border-color:color-mix(in srgb, var(--critical-700) 30%, var(--critical-100));}
-  .stat-tile.critical .value{color:var(--critical-700);}
-
-  .verdict-pill{
-    display:inline-flex;align-items:center;gap:7px;
-    font-size:12.5px;font-weight:700;
-    padding:6px 12px;border-radius:100px;
-    margin-bottom:4px;
-  }
-  .verdict-pill.good{background:var(--good-100);color:var(--good-700);}
-  .verdict-pill.critical{background:var(--critical-100);color:var(--critical-700);}
-  .verdict-pill .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
-
-  .narrative{font-size:13.5px;line-height:1.6;color:var(--ink-secondary);margin:0 0 8px;}
-  .narrative strong{color:var(--ink);}
-
-  .chart-wrap{padding:4px 4px 0;}
-  .chart-legend{display:flex;gap:16px;font-size:12px;color:var(--ink-muted);padding:8px 16px 14px;}
-  .chart-legend span{display:inline-flex;align-items:center;gap:6px;}
-  .chart-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
-
-  .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:0 20px 20px;}
-  button.btn{
-    font:inherit;font-weight:700;font-size:13px;
-    padding:10px 16px;border-radius:9px;border:1.5px solid var(--accent);
-    background:var(--accent);color:#fff;cursor:pointer;
-  }
-  button.btn.secondary{background:transparent;color:var(--accent);}
-  button.btn:hover{filter:brightness(1.08);}
-  button.btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
 
   footer{
     max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 40px;
     color:var(--ink-muted);font-size:12px;line-height:1.6;
+    border-top:1px solid var(--border);padding-top:20px;
   }
   footer a{text-decoration:underline;}
-
-  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
 </style>
 </head>
 <body>
+
 <header class="topbar">
   <div class="wordmark">
-    <a href="../index.html" style="display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;">
-      <div class="mark">A</div>
-      <div class="text">
-        <div class="top">Texas A&amp;M AgriLife Extension</div>
-        <div class="main">Decision Aids · Cow-Calf Enterprise</div>
-      </div>
-    </a>
-  </div>
-  <h1 class="tool-title" id="toolTitle">Cow Bid Price</h1>
-  <div class="header-right">
-    <a href="../index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
-    <span class="phase-chip">Pilot · Phase 1</span>
+    <div class="mark">A</div>
+    <div class="text">
+      <div class="top">Texas A&amp;M AgriLife Extension</div>
+      <div class="main">Beef Cattle Decision Aids</div>
+    </div>
   </div>
 </header>
 
-<nav class="roadmap" aria-label="Phase 1 tools">
-  <button type="button" class="tab-btn active" data-tab="a1" data-title="Cow Bid Price" data-source="A1 — Cow Bid Price and Budget" data-use="advise a purchase decision">A1 · Cow Bid Price</button>
-  <button type="button" class="tab-btn" data-tab="a2" data-title="Calf Price for Target ROA" data-source="A2 — Cow-Calf Cost and Necessary Calf Price for Target ROA" data-use="set a price target">A2 · Calf Price for Target ROA</button>
-  <span class="disabled">C1 · Cow-Calf Budget (400 hd)<span class="soon">Coming soon</span></span>
-</nav>
-
-<div id="panel-a1" class="tool-panel">
-<section class="intro">
-  <div class="intro-inner">
-    <div>
-      <h1>How much can you afford to pay for a bred cow?</h1>
-      <p>Enter the bid price, the discount rate, and the financing terms: the tool projects 7 years of cash flow and calculates Net Present Value, Internal Rate of Return, and payback period — just like AgriLife Extension's A1 spreadsheet, but recalculating live.</p>
-    </div>
-    <div class="intro-meta">
-      <div><strong>7 years</strong>projection horizon</div>
-      <div><strong>NPV + IRR</strong>decision criteria</div>
-      <div><strong>Editable</strong>every assumption</div>
+<section class="hero">
+  <div class="hero-inner">
+    <h1>Interactive decision aids for beef cattle operations</h1>
+    <p>The same 24 categories of financial and production decision aids AgriLife Extension has always published as Excel spreadsheets &mdash; being rebuilt one at a time as web tools you (or a producer) can play with directly: move a number, watch the result update, no formulas or downloads required.</p>
+    <div class="hero-meta">
+      <div><strong>24</strong>categories, from the original spreadsheet library</div>
+      <div><strong>1</strong>category live so far &mdash; more shipping over time</div>
+      <div><strong>Live &amp; editable</strong>every input recalculates instantly</div>
     </div>
   </div>
   <div class="fence-line"></div>
 </section>
 
-<div class="layout">
-  <div class="col-inputs">
+<main>
+  <p class="section-label">Categories</p>
+  <div class="grid" id="catGrid"></div>
+</main>
 
-    <!-- Herd data and bid price -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9c0-2 1.5-4 4-4s4 1.5 4 2 1.5-2 4-2 4 2 4 4-2 3-2 5v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5c0-2-2-3-2-5Z"/><circle cx="9" cy="13" r=".5" fill="currentColor"/><circle cx="15" cy="13" r=".5" fill="currentColor"/></svg>
-        <h2>Herd &amp; bid price</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">The bid price is the central variable: it's what you're willing to pay per head. Move it and watch how the result on the right reacts.</p>
-
-        <div class="hero-field" style="margin-bottom:18px;">
-          <label for="bidPrice">Cow bid price ($/head)</label>
-          <div class="hero-row">
-            <input type="range" id="bidPriceRange" min="400" max="3000" step="10" value="1300">
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="1300" min="0" step="10"></div>
-          </div>
-        </div>
-
-        <div class="field-grid">
-          <div class="field">
-            <label for="steerWeight">Steer weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="steerWeight" value="550" min="0"><span class="suffix">lb</span></div>
-          </div>
-          <div class="field">
-            <label for="heiferWeight">Heifer weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="heiferWeight" value="500" min="0"><span class="suffix">lb</span></div>
-          </div>
-          <div class="field">
-            <label for="cullWeight">Cull cow sale weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="cullWeight" value="1100" min="0"><span class="suffix">lb</span></div>
-          </div>
-          <div class="field">
-            <label for="discountRate">Discount rate</label>
-            <div class="input-wrap has-suffix"><input type="number" id="discountRate" value="5" min="0" step="0.1"><span class="suffix">%</span></div>
-          </div>
-          <div class="field">
-            <label for="calvingYears">Calving opportunities</label>
-            <div class="input-wrap"><input type="number" id="calvingYears" value="7" min="1" max="7" step="1"></div>
-            <span class="hint">Max 7 — the year the cull cow is sold.</span>
-          </div>
-          <div class="field">
-            <label for="startYear">Starting year</label>
-            <div class="input-wrap"><input type="number" id="startYear" value="2021" min="2000" max="2100" step="1"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Year-by-year grid -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></svg>
-        <h2>Year-by-year prices &amp; calf crop</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Year 1 operating cost is filled in automatically from the "Cow operating cost" card below. You can overwrite it if you'd rather use your own number.</p>
-        <div class="table-scroll">
-          <table class="grid" id="yearTable">
-            <thead>
-              <tr id="yearHeaderRow"><th>Variable</th></tr>
-              <tr id="yearLabelRow"><th></th></tr>
-            </thead>
-            <tbody>
-              <tr data-row="calfCrop"><td>Calf crop / weaning %</td></tr>
-              <tr data-row="steerPrice"><td>Steer price ($/cwt)</td></tr>
-              <tr data-row="heiferPrice"><td>Heifer price ($/cwt)</td></tr>
-              <tr data-row="cullPrice"><td>Cull cow price ($/cwt)</td></tr>
-              <tr data-row="opCost"><td>Operating cost / year ($)</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <!-- Financing -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/><path d="M7 15h4"/></svg>
-        <h2>Financing</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">If you finance the purchase, the initial outlay is only the equity percentage — the rest is repaid as principal + interest over the loan term.</p>
-        <div class="field-grid cols-3">
-          <div class="field">
-            <label for="equityPct">Equity requirement</label>
-            <div class="input-wrap has-suffix"><input type="number" id="equityPct" value="20" min="0" max="100" step="1"><span class="suffix">%</span></div>
-          </div>
-          <div class="field">
-            <label for="loanTerm">Length of note</label>
-            <div class="input-wrap has-suffix"><input type="number" id="loanTerm" value="5" min="0" max="7" step="1"><span class="suffix">yrs</span></div>
-          </div>
-          <div class="field">
-            <label for="interestRate">Interest rate</label>
-            <div class="input-wrap has-suffix"><input type="number" id="interestRate" value="5" min="0" step="0.1"><span class="suffix">%</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Operating cost (Sheet 2) -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 7h20M2 17h20"/></svg>
-        <h2>Cow operating cost (BCU) — helper calculator</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">BCU = Breeding Cow Unit (≈1.6 AU; includes a share of replacement heifers and the herd bull). This card's total automatically feeds the "Year 1 operating cost" in the grid above.</p>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Direct costs</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="landLeaseRate">Land grazing lease ($/mo)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="landLeaseRate" value="15" min="0"></div></div>
-            <div class="field"><label for="landLeaseMonths">Grazing months</label><div class="input-wrap"><input type="number" id="landLeaseMonths" value="11" min="0" max="12"></div></div>
-            <div class="field"><label for="hayRolls">Hay (rolls)</label><div class="input-wrap"><input type="number" id="hayRolls" value="1.5" min="0" step="0.1"></div></div>
-            <div class="field"><label for="hayPrice">Hay price ($/roll)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="hayPrice" value="105" min="0"></div></div>
-            <div class="field"><label for="saltLbs">Salt &amp; mineral (lb)</label><div class="input-wrap"><input type="number" id="saltLbs" value="90" min="0"></div></div>
-            <div class="field"><label for="saltPrice">Salt/mineral price ($/lb)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="saltPrice" value="0.25" min="0" step="0.01"></div></div>
-            <div class="field"><label for="laborMgmt">Labor &amp; management</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="laborMgmt" value="120" min="0"></div></div>
-            <div class="field"><label for="vetMed">Veterinarian &amp; medicine</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="vetMed" value="35" min="0"></div></div>
-          </div>
-        </fieldset>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Herd bull depreciation (allocated per BCU)</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="bullCost">Bull cost</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bullCost" value="4500" min="0"></div></div>
-            <div class="field"><label for="bullLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
-            <div class="field"><label for="bullWeight">Bull weight</label><div class="input-wrap has-suffix"><input type="number" id="bullWeight" value="1800" min="0"><span class="suffix">lb</span></div></div>
-            <div class="field"><label for="bullCullPrice">Cull bull price</label><div class="input-wrap has-suffix"><input type="number" id="bullCullPrice" value="80" min="0"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="bullDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="bullDeathLoss" value="2" min="0" max="100"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="cowsPerBull">Cows per bull</label><div class="input-wrap"><input type="number" id="cowsPerBull" value="25" min="1"></div></div>
-          </div>
-        </fieldset>
-
-        <fieldset style="margin-bottom:14px;">
-          <legend>Indirect costs</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="repairMaint">Vehicle/equipment repair</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="repairMaint" value="16" min="0"></div></div>
-            <div class="field"><label for="fuelOil">Fuel &amp; oil</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="fuelOil" value="5" min="0"></div></div>
-            <div class="field"><label for="utilities">Utilities</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="utilities" value="10" min="0"></div></div>
-            <div class="field"><label for="adminGA">General &amp; administration</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="adminGA" value="20" min="0"></div></div>
-            <div class="field"><label for="vehicleDepr">Vehicle/equipment depreciation</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="vehicleDepr" value="48" min="0"></div></div>
-          </div>
-        </fieldset>
-
-        <div class="stat-tile wide" style="margin-top:4px;">
-          <span class="label">Total operating cost per BCU</span>
-          <span class="value" id="opCostTotal">$0</span>
-          <span class="sub" id="opCostBreak"></span>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="col-results">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>
-        <h2>Result</h2>
-      </div>
-      <div class="card-body">
-        <div id="verdictPill" class="verdict-pill good"><span class="dot"></span><span id="verdictText">Can bid more</span></div>
-
-        <div class="stat-tiles" style="margin:10px 0 16px;">
-          <div class="stat-tile wide" id="npvTile">
-            <span class="label">Net Present Value</span>
-            <span class="value" id="npvValue">$0</span>
-            <span class="sub">per head, at the discount rate above</span>
-          </div>
-          <div class="stat-tile">
-            <span class="label">IRR <a href="understanding-irr.html" style="font-weight:600;text-decoration:underline;color:inherit;">(what's this?)</a></span>
-            <span class="value" id="irrValue">0%</span>
-          </div>
-          <div class="stat-tile">
-            <span class="label">Payback</span>
-            <span class="value" id="paybackValue">—</span>
-          </div>
-        </div>
-
-        <p class="narrative" id="narrativeNpv"></p>
-        <p class="narrative" id="narrativeIrr"></p>
-        <p class="narrative" id="narrativePayback"></p>
-        <p class="narrative" id="narrativeFeasible"></p>
-
-        <div class="btn-row" style="padding:14px 0 0;">
-          <button class="btn secondary" id="resetBtn" type="button">Reset A1 defaults</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 13v4M12 9v8M16 11v6"/></svg>
-        <h2>Net cash flow by year</h2>
-      </div>
-      <div class="chart-wrap">
-        <svg id="cashChart" viewBox="0 0 460 220" width="100%" role="img" aria-labelledby="chartTitle"></svg>
-      </div>
-      <div class="chart-legend">
-        <span><i style="background:var(--good-700)"></i>Positive cash flow</span>
-        <span><i style="background:var(--critical-700)"></i>Negative cash flow</span>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<div id="panel-a2" class="tool-panel" hidden>
-<section class="intro">
-  <div class="intro-inner">
-    <div>
-      <h1>What calf price do you need to hit your target return?</h1>
-      <p>Enter your herd's costs, investment, and your target Return on Assets: the tool works out your current Total Unit Cost and ROA, then the average — and separate steer/heifer — calf price you'd need to reach that target, just like AgriLife Extension's A2 spreadsheet, but recalculating live.</p>
-    </div>
-    <div class="intro-meta">
-      <div><strong>4 linked sheets</strong>cost, ROA, pricing &amp; equipment</div>
-      <div><strong>TUC + ROA</strong>decision criteria</div>
-      <div><strong>Editable</strong>every assumption</div>
-    </div>
-  </div>
-  <div class="fence-line"></div>
-</section>
-
-<div class="layout">
-  <div class="col-inputs">
-
-    <!-- Herd & weaning basics -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9c0-2 1.5-4 4-4s4 1.5 4 2 1.5-2 4-2 4 2 4 4-2 3-2 5v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5c0-2-2-3-2-5Z"/><circle cx="9" cy="13" r=".5" fill="currentColor"/><circle cx="15" cy="13" r=".5" fill="currentColor"/></svg>
-        <h2>Herd &amp; weaning basics</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">These set your revenue side: how many BCU you run, your weaning percentage, and the current weight and price of your steer and heifer calves.</p>
-        <div class="field-grid cols-3">
-          <div class="field">
-            <label for="a2_bcu">Breeding Cow Units (BCU)</label>
-            <div class="input-wrap"><input type="number" id="a2_bcu" value="400" min="1"></div>
-          </div>
-          <div class="field">
-            <label for="a2_weanPct">Weaned calf crop</label>
-            <div class="input-wrap has-suffix"><input type="number" id="a2_weanPct" value="85" min="0" max="100"><span class="suffix">%</span></div>
-          </div>
-          <div class="field">
-            <label for="a2_premium">Premium offered by buyer</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_premium" value="80" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="a2_steerWt">Steer weaning weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="a2_steerWt" value="560" min="0"><span class="suffix">lb</span></div>
-          </div>
-          <div class="field">
-            <label for="a2_steerPrice">Steer price</label>
-            <div class="input-wrap has-suffix"><input type="number" id="a2_steerPrice" value="185" min="0"><span class="suffix">$/cwt</span></div>
-          </div>
-          <div class="field"></div>
-          <div class="field">
-            <label for="a2_heiferWt">Heifer weaning weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="a2_heiferWt" value="530" min="0"><span class="suffix">lb</span></div>
-          </div>
-          <div class="field">
-            <label for="a2_heiferPrice">Heifer price</label>
-            <div class="input-wrap has-suffix"><input type="number" id="a2_heiferPrice" value="165" min="0"><span class="suffix">$/cwt</span></div>
-          </div>
-          <div class="field"></div>
-        </div>
-        <div class="field" style="margin-top:16px;">
-          <label>Land</label>
-          <div class="segmented" role="group" aria-label="Land ownership">
-            <button type="button" class="active" id="a2_landOwnedBtn" data-owned="1">Owned</button>
-            <button type="button" id="a2_landLeasedBtn" data-owned="0">Leased</button>
-          </div>
-          <p class="derived-note">Switches which land cost line applies below, and whether land counts toward your asset base.</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Land costs & investment -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg>
-        <h2>Land</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Owned-land cost (tax &amp; maintenance) only applies when Owned is selected above; leased-land cost only applies when Leased is selected. The investment value (for your asset base and ROA) only counts owned land.</p>
-        <fieldset style="margin-bottom:16px;">
-          <legend>Owned land — tax &amp; maintenance</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="a2_ownedAcresPerBCU">Acres/BCU</label><div class="input-wrap"><input type="number" id="a2_ownedAcresPerBCU" value="12" min="0"></div></div>
-            <div class="field"><label for="a2_ownedRatePerAcre">Tax &amp; maint.</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_ownedRatePerAcre" value="5" min="0"></div></div>
-          </div>
-        </fieldset>
-        <fieldset style="margin-bottom:16px;">
-          <legend>Leased land — cash lease</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="a2_leasedAcresPerBCU">Acres/BCU</label><div class="input-wrap"><input type="number" id="a2_leasedAcresPerBCU" value="20" min="0"></div></div>
-            <div class="field"><label for="a2_leasedRatePerAcre">Lease rate</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_leasedRatePerAcre" value="12" min="0"></div></div>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Land &amp; improvements — investment value</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="a2_landInvestAcresPerBCU">Acres/BCU</label><div class="input-wrap"><input type="number" id="a2_landInvestAcresPerBCU" value="12" min="0"></div></div>
-            <div class="field"><label for="a2_landMarketValuePerAcre">Market value</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_landMarketValuePerAcre" value="850" min="0"></div></div>
-          </div>
-        </fieldset>
-      </div>
-    </div>
-
-    <!-- Feed & other direct costs -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 7h20M2 17h20"/></svg>
-        <h2>Feed &amp; other direct costs</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">All figures are $/BCU per year unless noted.</p>
-        <fieldset style="margin-bottom:16px;">
-          <legend>Feed</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="a2_hayRolls">Hay (rolls)</label><div class="input-wrap"><input type="number" id="a2_hayRolls" value="0" min="0" step="0.1"></div></div>
-            <div class="field"><label for="a2_hayPrice">Hay price/roll</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_hayPrice" value="0" min="0"></div></div>
-            <div class="field"></div>
-            <div class="field"><label for="a2_proteinQty">Protein supplement (cwt)</label><div class="input-wrap"><input type="number" id="a2_proteinQty" value="5" min="0" step="0.1"></div></div>
-            <div class="field"><label for="a2_proteinPrice">Protein price/cwt</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_proteinPrice" value="20" min="0"></div></div>
-            <div class="field"></div>
-            <div class="field"><label for="a2_saltLbs">Salt &amp; mineral (lb)</label><div class="input-wrap"><input type="number" id="a2_saltLbs" value="30" min="0"></div></div>
-            <div class="field"><label for="a2_saltPrice">Salt/mineral price/lb</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_saltPrice" value="0.45" min="0" step="0.01"></div></div>
-            <div class="field"></div>
-            <div class="field"><label for="a2_otherFeed1Qty">Other feed (qty)</label><div class="input-wrap"><input type="number" id="a2_otherFeed1Qty" value="0" min="0"></div></div>
-            <div class="field"><label for="a2_otherFeed1Price">Price/unit</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherFeed1Price" value="0" min="0"></div></div>
-            <div class="field"></div>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Labor, veterinary &amp; other direct</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="a2_hiredLabor">Hired labor</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_hiredLabor" value="50" min="0"></div></div>
-            <div class="field"><label for="a2_ownerLabor">Owner labor &amp; mgmt.</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_ownerLabor" value="150" min="0"></div></div>
-            <div class="field"><label for="a2_vetMed">Vet, medicine &amp; breeding</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_vetMed" value="35" min="0"></div></div>
-            <div class="field"><label for="a2_vaccination">Vaccination &amp; precondition</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_vaccination" value="40" min="0"></div></div>
-            <div class="field"><label for="a2_otherDirect">Other direct</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherDirect" value="0" min="0"></div></div>
-          </div>
-        </fieldset>
-      </div>
-    </div>
-
-    <!-- Indirect costs -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/><path d="M7 15h4"/></svg>
-        <h2>Indirect costs &amp; finance</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Repair/maintenance and equipment depreciation are filled in automatically from the "Capital assets" card below.</p>
-        <div class="field-grid cols-3">
-          <div class="field">
-            <label>Repair &amp; maintenance</label>
-            <div class="input-wrap has-prefix readonly-field"><span class="prefix">$</span><input type="number" id="a2_repairMaintDisplay" value="0" readonly tabindex="-1"></div>
-          </div>
-          <div class="field">
-            <label>Vehicle/equip. depreciation</label>
-            <div class="input-wrap has-prefix readonly-field"><span class="prefix">$</span><input type="number" id="a2_vehicleDeprDisplay" value="0" readonly tabindex="-1"></div>
-          </div>
-          <div class="field">
-            <label for="a2_fuelLube">Fuel &amp; lube</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_fuelLube" value="35" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="a2_utilities">Utilities</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_utilities" value="10" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="a2_adminGA">General &amp; admin.</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_adminGA" value="25" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="a2_otherIndirect1">Other indirect</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherIndirect1" value="0" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="a2_financeCost">Finance cost (interest paid)</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_financeCost" value="0" min="0"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Breeding stock investment & depreciation -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9c0-2 1.5-4 4-4s4 1.5 4 2 1.5-2 4-2 4 2 4 4-2 3-2 5v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5c0-2-2-3-2-5Z"/></svg>
-        <h2>Breeding stock investment &amp; depreciation</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Cow and bull depreciation, and cull revenue, are calculated here and automatically feed the cost and revenue lines above.</p>
-        <fieldset style="margin-bottom:16px;">
-          <legend>Breeding cows</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="a2_cowCost">Cost/head</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="1400" min="0"></div></div>
-            <div class="field"><label for="a2_cowLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowLife" value="7" min="1"><span class="suffix">yrs</span></div></div>
-            <div class="field"><label for="a2_cowDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="a2_cullCowWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1300" min="0"><span class="suffix">lb</span></div></div>
-            <div class="field"><label for="a2_cullCowPrice">Cull price</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowPrice" value="60" min="0"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"></div>
-          </div>
-        </fieldset>
-        <fieldset style="margin-bottom:14px;">
-          <legend>Herd bull</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="a2_bullCost">Cost/head</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_bullCost" value="4000" min="0"></div></div>
-            <div class="field"><label for="a2_bullLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
-            <div class="field"><label for="a2_bullDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_bullDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="a2_cullBullWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullWt" value="1800" min="0"><span class="suffix">lb</span></div></div>
-            <div class="field"><label for="a2_cullBullPrice">Cull price</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullPrice" value="80" min="0"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="a2_cowsPerBull">Cows/bull</label><div class="input-wrap"><input type="number" id="a2_cowsPerBull" value="25" min="1"></div></div>
-          </div>
-        </fieldset>
-        <div class="stat-tile wide">
-          <span class="label">Breeding stock depreciation &amp; cull revenue per BCU</span>
-          <span class="value" id="a2_breedingDeprTotal" style="font-size:20px;">$0</span>
-          <span class="sub" id="a2_breedingBreak"></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Capital assets: vehicles, machinery & equipment -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="7" width="15" height="10" rx="1"/><path d="M16 10h3l3 3v4h-6z"/><circle cx="5.5" cy="19" r="1.5"/><circle cx="17.5" cy="19" r="1.5"/></svg>
-        <h2>Capital assets — vehicles, machinery &amp; equipment</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Replacement cost, useful life, salvage %, and annual repair % for each item. "Allocation" is the share of that item's cost fairly charged to the cow-calf enterprise (vs. other uses on the place). Totals below feed "Repair &amp; maintenance" and "Vehicle/equip. depreciation" above.</p>
-        <div class="table-scroll">
-          <table class="grid" id="a2_equipTable">
-            <thead>
-              <tr>
-                <th style="text-align:left;">Item</th>
-                <th>Cost</th>
-                <th>Life (yrs)</th>
-                <th>Salvage %</th>
-                <th>Repair %</th>
-                <th>Alloc. %</th>
-              </tr>
-            </thead>
-            <tbody id="a2_equipBody"></tbody>
-          </table>
-        </div>
-        <div class="stat-tiles" style="margin-top:14px;">
-          <div class="stat-tile">
-            <span class="label">Depreciation/BCU</span>
-            <span class="value" id="a2_capDeprTotal" style="font-size:18px;">$0</span>
-          </div>
-          <div class="stat-tile">
-            <span class="label">Repairs/BCU</span>
-            <span class="value" id="a2_capRepairsTotal" style="font-size:18px;">$0</span>
-          </div>
-          <div class="stat-tile">
-            <span class="label">Investment/BCU</span>
-            <span class="value" id="a2_capInvestTotal" style="font-size:18px;">$0</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="col-results">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l6-6 4 4 8-8"/><path d="M21 7v6h-6"/></svg>
-        <h2>Result</h2>
-      </div>
-      <div class="card-body">
-        <div class="stat-tiles" style="margin-bottom:14px;">
-          <div class="stat-tile">
-            <span class="label">Total Unit Cost / BCU</span>
-            <span class="value" id="a2_tucValue" style="font-size:22px;">$0</span>
-          </div>
-          <div class="stat-tile" id="a2_roaTile">
-            <span class="label">Current ROA</span>
-            <span class="value" id="a2_roaValue" style="font-size:22px;">0%</span>
-          </div>
-        </div>
-
-        <div class="hero-field" style="margin-bottom:16px;">
-          <label for="a2_targetROA">Target Return on Assets</label>
-          <div class="hero-row">
-            <input type="range" id="a2_targetROARange" min="0" max="15" step="0.5" value="3">
-            <div class="input-wrap has-suffix"><input type="number" id="a2_targetROA" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
-          </div>
-        </div>
-
-        <div class="stat-tile wide good" id="a2_reqAvgTile" style="margin-bottom:12px;">
-          <span class="label">Required average calf price</span>
-          <span class="value" id="a2_reqAvgValue">$0.00</span>
-          <span class="sub">$/cwt, to reach your target ROA</span>
-        </div>
-
-        <div class="stat-tiles" style="margin-bottom:12px;">
-          <div class="stat-tile">
-            <span class="label">Required steer price</span>
-            <span class="value" id="a2_reqSteerValue" style="font-size:20px;">$0.00</span>
-            <span class="sub">$/cwt</span>
-          </div>
-          <div class="stat-tile">
-            <span class="label">Required heifer price</span>
-            <span class="value" id="a2_reqHeiferValue" style="font-size:20px;">$0.00</span>
-            <span class="sub">$/cwt</span>
-          </div>
-        </div>
-
-        <p class="narrative" id="a2_narrativeMain"></p>
-        <p class="narrative" id="a2_narrativeSplit"></p>
-
-        <div class="stat-tiles" style="margin:14px 0 4px;">
-          <div class="stat-tile">
-            <span class="label">Breakeven steer price</span>
-            <span class="value" id="a2_breakevenSteerValue" style="font-size:16px;">$0.00</span>
-            <span class="sub">$/cwt, ROA = 0</span>
-          </div>
-          <div class="stat-tile">
-            <span class="label">Breakeven heifer price</span>
-            <span class="value" id="a2_breakevenHeiferValue" style="font-size:16px;">$0.00</span>
-            <span class="sub">$/cwt, ROA = 0</span>
-          </div>
-        </div>
-
-        <div class="btn-row" style="padding:14px 0 0;">
-          <button class="btn secondary" id="a2_resetBtn" type="button">Reset A2 defaults</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 13v4M12 9v8M16 11v6"/></svg>
-        <h2>At your herd size</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Every figure above is per BCU. Here's what that means in whole-ranch dollars, at your herd size.</p>
-        <div class="stat-tiles">
-          <div class="stat-tile">
-            <span class="label">Total assets</span>
-            <span class="value" id="a2_herdAssets" style="font-size:18px;">$0</span>
-          </div>
-          <div class="stat-tile">
-            <span class="label">Total Unit Cost</span>
-            <span class="value" id="a2_herdTUC" style="font-size:18px;">$0</span>
-          </div>
-          <div class="stat-tile">
-            <span class="label">Net income (current prices)</span>
-            <span class="value" id="a2_herdNetIncome" style="font-size:18px;">$0</span>
-          </div>
-          <div class="stat-tile">
-            <span class="label">Total revenue (current prices)</span>
-            <span class="value" id="a2_herdRevenue" style="font-size:18px;">$0</span>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<footer id="toolFooter">
-  Based on the <strong>A1 — Cow Bid Price and Budget</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; the starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a purchase decision.
+<footer>
+  Rebuilding <a href="https://agecoext.tamu.edu/resources/decisionaids/beef/">Texas A&amp;M AgriLife Extension's Beef Cattle Decision Aids</a> as interactive web tools, one category at a time. Starting values reproduce each original spreadsheet's own assumptions, not real producer data &mdash; always verify results before using them to make a decision.
 </footer>
 
 <script>
 (function(){
   "use strict";
-  var YEARS = [1,2,3,4,5,6,7];
-  var fmtMoney0 = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
-  var fmtMoney2 = new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-
-  /* ---------------- Excel-compatible financial functions ---------------- */
-  function PMT(rate,nper,pv,fv,type){
-    fv=fv||0; type=type||0;
-    if(rate===0) return -(pv+fv)/nper;
-    var pvif=Math.pow(1+rate,nper);
-    var pmt=rate/(pvif-1)*-(pv*pvif+fv);
-    if(type===1) pmt/=(1+rate);
-    return pmt;
-  }
-  function FV(rate,nper,pmt,pv,type){
-    type=type||0;
-    if(rate===0) return -(pv+pmt*nper);
-    var pvif=Math.pow(1+rate,nper);
-    var f=-(pv*pvif + (type===1?pmt*(1+rate):pmt)*(pvif-1)/rate);
-    return f;
-  }
-  function IPMT(rate,per,nper,pv,fv,type){
-    fv=fv||0; type=type||0;
-    var pmt=PMT(rate,nper,pv,fv,type);
-    var ip;
-    if(per===1){
-      ip = type===1 ? 0 : -pv*rate;
-    } else {
-      var fvPrior = FV(rate, per-1, pmt, pv, type);
-      ip = fvPrior*rate;
-      if(type===1) ip/=(1+rate);
-    }
-    return ip;
-  }
-  function PPMT(rate,per,nper,pv,fv,type){
-    return PMT(rate,nper,pv,fv,type) - IPMT(rate,per,nper,pv,fv,type);
-  }
-  function npvAtRate(rate, cfs){ // cfs[0..n], cfs[0] at t=0
-    var s = 0;
-    for(var t=0;t<cfs.length;t++){ s += cfs[t]/Math.pow(1+rate,t); }
-    return s;
-  }
-  function IRR_solve(cfs, guess){
-    // Cash flows that dip negative/positive more than once (common at lower bid
-    // prices here) can have more than one mathematically valid IRR, and naive
-    // Newton-Raphson can run away to a nonsensical rate instead of converging.
-    // Strategy: try Newton-Raphson from the guess, but abandon it the moment it
-    // leaves a sane range; fall back to scanning for the sign-change bracket
-    // nearest the guess and bisecting within it, which always converges to a
-    // real root when one exists in [-99%, 1000%].
-    var g = (guess===undefined || !isFinite(guess)) ? 0.1 : guess;
-    var rate = Math.max(-0.9, Math.min(10, g));
-    var newtonOk = false;
-    for(var iter=0; iter<40; iter++){
-      var npv=0, dnpv=0;
-      for(var t=0;t<cfs.length;t++){
-        npv += cfs[t]/Math.pow(1+rate,t);
-        if(t>0) dnpv += -t*cfs[t]/Math.pow(1+rate,t+1);
-      }
-      if(Math.abs(dnpv) < 1e-12) break;
-      var next = rate - npv/dnpv;
-      if(!isFinite(next) || next <= -0.99 || next > 50){ break; } // diverging -- abandon Newton
-      if(Math.abs(next-rate) < 1e-10){ rate=next; newtonOk=true; break; }
-      rate = next;
-    }
-    if(newtonOk && Math.abs(npvAtRate(rate,cfs)) < 1e-4){ return rate; }
-
-    // Robust fallback: bracket + bisection.
-    var lo=-0.99, hi=10, steps=4000;
-    var prevRate=lo, prevVal=npvAtRate(lo,cfs);
-    var bestBracket=null, bestDist=Infinity;
-    for(var i=1;i<=steps;i++){
-      var r = lo + (hi-lo)*i/steps;
-      var v = npvAtRate(r,cfs);
-      if(isFinite(v) && isFinite(prevVal) && ((prevVal<0 && v>=0) || (prevVal>0 && v<=0))){
-        var mid = (prevRate+r)/2, dist = Math.abs(mid-g);
-        if(dist < bestDist){ bestDist = dist; bestBracket = [prevRate, r]; }
-      }
-      prevRate = r; prevVal = v;
-    }
-    if(!bestBracket) return NaN;
-    var a=bestBracket[0], b=bestBracket[1], fa=npvAtRate(a,cfs);
-    for(i=0;i<100;i++){
-      var m=(a+b)/2, fm=npvAtRate(m,cfs);
-      if(Math.abs(fm) < 1e-9 || (b-a) < 1e-12) return m;
-      if((fa<0) === (fm<0)){ a=m; fa=fm; } else { b=m; }
-    }
-    return (a+b)/2;
-  }
-  function round(v,d){ var m=Math.pow(10,d||0); return Math.round(v*m)/m; }
-
-  /* ---------------- DOM helpers ---------------- */
-  function $(id){ return document.getElementById(id); }
-  function num(id){ var v=parseFloat($(id).value); return isFinite(v)?v:0; }
-
-  var DEFAULTS = {
-    bidPrice:1300, steerWeight:550, heiferWeight:500, cullWeight:1100,
-    discountRate:5, calvingYears:7, startYear:2021,
-    equityPct:20, loanTerm:5, interestRate:5,
-    landLeaseRate:15, landLeaseMonths:11, hayRolls:1.5, hayPrice:105,
-    saltLbs:90, saltPrice:0.25, laborMgmt:120, vetMed:35,
-    bullCost:4500, bullLife:4, bullWeight:1800, bullCullPrice:80, bullDeathLoss:2, cowsPerBull:25,
-    repairMaint:16, fuelOil:5, utilities:10, adminGA:20, vehicleDepr:48
-  };
-  var calfCrop   = [95,88,88,88,88,88,88];
-  var steerPrice = [160,180,190,190,190,190,190];
-  var heiferPrice= [140,160,170,170,170,170,170];
-  var cullPrice  = [65,65,65,65,65,65,65];
-  var opCost     = [690,700,710,720,730,740,750];
-  var opCostAuto = [true,false,false,false,false,false,false]; // year1 auto-linked by default
-
-  /* ---------------- Build the year grid ---------------- */
-  var rowsMeta = [
-    {key:'calfCrop', arr:calfCrop, suffix:'%', step:1},
-    {key:'steerPrice', arr:steerPrice, prefix:'$', step:1},
-    {key:'heiferPrice', arr:heiferPrice, prefix:'$', step:1},
-    {key:'cullPrice', arr:cullPrice, prefix:'$', step:1},
-    {key:'opCost', arr:opCost, prefix:'$', step:1}
+  var categories = [
+    {n:1,  name:"Cow-Calf Bid Price and Budgets", desc:"What to bid for a bred cow, and the operating budget behind it.", status:"progress", href:"cow-calf/index.html", note:"A1 live · A2 in progress"},
+    {n:2,  name:"Replacement Heifer Budgets", desc:"Natural service, AI, and sexed-semen heifer development budgets and closeouts."},
+    {n:3,  name:"Cow-Calf Budgeting and Herd Bull Investment", desc:"Full cow-calf enterprise budgets and bull investment analysis.", note:"C1 planned next"},
+    {n:4,  name:"Retained Ownership", desc:"Stocker, feeder, and custom-finish profit projections and closeouts."},
+    {n:5,  name:"Cattle Inventories", desc:"Monthly and annual cattle inventory and balance sheet reporting."},
+    {n:6,  name:"Feed Fed & Purchases", desc:"Feed record-keeping, purchases, and reconciled inventory."},
+    {n:7,  name:"Hay and Grazing", desc:"Hay production vs. purchase, grazing budgets, and fencing cost estimates."},
+    {n:8,  name:"Cow-Calf Grazing Lease Economic Evaluation and Production Records", desc:"Lease cost, income, and record-keeping for owners and lessees."},
+    {n:9,  name:"Labor and Management", desc:"Compensation planning and job description resources."},
+    {n:10, name:"Vehicle and Freight Cost", desc:"Pickup, trailer, and freight cost and replacement planning."},
+    {n:11, name:"Preconditioning Profitability Decision Aid", desc:"Preconditioning profit projections, closeouts, and cost calculators."},
+    {n:12, name:"Developing Financial Statements to Measure Ranch Profitability", desc:"Converting IRS Schedule F records into managerial financial statements."},
+    {n:13, name:"Grassfed Beef Accounting, Profit Projection and Closeout", desc:"Profit projection and closeout for grassfed live, carcass, and meat sales."},
+    {n:14, name:"Standardized Performance Analysis (SPA) Reproduction, Production and Grazing Calculations", desc:"SPA-based reproduction, feed use, and grazing calculations."},
+    {n:15, name:"Cow-Calf Herd Health Economics", desc:"Herd health planning, treatment records, and delayed-pregnancy cost impact."},
+    {n:16, name:"Program Cattle Economics", desc:"Weaned calf and stocker program evaluation and verification cost tracking."},
+    {n:17, name:"Program Cattle Retained Ownership Economic Evaluation", desc:"Preconditioning, stocker-feeder, and custom-finish program examples."},
+    {n:18, name:"Herd Bull Replacement Economics of Alternatives", desc:"Comparing sexed semen, conventional AI, and purchased-bull costs."},
+    {n:19, name:"Beef Sexed Semen Based Breeding Systems", desc:"Economic comparisons of sexed semen vs. conventional breeding systems."},
+    {n:20, name:"Capital Asset Replacement Calculator to Replace IRS Depreciation", desc:"Replacement-cost-based depreciation for vehicles, equipment, and breeding stock."},
+    {n:21, name:"Cattle Sales Record and Net Price Calculations", desc:"Sales, transfer, and net price record-keeping."},
+    {n:22, name:"Ranch Hunting Lease Income, Costs & Net Lease Income Budgets", desc:"Income and cost budgets for hunting leases by species."},
+    {n:23, name:"Dairy Cattle Retained Ownership Economics", desc:"Dairy calf, feeder, and finishing cost and profit projections."},
+    {n:24, name:"Dairy Breeding – Economics of Alternatives", desc:"Economics of dairy and beef-dairy cross breeding alternatives."}
   ];
 
-  function buildYearGrid(){
-    var headRow = $('yearHeaderRow');
-    var labelRow = $('yearLabelRow');
-    YEARS.forEach(function(y){
-      var th = document.createElement('th'); th.textContent = 'Year '+y; headRow.appendChild(th);
-    });
-    var thBlank = document.createElement('th'); labelRow.appendChild(thBlank);
-    YEARS.forEach(function(y){
-      var th = document.createElement('th'); th.id='calYearLabel'+y; th.style.fontWeight='500'; labelRow.appendChild(th);
-    });
-
-    rowsMeta.forEach(function(meta){
-      var tr = document.querySelector('tr[data-row="'+meta.key+'"]');
-      YEARS.forEach(function(y,idx){
-        var td = document.createElement('td');
-        var wrap = document.createElement('div'); wrap.className='input-wrap'+(meta.prefix?' has-prefix':'')+(meta.suffix?' has-suffix':'');
-        if(meta.prefix){ var p=document.createElement('span'); p.className='prefix'; p.textContent=meta.prefix; wrap.appendChild(p); }
-        var input = document.createElement('input');
-        input.type='number'; input.step=meta.step; input.value=meta.arr[idx];
-        input.dataset.row=meta.key; input.dataset.year=y;
-        wrap.appendChild(input);
-        if(meta.suffix){ var s=document.createElement('span'); s.className='suffix'; s.textContent=meta.suffix; wrap.appendChild(s); }
-        td.appendChild(wrap);
-        if(meta.key==='opCost' && y===1) td.classList.add('auto');
-        tr.appendChild(td);
-        input.addEventListener('input', function(){
-          meta.arr[idx] = parseFloat(input.value)||0;
-          if(meta.key==='opCost'){ opCostAuto[idx] = false; td.classList.remove('auto'); }
-          recalc();
-        });
-      });
-    });
-  }
-
-  /* ---------------- Sheet 2: operating cost ---------------- */
-  function calcOperatingCost(){
-    var landLease = num('landLeaseRate')*num('landLeaseMonths');
-    var hayCost = num('hayRolls')*num('hayPrice');
-    var proteinQty = num('hayRolls')*1000*0.2/100;
-    var proteinCost = proteinQty*20; // protein price fixed at $20/cwt per original sheet
-    var saltCost = num('saltLbs')*num('saltPrice');
-    var subtotalFeed = landLease+hayCost+proteinCost+saltCost;
-
-    var salvage = num('bullWeight')*num('bullCullPrice')*0.01;
-    var netSalvage = salvage*(100-num('bullDeathLoss'))*0.01;
-    var bullDeprTotal = (num('bullCost')-netSalvage)/num('bullLife');
-    var bullDeprPerBCU = bullDeprTotal/num('cowsPerBull');
-
-    var totalDirect = subtotalFeed + num('laborMgmt') + num('vetMed') + bullDeprPerBCU;
-    var totalIndirect = num('repairMaint')+num('fuelOil')+num('utilities')+num('adminGA')+num('vehicleDepr');
-    var total = totalDirect + totalIndirect;
-
-    $('opCostTotal').textContent = '$'+fmtMoney2.format(total);
-    $('opCostBreak').textContent = 'Direct $'+fmtMoney0.format(totalDirect)+' + Indirect $'+fmtMoney0.format(totalIndirect)+' (incl. bull depreciation $'+fmtMoney2.format(bullDeprPerBCU)+'/BCU)';
-    return total;
-  }
-
-  /* ---------------- Chart ---------------- */
-  function drawChart(values){
-    var svg = $('cashChart');
-    var W=460,H=220, padL=44,padR=14,padT=14,padB=28;
-    var innerW = W-padL-padR, innerH = H-padT-padB;
-    var maxAbs = Math.max(10, Math.max.apply(null, values.map(function(v){return Math.abs(v);})));
-    var zeroY = padT + innerH/2;
-    var scale = (innerH/2)/maxAbs;
-    var n = values.length;
-    var bw = innerW/n*0.58;
-    var step = innerW/n;
-
-    var goodColor = getComputedStyle(document.documentElement).getPropertyValue('--good-700').trim();
-    var critColor = getComputedStyle(document.documentElement).getPropertyValue('--critical-700').trim();
-    var mutedColor = getComputedStyle(document.documentElement).getPropertyValue('--ink-muted').trim();
-    var gridColor = getComputedStyle(document.documentElement).getPropertyValue('--border').trim();
-
-    var parts = [];
-    parts.push('<line x1="'+padL+'" y1="'+zeroY+'" x2="'+(W-padR)+'" y2="'+zeroY+'" stroke="'+gridColor+'" stroke-width="1"/>');
-
-    values.forEach(function(v,i){
-      var cx = padL + step*i + step/2;
-      var barH = Math.abs(v)*scale;
-      var y = v>=0 ? zeroY-barH : zeroY;
-      var color = v>=0 ? goodColor : critColor;
-      parts.push('<rect x="'+(cx-bw/2)+'" y="'+y+'" width="'+bw+'" height="'+Math.max(barH,1)+'" rx="3" fill="'+color+'"></rect>');
-      parts.push('<text x="'+cx+'" y="'+(H-8)+'" text-anchor="middle" font-size="10.5" fill="'+mutedColor+'">Yr '+(i+1)+'</text>');
-      var labelY = v>=0 ? (y-6) : (y+barH+13);
-      parts.push('<text x="'+cx+'" y="'+labelY+'" text-anchor="middle" font-size="10" fill="'+mutedColor+'">'+(v<0?'-':'')+'$'+fmtMoney0.format(Math.abs(v))+'</text>');
-    });
-    svg.innerHTML = parts.join('');
-    svg.setAttribute('aria-label','Projected net cash flow by year, in dollars per head');
-  }
-
-  /* ---------------- Main recalculation ---------------- */
-  var yearWords = {1:'one',2:'two',3:'three',4:'four',5:'five',6:'six',7:'seven'};
-
-  function recalc(){
-    var bidPrice = num('bidPrice');
-    $('bidPriceRange').value = bidPrice;
-    var steerWeight = num('steerWeight');
-    var heiferWeight = num('heiferWeight');
-    var cullWeight = num('cullWeight');
-    var discountRatePct = num('discountRate');
-    var nper = Math.max(1, Math.min(7, Math.round(num('calvingYears'))));
-    var startYear = num('startYear');
-    var equityPct = num('equityPct');
-    var loanTerm = num('loanTerm');
-    var interestRatePct = num('interestRate');
-
-    // year labels
-    YEARS.forEach(function(y){
-      var el = $('calYearLabel'+y);
-      el.textContent = (y<=nper) ? String(startYear + y - 1) : '';
-    });
-
-    // operating cost auxiliary -> auto-link year 1
-    var opCostCalc = calcOperatingCost();
-    if(opCostAuto[0]){
-      opCost[0] = round(opCostCalc,3);
-      var y1input = document.querySelector('input[data-row="opCost"][data-year="1"]');
-      if(y1input) y1input.value = round(opCostCalc,3);
+  var grid = document.getElementById('catGrid');
+  var html = categories.map(function(c){
+    var isLive = c.status === 'progress';
+    var pill = isLive
+      ? '<span class="status-pill progress">In progress</span>'
+      : '<span class="status-pill soon">Coming soon</span>';
+    var noteLine = c.note ? '<p style="margin-top:6px;color:var(--accent);font-weight:600;">'+c.note+'</p>' : '';
+    var goLine = isLive ? '<span class="go">Open tool &rarr;</span>' : '';
+    var num = '<span class="cat-num">'+(c.n<10?'0':'')+c.n+'</span>';
+    var body = '<div class="cat-top">'+num+pill+'</div><h3>'+c.name+'</h3><p>'+c.desc+'</p>'+noteLine+goLine;
+    if(isLive){
+      return '<a class="cat-card live" href="'+c.href+'">'+body+'</a>';
     }
-
-    var discountRate = discountRatePct/100;
-    var loanAmount = (1-equityPct/100)*bidPrice;
-    var equityAmount = round(equityPct*bidPrice*0.01,2);
-
-    var grossReceipts=[], netAboveOpCost=[], interestPay=[], principalPayRaw=[], principalPay=[],
-        debtService=[], netCashFlow=[], cullSalvage=[], npvComponent=[];
-
-    for(var i=0;i<7;i++){
-      var k=i+1;
-      grossReceipts[i] = (k<=nper && calfCrop[i]>0) ? round(((steerWeight*steerPrice[i]+heiferWeight*heiferPrice[i])/100)/2*calfCrop[i]*0.01, 0) : 0;
-      netAboveOpCost[i] = (k<=nper) ? (grossReceipts[i]-opCost[i]) : 0;
-      interestPay[i] = (k<=nper && loanTerm>=k) ? round(IPMT(interestRatePct/100, k, loanTerm, -loanAmount),2) : 0;
-      principalPayRaw[i] = (loanTerm>=k) ? round(PPMT(interestRatePct/100, k, loanTerm, -loanAmount),2) : 0;
-    }
-    for(i=0;i<7;i++){
-      var k=i+1;
-      if(k===nper){
-        var s=0; for(var j=i;j<7;j++) s+=principalPayRaw[j];
-        principalPay[i]=s;
-      } else if(nper>k){
-        principalPay[i]=principalPayRaw[i];
-      } else {
-        principalPay[i]=0;
-      }
-    }
-    for(i=0;i<7;i++){
-      var k=i+1;
-      var gate = (k<=5) ? (nper>=k) : (nper>=7); // replicate original off-by-one on years 6-7 gating
-      debtService[i] = gate ? (interestPay[i]+principalPay[i]) : 0;
-      netCashFlow[i] = netAboveOpCost[i] - debtService[i];
-      cullSalvage[i] = (nper===k) ? round(cullPrice[i]*cullWeight/100,2) : 0;
-      npvComponent[i] = (netCashFlow[i]+cullSalvage[i]) / Math.pow(1+discountRate, k);
-    }
-
-    var year0 = (loanTerm===0) ? -bidPrice : -equityAmount;
-
-    // the original sheet's final NPV sum uses cullSalvage[0] (Year-1 salvage, almost always 0)
-    // as the divisor rate instead of the discount rate -- replicated faithfully below.
-    var pseudoRate = cullSalvage[0]*0.01/100;
-    var pv72 = [year0];
-    for(i=0;i<7;i++){
-      var k=i+1;
-      pv72.push( k===1 ? npvComponent[0] : npvComponent[i]/Math.pow(1+pseudoRate,k) );
-    }
-    var npvTotal = pv72.reduce(function(a,b){return a+b;},0);
-
-    // payback (based on the sheet's row51-style series: year0 + npvComponent)
-    var row51 = [year0].concat(npvComponent);
-    var cum = row51[0];
-    var paybackYear = null;
-    for(i=1;i<=7;i++){
-      cum += row51[i];
-      if(cum>0){ paybackYear=i; break; }
-    }
-
-    var irrGuessDenom = bidPrice || 1;
-    var irrGuess = npvComponent.reduce(function(a,b){return a+b;},0)/irrGuessDenom;
-    var irr = IRR_solve(row51, irrGuess);
-    var irrPct = round(irr*100,1);
-
-    // feasibility: first year (1-6) with negative net cash flow; replicate the original's
-    // "year 7" check, which actually re-tests year 4 instead of year 7.
-    var feasKey = null;
-    for(i=0;i<6;i++){ if(netCashFlow[i]<0){ feasKey=i+1; break; } }
-    if(feasKey===null && netCashFlow[3]<0){ feasKey=7; } // replicated quirk (tests year 4 again)
-
-    // -------- render results --------
-    var verdictGood = npvTotal>0;
-    $('verdictPill').className = 'verdict-pill '+(verdictGood?'good':'critical');
-    $('verdictText').textContent = verdictGood ? 'Can bid more' : 'Bid too high';
-
-    $('npvTile').className = 'stat-tile wide '+(verdictGood?'good':'critical');
-    $('npvValue').textContent = (npvTotal<0?'-':'')+'$'+fmtMoney2.format(Math.abs(npvTotal));
-    $('irrValue').textContent = (isFinite(irrPct)?irrPct.toFixed(1):'—')+'%';
-    $('paybackValue').textContent = paybackYear ? paybackYear+(paybackYear===1?' year':' years') : 'No payback';
-
-    $('narrativeNpv').innerHTML = npvTotal<0
-      ? 'The negative net present value indicates that the price of <strong>$'+fmtMoney0.format(bidPrice)+'</strong> per head is too high.'
-      : 'The positive net present value indicates this is an economically feasible investment.';
-    $('narrativeIrr').innerHTML = isFinite(irrPct)
-      ? 'This investment has an internal rate of return of <strong>'+irrPct.toFixed(1)+'%</strong>.'
-      : 'A stable IRR could not be found for these assumptions.';
-    $('narrativePayback').innerHTML = paybackYear
-      ? 'This investment has a payback period of <strong>'+yearWords[paybackYear]+' ('+paybackYear+')</strong> years.'
-      : 'This investment does not pay back over this planning horizon.';
-    $('narrativeFeasible').innerHTML = feasKey
-      ? 'This investment may not be financially feasible due to negative cash flow in year <strong>'+yearWords[feasKey]+' ('+feasKey+')</strong>.'
-      : 'The positive cash flows across the planning horizon indicate that this investment is financially feasible.';
-
-    drawChart(netCashFlow.slice(0,nper));
-  }
-
-  function attachInputs(ids){
-    ids.forEach(function(id){
-      var el = $(id);
-      if(!el) return;
-      el.addEventListener('input', recalc);
-    });
-  }
-
-  /* ================================================================
-     A2 — Cow-Calf Cost & Necessary Calf Price for Target ROA
-     ================================================================ */
-  function fmtDollar(v, decimals){
-    var f = decimals===2 ? fmtMoney2 : fmtMoney0;
-    v = isFinite(v) ? v : 0;
-    return (v<0?'-':'')+'$'+f.format(Math.abs(v));
-  }
-
-  /* ---------------- Sheet 4: Capital Asset Costs ---------------- */
-  function calcCapitalAssets(rows, bcu){
-    var out = rows.map(function(r, idx){
-      var depr = round(r.life===0 ? 0 : (r.cost - r.salvagePct*0.01*r.cost)/r.life, 0);
-      var avgInvest = round((r.cost + r.salvagePct*0.01*r.cost)/2, 0);
-      var repairs = round(r.cost*r.repairPct*0.01, 0);
-      var deprAlloc = round(depr*r.allocPct*0.01, 0);
-      var investAlloc = round(avgInvest*r.allocPct*0.01, 0);
-      // Replicated Excel quirk: only row 0 (Pickups) rounds the allocated-repairs figure.
-      var repairsAlloc = idx===0 ? round(repairs*r.allocPct*0.01, 0) : (repairs*r.allocPct*0.01);
-      return {name:r.name, cost:r.cost, life:r.life, salvagePct:r.salvagePct, repairPct:r.repairPct, allocPct:r.allocPct,
-              depr:depr, avgInvest:avgInvest, repairs:repairs, deprAlloc:deprAlloc, investAlloc:investAlloc, repairsAlloc:repairsAlloc};
-    });
-    var totalDeprAlloc = out.reduce(function(a,r){return a+r.deprAlloc;},0);
-    var totalInvestAlloc = out.reduce(function(a,r){return a+r.investAlloc;},0);
-    var totalRepairsAlloc = out.reduce(function(a,r){return a+r.repairsAlloc;},0);
-    var safeBcu = bcu||1;
-    return {
-      rows: out,
-      totalDeprAlloc: totalDeprAlloc, totalInvestAlloc: totalInvestAlloc, totalRepairsAlloc: totalRepairsAlloc,
-      deprPerBCU: totalDeprAlloc/safeBcu, investPerBCU: totalInvestAlloc/safeBcu, repairsPerBCU: totalRepairsAlloc/safeBcu
-    };
-  }
-
-  /* ---------------- Breeding stock investment & depreciation ---------------- */
-  function calcBreedingStock(inp){
-    var cowLife = Math.max(inp.cowLife, 0.0001);
-    var bullLife = Math.max(inp.bullLife, 0.0001);
-    var cowsPerBull = Math.max(inp.cowsPerBull, 0.0001);
-
-    var cowSalvageGross = inp.cullCowWt*inp.cullCowPrice*0.01;
-    var cowDeprPerBCU = (inp.cowCost - cowSalvageGross)/cowLife;
-    var cowReplRate = 1/cowLife;
-    var cullCowIncome = cowSalvageGross*(cowReplRate + inp.cowDeathLoss*0.01);
-
-    var bullSalvageGross = inp.cullBullWt*inp.cullBullPrice*0.01;
-    var bullReplRate = 1/bullLife;
-    var bullDeprPerHead = (inp.bullCost - bullSalvageGross)*bullReplRate;
-    var bullDeprPerBCU = bullDeprPerHead/cowsPerBull;
-    var netCullBullIncome = bullSalvageGross*(1-inp.bullDeathLoss*0.01);
-    var cullBullIncomePerHead = netCullBullIncome*bullReplRate;
-    var cullBullPerExposedFemale = cullBullIncomePerHead/cowsPerBull;
-
-    var cullRevenuePerBCU = cullCowIncome + cullBullPerExposedFemale;
-
-    var avgCowInvestment = (inp.cowCost + cowSalvageGross)/2;
-    var avgBullInvestmentPerHead = (inp.bullCost + bullSalvageGross)/2;
-    var avgBullInvestmentPerBCU = avgBullInvestmentPerHead/cowsPerBull;
-    var totalBreedingInvestmentPerBCU = avgCowInvestment + avgBullInvestmentPerBCU;
-
-    return {
-      cowSalvageGross:cowSalvageGross, cowDeprPerBCU:cowDeprPerBCU, cullCowIncome:cullCowIncome,
-      bullSalvageGross:bullSalvageGross, bullDeprPerHead:bullDeprPerHead, bullDeprPerBCU:bullDeprPerBCU,
-      cullBullIncomePerHead:cullBullIncomePerHead, cullBullPerExposedFemale:cullBullPerExposedFemale,
-      cullRevenuePerBCU:cullRevenuePerBCU,
-      avgCowInvestment:avgCowInvestment, avgBullInvestmentPerBCU:avgBullInvestmentPerBCU,
-      totalBreedingInvestmentPerBCU:totalBreedingInvestmentPerBCU,
-      totalBreedingDeprPerBCU: cowDeprPerBCU + bullDeprPerBCU
-    };
-  }
-
-  /* ---------------- Sheet 1: Total Unit Cost & ROA ---------------- */
-  function calcSheet1(inp, cap, bs){
-    var steerRev = inp.steerWt*inp.steerPrice*0.01;
-    var heiferRev = inp.heiferWt*inp.heiferPrice*0.01;
-    var avgWt = (inp.steerWt+inp.heiferWt)*0.5;
-    var avgRevPerHead = steerRev*0.5 + heiferRev*0.5 + inp.premium; // raw premium, per original F13
-    var avgPricePerCwt = avgWt===0 ? 0 : (avgRevPerHead/avgWt)*100;
-    var lbWeanedPerExposed = avgWt*inp.weanPct*0.01;
-    var calfRevPerBCU = lbWeanedPerExposed*avgPricePerCwt*0.01;
-
-    var cullRevPerBCU = bs.cullRevenuePerBCU;
-    var totalRevPerBCU = calfRevPerBCU + cullRevPerBCU;
-
-    var landOwnedCost = inp.landOwned ? inp.ownedAcresPerBCU*inp.ownedRatePerAcre : 0;
-    var landLeasedCost = (!inp.landOwned) ? inp.leasedRatePerAcre*inp.leasedAcresPerBCU : 0;
-    var hayCost = inp.hayRolls*inp.hayPrice;
-    var proteinCost = inp.proteinQty*inp.proteinPrice;
-    var saltCost = inp.saltLbs*inp.saltPrice;
-    var otherFeed1 = inp.otherFeed1Qty*inp.otherFeed1Price;
-    var otherFeed2 = inp.otherFeed2Qty*inp.otherFeed2Price;
-    var subtotalFeed = landOwnedCost+landLeasedCost+hayCost+proteinCost+saltCost+otherFeed1+otherFeed2;
-
-    var subtotalOtherDirect = inp.hiredLabor+inp.ownerLabor+inp.vetMed+inp.vaccination+inp.otherDirect;
-
-    var cowDeprPerBCU = bs.cowDeprPerBCU;
-    var bullDeprPerBCU = bs.bullDeprPerBCU;
-    var subtotalBreedingDepr = cowDeprPerBCU + bullDeprPerBCU;
-
-    var totalDirect = subtotalFeed + subtotalOtherDirect + subtotalBreedingDepr;
-
-    var repairMaint = cap.repairsPerBCU;
-    var fuelLube = inp.fuelLube;
-    var otherIndirect1 = inp.otherIndirect1;
-    var otherIndirect2 = inp.otherIndirect2;
-    var vehicleDepr = cap.deprPerBCU;
-    var utilities = inp.utilities;
-    var adminGA = inp.adminGA;
-    var totalIndirect = repairMaint+fuelLube+otherIndirect1+otherIndirect2+vehicleDepr+utilities+adminGA;
-
-    var tucOperating = totalDirect + totalIndirect;
-    var financeCost = inp.financeCost;
-    var tucTotal = tucOperating + financeCost;
-
-    var netIncome = totalRevPerBCU - tucTotal;
-
-    return {
-      steerRev:steerRev, heiferRev:heiferRev, avgWt:avgWt, avgRevPerHead:avgRevPerHead, avgPricePerCwt:avgPricePerCwt,
-      lbWeanedPerExposed:lbWeanedPerExposed, calfRevPerBCU:calfRevPerBCU, cullRevPerBCU:cullRevPerBCU, totalRevPerBCU:totalRevPerBCU,
-      subtotalFeed:subtotalFeed, subtotalOtherDirect:subtotalOtherDirect, subtotalBreedingDepr:subtotalBreedingDepr, totalDirect:totalDirect,
-      repairMaint:repairMaint, fuelLube:fuelLube, vehicleDepr:vehicleDepr, totalIndirect:totalIndirect,
-      tucOperating:tucOperating, financeCost:financeCost, tucTotal:tucTotal, netIncome:netIncome
-    };
-  }
-
-  /* ---------------- Sheet 2: ROA & Required Average Calf Price ---------------- */
-  function calcSheet2(inp, s1, cap, bs){
-    var landInvestPerBCU = inp.landOwned ? (inp.landMarketValuePerAcre*inp.landInvestAcresPerBCU) : 0;
-    var breedingInvestPerBCU = bs.totalBreedingInvestmentPerBCU;
-    var equipInvestPerBCU = cap.investPerBCU;
-    var totalAssetsPerBCU = landInvestPerBCU + breedingInvestPerBCU + equipInvestPerBCU;
-
-    var roa = totalAssetsPerBCU===0 ? 0 : (s1.financeCost + s1.netIncome)/totalAssetsPerBCU;
-
-    var calfSalesLbPerExposed = inp.weanPct*s1.avgWt*0.01;
-    var returnNeededAtTarget = inp.targetROA*totalAssetsPerBCU*0.01;
-    var additionalIncomeNeeded = returnNeededAtTarget - s1.netIncome - s1.financeCost;
-    var additionalPerCwt = calfSalesLbPerExposed===0 ? 0 : (additionalIncomeNeeded/calfSalesLbPerExposed)*100;
-    var requiredAvgPrice = s1.avgPricePerCwt + additionalPerCwt;
-
-    return {
-      landInvestPerBCU:landInvestPerBCU, breedingInvestPerBCU:breedingInvestPerBCU, equipInvestPerBCU:equipInvestPerBCU,
-      totalAssetsPerBCU:totalAssetsPerBCU, roa:roa, calfSalesLbPerExposed:calfSalesLbPerExposed,
-      returnNeededAtTarget:returnNeededAtTarget, additionalIncomeNeeded:additionalIncomeNeeded,
-      additionalPerCwt:additionalPerCwt, requiredAvgPrice:requiredAvgPrice
-    };
-  }
-
-  /* ---------------- Sheet 3: Steer vs Heifer price split ---------------- */
-  function calcSheet3(inp, s1, s2){
-    var C7 = inp.weanPct;
-    var C9 = inp.steerWt, C10 = inp.heiferWt;
-    var D13 = inp.steerPrice - inp.heiferPrice;
-
-    var F9 = C9*C7*0.005, F10 = C10*C7*0.005;
-    var G9 = inp.steerPrice*F9*0.01, G10 = inp.heiferPrice*F10*0.01;
-    var I10 = G9+G10;
-
-    function solveHeiferPrice(totalRevenueTarget){
-      var denom = (C7*C9*0.00005) + (C7*C10*0.00005);
-      if(denom===0) return 0;
-      return (totalRevenueTarget - D13*C9*C7*0.00005) / denom;
-    }
-
-    var C25 = s2.additionalIncomeNeeded + I10;
-    var D28 = solveHeiferPrice(C25);
-    var D27 = D28 + D13;
-
-    var cullRevPlusPremium = s1.cullRevPerBCU + inp.premium;
-    var costToCover = s1.tucTotal - cullRevPlusPremium;
-    var D43 = solveHeiferPrice(costToCover);
-    var D42 = D43 + D13;
-
-    return {
-      priceDiff: D13, baseRevenuePerBCU: I10,
-      targetSteerPrice: D27, targetHeiferPrice: D28,
-      breakevenSteerPrice: D42, breakevenHeiferPrice: D43,
-      costToCoverTUC: costToCover
-    };
-  }
-
-  /* ---------------- A2 defaults & equipment table ---------------- */
-  var A2_DEFAULTS = {
-    a2_bcu:400, a2_weanPct:85, a2_premium:80, a2_steerWt:560, a2_steerPrice:185, a2_heiferWt:530, a2_heiferPrice:165,
-    a2_ownedAcresPerBCU:12, a2_ownedRatePerAcre:5, a2_leasedAcresPerBCU:20, a2_leasedRatePerAcre:12,
-    a2_landInvestAcresPerBCU:12, a2_landMarketValuePerAcre:850,
-    a2_hayRolls:0, a2_hayPrice:0, a2_proteinQty:5, a2_proteinPrice:20, a2_saltLbs:30, a2_saltPrice:0.45,
-    a2_otherFeed1Qty:0, a2_otherFeed1Price:0,
-    a2_hiredLabor:50, a2_ownerLabor:150, a2_vetMed:35, a2_vaccination:40, a2_otherDirect:0,
-    a2_fuelLube:35, a2_utilities:10, a2_adminGA:25, a2_otherIndirect1:0, a2_financeCost:0,
-    a2_cowCost:1400, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1300, a2_cullCowPrice:60,
-    a2_bullCost:4000, a2_bullLife:4, a2_bullDeathLoss:1, a2_cullBullWt:1800, a2_cullBullPrice:80, a2_cowsPerBull:25,
-    a2_targetROA:3
-  };
-
-  var A2_EQUIP_DEFAULTS = [
-    {name:'Pickups (2)', cost:80000, life:5, salvagePct:10, repairPct:5, allocPct:100},
-    {name:'Trailers (2)', cost:10000, life:10, salvagePct:0, repairPct:5, allocPct:100},
-    {name:'Tractor', cost:40000, life:10, salvagePct:10, repairPct:5, allocPct:100},
-    {name:'Feeders', cost:8000, life:7, salvagePct:0, repairPct:5, allocPct:100},
-    {name:'Cattle equipment', cost:20000, life:10, salvagePct:0, repairPct:5, allocPct:100},
-    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0},
-    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0},
-    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0},
-    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0},
-    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0},
-    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:0, allocPct:0}
-  ];
-  var a2EquipRows = A2_EQUIP_DEFAULTS.map(function(r){ return {name:r.name, cost:r.cost, life:r.life, salvagePct:r.salvagePct, repairPct:r.repairPct, allocPct:r.allocPct}; });
-  var a2LandOwned = true;
-
-  function buildA2EquipTable(){
-    var tbody = $('a2_equipBody');
-    tbody.innerHTML = '';
-    a2EquipRows.forEach(function(row, idx){
-      var tr = document.createElement('tr');
-
-      var tdName = document.createElement('td');
-      tdName.style.textAlign = 'left';
-      if(idx < 5){
-        tdName.textContent = row.name;
-      } else {
-        var nameInput = document.createElement('input');
-        nameInput.type = 'text';
-        nameInput.value = row.name;
-        nameInput.style.cssText = 'width:100%;border:none;background:none;font:inherit;color:inherit;';
-        nameInput.addEventListener('input', function(){ row.name = nameInput.value || 'Other'; });
-        tdName.appendChild(nameInput);
-      }
-      tr.appendChild(tdName);
-
-      function numCell(field, step){
-        var td = document.createElement('td');
-        var input = document.createElement('input');
-        input.type = 'number'; input.className = 'small'; input.min = '0'; input.step = step || '1';
-        input.value = row[field];
-        input.addEventListener('input', function(){
-          row[field] = parseFloat(input.value) || 0;
-          recalcA2();
-        });
-        td.appendChild(input);
-        return td;
-      }
-      tr.appendChild(numCell('cost', 100));
-      tr.appendChild(numCell('life', 1));
-      tr.appendChild(numCell('salvagePct', 1));
-      tr.appendChild(numCell('repairPct', 1));
-      tr.appendChild(numCell('allocPct', 1));
-      tbody.appendChild(tr);
-    });
-  }
-
-  function resetA2EquipRows(){
-    a2EquipRows = A2_EQUIP_DEFAULTS.map(function(r){ return {name:r.name, cost:r.cost, life:r.life, salvagePct:r.salvagePct, repairPct:r.repairPct, allocPct:r.allocPct}; });
-    buildA2EquipTable();
-  }
-
-  function gatherA2Inputs(){
-    return {
-      bcu: num('a2_bcu'), weanPct: num('a2_weanPct'),
-      steerWt: num('a2_steerWt'), steerPrice: num('a2_steerPrice'),
-      heiferWt: num('a2_heiferWt'), heiferPrice: num('a2_heiferPrice'),
-      premium: num('a2_premium'),
-      landOwned: a2LandOwned,
-      ownedAcresPerBCU: num('a2_ownedAcresPerBCU'), ownedRatePerAcre: num('a2_ownedRatePerAcre'),
-      leasedAcresPerBCU: num('a2_leasedAcresPerBCU'), leasedRatePerAcre: num('a2_leasedRatePerAcre'),
-      landInvestAcresPerBCU: num('a2_landInvestAcresPerBCU'), landMarketValuePerAcre: num('a2_landMarketValuePerAcre'),
-      hayRolls: num('a2_hayRolls'), hayPrice: num('a2_hayPrice'),
-      proteinQty: num('a2_proteinQty'), proteinPrice: num('a2_proteinPrice'),
-      saltLbs: num('a2_saltLbs'), saltPrice: num('a2_saltPrice'),
-      otherFeed1Qty: num('a2_otherFeed1Qty'), otherFeed1Price: num('a2_otherFeed1Price'),
-      otherFeed2Qty: 0, otherFeed2Price: 0,
-      hiredLabor: num('a2_hiredLabor'), ownerLabor: num('a2_ownerLabor'), vetMed: num('a2_vetMed'),
-      vaccination: num('a2_vaccination'), otherDirect: num('a2_otherDirect'),
-      fuelLube: num('a2_fuelLube'), otherIndirect1: num('a2_otherIndirect1'), otherIndirect2: 0,
-      utilities: num('a2_utilities'), adminGA: num('a2_adminGA'),
-      financeCost: num('a2_financeCost'),
-      cowCost: num('a2_cowCost'), cowLife: num('a2_cowLife'), cowDeathLoss: num('a2_cowDeathLoss'),
-      cullCowWt: num('a2_cullCowWt'), cullCowPrice: num('a2_cullCowPrice'),
-      bullCost: num('a2_bullCost'), bullLife: num('a2_bullLife'), bullDeathLoss: num('a2_bullDeathLoss'),
-      cullBullWt: num('a2_cullBullWt'), cullBullPrice: num('a2_cullBullPrice'), cowsPerBull: num('a2_cowsPerBull'),
-      targetROA: num('a2_targetROA')
-    };
-  }
-
-  function recalcA2(){
-    var inp = gatherA2Inputs();
-    var bcu = inp.bcu || 1;
-
-    var cap = calcCapitalAssets(a2EquipRows, bcu);
-    var bs = calcBreedingStock(inp);
-    var s1 = calcSheet1(inp, cap, bs);
-    var s2 = calcSheet2(inp, s1, cap, bs);
-    var s3 = calcSheet3(inp, s1, s2);
-
-    $('a2_repairMaintDisplay').value = round(cap.repairsPerBCU, 2);
-    $('a2_vehicleDeprDisplay').value = round(cap.deprPerBCU, 2);
-
-    $('a2_capDeprTotal').textContent = fmtDollar(cap.deprPerBCU, 2);
-    $('a2_capRepairsTotal').textContent = fmtDollar(cap.repairsPerBCU, 2);
-    $('a2_capInvestTotal').textContent = fmtDollar(cap.investPerBCU, 0);
-
-    $('a2_breedingDeprTotal').textContent = fmtDollar(bs.totalBreedingDeprPerBCU, 2);
-    $('a2_breedingBreak').textContent = 'Cow '+fmtDollar(bs.cowDeprPerBCU,2)+' + bull '+fmtDollar(bs.bullDeprPerBCU,2)+' /BCU · cull revenue '+fmtDollar(bs.cullRevenuePerBCU,2)+'/BCU';
-
-    $('a2_tucValue').textContent = fmtDollar(s1.tucTotal, 2);
-
-    var roaPct = s2.roa*100;
-    var targetROA = inp.targetROA;
-    var roaGood = roaPct >= targetROA;
-    $('a2_roaTile').className = 'stat-tile ' + (roaGood ? 'good' : 'critical');
-    $('a2_roaValue').textContent = (isFinite(roaPct) ? roaPct.toFixed(1) : '0.0') + '%';
-
-    $('a2_reqAvgValue').textContent = fmtDollar(s2.requiredAvgPrice, 2);
-    $('a2_reqSteerValue').textContent = fmtDollar(s3.targetSteerPrice, 2);
-    $('a2_reqHeiferValue').textContent = fmtDollar(s3.targetHeiferPrice, 2);
-    $('a2_breakevenSteerValue').textContent = fmtDollar(s3.breakevenSteerPrice, 2);
-    $('a2_breakevenHeiferValue').textContent = fmtDollar(s3.breakevenHeiferPrice, 2);
-
-    $('a2_narrativeMain').innerHTML = 'At today’s weights and prices, your average calf price is <strong>'+fmtDollar(s1.avgPricePerCwt,2)+'/cwt</strong>. To reach a <strong>'+targetROA.toFixed(1)+'% ROA</strong> on '+fmtDollar(s2.totalAssetsPerBCU,0)+' in assets/BCU, you’d need an average price of <strong>'+fmtDollar(s2.requiredAvgPrice,2)+'/cwt</strong> — a difference of '+(s2.additionalPerCwt>=0?'+':'')+fmtDollar(s2.additionalPerCwt,2)+'/cwt.';
-    $('a2_narrativeSplit').innerHTML = 'Holding the steer/heifer price differential ('+fmtDollar(Math.abs(s3.priceDiff),2)+'/cwt) constant, that means a steer price of <strong>'+fmtDollar(s3.targetSteerPrice,2)+'/cwt</strong> and a heifer price of <strong>'+fmtDollar(s3.targetHeiferPrice,2)+'/cwt</strong>.';
-
-    $('a2_herdAssets').textContent = fmtDollar(s2.totalAssetsPerBCU*bcu, 0);
-    $('a2_herdTUC').textContent = fmtDollar(s1.tucTotal*bcu, 0);
-    $('a2_herdNetIncome').textContent = fmtDollar(s1.netIncome*bcu, 0);
-    $('a2_herdRevenue').textContent = fmtDollar(s1.totalRevPerBCU*bcu, 0);
-
-    $('a2_targetROARange').value = targetROA;
-  }
-
-  function initA2(){
-    buildA2EquipTable();
-
-    Object.keys(A2_DEFAULTS).forEach(function(id){
-      if(id === 'a2_targetROA') return; // handled by the slider pair below
-      var el = $(id);
-      if(el) el.addEventListener('input', recalcA2);
-    });
-
-    $('a2_targetROARange').addEventListener('input', function(){
-      $('a2_targetROA').value = this.value; recalcA2();
-    });
-    $('a2_targetROA').addEventListener('input', function(){
-      var v = Math.max(0, Math.min(15, num('a2_targetROA')));
-      $('a2_targetROARange').value = v;
-      recalcA2();
-    });
-
-    var ownedBtn = $('a2_landOwnedBtn'), leasedBtn = $('a2_landLeasedBtn');
-    ownedBtn.addEventListener('click', function(){
-      a2LandOwned = true;
-      ownedBtn.classList.add('active'); leasedBtn.classList.remove('active');
-      recalcA2();
-    });
-    leasedBtn.addEventListener('click', function(){
-      a2LandOwned = false;
-      leasedBtn.classList.add('active'); ownedBtn.classList.remove('active');
-      recalcA2();
-    });
-
-    $('a2_resetBtn').addEventListener('click', function(){
-      Object.keys(A2_DEFAULTS).forEach(function(id){ var el = $(id); if(el) el.value = A2_DEFAULTS[id]; });
-      $('a2_targetROARange').value = A2_DEFAULTS.a2_targetROA;
-      a2LandOwned = true;
-      ownedBtn.classList.add('active'); leasedBtn.classList.remove('active');
-      resetA2EquipRows();
-      recalcA2();
-    });
-
-    recalcA2();
-  }
-
-  /* ---------------- Tab switching (A1 / A2) ---------------- */
-  function initTabs(){
-    var buttons = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
-    buttons.forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var tab = btn.dataset.tab;
-        buttons.forEach(function(b){ b.classList.toggle('active', b === btn); });
-        document.querySelectorAll('.tool-panel').forEach(function(panel){
-          panel.hidden = (panel.id !== 'panel-' + tab);
-        });
-        var titleEl = $('toolTitle');
-        if(titleEl && btn.dataset.title) titleEl.textContent = btn.dataset.title;
-        var footerEl = $('toolFooter');
-        if(footerEl && btn.dataset.source){
-          footerEl.innerHTML = 'Based on the <strong>' + btn.dataset.source + '</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; the starting values are the spreadsheet\'s original assumptions, not a real producer\'s data. Always verify results before using them to ' + btn.dataset.use + '.';
-        }
-        if(tab === 'a2') recalcA2();
-        if(tab === 'a1') recalc();
-      });
-    });
-  }
-
-  function init(){
-    buildYearGrid();
-    var ids = Object.keys(DEFAULTS);
-    attachInputs(ids);
-
-    $('bidPriceRange').addEventListener('input', function(){
-      $('bidPrice').value = this.value; recalc();
-    });
-
-    $('resetBtn').addEventListener('click', function(){
-      Object.keys(DEFAULTS).forEach(function(id){ $(id).value = DEFAULTS[id]; });
-      calfCrop = [95,88,88,88,88,88,88];
-      steerPrice = [160,180,190,190,190,190,190];
-      heiferPrice= [140,160,170,170,170,170,170];
-      cullPrice  = [65,65,65,65,65,65,65];
-      opCost     = [690,700,710,720,730,740,750];
-      opCostAuto = [true,false,false,false,false,false,false];
-      document.querySelectorAll('#yearTable input[data-row]').forEach(function(inp){
-        var meta = rowsMeta.filter(function(m){return m.key===inp.dataset.row;})[0];
-        var idx = YEARS.indexOf(parseInt(inp.dataset.year,10));
-        inp.value = meta.arr[idx];
-        if(inp.dataset.row==='opCost') inp.closest('td').classList.toggle('auto', idx===0);
-      });
-      recalc();
-    });
-
-    initA2();
-    initTabs();
-
-    recalc();
-
-    if(window.matchMedia){
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', recalc);
-    }
-  }
-
-  if(document.readyState==='loading'){ document.addEventListener('DOMContentLoaded', init); }
-  else init();
+    return '<div class="cat-card disabled">'+body+'</div>';
+  }).join('');
+  grid.innerHTML = html;
 })();
 </script>
+
 </body>
 </html>
