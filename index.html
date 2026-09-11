@@ -77,6 +77,15 @@
   .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
   .wordmark .text .main{font-family:"Fraunces",serif;font-size:19px;font-weight:600;}
 
+  .theme-toggle{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:100px;
+    background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.4);
+    color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0;flex:none;
+  }
+  .theme-toggle:hover{background:rgba(255,255,255,0.24);}
+  .theme-toggle:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+
   .hero{
     position:relative;
     overflow:hidden;
@@ -173,11 +182,12 @@
       <div class="main">Beef Cattle Decision Aids</div>
     </div>
   </div>
+  <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
 </header>
 
 <section class="hero">
   <div class="hero-inner">
-    <h1>Interactive decision aids for beef cattle operations</h1>
+    <h1>Texas A&amp;M AgriLife Extension</h1>
     <p>The same 24 categories of financial and production decision aids AgriLife Extension has always published as Excel spreadsheets &mdash; being rebuilt one at a time as web tools you (or a producer) can play with directly: move a number, watch the result update, no formulas or downloads required.</p>
     <div class="hero-meta">
       <div><strong>24</strong>categories, from the original spreadsheet library</div>
@@ -200,6 +210,41 @@
 <script>
 (function(){
   "use strict";
+
+  /* ---------------- Manual dark/light toggle (overrides the OS/browser setting) ---------------- */
+  (function initThemeToggle(){
+    var STORAGE_KEY = 'tamuDecisionAidsTheme';
+    var toggle = document.getElementById('themeToggle');
+    if(!toggle) return;
+
+    var stored = null;
+    try { stored = window.localStorage.getItem(STORAGE_KEY); } catch(e){ /* private mode / blocked storage -- fall back to system preference */ }
+    if(stored === 'light' || stored === 'dark'){
+      document.documentElement.setAttribute('data-theme', stored);
+    }
+
+    function currentTheme(){
+      var attr = document.documentElement.getAttribute('data-theme');
+      if(attr === 'light' || attr === 'dark') return attr;
+      return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    function updateButton(){
+      var dark = currentTheme() === 'dark';
+      toggle.textContent = dark ? '☀️' : '🌙';
+      var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+      toggle.setAttribute('aria-label', label);
+      toggle.setAttribute('title', label);
+    }
+
+    updateButton();
+    toggle.addEventListener('click', function(){
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { window.localStorage.setItem(STORAGE_KEY, next); } catch(e){}
+      updateButton();
+    });
+  })();
+
   var categories = [
     {n:1,  name:"Cow-Calf Bid Price and Budgets", desc:"What to bid for a bred cow, and the operating budget behind it.", status:"progress", href:"cow-calf/index.html", note:"A1 live · A2 in progress"},
     {n:2,  name:"Replacement Heifer Budgets", desc:"Natural service, AI, and sexed-semen heifer development budgets and closeouts."},
