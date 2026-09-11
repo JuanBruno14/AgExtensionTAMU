@@ -28,6 +28,8 @@
     --ink-muted:#8a7d73;
     --focus:#2f6fb3;
     --shadow-card:0 1px 2px rgba(58,0,0,0.04), 0 4px 16px rgba(58,0,0,0.06);
+    /* dataviz categorical (validated 5-slot set) */
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#4a3aa7;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -47,6 +49,7 @@
       --wheat-100:#3a2d15;
       --wheat-500:#d9a44a;
       --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
     }
   }
   :root[data-theme="dark"]{
@@ -66,6 +69,7 @@
     --wheat-100:#3a2d15;
     --wheat-500:#d9a44a;
     --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
   }
 
   *{box-sizing:border-box;}
@@ -321,6 +325,70 @@
   /* ---------- Panels ---------- */
   .tool-panel[hidden]{display:none;}
 
+  /* ---------- Data viz: stacked bar (part-to-whole) ---------- */
+  .stackbar-total{font-size:12.5px;color:var(--ink-secondary);margin-bottom:8px;display:flex;justify-content:space-between;}
+  .stackbar-total strong{color:var(--ink);font-weight:700;}
+  .stackbar{display:flex;width:100%;height:26px;border-radius:6px;overflow:hidden;background:var(--surface-sunken);gap:2px;}
+  .stackbar .seg{height:100%;position:relative;cursor:pointer;outline:none;min-width:3px;transition:filter 0.12s ease;}
+  .stackbar .seg:hover,.stackbar .seg:focus-visible{filter:brightness(1.08) saturate(1.05);}
+  .stackbar .seg:first-child{border-top-left-radius:5px;border-bottom-left-radius:5px;}
+  .stackbar .seg:last-child{border-top-right-radius:5px;border-bottom-right-radius:5px;}
+  .legend-rows{margin-top:14px;display:flex;flex-direction:column;gap:7px;}
+  .legend-row{display:flex;align-items:center;gap:9px;font-size:13px;cursor:default;}
+  .legend-row .swatch{width:10px;height:10px;border-radius:2.5px;flex:none;}
+  .legend-row .lbl{color:var(--ink-secondary);flex:1;}
+  .legend-row .val{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;}
+  .legend-row .pct{color:var(--ink-muted);font-size:11.5px;min-width:38px;text-align:right;}
+
+  /* ---------- Data viz: line chart ---------- */
+  .linechart-wrap{position:relative;}
+  svg.linechart{width:100%;height:auto;display:block;overflow:visible;}
+  .lc-grid{stroke:var(--border);stroke-width:1;}
+  .lc-zero{stroke:var(--ink-muted);stroke-width:1;}
+  .lc-path{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .lc-area{fill:var(--accent);opacity:0.08;}
+  .lc-dot{fill:var(--accent);stroke:var(--surface);stroke-width:2;}
+  .lc-dot-hit{fill:transparent;cursor:pointer;}
+  .lc-axis-label{font-size:10.5px;fill:var(--ink-muted);font-family:"Public Sans",sans-serif;}
+  .lc-callout{font-size:11px;font-weight:700;fill:var(--ink);font-family:"Public Sans",sans-serif;}
+
+  /* ---------- Data viz: grouped bar ---------- */
+  .groupbar-legend{display:flex;gap:18px;margin-bottom:14px;flex-wrap:wrap;}
+  .groupbar-legend .item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-secondary);}
+  .groupbar-legend .swatch{width:10px;height:10px;border-radius:2.5px;}
+  svg.groupbar{width:100%;height:auto;display:block;overflow:visible;}
+  .gb-bar-current{fill:var(--ink-muted);opacity:0.55;}
+  .gb-bar-required{fill:var(--accent);}
+  .gb-bar-current:hover,.gb-bar-required:hover{filter:brightness(1.1);}
+  .gb-label{font-size:11.5px;font-weight:700;fill:var(--ink);font-family:"Public Sans",sans-serif;}
+  .gb-axis{font-size:11px;fill:var(--ink-secondary);font-family:"Public Sans",sans-serif;}
+
+  /* ---------- Data viz: meter ---------- */
+  .meter-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
+  .meter-cur{font-size:26px;font-weight:700;color:var(--ink);}
+  .meter-cur.under{color:var(--critical-700);}
+  .meter-cur.over{color:var(--good-700);}
+  .meter-target-lbl{font-size:12.5px;color:var(--ink-muted);}
+  .meter-track{position:relative;height:14px;border-radius:7px;background:var(--surface-sunken);border:1px solid var(--border);overflow:visible;}
+  .meter-fill{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:var(--critical-700);transition:width 0.15s ease;}
+  .meter-fill.over{background:var(--good-700);}
+  .meter-tick{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);border-radius:1px;}
+  .meter-tick-lbl{position:absolute;top:18px;font-size:11px;color:var(--ink-secondary);font-weight:600;white-space:nowrap;}
+  .meter-scale{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-muted);margin-top:26px;}
+
+  /* ---------- Data viz: shared tooltip ---------- */
+  .viz-tooltip{
+    position:fixed;pointer-events:none;z-index:50;
+    background:var(--ink);color:var(--surface);border-radius:8px;padding:8px 11px;
+    font-size:12px;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,0.25);
+    opacity:0;transform:translate(-50%,-100%) translateY(-8px);transition:opacity 0.08s ease;
+    max-width:220px;
+  }
+  .viz-tooltip.show{opacity:1;}
+  .viz-tooltip .tt-val{font-weight:800;font-size:13.5px;}
+  .viz-tooltip .tt-lbl{color:rgba(255,255,255,0.7);font-size:11px;}
+  .viz-caption{font-size:11.5px;color:var(--ink-muted);margin-top:14px;line-height:1.5;}
+
   /* ---------- Results ---------- */
   .stat-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
   .stat-tile{
@@ -568,6 +636,12 @@
           <span class="value" id="opCostTotal">$0</span>
           <span class="sub" id="opCostBreak"></span>
         </div>
+
+        <div style="margin-top:18px;">
+          <div class="stackbar-total"><span>Where it goes</span><strong id="opCostBarTotal">$0 / BCU</strong></div>
+          <div class="stackbar" id="opCostStackbar"></div>
+          <div class="legend-rows" id="opCostLegend"></div>
+        </div>
       </div>
     </div>
 
@@ -620,6 +694,17 @@
       <div class="chart-legend">
         <span><i style="background:var(--good-700)"></i>Positive cash flow</span>
         <span><i style="background:var(--critical-700)"></i>Negative cash flow</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 3 5-6"/></svg>
+        <h2>Your cash position over time</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Running total of cash in vs. out, starting from your equity down payment — the same "payback" idea as the Result card above, drawn out year by year.</p>
+        <div class="linechart-wrap"><svg class="linechart" id="cashLineChart" viewBox="0 0 460 240"></svg></div>
       </div>
     </div>
   </div>
@@ -905,12 +990,31 @@
           </div>
         </div>
 
+        <div style="margin-bottom:18px;">
+          <div class="stackbar-total"><span>Where your cost per cow goes</span><strong id="a2_costBarTotal">$0 / BCU</strong></div>
+          <div class="stackbar" id="a2_costStackbar"></div>
+          <div class="legend-rows" id="a2_costLegend"></div>
+        </div>
+
         <div class="hero-field" style="margin-bottom:16px;">
           <label for="a2_targetROA">Target Return on Assets</label>
           <div class="hero-row">
             <input type="range" id="a2_targetROARange" min="0" max="15" step="0.5" value="3">
             <div class="input-wrap has-suffix"><input type="number" id="a2_targetROA" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
           </div>
+        </div>
+
+        <div style="margin-bottom:18px;">
+          <div class="meter-row">
+            <span class="meter-cur" id="a2_meterValue">0.0%</span>
+            <span class="meter-target-lbl" id="a2_meterTargetLbl">Target: 3.0%</span>
+          </div>
+          <div class="meter-track" id="a2_meterTrack">
+            <div class="meter-fill" id="a2_meterFill" style="width:0%"></div>
+            <div class="meter-tick" id="a2_meterTick" style="left:50%"></div>
+            <div class="meter-tick-lbl" id="a2_meterTickLbl" style="left:50%">Target</div>
+          </div>
+          <div class="meter-scale"><span>0%</span><span id="a2_meterMidLbl">3%</span><span id="a2_meterMaxLbl">6%</span></div>
         </div>
 
         <div class="stat-tile wide good" id="a2_reqAvgTile" style="margin-bottom:12px;">
@@ -934,6 +1038,14 @@
 
         <p class="narrative" id="a2_narrativeMain"></p>
         <p class="narrative" id="a2_narrativeSplit"></p>
+
+        <div style="margin-bottom:14px;">
+          <div class="groupbar-legend">
+            <div class="item"><span class="swatch" style="background:var(--ink-muted);opacity:0.55;"></span>Current price</div>
+            <div class="item"><span class="swatch" style="background:var(--accent);"></span>Price needed for your target ROA</div>
+          </div>
+          <svg class="groupbar" id="a2_priceGroupbar" viewBox="0 0 400 200"></svg>
+        </div>
 
         <div class="stat-tiles" style="margin:14px 0 4px;">
           <div class="stat-tile">
@@ -988,6 +1100,8 @@
 <footer id="toolFooter">
   Based on the <strong>A1 — Cow Bid Price and Budget</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; the starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a purchase decision.
 </footer>
+
+<div class="viz-tooltip" id="vizTooltip"></div>
 
 <script>
 (function(){
@@ -1086,6 +1200,192 @@
   function $(id){ return document.getElementById(id); }
   function num(id){ var v=parseFloat($(id).value); return isFinite(v)?v:0; }
 
+  /* ================================================================
+     Shared data-viz helpers (stacked bar, line, grouped bar, meter)
+     ================================================================ */
+  function showVizTooltip(x,y,html){
+    var tt = $('vizTooltip');
+    tt.innerHTML = html;
+    tt.style.left = x+'px';
+    tt.style.top = (y-6)+'px';
+    tt.classList.add('show');
+  }
+  function hideVizTooltip(){ var tt=$('vizTooltip'); if(tt) tt.classList.remove('show'); }
+
+  /* data: [{label, value, color}, ...]; renders a horizontal stacked bar + legend rows + total */
+  function buildStackBar(barId, legendId, totalId, data, total, totalSuffix){
+    var bar = $(barId), legend = $(legendId);
+    if(!bar || !legend) return;
+    bar.innerHTML=''; legend.innerHTML='';
+    if(totalId && $(totalId)) $(totalId).textContent = fmtDollar0or2(total,2)+(totalSuffix||'');
+    data.forEach(function(d){
+      var pct = total>0 ? (d.value/total*100) : 0;
+      var seg = document.createElement('div');
+      seg.className='seg';
+      seg.style.background = d.color;
+      seg.style.width = Math.max(pct,0)+'%';
+      seg.tabIndex = 0;
+      seg.setAttribute('role','img');
+      seg.setAttribute('aria-label', d.label+': $'+fmtMoney2.format(d.value)+' ('+pct.toFixed(1)+'%)');
+      function showTt(){
+        var r = seg.getBoundingClientRect();
+        showVizTooltip(r.left+r.width/2, r.top, '<div class="tt-val">$'+fmtMoney2.format(d.value)+'</div><div class="tt-lbl">'+d.label+' &middot; '+pct.toFixed(1)+'% of total</div>');
+      }
+      seg.addEventListener('pointerenter', showTt);
+      seg.addEventListener('focus', showTt);
+      seg.addEventListener('pointerleave', hideVizTooltip);
+      seg.addEventListener('blur', hideVizTooltip);
+      bar.appendChild(seg);
+
+      var row = document.createElement('div');
+      row.className='legend-row';
+      row.innerHTML = '<span class="swatch" style="background:'+d.color+'"></span>'+
+                       '<span class="lbl"></span>'+
+                       '<span class="val">$'+fmtMoney2.format(d.value)+'</span>'+
+                       '<span class="pct">'+pct.toFixed(1)+'%</span>';
+      row.querySelector('.lbl').textContent = d.label;
+      legend.appendChild(row);
+    });
+  }
+  function fmtDollar0or2(v,d){ v = isFinite(v)?v:0; var f = d===2?fmtMoney2:fmtMoney0; return (v<0?'-':'')+'$'+f.format(Math.abs(v)); }
+
+  /* series: array of cumulative values, index 0 = starting position (year 0) */
+  function renderLineChart(svgId, series, opts){
+    var svg = $(svgId);
+    if(!svg || !series || series.length<2) { if(svg) svg.innerHTML=''; return; }
+    opts = opts || {};
+    var W=460,H=240, padL=48,padR=16,padT=18,padB=30;
+    var innerW=W-padL-padR, innerH=H-padT-padB;
+    var minV = Math.min.apply(null, series.concat([0]));
+    var maxV = Math.max.apply(null, series.concat([0]));
+    if(minV===maxV){ minV-=1; maxV+=1; }
+    var span = maxV-minV;
+    function xAt(i){ return padL + innerW*(i/(series.length-1)); }
+    function yAt(v){ return padT + innerH*(1-((v-minV)/span)); }
+    var zeroY = yAt(0);
+
+    var parts = [];
+    [minV, 0, maxV].forEach(function(v){
+      if(v===minV && Math.abs(minV)<1e-9) return;
+      var y = yAt(v);
+      parts.push('<line class="'+(Math.abs(v)<1e-9?'lc-zero':'lc-grid')+'" x1="'+padL+'" y1="'+y+'" x2="'+(W-padR)+'" y2="'+y+'"/>');
+      var lbl = (v<0?'-':'')+'$'+fmtMoney0.format(Math.abs(Math.round(v/10)*10));
+      parts.push('<text class="lc-axis-label" x="'+(padL-8)+'" y="'+(y+3)+'" text-anchor="end">'+lbl+'</text>');
+    });
+
+    var pathD = series.map(function(v,i){ return (i===0?'M':'L')+xAt(i)+','+yAt(v); }).join(' ');
+    var areaD = pathD + ' L'+xAt(series.length-1)+','+zeroY+' L'+xAt(0)+','+zeroY+' Z';
+    parts.push('<path class="lc-area" d="'+areaD+'"/>');
+    parts.push('<path class="lc-path" d="'+pathD+'"/>');
+
+    // crossing-to-positive callout (first index where value turns >=0 after being negative)
+    var crossIdx = -1;
+    for(var i=1;i<series.length;i++){ if(series[i-1]<0 && series[i]>=0){ crossIdx=i; break; } }
+
+    series.forEach(function(v,i){
+      var x=xAt(i), y=yAt(v);
+      parts.push('<text class="lc-axis-label" x="'+x+'" y="'+(H-8)+'" text-anchor="middle">Yr '+i+'</text>');
+      var r = (i===crossIdx || i===series.length-1) ? 4.5 : 3.5;
+      parts.push('<circle class="lc-dot" cx="'+x+'" cy="'+y+'" r="'+r+'"/>');
+      if(i===crossIdx){
+        parts.push('<text class="lc-callout" x="'+x+'" y="'+(y-12)+'" text-anchor="middle">Back above zero</text>');
+      }
+      parts.push('<circle class="lc-dot-hit" data-i="'+i+'" data-v="'+v+'" cx="'+x+'" cy="'+y+'" r="13" tabindex="0"/>');
+    });
+
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.innerHTML = parts.join('');
+    svg.querySelectorAll('.lc-dot-hit').forEach(function(hit){
+      function show(){
+        var r = hit.getBoundingClientRect();
+        var i = hit.dataset.i, v = parseFloat(hit.dataset.v);
+        showVizTooltip(r.left+r.width/2, r.top, '<div class="tt-val">'+(v<0?'-':'')+'$'+fmtMoney0.format(Math.abs(v))+'</div><div class="tt-lbl">'+(opts.tooltipLabel||'Cumulative')+', end of Year '+i+'</div>');
+      }
+      hit.addEventListener('pointerenter', show);
+      hit.addEventListener('focus', show);
+      hit.addEventListener('pointerleave', hideVizTooltip);
+      hit.addEventListener('blur', hideVizTooltip);
+    });
+  }
+
+  /* groups: [{label, current, required}, ...] */
+  function renderGroupBar(svgId, groups, opts){
+    var svg = $(svgId);
+    if(!svg) return;
+    opts = opts || {};
+    var W=400,H=200, padL=10,padR=10,padT=28,padB=30;
+    var innerW=W-padL-padR, innerH=H-padT-padB;
+    var maxV = Math.max.apply(null, groups.map(function(g){return Math.max(g.current,g.required);})) * 1.15 || 1;
+    var groupW = innerW/groups.length;
+    var barW = Math.min(44, groupW*0.32), gap=4;
+    function yAt(v){ return padT + innerH*(1-(v/maxV)); }
+
+    var parts = [];
+    parts.push('<line class="lc-grid" x1="'+padL+'" y1="'+yAt(0)+'" x2="'+(W-padR)+'" y2="'+yAt(0)+'"/>');
+
+    groups.forEach(function(g){
+      var gi = groups.indexOf(g);
+      var cx = padL + groupW*gi + groupW/2;
+      var x1 = cx - barW - gap/2;
+      var x2 = cx + gap/2;
+      [
+        {v:g.current, x:x1, cls:'gb-bar-current', lbl:'Current'},
+        {v:g.required, x:x2, cls:'gb-bar-required', lbl:opts.requiredLabel||'Needed'}
+      ].forEach(function(b){
+        var y = yAt(b.v), h = yAt(0)-y;
+        parts.push('<rect class="'+b.cls+'" x="'+b.x+'" y="'+y+'" width="'+barW+'" height="'+Math.max(h,0)+'" rx="4" ry="4" data-v="'+b.v+'" data-lbl="'+g.label+' — '+b.lbl+'" tabindex="0"/>');
+        parts.push('<text class="gb-label" x="'+(b.x+barW/2)+'" y="'+(y-7)+'" text-anchor="middle">$'+b.v.toFixed(0)+'</text>');
+      });
+      parts.push('<text class="gb-axis" x="'+cx+'" y="'+(H-8)+'" text-anchor="middle">'+g.label+'</text>');
+    });
+
+    svg.setAttribute('viewBox','0 0 '+W+' '+H);
+    svg.innerHTML = parts.join('');
+    svg.querySelectorAll('rect[data-v]').forEach(function(rect){
+      function show(){
+        var r = rect.getBoundingClientRect();
+        showVizTooltip(r.left+r.width/2, r.top, '<div class="tt-val">$'+parseFloat(rect.dataset.v).toFixed(2)+(opts.unit||'')+'</div><div class="tt-lbl">'+rect.dataset.lbl+'</div>');
+      }
+      rect.addEventListener('pointerenter', show);
+      rect.addEventListener('focus', show);
+      rect.addEventListener('pointerleave', hideVizTooltip);
+      rect.addEventListener('blur', hideVizTooltip);
+    });
+  }
+
+  /* current/target as plain numbers (e.g. percent); scaleMax = right edge of the track */
+  function renderMeter(ids, current, target, scaleMax){
+    var over = current >= target;
+    var fillPct = Math.max(0, Math.min(100, current/scaleMax*100));
+    var tickPct = Math.max(0, Math.min(100, target/scaleMax*100));
+
+    var valueEl = $(ids.value);
+    valueEl.textContent = current.toFixed(1)+'%';
+    valueEl.className = 'meter-cur '+(over?'over':'under');
+    $(ids.targetLbl).textContent = 'Target: '+target.toFixed(1)+'%';
+
+    var fill = $(ids.fill);
+    fill.style.width = fillPct+'%';
+    fill.className = 'meter-fill '+(over?'over':'');
+
+    $(ids.tick).style.left = tickPct+'%';
+    $(ids.tickLbl).style.left = 'calc('+tickPct+'% - 16px)';
+
+    if(ids.midLbl) $(ids.midLbl).textContent = (scaleMax/2).toFixed(0)+'%';
+    if(ids.maxLbl) $(ids.maxLbl).textContent = scaleMax.toFixed(0)+'%';
+
+    var track = $(ids.track);
+    if(track && !track.dataset.vizBound){
+      track.dataset.vizBound = '1';
+      track.addEventListener('pointerenter', function(){
+        var r = track.getBoundingClientRect();
+        var fp = parseFloat(fill.style.width)||0;
+        showVizTooltip(r.left+r.width*(fp/100), r.top, '<div class="tt-val">'+current.toFixed(1)+'%</div><div class="tt-lbl">Current &middot; target '+target.toFixed(1)+'%</div>');
+      });
+      track.addEventListener('pointerleave', hideVizTooltip);
+    }
+  }
+
   var DEFAULTS = {
     bidPrice:1300, steerWeight:550, heiferWeight:500, cullWeight:1100,
     discountRate:5, calvingYears:7, startYear:2021,
@@ -1165,6 +1465,15 @@
 
     $('opCostTotal').textContent = '$'+fmtMoney2.format(total);
     $('opCostBreak').textContent = 'Direct $'+fmtMoney0.format(totalDirect)+' + Indirect $'+fmtMoney0.format(totalIndirect)+' (incl. bull depreciation $'+fmtMoney2.format(bullDeprPerBCU)+'/BCU)';
+
+    buildStackBar('opCostStackbar','opCostLegend','opCostBarTotal', [
+      {label:'Feed & land', value:subtotalFeed, color:'var(--s1)'},
+      {label:'Labor & management', value:num('laborMgmt'), color:'var(--s2)'},
+      {label:'Vet & health', value:num('vetMed'), color:'var(--s3)'},
+      {label:'Bull depreciation', value:bullDeprPerBCU, color:'var(--s4)'},
+      {label:'Equipment & other indirect', value:totalIndirect, color:'var(--s5)'}
+    ], total, ' / BCU');
+
     return total;
   }
 
@@ -1322,6 +1631,16 @@
       : 'The positive cash flows across the planning horizon indicate that this investment is financially feasible.';
 
     drawChart(netCashFlow.slice(0,nper));
+
+    // Cumulative (undiscounted) running cash position, year 0..nper -- a simplified
+    // companion view to the official discounted payback stat above.
+    var cumSeries = [round(year0,0)];
+    var runningCum = year0;
+    for(i=0;i<nper;i++){
+      runningCum += netCashFlow[i] + cullSalvage[i];
+      cumSeries.push(round(runningCum,0));
+    }
+    renderLineChart('cashLineChart', cumSeries, {tooltipLabel:'Cumulative cash'});
   }
 
   function attachInputs(ids){
@@ -1638,11 +1957,25 @@
 
     $('a2_tucValue').textContent = fmtDollar(s1.tucTotal, 2);
 
+    buildStackBar('a2_costStackbar','a2_costLegend','a2_costBarTotal', [
+      {label:'Feed & land', value:s1.subtotalFeed, color:'var(--s1)'},
+      {label:'Labor, vet & other direct', value:s1.subtotalOtherDirect, color:'var(--s2)'},
+      {label:'Breeding stock depreciation', value:s1.subtotalBreedingDepr, color:'var(--s3)'},
+      {label:'Equipment (depreciation + repairs)', value:s1.repairMaint+s1.vehicleDepr, color:'var(--s4)'},
+      {label:'Other indirect & finance', value:s1.totalIndirect-s1.repairMaint-s1.vehicleDepr+s1.financeCost, color:'var(--s5)'}
+    ], s1.tucTotal, ' / BCU');
+
     var roaPct = s2.roa*100;
     var targetROA = inp.targetROA;
     var roaGood = roaPct >= targetROA;
     $('a2_roaTile').className = 'stat-tile ' + (roaGood ? 'good' : 'critical');
     $('a2_roaValue').textContent = (isFinite(roaPct) ? roaPct.toFixed(1) : '0.0') + '%';
+
+    renderMeter({
+      value:'a2_meterValue', targetLbl:'a2_meterTargetLbl', fill:'a2_meterFill',
+      tick:'a2_meterTick', tickLbl:'a2_meterTickLbl', midLbl:'a2_meterMidLbl', maxLbl:'a2_meterMaxLbl',
+      track:'a2_meterTrack'
+    }, isFinite(roaPct)?roaPct:0, targetROA, Math.max(6, targetROA*2));
 
     $('a2_reqAvgValue').textContent = fmtDollar(s2.requiredAvgPrice, 2);
     $('a2_reqSteerValue').textContent = fmtDollar(s3.targetSteerPrice, 2);
@@ -1652,6 +1985,11 @@
 
     $('a2_narrativeMain').innerHTML = 'At today’s weights and prices, your average calf price is <strong>'+fmtDollar(s1.avgPricePerCwt,2)+'/cwt</strong>. To reach a <strong>'+targetROA.toFixed(1)+'% ROA</strong> on '+fmtDollar(s2.totalAssetsPerBCU,0)+' in assets/BCU, you’d need an average price of <strong>'+fmtDollar(s2.requiredAvgPrice,2)+'/cwt</strong> — a difference of '+(s2.additionalPerCwt>=0?'+':'')+fmtDollar(s2.additionalPerCwt,2)+'/cwt.';
     $('a2_narrativeSplit').innerHTML = 'Holding the steer/heifer price differential ('+fmtDollar(Math.abs(s3.priceDiff),2)+'/cwt) constant, that means a steer price of <strong>'+fmtDollar(s3.targetSteerPrice,2)+'/cwt</strong> and a heifer price of <strong>'+fmtDollar(s3.targetHeiferPrice,2)+'/cwt</strong>.';
+
+    renderGroupBar('a2_priceGroupbar', [
+      {label:'Steer', current:inp.steerPrice, required:s3.targetSteerPrice},
+      {label:'Heifer', current:inp.heiferPrice, required:s3.targetHeiferPrice}
+    ], {unit:'/cwt', requiredLabel:'Needed for target ROA'});
 
     $('a2_herdAssets').textContent = fmtDollar(s2.totalAssetsPerBCU*bcu, 0);
     $('a2_herdTUC').textContent = fmtDollar(s1.tucTotal*bcu, 0);
