@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cow Bid Price</title>
+<title>Texas A&amp;M AgriLife Extension - Decision Making</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap">
 <style>
   :root{
@@ -285,6 +285,7 @@
   .hero-field label{font-size:13px;font-weight:700;color:var(--accent);}
   .hero-row{display:flex;align-items:center;gap:14px;}
   .hero-row input[type="range"]{flex:1;accent-color:var(--accent);}
+  input[type="range"].weight-slide{display:block;width:100%;margin-top:8px;accent-color:var(--accent);}
   .hero-row .input-wrap{width:118px;flex:none;}
   .hero-row .input-wrap input{
     background:var(--surface);
@@ -315,7 +316,18 @@
   }
   table.grid td.readonly{color:var(--ink-muted);font-style:italic;}
   table.grid td.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
+  .input-wrap.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
   table.grid input[type="number"].small{width:64px;}
+  table.grid td.equip-remove-cell{padding:9px 6px;text-align:center;}
+  .equip-row-remove{
+    font:inherit;font-size:15px;line-height:1;font-weight:700;
+    width:24px;height:24px;border-radius:100px;border:1px solid var(--border);
+    background:var(--surface);color:var(--ink-muted);cursor:pointer;
+    display:inline-flex;align-items:center;justify-content:center;padding:0;
+  }
+  .equip-row-remove:hover{background:var(--critical-100);border-color:var(--critical-700);color:var(--critical-700);}
+  .equip-row-remove:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  button.btn.equip-add-btn{padding:8px 14px;font-size:12.5px;}
 
   /* ---------- Segmented toggle (Owned/Leased) ---------- */
   .segmented{display:inline-flex;background:var(--surface-sunken);border:1.5px solid var(--border);border-radius:9px;padding:3px;gap:2px;}
@@ -458,7 +470,7 @@
     <a href="../index.html" style="display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;">
       <div class="mark">A</div>
       <div class="text">
-        <div class="top">Texas A&amp;M AgriLife Extension</div>
+        <div class="top">Texas A&amp;M AgriLife Extension - Decision Making</div>
         <div class="main">Decision Aids · Cow-Calf Enterprise</div>
       </div>
     </a>
@@ -503,12 +515,12 @@
         <h2>Herd &amp; bid price</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">The bid price is the central variable: it's what you're willing to pay per head. Move it and watch how the result on the right reacts.</p>
+        <p class="card-note">The bid price is the central variable: it's what you're willing to pay per head. Move it and watch how the result on the right reacts. Drag the steer/heifer/cull-cow weight sliders below to auto-fill the matching price from the Sept 2026 Texas auction price slide (amber fields below, in "Year-by-year prices") — you can still type over any price by hand.</p>
 
         <div class="hero-field" style="margin-bottom:18px;">
           <label for="bidPrice">Cow bid price ($/head)</label>
           <div class="hero-row">
-            <input type="range" id="bidPriceRange" min="400" max="3000" step="10" value="1300">
+            <input type="range" id="bidPriceRange" min="400" max="7000" step="10" value="1300">
             <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="1300" min="0" step="10"></div>
           </div>
         </div>
@@ -516,15 +528,18 @@
         <div class="field-grid">
           <div class="field">
             <label for="steerWeight">Steer weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="steerWeight" value="550" min="0"><span class="suffix">lb</span></div>
+            <div class="input-wrap has-suffix"><input type="number" id="steerWeight" value="516.4" min="0"><span class="suffix">lb</span></div>
+            <input type="range" id="steerWeightRange" class="weight-slide" min="350" max="1150" step="50" value="516.4" aria-label="Steer weight — drag to auto-fill the matching auction price">
           </div>
           <div class="field">
             <label for="heiferWeight">Heifer weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="heiferWeight" value="500" min="0"><span class="suffix">lb</span></div>
+            <div class="input-wrap has-suffix"><input type="number" id="heiferWeight" value="531.3" min="0"><span class="suffix">lb</span></div>
+            <input type="range" id="heiferWeightRange" class="weight-slide" min="300" max="950" step="50" value="531.3" aria-label="Heifer weight — drag to auto-fill the matching auction price">
           </div>
           <div class="field">
             <label for="cullWeight">Cull cow sale weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="cullWeight" value="1100" min="0"><span class="suffix">lb</span></div>
+            <div class="input-wrap has-suffix"><input type="number" id="cullWeight" value="1279.4" min="0"><span class="suffix">lb</span></div>
+            <input type="range" id="cullWeightRange" class="weight-slide" min="1100" max="1550" step="50" value="1279.4" aria-label="Cull cow weight — drag to auto-fill the matching auction price">
           </div>
           <div class="field">
             <label for="discountRate">Discount rate</label>
@@ -550,7 +565,7 @@
         <h2>Year-by-year prices &amp; calf crop</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Year 1 operating cost is filled in automatically from the "Cow operating cost" card below. You can overwrite it if you'd rather use your own number.</p>
+        <p class="card-note">Year 1 operating cost is filled in automatically from the "Cow operating cost" card below. Steer/heifer/cull-cow price (amber) auto-fill from the weight sliders above — the price is interpolated between the nearest reported weight classes (or condition grades, for cull cows) in the Sept 2026 Texas auction data. Type over any amber cell to lock in your own number for that year; it stops following the slider until you reset.</p>
         <div class="table-scroll">
           <table class="grid" id="yearTable">
             <thead>
@@ -601,7 +616,7 @@
         <h2>Cow operating cost (BCU) — helper calculator</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">BCU = Breeding Cow Unit (≈1.6 AU; includes a share of replacement heifers and the herd bull). This card's total automatically feeds the "Year 1 operating cost" in the grid above.</p>
+        <p class="card-note">BCU = Breeding Cow Unit (≈1.6 AU; includes a share of replacement heifers and the herd bull). This card's total automatically feeds the "Year 1 operating cost" in the grid above. The bull weight slider below auto-fills the cull bull price (amber) from the Sept 2026 Texas auction data — that report has only one grade for bulls, so the price stays at $189.30/cwt across the slider's range.</p>
 
         <fieldset style="margin-bottom:18px;">
           <legend>Direct costs</legend>
@@ -622,8 +637,8 @@
           <div class="field-grid cols-3">
             <div class="field"><label for="bullCost">Bull cost</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bullCost" value="4500" min="0"></div></div>
             <div class="field"><label for="bullLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
-            <div class="field"><label for="bullWeight">Bull weight</label><div class="input-wrap has-suffix"><input type="number" id="bullWeight" value="1800" min="0"><span class="suffix">lb</span></div></div>
-            <div class="field"><label for="bullCullPrice">Cull bull price</label><div class="input-wrap has-suffix"><input type="number" id="bullCullPrice" value="80" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="bullWeight">Bull weight</label><div class="input-wrap has-suffix"><input type="number" id="bullWeight" value="1650.7" min="0"><span class="suffix">lb</span></div><input type="range" id="bullWeightRange" class="weight-slide" min="1300" max="2000" step="50" value="1650.7" aria-label="Bull weight — auto-fills the cull bull price (only one grade reported, so the price stays constant)"></div>
+            <div class="field"><label for="bullCullPrice">Cull bull price</label><div class="input-wrap has-suffix auto"><input type="number" id="bullCullPrice" value="189.3" min="0"><span class="suffix">$/cwt</span></div></div>
             <div class="field"><label for="bullDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="bullDeathLoss" value="2" min="0" max="100"><span class="suffix">%</span></div></div>
             <div class="field"><label for="cowsPerBull">Cows per bull</label><div class="input-wrap"><input type="number" id="cowsPerBull" value="25" min="1"></div></div>
           </div>
@@ -746,7 +761,7 @@
         <h2>Herd &amp; weaning basics</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">These set your revenue side: how many BCU you run, your weaning percentage, and the current weight and price of your steer and heifer calves.</p>
+        <p class="card-note">These set your revenue side: how many BCU you run, your weaning percentage, and the current weight and price of your steer and heifer calves. Drag a weight slider and its price field (amber) auto-fills from the Sept 2026 Texas auction price slide, interpolated between the nearest reported weight classes — type over the price by hand any time to lock in your own number.</p>
         <div class="field-grid cols-3">
           <div class="field">
             <label for="a2_bcu">Breeding Cow Units (BCU)</label>
@@ -762,20 +777,22 @@
           </div>
           <div class="field">
             <label for="a2_steerWt">Steer weaning weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="a2_steerWt" value="560" min="0"><span class="suffix">lb</span></div>
+            <div class="input-wrap has-suffix"><input type="number" id="a2_steerWt" value="516.4" min="0"><span class="suffix">lb</span></div>
+            <input type="range" id="a2_steerWtRange" class="weight-slide" min="350" max="1150" step="50" value="516.4" aria-label="Steer weight — drag to auto-fill the matching auction price">
           </div>
           <div class="field">
             <label for="a2_steerPrice">Steer price</label>
-            <div class="input-wrap has-suffix"><input type="number" id="a2_steerPrice" value="185" min="0"><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-suffix auto"><input type="number" id="a2_steerPrice" value="413.1" min="0"><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field"></div>
           <div class="field">
             <label for="a2_heiferWt">Heifer weaning weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="a2_heiferWt" value="530" min="0"><span class="suffix">lb</span></div>
+            <div class="input-wrap has-suffix"><input type="number" id="a2_heiferWt" value="531.3" min="0"><span class="suffix">lb</span></div>
+            <input type="range" id="a2_heiferWtRange" class="weight-slide" min="300" max="950" step="50" value="531.3" aria-label="Heifer weight — drag to auto-fill the matching auction price">
           </div>
           <div class="field">
             <label for="a2_heiferPrice">Heifer price</label>
-            <div class="input-wrap has-suffix"><input type="number" id="a2_heiferPrice" value="165" min="0"><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-suffix auto"><input type="number" id="a2_heiferPrice" value="356.2" min="0"><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field"></div>
         </div>
@@ -908,15 +925,15 @@
         <h2>Breeding stock investment &amp; depreciation</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Cow and bull depreciation, and cull revenue, are calculated here and automatically feed the cost and revenue lines above.</p>
+        <p class="card-note">Cow and bull depreciation, and cull revenue, are calculated here and automatically feed the cost and revenue lines above. Drag the cull cow weight slider to auto-fill its price (amber) from the Sept 2026 Texas auction data — interpolated across the three condition grades reported (Lean/Boner/Breaker). The bull weight slider auto-fills its price too, but the report only has one grade for bulls (no weight breakdown), so that price stays at $189.30/cwt no matter where you set the slider.</p>
         <fieldset style="margin-bottom:16px;">
           <legend>Breeding cows</legend>
           <div class="field-grid cols-3">
             <div class="field"><label for="a2_cowCost">Cost/head</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="1400" min="0"></div></div>
             <div class="field"><label for="a2_cowLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowLife" value="7" min="1"><span class="suffix">yrs</span></div></div>
             <div class="field"><label for="a2_cowDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="a2_cullCowWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1300" min="0"><span class="suffix">lb</span></div></div>
-            <div class="field"><label for="a2_cullCowPrice">Cull price</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowPrice" value="60" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="a2_cullCowWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1279.4" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullCowWtRange" class="weight-slide" min="1100" max="1550" step="50" value="1279.4" aria-label="Cull cow weight — drag to auto-fill the matching auction price"></div>
+            <div class="field"><label for="a2_cullCowPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullCowPrice" value="149.8" min="0"><span class="suffix">$/cwt</span></div></div>
             <div class="field"></div>
           </div>
         </fieldset>
@@ -926,8 +943,8 @@
             <div class="field"><label for="a2_bullCost">Cost/head</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_bullCost" value="4000" min="0"></div></div>
             <div class="field"><label for="a2_bullLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
             <div class="field"><label for="a2_bullDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_bullDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="a2_cullBullWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullWt" value="1800" min="0"><span class="suffix">lb</span></div></div>
-            <div class="field"><label for="a2_cullBullPrice">Cull price</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullPrice" value="80" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="a2_cullBullWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullWt" value="1650.7" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullBullWtRange" class="weight-slide" min="1300" max="2000" step="50" value="1650.7" aria-label="Bull weight — auto-fills the cull bull price (only one grade reported, so the price stays constant)"></div>
+            <div class="field"><label for="a2_cullBullPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullBullPrice" value="189.3" min="0"><span class="suffix">$/cwt</span></div></div>
             <div class="field"><label for="a2_cowsPerBull">Cows/bull</label><div class="input-wrap"><input type="number" id="a2_cowsPerBull" value="25" min="1"></div></div>
           </div>
         </fieldset>
@@ -957,10 +974,14 @@
                 <th>Salvage %</th>
                 <th>Repair %</th>
                 <th>Alloc. %</th>
+                <th><span class="sr-only">Remove</span></th>
               </tr>
             </thead>
             <tbody id="a2_equipBody"></tbody>
           </table>
+        </div>
+        <div class="btn-row" style="padding:12px 0 0;">
+          <button class="btn secondary equip-add-btn" id="a2_addEquipBtn" type="button">+ Add another item</button>
         </div>
         <div class="stat-tiles" style="margin-top:14px;">
           <div class="stat-tile">
@@ -1396,20 +1417,95 @@
   }
 
   var DEFAULTS = {
-    bidPrice:1300, steerWeight:550, heiferWeight:500, cullWeight:1100,
+    bidPrice:1300, steerWeight:516.4, heiferWeight:531.3, cullWeight:1279.4,
     discountRate:5, calvingYears:7, startYear:2021,
     equityPct:20, loanTerm:5, interestRate:5,
     landLeaseRate:15, landLeaseMonths:11, hayRolls:1.5, hayPrice:105,
     saltLbs:90, saltPrice:0.25, laborMgmt:120, vetMed:35,
-    bullCost:4500, bullLife:4, bullWeight:1800, bullCullPrice:80, bullDeathLoss:2, cowsPerBull:25,
+    bullCost:4500, bullLife:4, bullWeight:1650.7, bullCullPrice:189.3, bullDeathLoss:2, cowsPerBull:25,
     repairMaint:16, fuelOil:5, utilities:10, adminGA:20, vehicleDepr:48
   };
-  var calfCrop   = [95,88,88,88,88,88,88];
-  var steerPrice = [160,180,190,190,190,190,190];
-  var heiferPrice= [140,160,170,170,170,170,170];
-  var cullPrice  = [65,65,65,65,65,65,65];
-  var opCost     = [690,700,710,720,730,740,750];
+  /* Single source of truth for the year-grid default arrays, so the initial
+     declaration and the Reset button can never drift apart (they used to be
+     two separate hardcoded copies - see 2026-09-11 project notes). */
+  var CALFCROP_DEFAULT   = [95,88,88,88,88,88,88];
+  var STEER_PRICE_DEFAULT  = [413.1,413.1,413.1,413.1,413.1,413.1,413.1];
+  var HEIFER_PRICE_DEFAULT = [356.2,356.2,356.2,356.2,356.2,356.2,356.2];
+  var CULL_PRICE_DEFAULT   = [149.8,149.8,149.8,149.8,149.8,149.8,149.8];
+  var OPCOST_DEFAULT       = [690,700,710,720,730,740,750];
+
+  /* Texas Auction Data price slide (Local Texas Auction Data, Sept 4, 2026 -
+     Tulia / Cattlemen's Dalhart / Beaver OK / Lonestar Wildorado). Each entry
+     is one reported weight-class's average weight & average price; weight
+     inputs between two points get a linearly-interpolated price ("price
+     slide") rather than a coarse step function. Weights outside the reported
+     range clamp to the nearest end point rather than extrapolating. */
+  var STEER_PRICE_SLIDE = [
+    {w:397.0,  p:490.25},
+    {w:463.8,  p:440.6},
+    {w:516.4,  p:413.1},
+    {w:654.7,  p:344.1},
+    {w:762.3,  p:341.3},
+    {w:835.5,  p:328.0},
+    {w:962.3,  p:305.6},
+    {w:1140.0, p:248.0}
+  ];
+  var HEIFER_PRICE_SLIDE = [
+    {w:337.0, p:429.1},
+    {w:455.1, p:381.7},
+    {w:531.3, p:356.2},
+    {w:654.1, p:329.8},
+    {w:765.6, p:306.5},
+    {w:862.6, p:290.0},
+    {w:922.0, p:249.0}
+  ];
+  /* Cull cows also have a real weight/price slide - the same Sept 4, 2026
+     report breaks them into 3 condition grades, each with its own average
+     weight and price (Lean is thinner/lighter, Breaker is heavier/better
+     conditioned). Not strictly monotonic (Boner's price is a touch above
+     Lean's despite being heavier) - that's a real market pattern (condition,
+     not just weight, drives price), so interpolated as reported rather than
+     forced into a clean downward slope. Cull BULLS only have one reported
+     row (no grade breakdown), so there's nothing to slide there - that
+     field stays a plain input. */
+  var CULL_COW_PRICE_SLIDE = [
+    {w:1143.4, p:148.7}, // Lean Cows
+    {w:1279.4, p:149.8}, // Boner Cows
+    {w:1496.1, p:147.2}  // Breaker Cows
+  ];
+  /* Bulls: the report has only one row (no condition-grade breakdown like
+     cull cows get), so this "slide" is a single point - priceSlideLookup
+     clamps to it regardless of weight. The slider still lets the field
+     auto-fill/lock the same way as every other price for a consistent UI,
+     it just won't visibly change as you drag it until a weight-class
+     breakdown for bulls is reported. */
+  var BULL_PRICE_SLIDE = [
+    {w:1650.7, p:189.3} // Bulls
+  ];
+  function priceSlideLookup(table, w){
+    if(!table.length || !isFinite(w)) return 0;
+    if(w<=table[0].w) return table[0].p;
+    if(w>=table[table.length-1].w) return table[table.length-1].p;
+    for(var i=0;i<table.length-1;i++){
+      var a=table[i], b=table[i+1];
+      if(w>=a.w && w<=b.w){
+        var t=(w-a.w)/(b.w-a.w);
+        return a.p + (b.p-a.p)*t;
+      }
+    }
+    return table[table.length-1].p;
+  }
+
+  var calfCrop   = CALFCROP_DEFAULT.slice();
+  var steerPrice = STEER_PRICE_DEFAULT.slice();
+  var heiferPrice= HEIFER_PRICE_DEFAULT.slice();
+  var cullPrice  = CULL_PRICE_DEFAULT.slice();
+  var opCost     = OPCOST_DEFAULT.slice();
   var opCostAuto = [true,false,false,false,false,false,false]; // year1 auto-linked by default
+  var steerPriceAuto  = [true,true,true,true,true,true,true]; // auto-linked to steer weight slide
+  var heiferPriceAuto = [true,true,true,true,true,true,true]; // auto-linked to heifer weight slide
+  var cullPriceAuto   = [true,true,true,true,true,true,true]; // auto-linked to cull cow weight slide
+  var bullCullPriceAuto = true; // auto-linked to bull weight slide (single reported point - see BULL_PRICE_SLIDE)
 
   /* ---------------- Build the year grid ---------------- */
   var rowsMeta = [
@@ -1444,10 +1540,16 @@
         if(meta.suffix){ var s=document.createElement('span'); s.className='suffix'; s.textContent=meta.suffix; wrap.appendChild(s); }
         td.appendChild(wrap);
         if(meta.key==='opCost' && y===1) td.classList.add('auto');
+        if(meta.key==='steerPrice' && steerPriceAuto[idx]) td.classList.add('auto');
+        if(meta.key==='heiferPrice' && heiferPriceAuto[idx]) td.classList.add('auto');
+        if(meta.key==='cullPrice' && cullPriceAuto[idx]) td.classList.add('auto');
         tr.appendChild(td);
         input.addEventListener('input', function(){
           meta.arr[idx] = parseFloat(input.value)||0;
           if(meta.key==='opCost'){ opCostAuto[idx] = false; td.classList.remove('auto'); }
+          if(meta.key==='steerPrice'){ steerPriceAuto[idx] = false; td.classList.remove('auto'); }
+          if(meta.key==='heiferPrice'){ heiferPriceAuto[idx] = false; td.classList.remove('auto'); }
+          if(meta.key==='cullPrice'){ cullPriceAuto[idx] = false; td.classList.remove('auto'); }
           recalc();
         });
       });
@@ -1524,6 +1626,11 @@
   var yearWords = {1:'one',2:'two',3:'three',4:'four',5:'five',6:'six',7:'seven'};
 
   function recalc(){
+    // bull price slide -> auto-link before calcOperatingCost() reads it below
+    if(bullCullPriceAuto){
+      $('bullCullPrice').value = round(priceSlideLookup(BULL_PRICE_SLIDE, num('bullWeight')), 2);
+    }
+
     var bidPrice = num('bidPrice');
     $('bidPriceRange').value = bidPrice;
     var steerWeight = num('steerWeight');
@@ -1549,6 +1656,28 @@
       var y1input = document.querySelector('input[data-row="opCost"][data-year="1"]');
       if(y1input) y1input.value = round(opCostCalc,3);
     }
+
+    // steer/heifer/cull-cow price slide -> auto-link any year not manually overridden
+    var steerSlidePrice = round(priceSlideLookup(STEER_PRICE_SLIDE, num('steerWeight')), 2);
+    var heiferSlidePrice = round(priceSlideLookup(HEIFER_PRICE_SLIDE, num('heiferWeight')), 2);
+    var cullSlidePrice = round(priceSlideLookup(CULL_COW_PRICE_SLIDE, num('cullWeight')), 2);
+    YEARS.forEach(function(y, idx){
+      if(steerPriceAuto[idx]){
+        steerPrice[idx] = steerSlidePrice;
+        var sEl = document.querySelector('input[data-row="steerPrice"][data-year="'+y+'"]');
+        if(sEl) sEl.value = steerSlidePrice;
+      }
+      if(heiferPriceAuto[idx]){
+        heiferPrice[idx] = heiferSlidePrice;
+        var hEl = document.querySelector('input[data-row="heiferPrice"][data-year="'+y+'"]');
+        if(hEl) hEl.value = heiferSlidePrice;
+      }
+      if(cullPriceAuto[idx]){
+        cullPrice[idx] = cullSlidePrice;
+        var cEl = document.querySelector('input[data-row="cullPrice"][data-year="'+y+'"]');
+        if(cEl) cEl.value = cullSlidePrice;
+      }
+    });
 
     var discountRate = discountRatePct/100;
     var loanAmount = (1-equityPct/100)*bidPrice;
@@ -1842,17 +1971,21 @@
 
   /* ---------------- A2 defaults & equipment table ---------------- */
   var A2_DEFAULTS = {
-    a2_bcu:400, a2_weanPct:85, a2_premium:80, a2_steerWt:560, a2_steerPrice:185, a2_heiferWt:530, a2_heiferPrice:165,
+    a2_bcu:400, a2_weanPct:85, a2_premium:80, a2_steerWt:516.4, a2_steerPrice:413.1, a2_heiferWt:531.3, a2_heiferPrice:356.2,
     a2_ownedAcresPerBCU:12, a2_ownedRatePerAcre:5, a2_leasedAcresPerBCU:20, a2_leasedRatePerAcre:12,
     a2_landInvestAcresPerBCU:12, a2_landMarketValuePerAcre:850,
     a2_hayRolls:0, a2_hayPrice:0, a2_proteinQty:5, a2_proteinPrice:20, a2_saltLbs:30, a2_saltPrice:0.45,
     a2_otherFeed1Qty:0, a2_otherFeed1Price:0,
     a2_hiredLabor:50, a2_ownerLabor:150, a2_vetMed:35, a2_vaccination:40, a2_otherDirect:0,
     a2_fuelLube:35, a2_utilities:10, a2_adminGA:25, a2_otherIndirect1:0, a2_financeCost:0,
-    a2_cowCost:1400, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1300, a2_cullCowPrice:60,
-    a2_bullCost:4000, a2_bullLife:4, a2_bullDeathLoss:1, a2_cullBullWt:1800, a2_cullBullPrice:80, a2_cowsPerBull:25,
+    a2_cowCost:1400, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:149.8,
+    a2_bullCost:4000, a2_bullLife:4, a2_bullDeathLoss:1, a2_cullBullWt:1650.7, a2_cullBullPrice:189.3, a2_cowsPerBull:25,
     a2_targetROA:3
   };
+  var a2SteerPriceAuto = true;   // auto-linked to the steer weight slide until manually overridden
+  var a2HeiferPriceAuto = true;  // auto-linked to the heifer weight slide until manually overridden
+  var a2CullCowPriceAuto = true;  // auto-linked to the cull cow weight slide until manually overridden
+  var a2CullBullPriceAuto = true; // auto-linked to the bull weight slide (single reported point) until manually overridden
 
   var A2_EQUIP_DEFAULTS = [
     {name:'Pickups (2)', cost:80000, life:5, salvagePct:10, repairPct:5, allocPct:100},
@@ -1860,13 +1993,10 @@
     {name:'Tractor', cost:40000, life:10, salvagePct:10, repairPct:5, allocPct:100},
     {name:'Feeders', cost:8000, life:7, salvagePct:0, repairPct:5, allocPct:100},
     {name:'Cattle equipment', cost:20000, life:10, salvagePct:0, repairPct:5, allocPct:100},
-    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:5, allocPct:100},
-    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:5, allocPct:100},
-    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:5, allocPct:100},
-    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:5, allocPct:100},
-    {name:'Other', cost:0, life:0, salvagePct:0, repairPct:5, allocPct:100},
     {name:'Other', cost:0, life:0, salvagePct:0, repairPct:5, allocPct:100}
   ];
+  var A2_FIXED_ROW_COUNT = 5; // the 5 named rows (Pickups..Cattle equipment) are never removable
+  var A2_NEW_EQUIP_ROW = {name:'Other', cost:0, life:0, salvagePct:0, repairPct:5, allocPct:100};
   var a2EquipRows = A2_EQUIP_DEFAULTS.map(function(r){ return {name:r.name, cost:r.cost, life:r.life, salvagePct:r.salvagePct, repairPct:r.repairPct, allocPct:r.allocPct}; });
   var a2LandOwned = true;
 
@@ -1878,7 +2008,7 @@
 
       var tdName = document.createElement('td');
       tdName.style.textAlign = 'left';
-      if(idx < 5){
+      if(idx < A2_FIXED_ROW_COUNT){
         tdName.textContent = row.name;
       } else {
         var nameInput = document.createElement('input');
@@ -1907,8 +2037,36 @@
       tr.appendChild(numCell('salvagePct', 1));
       tr.appendChild(numCell('repairPct', 1));
       tr.appendChild(numCell('allocPct', 1));
+
+      var tdRemove = document.createElement('td');
+      tdRemove.className = 'equip-remove-cell';
+      if(idx >= A2_FIXED_ROW_COUNT){
+        var removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
+        removeBtn.className = 'equip-row-remove';
+        removeBtn.setAttribute('aria-label', 'Remove ' + (row.name || 'this') + ' row');
+        removeBtn.title = 'Remove this row';
+        removeBtn.textContent = '×';
+        removeBtn.addEventListener('click', function(){
+          a2EquipRows.splice(idx, 1);
+          buildA2EquipTable();
+          recalcA2();
+        });
+        tdRemove.appendChild(removeBtn);
+      }
+      tr.appendChild(tdRemove);
+
       tbody.appendChild(tr);
     });
+  }
+
+  function addA2EquipRow(){
+    a2EquipRows.push({name:A2_NEW_EQUIP_ROW.name, cost:A2_NEW_EQUIP_ROW.cost, life:A2_NEW_EQUIP_ROW.life, salvagePct:A2_NEW_EQUIP_ROW.salvagePct, repairPct:A2_NEW_EQUIP_ROW.repairPct, allocPct:A2_NEW_EQUIP_ROW.allocPct});
+    buildA2EquipTable();
+    recalcA2();
+    var rows = $('a2_equipBody').querySelectorAll('tr');
+    var lastRow = rows[rows.length - 1];
+    if(lastRow){ var firstInput = lastRow.querySelector('input[type="text"]'); if(firstInput) firstInput.focus(); }
   }
 
   function resetA2EquipRows(){
@@ -1945,6 +2103,20 @@
   }
 
   function recalcA2(){
+    // steer/heifer price slide -> auto-link the price field to the weight slider
+    if(a2SteerPriceAuto){
+      $('a2_steerPrice').value = round(priceSlideLookup(STEER_PRICE_SLIDE, num('a2_steerWt')), 2);
+    }
+    if(a2HeiferPriceAuto){
+      $('a2_heiferPrice').value = round(priceSlideLookup(HEIFER_PRICE_SLIDE, num('a2_heiferWt')), 2);
+    }
+    if(a2CullCowPriceAuto){
+      $('a2_cullCowPrice').value = round(priceSlideLookup(CULL_COW_PRICE_SLIDE, num('a2_cullCowWt')), 2);
+    }
+    if(a2CullBullPriceAuto){
+      $('a2_cullBullPrice').value = round(priceSlideLookup(BULL_PRICE_SLIDE, num('a2_cullBullWt')), 2);
+    }
+
     var inp = gatherA2Inputs();
     var bcu = inp.bcu || 1;
 
@@ -2010,11 +2182,58 @@
 
   function initA2(){
     buildA2EquipTable();
+    $('a2_addEquipBtn').addEventListener('click', addA2EquipRow);
 
     Object.keys(A2_DEFAULTS).forEach(function(id){
       if(id === 'a2_targetROA') return; // handled by the slider pair below
+      if(id === 'a2_steerPrice' || id === 'a2_heiferPrice' || id === 'a2_cullCowPrice' || id === 'a2_cullBullPrice') return; // handled below (auto-link clearing)
       var el = $(id);
       if(el) el.addEventListener('input', recalcA2);
+    });
+
+    $('a2_steerWtRange').addEventListener('input', function(){
+      $('a2_steerWt').value = this.value; recalcA2();
+    });
+    $('a2_steerWt').addEventListener('input', function(){
+      $('a2_steerWtRange').value = this.value;
+    });
+    $('a2_heiferWtRange').addEventListener('input', function(){
+      $('a2_heiferWt').value = this.value; recalcA2();
+    });
+    $('a2_heiferWt').addEventListener('input', function(){
+      $('a2_heiferWtRange').value = this.value;
+    });
+    $('a2_steerPrice').addEventListener('input', function(){
+      a2SteerPriceAuto = false;
+      $('a2_steerPrice').closest('.input-wrap').classList.remove('auto');
+      recalcA2();
+    });
+    $('a2_heiferPrice').addEventListener('input', function(){
+      a2HeiferPriceAuto = false;
+      $('a2_heiferPrice').closest('.input-wrap').classList.remove('auto');
+      recalcA2();
+    });
+    $('a2_cullCowWtRange').addEventListener('input', function(){
+      $('a2_cullCowWt').value = this.value; recalcA2();
+    });
+    $('a2_cullCowWt').addEventListener('input', function(){
+      $('a2_cullCowWtRange').value = this.value;
+    });
+    $('a2_cullCowPrice').addEventListener('input', function(){
+      a2CullCowPriceAuto = false;
+      $('a2_cullCowPrice').closest('.input-wrap').classList.remove('auto');
+      recalcA2();
+    });
+    $('a2_cullBullWtRange').addEventListener('input', function(){
+      $('a2_cullBullWt').value = this.value; recalcA2();
+    });
+    $('a2_cullBullWt').addEventListener('input', function(){
+      $('a2_cullBullWtRange').value = this.value;
+    });
+    $('a2_cullBullPrice').addEventListener('input', function(){
+      a2CullBullPriceAuto = false;
+      $('a2_cullBullPrice').closest('.input-wrap').classList.remove('auto');
+      recalcA2();
     });
 
     $('a2_targetROARange').addEventListener('input', function(){
@@ -2041,6 +2260,18 @@
     $('a2_resetBtn').addEventListener('click', function(){
       Object.keys(A2_DEFAULTS).forEach(function(id){ var el = $(id); if(el) el.value = A2_DEFAULTS[id]; });
       $('a2_targetROARange').value = A2_DEFAULTS.a2_targetROA;
+      $('a2_steerWtRange').value = A2_DEFAULTS.a2_steerWt;
+      $('a2_heiferWtRange').value = A2_DEFAULTS.a2_heiferWt;
+      $('a2_cullCowWtRange').value = A2_DEFAULTS.a2_cullCowWt;
+      $('a2_cullBullWtRange').value = A2_DEFAULTS.a2_cullBullWt;
+      a2SteerPriceAuto = true;
+      a2HeiferPriceAuto = true;
+      a2CullCowPriceAuto = true;
+      a2CullBullPriceAuto = true;
+      $('a2_steerPrice').closest('.input-wrap').classList.add('auto');
+      $('a2_heiferPrice').closest('.input-wrap').classList.add('auto');
+      $('a2_cullCowPrice').closest('.input-wrap').classList.add('auto');
+      $('a2_cullBullPrice').closest('.input-wrap').classList.add('auto');
       a2LandOwned = true;
       ownedBtn.classList.add('active'); leasedBtn.classList.remove('active');
       resetA2EquipRows();
@@ -2111,26 +2342,67 @@
   function init(){
     initThemeToggle();
     buildYearGrid();
-    var ids = Object.keys(DEFAULTS);
+    var ids = Object.keys(DEFAULTS).filter(function(id){ return id !== 'bullCullPrice'; }); // handled below (auto-link clearing)
     attachInputs(ids);
 
     $('bidPriceRange').addEventListener('input', function(){
       $('bidPrice').value = this.value; recalc();
     });
+    $('steerWeightRange').addEventListener('input', function(){
+      $('steerWeight').value = this.value; recalc();
+    });
+    $('steerWeight').addEventListener('input', function(){
+      $('steerWeightRange').value = this.value;
+    });
+    $('heiferWeightRange').addEventListener('input', function(){
+      $('heiferWeight').value = this.value; recalc();
+    });
+    $('heiferWeight').addEventListener('input', function(){
+      $('heiferWeightRange').value = this.value;
+    });
+    $('cullWeightRange').addEventListener('input', function(){
+      $('cullWeight').value = this.value; recalc();
+    });
+    $('cullWeight').addEventListener('input', function(){
+      $('cullWeightRange').value = this.value;
+    });
+    $('bullWeightRange').addEventListener('input', function(){
+      $('bullWeight').value = this.value; recalc();
+    });
+    $('bullWeight').addEventListener('input', function(){
+      $('bullWeightRange').value = this.value;
+    });
+    $('bullCullPrice').addEventListener('input', function(){
+      bullCullPriceAuto = false;
+      $('bullCullPrice').closest('.input-wrap').classList.remove('auto');
+      recalc();
+    });
 
     $('resetBtn').addEventListener('click', function(){
       Object.keys(DEFAULTS).forEach(function(id){ $(id).value = DEFAULTS[id]; });
-      calfCrop = [95,88,88,88,88,88,88];
-      steerPrice = [160,180,190,190,190,190,190];
-      heiferPrice= [140,160,170,170,170,170,170];
-      cullPrice  = [65,65,65,65,65,65,65];
-      opCost     = [690,700,710,720,730,740,750];
+      $('steerWeightRange').value = DEFAULTS.steerWeight;
+      $('heiferWeightRange').value = DEFAULTS.heiferWeight;
+      $('cullWeightRange').value = DEFAULTS.cullWeight;
+      $('bullWeightRange').value = DEFAULTS.bullWeight;
+      bullCullPriceAuto = true;
+      $('bullCullPrice').closest('.input-wrap').classList.add('auto');
+      calfCrop = CALFCROP_DEFAULT.slice();
+      steerPrice = STEER_PRICE_DEFAULT.slice();
+      heiferPrice= HEIFER_PRICE_DEFAULT.slice();
+      cullPrice  = CULL_PRICE_DEFAULT.slice();
+      opCost     = OPCOST_DEFAULT.slice();
       opCostAuto = [true,false,false,false,false,false,false];
+      steerPriceAuto  = [true,true,true,true,true,true,true];
+      heiferPriceAuto = [true,true,true,true,true,true,true];
+      cullPriceAuto   = [true,true,true,true,true,true,true];
       document.querySelectorAll('#yearTable input[data-row]').forEach(function(inp){
         var meta = rowsMeta.filter(function(m){return m.key===inp.dataset.row;})[0];
         var idx = YEARS.indexOf(parseInt(inp.dataset.year,10));
         inp.value = meta.arr[idx];
         if(inp.dataset.row==='opCost') inp.closest('td').classList.toggle('auto', idx===0);
+        if(inp.dataset.row==='steerPrice') inp.closest('td').classList.add('auto');
+        if(inp.dataset.row==='heiferPrice') inp.closest('td').classList.add('auto');
+        if(inp.dataset.row==='cullPrice') inp.closest('td').classList.add('auto');
       });
       recalc();
     });
