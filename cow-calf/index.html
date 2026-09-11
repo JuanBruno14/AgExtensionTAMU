@@ -129,6 +129,14 @@
     color:#fff;
     padding:5px 11px;border-radius:100px;
   }
+  .theme-toggle{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:100px;
+    background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.4);
+    color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0;
+  }
+  .theme-toggle:hover{background:rgba(255,255,255,0.24);}
+  .theme-toggle:focus-visible{outline:2px solid #fff;outline-offset:2px;}
 
   /* ---------- Roadmap tabs ---------- */
   .roadmap{
@@ -458,6 +466,7 @@
   <h1 class="tool-title" id="toolTitle">Cow Bid Price</h1>
   <div class="header-right">
     <a href="../index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
     <span class="phase-chip">Pilot · Phase 1</span>
   </div>
 </header>
@@ -2063,7 +2072,44 @@
     });
   }
 
+  /* ---------------- Manual dark/light toggle (overrides the OS/browser setting) ---------------- */
+  function initThemeToggle(){
+    var STORAGE_KEY = 'tamuDecisionAidsTheme';
+    var toggle = $('themeToggle');
+    if(!toggle) return;
+
+    var stored = null;
+    try { stored = window.localStorage.getItem(STORAGE_KEY); } catch(e){ /* private mode / blocked storage -- fall back to system preference */ }
+    if(stored === 'light' || stored === 'dark'){
+      document.documentElement.setAttribute('data-theme', stored);
+    }
+
+    function currentTheme(){
+      var attr = document.documentElement.getAttribute('data-theme');
+      if(attr === 'light' || attr === 'dark') return attr;
+      return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    function updateButton(){
+      var dark = currentTheme() === 'dark';
+      toggle.textContent = dark ? '☀️' : '🌙';
+      var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+      toggle.setAttribute('aria-label', label);
+      toggle.setAttribute('title', label);
+    }
+
+    updateButton();
+    toggle.addEventListener('click', function(){
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { window.localStorage.setItem(STORAGE_KEY, next); } catch(e){}
+      updateButton();
+      recalc();
+      if(typeof recalcA2 === 'function') recalcA2();
+    });
+  }
+
   function init(){
+    initThemeToggle();
     buildYearGrid();
     var ids = Object.keys(DEFAULTS);
     attachInputs(ids);
