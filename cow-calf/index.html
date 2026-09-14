@@ -992,6 +992,21 @@
       </div>
     </div>
 
+    <!-- Opportunity cost of capital (optional economic view) -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <h2>Opportunity cost of capital</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">The tool above only charges you for interest actually paid on debt — same as the original spreadsheet, which notes "no economic or opportunity cost for capital is included." It doesn't charge anything for capital you already own outright (owned land, your cow herd &amp; bull, your equipment). If that money could instead be earning a return elsewhere, set a rate below to see what your numbers look like after accounting for it — shown separately in the Result panel, without changing any of the figures above.</p>
+        <div class="field">
+          <label for="a2_oppCostRate">Opportunity cost rate</label>
+          <div class="input-wrap has-suffix"><input type="number" id="a2_oppCostRate" value="5" min="0" step="0.1"><span class="suffix">%</span></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <div class="col-results">
@@ -1037,6 +1052,19 @@
             <div class="meter-tick-lbl" id="a2_meterTickLbl" style="left:50%">Target</div>
           </div>
           <div class="meter-scale"><span>0%</span><span id="a2_meterMidLbl">3%</span><span id="a2_meterMaxLbl">6%</span></div>
+        </div>
+
+        <div class="stat-tiles" style="margin-bottom:12px;">
+          <div class="stat-tile">
+            <span class="label">Economic net income</span>
+            <span class="value" id="a2_econNetIncome" style="font-size:18px;">$0</span>
+            <span class="sub">/BCU, after opportunity cost</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Economic ROA</span>
+            <span class="value" id="a2_econROA" style="font-size:18px;">0.0%</span>
+            <span class="sub">after charging your own capital</span>
+          </div>
         </div>
 
         <div class="stat-tile wide good" id="a2_reqAvgTile" style="margin-bottom:12px;">
@@ -2036,6 +2064,7 @@
     a2_cowCost:1400, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:149.8,
     a2_bullCost:4000, a2_bullLife:4, a2_bullDeathLoss:1, a2_cullBullWt:1650.7, a2_cullBullPrice:189.3, a2_cowsPerBull:25,
     a2_capitalTotal:158000,
+    a2_oppCostRate:5,
     a2_targetROA:3
   };
   // Effective capital-asset rates, derived from the original Excel's 5-item equipment
@@ -2151,6 +2180,22 @@
     $('a2_sensDownNI').textContent = 'Net income ' + fmtDollar(sensDown.netIncome, 2) + '/BCU';
     $('a2_sensUpROA').textContent = (isFinite(sensUp.roa) ? (sensUp.roa*100).toFixed(1) : '0.0') + '%';
     $('a2_sensUpNI').textContent = 'Net income ' + fmtDollar(sensUp.netIncome, 2) + '/BCU';
+
+    // Opportunity cost of capital (optional economic view). The base ROA above
+    // only charges interest actually paid on debt, matching the original Excel's
+    // own footnote ("no economic or opportunity cost for capital is included").
+    // Here we charge a rate against capital the producer already owns outright —
+    // land only if Owned (leased land isn't "their" capital), plus breeding
+    // stock and equipment, which are always owned in this model. The ROA
+    // denominator stays the full asset base (all capital employed), matching
+    // the main ROA above — only the numerator (net income) is adjusted.
+    var oppCostRate = num('a2_oppCostRate');
+    var ownedCapitalPerBCU = (inp.landOwned ? s2.landInvestPerBCU : 0) + s2.breedingInvestPerBCU + s2.equipInvestPerBCU;
+    var opportunityCostPerBCU = ownedCapitalPerBCU * oppCostRate * 0.01;
+    var economicNetIncome = s1.netIncome - opportunityCostPerBCU;
+    var economicRoa = s2.totalAssetsPerBCU===0 ? 0 : economicNetIncome/s2.totalAssetsPerBCU;
+    $('a2_econNetIncome').textContent = fmtDollar(economicNetIncome, 2);
+    $('a2_econROA').textContent = (isFinite(economicRoa) ? (economicRoa*100).toFixed(1) : '0.0') + '%';
 
     $('a2_reqAvgValue').textContent = fmtDollar(s2.requiredAvgPrice, 2);
     $('a2_reqSteerValue').textContent = fmtDollar(s3.targetSteerPrice, 2);
