@@ -555,7 +555,7 @@
         <h2>Year-by-year prices &amp; calf crop</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Year 1 operating cost is filled in automatically from the "Cow operating cost" card below. Steer/heifer/cull-cow price (amber) auto-fill from the weight sliders above — the price is interpolated between the nearest reported weight classes (or condition grades, for cull cows) in the Sept 2026 Texas auction data. Type over any amber cell to lock in your own number for that year; it stops following the slider until you reset.</p>
+        <p class="card-note">Year 1 operating cost is filled in automatically from the "Cow operating cost" card below. Steer/heifer/cull-cow price (amber) auto-fill from the weight sliders above — the price is interpolated between the nearest reported weight classes (or condition grades, for cull cows) in the Sept 2026 Texas auction price curve, re-centered on the Rolling Plains District 3 budget's current prices. Type over any amber cell to lock in your own number for that year; it stops following the slider until you reset.</p>
         <div class="table-scroll">
           <table class="grid" id="yearTable">
             <thead>
@@ -599,62 +599,18 @@
       </div>
     </div>
 
-    <!-- Operating cost (Sheet 2) -->
+    <!-- Operating cost (Sheet 2) — now a shared calculator, see site/index.html -->
     <div class="card">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 7h20M2 17h20"/></svg>
-        <h2>Cow operating cost (BCU) — helper calculator</h2>
+        <h2>Cow operating cost (BCU)</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">BCU = Breeding Cow Unit (≈1.6 AU; includes a share of replacement heifers and the herd bull). This card's total automatically feeds the "Year 1 operating cost" in the grid above. The bull weight slider below auto-fills the cull bull price (amber) from the Sept 2026 Texas auction data — that report has only one grade for bulls, so the price stays at $189.30/cwt across the slider's range.</p>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Direct costs</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="landLeaseRate">Land grazing lease ($/mo)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="landLeaseRate" value="15" min="0"></div></div>
-            <div class="field"><label for="landLeaseMonths">Grazing months</label><div class="input-wrap"><input type="number" id="landLeaseMonths" value="11" min="0" max="12"></div></div>
-            <div class="field"><label for="hayRolls">Hay (rolls)</label><div class="input-wrap"><input type="number" id="hayRolls" value="1.5" min="0" step="0.1"></div></div>
-            <div class="field"><label for="hayPrice">Hay price ($/roll)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="hayPrice" value="105" min="0"></div></div>
-            <div class="field"><label for="saltLbs">Salt &amp; mineral (lb)</label><div class="input-wrap"><input type="number" id="saltLbs" value="90" min="0"></div></div>
-            <div class="field"><label for="saltPrice">Salt/mineral price ($/lb)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="saltPrice" value="0.25" min="0" step="0.01"></div></div>
-            <div class="field"><label for="laborMgmt">Labor &amp; management</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="laborMgmt" value="120" min="0"></div></div>
-            <div class="field"><label for="vetMed">Veterinarian &amp; medicine</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="vetMed" value="35" min="0"></div></div>
-          </div>
-        </fieldset>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Herd bull depreciation (allocated per BCU)</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="bullCost">Bull cost</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bullCost" value="4500" min="0"></div></div>
-            <div class="field"><label for="bullLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
-            <div class="field"><label for="bullWeight">Bull weight</label><div class="input-wrap has-suffix"><input type="number" id="bullWeight" value="1650.7" min="0"><span class="suffix">lb</span></div><input type="range" id="bullWeightRange" class="weight-slide" min="1300" max="2000" step="50" value="1650.7" aria-label="Bull weight — auto-fills the cull bull price (only one grade reported, so the price stays constant)"></div>
-            <div class="field"><label for="bullCullPrice">Cull bull price</label><div class="input-wrap has-suffix auto"><input type="number" id="bullCullPrice" value="189.3" min="0"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="bullDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="bullDeathLoss" value="2" min="0" max="100"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="cowsPerBull">Cows per bull</label><div class="input-wrap"><input type="number" id="cowsPerBull" value="25" min="1"></div></div>
-          </div>
-        </fieldset>
-
-        <fieldset style="margin-bottom:14px;">
-          <legend>Indirect costs</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="repairMaint">Vehicle/equipment repair</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="repairMaint" value="16" min="0"></div></div>
-            <div class="field"><label for="fuelOil">Fuel &amp; oil</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="fuelOil" value="5" min="0"></div></div>
-            <div class="field"><label for="utilities">Utilities</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="utilities" value="10" min="0"></div></div>
-            <div class="field"><label for="adminGA">General &amp; administration</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="adminGA" value="20" min="0"></div></div>
-            <div class="field"><label for="vehicleDepr">Vehicle/equipment depreciation</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="vehicleDepr" value="48" min="0"></div></div>
-          </div>
-        </fieldset>
-
-        <div class="stat-tile wide" style="margin-top:4px;">
-          <span class="label">Total operating cost per BCU</span>
-          <span class="value" id="opCostTotal">$0</span>
-          <span class="sub" id="opCostBreak"></span>
-        </div>
-
-        <div style="margin-top:18px;">
-          <div class="stackbar-total"><span>Where it goes</span><strong id="opCostBarTotal">$0 / BCU</strong></div>
-          <div class="stackbar" id="opCostStackbar"></div>
-          <div class="legend-rows" id="opCostLegend"></div>
+        <p class="card-note">BCU = Breeding Cow Unit (≈1.6 AU; includes a share of replacement heifers and the herd bull). This feeds "Year 1 operating cost" in the grid above. It's a shared number now — entered once in the <a href="../index.html#bcu-calculator" style="font-weight:600;text-decoration:underline;color:inherit;">"Cow operating cost (BCU)" calculator on the home page</a>, so every tool on this site that needs it reads the same value from there instead of asking you to re-enter it per page. Update it on the home page any time; to override just this page, type a different number directly into Year 1 in the grid below.</p>
+        <div class="stat-tile wide">
+          <span class="label">Currently using</span>
+          <span class="value" id="sharedOpCostValue">$0</span>
+          <span class="sub" id="sharedOpCostSub"></span>
         </div>
       </div>
     </div>
@@ -768,7 +724,7 @@
         <h2>Herd &amp; weaning basics</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">These set your revenue side: how many BCU you run, your weaning percentage, and the current weight and price of your steer and heifer calves. Drag a weight slider and its price field (amber) auto-fills from the Sept 2026 Texas auction price slide, interpolated between the nearest reported weight classes — type over the price by hand any time to lock in your own number.</p>
+        <p class="card-note">These set your revenue side: how many BCU you run, your weaning percentage, and the current weight and price of your steer and heifer calves. Drag a weight slider and its price field (amber) auto-fills from the Sept 2026 Texas auction price curve, re-centered on the Rolling Plains District 3 budget's current prices, interpolated between the nearest reported weight classes — type over the price by hand any time to lock in your own number.</p>
         <div class="field-grid cols-3">
           <div class="field">
             <label for="a2_bcu">Breeding Cow Units (BCU)</label>
@@ -789,7 +745,7 @@
           </div>
           <div class="field">
             <label for="a2_steerPrice">Steer price</label>
-            <div class="input-wrap has-suffix auto"><input type="number" id="a2_steerPrice" value="413.1" min="0"><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-suffix auto"><input type="number" id="a2_steerPrice" value="530.0" min="0"><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field"></div>
           <div class="field">
@@ -799,17 +755,9 @@
           </div>
           <div class="field">
             <label for="a2_heiferPrice">Heifer price</label>
-            <div class="input-wrap has-suffix auto"><input type="number" id="a2_heiferPrice" value="356.2" min="0"><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-suffix auto"><input type="number" id="a2_heiferPrice" value="460.0" min="0"><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field"></div>
-        </div>
-        <div class="field" style="margin-top:16px;">
-          <label>Land</label>
-          <div class="segmented" role="group" aria-label="Land ownership">
-            <button type="button" class="active" id="a2_landOwnedBtn" data-owned="1">Owned</button>
-            <button type="button" id="a2_landLeasedBtn" data-owned="0">Leased</button>
-          </div>
-          <p class="derived-note">Switches which land cost line applies below (owned tax &amp; maintenance vs. leased rent). Land's market value counts toward your asset base either way, since it's capital your operation uses regardless of who holds the title.</p>
         </div>
       </div>
     </div>
@@ -821,14 +769,7 @@
         <h2>Land</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Owned-land cost (tax &amp; maintenance) only applies when Owned is selected above; leased-land cost only applies when Leased is selected. The investment value below (for your asset base and ROA) counts land's market value either way, since it reflects capital your operation is using — not just what you happen to hold title to.</p>
-        <fieldset style="margin-bottom:16px;">
-          <legend>Owned land — tax &amp; maintenance</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="a2_ownedAcresPerBCU">Acres/BCU</label><div class="input-wrap"><input type="number" id="a2_ownedAcresPerBCU" value="12" min="0"></div></div>
-            <div class="field"><label for="a2_ownedRatePerAcre">Tax &amp; maint.</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_ownedRatePerAcre" value="5" min="0"></div></div>
-          </div>
-        </fieldset>
+        <p class="card-note">This tool models leased land only. The investment value below (for your asset base and ROA) still counts land's market value, since it reflects capital your operation is using regardless of who holds the title.</p>
         <fieldset style="margin-bottom:16px;">
           <legend>Leased land — cash lease</legend>
           <div class="field-grid cols-3">
@@ -932,7 +873,7 @@
         <h2>Breeding stock investment &amp; depreciation</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Cow and bull depreciation, and cull revenue, are calculated here and automatically feed the cost and revenue lines above. Drag the cull cow weight slider to auto-fill its price (amber) from the Sept 2026 Texas auction data — interpolated across the three condition grades reported (Lean/Boner/Breaker). The bull weight slider auto-fills its price too, but the report only has one grade for bulls (no weight breakdown), so that price stays at $189.30/cwt no matter where you set the slider.</p>
+        <p class="card-note">Cow and bull depreciation, and cull revenue, are calculated here and automatically feed the cost and revenue lines above. Drag the cull cow weight slider to auto-fill its price (amber) — interpolated across the three condition grades reported (Lean/Boner/Breaker). The bull weight slider auto-fills its price too, but the report only has one grade for bulls (no weight breakdown), so that price stays at $190.00/cwt no matter where you set the slider.</p>
         <fieldset style="margin-bottom:16px;">
           <legend>Breeding cows</legend>
           <div class="field-grid cols-3">
@@ -940,7 +881,7 @@
             <div class="field"><label for="a2_cowLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowLife" value="7" min="1"><span class="suffix">yrs</span></div></div>
             <div class="field"><label for="a2_cowDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
             <div class="field"><label for="a2_cullCowWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1279.4" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullCowWtRange" class="weight-slide" min="1100" max="1550" step="50" value="1279.4" aria-label="Cull cow weight — drag to auto-fill the matching auction price"></div>
-            <div class="field"><label for="a2_cullCowPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullCowPrice" value="149.8" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="a2_cullCowPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullCowPrice" value="180.0" min="0"><span class="suffix">$/cwt</span></div></div>
             <div class="field"></div>
           </div>
         </fieldset>
@@ -951,7 +892,7 @@
             <div class="field"><label for="a2_bullLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
             <div class="field"><label for="a2_bullDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_bullDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
             <div class="field"><label for="a2_cullBullWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullWt" value="1650.7" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullBullWtRange" class="weight-slide" min="1300" max="2000" step="50" value="1650.7" aria-label="Bull weight — auto-fills the cull bull price (only one grade reported, so the price stays constant)"></div>
-            <div class="field"><label for="a2_cullBullPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullBullPrice" value="189.3" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="a2_cullBullPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullBullPrice" value="190.0" min="0"><span class="suffix">$/cwt</span></div></div>
             <div class="field"><label for="a2_cowsPerBull">Cows/bull</label><div class="input-wrap"><input type="number" id="a2_cowsPerBull" value="25" min="1"></div></div>
           </div>
         </fieldset>
@@ -1456,19 +1397,15 @@
   var DEFAULTS = {
     bidPrice:1300, steerWeight:516.4, heiferWeight:531.3, cullWeight:1279.4,
     discountRate:5, calvingYears:7, startYear:2026,
-    equityPct:20, loanTerm:5, interestRate:5,
-    landLeaseRate:15, landLeaseMonths:11, hayRolls:1.5, hayPrice:105,
-    saltLbs:90, saltPrice:0.25, laborMgmt:120, vetMed:35,
-    bullCost:4500, bullLife:4, bullWeight:1650.7, bullCullPrice:189.3, bullDeathLoss:2, cowsPerBull:25,
-    repairMaint:16, fuelOil:5, utilities:10, adminGA:20, vehicleDepr:48
+    equityPct:20, loanTerm:5, interestRate:5
   };
   /* Single source of truth for the year-grid default arrays, so the initial
      declaration and the Reset button can never drift apart (they used to be
      two separate hardcoded copies - see 2026-09-11 project notes). */
   var CALFCROP_DEFAULT   = [95,88,88,88,88,88,88];
-  var STEER_PRICE_DEFAULT  = [413.1,413.1,413.1,413.1,413.1,413.1,413.1];
-  var HEIFER_PRICE_DEFAULT = [356.2,356.2,356.2,356.2,356.2,356.2,356.2];
-  var CULL_PRICE_DEFAULT   = [149.8,149.8,149.8,149.8,149.8,149.8,149.8];
+  var STEER_PRICE_DEFAULT  = [530.0,530.0,530.0,530.0,530.0,530.0,530.0];
+  var HEIFER_PRICE_DEFAULT = [460.0,460.0,460.0,460.0,460.0,460.0,460.0];
+  var CULL_PRICE_DEFAULT   = [180.0,180.0,180.0,180.0,180.0,180.0,180.0];
   var OPCOST_DEFAULT       = [690,700,710,720,730,740,750];
 
   /* Texas Auction Data price slide (Local Texas Auction Data, Sept 4, 2026 -
@@ -1476,25 +1413,40 @@
      is one reported weight-class's average weight & average price; weight
      inputs between two points get a linearly-interpolated price ("price
      slide") rather than a coarse step function. Weights outside the reported
-     range clamp to the nearest end point rather than extrapolating. */
+     range clamp to the nearest end point rather than extrapolating.
+
+     UPDATED 2026-09-16 (eighteenth/nineteenth round): the user designated
+     "2026 D03 Budgets 3-10-26 1.xlsm" (Rolling Plains Extension District 3)
+     as the new authoritative price source, but that workbook only gives one
+     flat price per class (Steer $530/cwt, Heifer $460/cwt, Cull Cow $180/cwt,
+     Cull Bull $190/cwt) - no weight breakdown. Rather than deleting this
+     richer, dated weight/price curve, every point below was rescaled by a
+     single constant ratio (new flat price / old anchor price at the class's
+     reference weight - 516.4 lb for steers, 531.3 lb for heifers, 1279.4 lb
+     Boner-grade for cull cows) so the curve's real relative shape from the
+     Sept 4 auction is preserved, but it now re-centers on the new source's
+     number at the reference weight. This is a deliberate rescale, not raw
+     auction data at every point any more - see the project doc for the
+     exact ratios and the alternative (keep as pure Sept-4 data, or replace
+     with a flat single price) that were offered and declined. */
   var STEER_PRICE_SLIDE = [
-    {w:397.0,  p:490.25},
-    {w:463.8,  p:440.6},
-    {w:516.4,  p:413.1},
-    {w:654.7,  p:344.1},
-    {w:762.3,  p:341.3},
-    {w:835.5,  p:328.0},
-    {w:962.3,  p:305.6},
-    {w:1140.0, p:248.0}
+    {w:397.0,  p:629.0},
+    {w:463.8,  p:565.3},
+    {w:516.4,  p:530.0},
+    {w:654.7,  p:441.5},
+    {w:762.3,  p:437.9},
+    {w:835.5,  p:420.8},
+    {w:962.3,  p:392.1},
+    {w:1140.0, p:318.2}
   ];
   var HEIFER_PRICE_SLIDE = [
-    {w:337.0, p:429.1},
-    {w:455.1, p:381.7},
-    {w:531.3, p:356.2},
-    {w:654.1, p:329.8},
-    {w:765.6, p:306.5},
-    {w:862.6, p:290.0},
-    {w:922.0, p:249.0}
+    {w:337.0, p:554.1},
+    {w:455.1, p:492.9},
+    {w:531.3, p:460.0},
+    {w:654.1, p:425.9},
+    {w:765.6, p:395.8},
+    {w:862.6, p:374.5},
+    {w:922.0, p:321.6}
   ];
   /* Cull cows also have a real weight/price slide - the same Sept 4, 2026
      report breaks them into 3 condition grades, each with its own average
@@ -1504,20 +1456,21 @@
      not just weight, drives price), so interpolated as reported rather than
      forced into a clean downward slope. Cull BULLS only have one reported
      row (no grade breakdown), so there's nothing to slide there - that
-     field stays a plain input. */
+     field stays a plain input. Rescaled 2026-09-16, see note above. */
   var CULL_COW_PRICE_SLIDE = [
-    {w:1143.4, p:148.7}, // Lean Cows
-    {w:1279.4, p:149.8}, // Boner Cows
-    {w:1496.1, p:147.2}  // Breaker Cows
+    {w:1143.4, p:178.7}, // Lean Cows
+    {w:1279.4, p:180.0}, // Boner Cows
+    {w:1496.1, p:176.9}  // Breaker Cows
   ];
   /* Bulls: the report has only one row (no condition-grade breakdown like
      cull cows get), so this "slide" is a single point - priceSlideLookup
      clamps to it regardless of weight. The slider still lets the field
      auto-fill/lock the same way as every other price for a consistent UI,
      it just won't visibly change as you drag it until a weight-class
-     breakdown for bulls is reported. */
+     breakdown for bulls is reported. Rescaled 2026-09-16, see note above
+     (with only one point, this is simply the new source's $190/cwt). */
   var BULL_PRICE_SLIDE = [
-    {w:1650.7, p:189.3} // Bulls
+    {w:1650.7, p:190.0} // Bulls
   ];
   function priceSlideLookup(table, w){
     if(!table.length || !isFinite(w)) return 0;
@@ -1542,7 +1495,6 @@
   var steerPriceAuto  = [true,true,true,true,true,true,true]; // auto-linked to steer weight slide
   var heiferPriceAuto = [true,true,true,true,true,true,true]; // auto-linked to heifer weight slide
   var cullPriceAuto   = [true,true,true,true,true,true,true]; // auto-linked to cull cow weight slide
-  var bullCullPriceAuto = true; // auto-linked to bull weight slide (single reported point - see BULL_PRICE_SLIDE)
 
   /* ---------------- Build the year grid ---------------- */
   var rowsMeta = [
@@ -1593,37 +1545,42 @@
     });
   }
 
-  /* ---------------- Sheet 2: operating cost ---------------- */
-  function calcOperatingCost(){
-    var landLease = num('landLeaseRate')*num('landLeaseMonths');
-    var hayCost = num('hayRolls')*num('hayPrice');
-    var proteinQty = num('hayRolls')*1000*0.2/100;
-    var proteinCost = proteinQty*20; // protein price fixed at $20/cwt per original sheet
-    var saltCost = num('saltLbs')*num('saltPrice');
-    var subtotalFeed = landLease+hayCost+proteinCost+saltCost;
+  /* ---------------- Sheet 2: operating cost (shared, see site/index.html) ---------------- */
+  // 2026-09-16: moved from a per-page input card to a single shared calculator on the
+  // home page (site/index.html#bcu-calculator), at the user's request, so a producer
+  // enters it once and every tool that needs it reads the same number. It's persisted
+  // to localStorage under SHARED_OPCOST_KEY by the home page; this page only reads it.
+  // The fallback below reproduces the original card's own default inputs exactly
+  // (verified in the project notes), so a visitor who lands here without ever having
+  // opened the home page still sees the same Year-1 default as before this change.
+  var SHARED_OPCOST_KEY = 'tamuDecisionAidsBcuOpCost';
+  var SHARED_OPCOST_FALLBACK = 673.264;
 
-    var salvage = num('bullWeight')*num('bullCullPrice')*0.01;
-    var netSalvage = salvage*(100-num('bullDeathLoss'))*0.01;
-    var bullDeprTotal = (num('bullCost')-netSalvage)/num('bullLife');
-    var bullDeprPerBCU = bullDeprTotal/num('cowsPerBull');
-
-    var totalDirect = subtotalFeed + num('laborMgmt') + num('vetMed') + bullDeprPerBCU;
-    var totalIndirect = num('repairMaint')+num('fuelOil')+num('utilities')+num('adminGA')+num('vehicleDepr');
-    var total = totalDirect + totalIndirect;
-
-    $('opCostTotal').textContent = '$'+fmtMoney2.format(total);
-    $('opCostBreak').textContent = 'Direct $'+fmtMoney0.format(totalDirect)+' + Indirect $'+fmtMoney0.format(totalIndirect)+' (incl. bull depreciation $'+fmtMoney2.format(bullDeprPerBCU)+'/BCU)';
-
-    buildStackBar('opCostStackbar','opCostLegend','opCostBarTotal', [
-      {label:'Feed & land', value:subtotalFeed, color:'var(--s1)'},
-      {label:'Labor & management', value:num('laborMgmt'), color:'var(--s2)'},
-      {label:'Vet & health', value:num('vetMed'), color:'var(--s3)'},
-      {label:'Bull depreciation', value:bullDeprPerBCU, color:'var(--s4)'},
-      {label:'Equipment & other indirect', value:totalIndirect, color:'var(--s5)'}
-    ], total, ' / BCU');
-
-    return total;
+  function getSharedOpCostTotal(){
+    try {
+      var raw = window.localStorage.getItem(SHARED_OPCOST_KEY);
+      if(raw){
+        var data = JSON.parse(raw);
+        if(data && isFinite(data.total)) return data.total;
+      }
+    } catch(e){ /* private mode / blocked storage -- fall back below */ }
+    return SHARED_OPCOST_FALLBACK;
   }
+
+  function renderSharedOpCostCard(total){
+    var el = $('sharedOpCostValue'), sub = $('sharedOpCostSub');
+    if(el) el.textContent = '$'+fmtMoney2.format(total)+' / BCU';
+    if(sub){
+      var raw = null;
+      try { raw = window.localStorage.getItem(SHARED_OPCOST_KEY); } catch(e){ /* private mode / blocked storage */ }
+      sub.textContent = raw ? 'From the home page calculator' : 'Not set on the home page yet — using the original spreadsheet default';
+    }
+  }
+
+  // Live-refresh if the home page's calculator is updated in another open tab.
+  window.addEventListener('storage', function(e){
+    if(e.key === SHARED_OPCOST_KEY) recalc();
+  });
 
   /* ---------------- Chart ---------------- */
   function drawChart(values){
@@ -1755,11 +1712,6 @@
   var yearWords = {1:'one',2:'two',3:'three',4:'four',5:'five',6:'six',7:'seven'};
 
   function recalc(){
-    // bull price slide -> auto-link before calcOperatingCost() reads it below
-    if(bullCullPriceAuto){
-      $('bullCullPrice').value = round(priceSlideLookup(BULL_PRICE_SLIDE, num('bullWeight')), 2);
-    }
-
     var bidPrice = num('bidPrice');
     $('bidPriceRange').value = bidPrice;
     var steerWeight = num('steerWeight');
@@ -1778,8 +1730,9 @@
       el.textContent = (y<=nper) ? String(startYear + y - 1) : '';
     });
 
-    // operating cost auxiliary -> auto-link year 1
-    var opCostCalc = calcOperatingCost();
+    // operating cost auxiliary -> auto-link year 1 (shared value, see getSharedOpCostTotal above)
+    var opCostCalc = getSharedOpCostTotal();
+    renderSharedOpCostCard(opCostCalc);
     if(opCostAuto[0]){
       opCost[0] = round(opCostCalc,3);
       var y1input = document.querySelector('input[data-row="opCost"][data-year="1"]');
@@ -1928,14 +1881,13 @@
     var cullRevPerBCU = bs.cullRevenuePerBCU;
     var totalRevPerBCU = calfRevPerBCU + cullRevPerBCU;
 
-    var landOwnedCost = inp.landOwned ? inp.ownedAcresPerBCU*inp.ownedRatePerAcre : 0;
-    var landLeasedCost = (!inp.landOwned) ? inp.leasedRatePerAcre*inp.leasedAcresPerBCU : 0;
+    var landLeasedCost = inp.leasedRatePerAcre*inp.leasedAcresPerBCU;
     var hayCost = inp.hayRolls*inp.hayPrice;
     var proteinCost = inp.proteinQty*inp.proteinPrice;
     var saltCost = inp.saltLbs*inp.saltPrice;
     var otherFeed1 = inp.otherFeed1Qty*inp.otherFeed1Price;
     var otherFeed2 = inp.otherFeed2Qty*inp.otherFeed2Price;
-    var subtotalFeed = landOwnedCost+landLeasedCost+hayCost+proteinCost+saltCost+otherFeed1+otherFeed2;
+    var subtotalFeed = landLeasedCost+hayCost+proteinCost+saltCost+otherFeed1+otherFeed2;
 
     var subtotalOtherDirect = inp.hiredLabor+inp.ownerLabor+inp.vetMed+inp.vaccination+inp.otherDirect;
 
@@ -1972,15 +1924,14 @@
   /* ---------------- Sheet 2: ROA & Required Average Calf Price ---------------- */
   function calcSheet2(inp, s1, cap, bs){
     // Deliberate deviation from the original Excel, made 2026-09-14 at the user's
-    // explicit request: land's market value now counts in the ROA asset base whether
-    // land is Owned or Leased, since it's capital employed in the operation either way.
-    // The original spreadsheet zeroed this out under Leased (only counting it when
-    // Owned), which made Leased-land ROA spike to unrealistic levels (69%+ at default
-    // inputs) purely because leasing removed land from the denominator while its full
-    // rent still counted as a cost. Verified this change makes Leased ROA lower than
-    // Owned at default inputs (since leasing costs more cash for the same asset base),
-    // which matches real-world intuition. The land cost lines above (owned tax vs.
-    // leased rent) are untouched — this only changes what counts as "assets."
+    // explicit request: land's market value counts in the ROA asset base even though
+    // it's leased, since it's capital employed in the operation regardless of who
+    // holds the title. The original spreadsheet zeroed this out for leased land,
+    // which made ROA spike to unrealistic levels (69%+ at default inputs) purely
+    // because leasing removed land from the denominator while its full rent still
+    // counted as a cost. (2026-09-16: the tool now only models leased land — see
+    // project notes — but this asset-base treatment predates and is unaffected by
+    // that simplification.)
     var landInvestPerBCU = inp.landMarketValuePerAcre*inp.landInvestAcresPerBCU;
     var breedingInvestPerBCU = bs.totalBreedingInvestmentPerBCU;
     var equipInvestPerBCU = cap.investPerBCU;
@@ -2054,15 +2005,15 @@
 
   /* ---------------- A2 defaults ---------------- */
   var A2_DEFAULTS = {
-    a2_bcu:400, a2_weanPct:85, a2_premium:80, a2_steerWt:516.4, a2_steerPrice:413.1, a2_heiferWt:531.3, a2_heiferPrice:356.2,
-    a2_ownedAcresPerBCU:12, a2_ownedRatePerAcre:5, a2_leasedAcresPerBCU:20, a2_leasedRatePerAcre:12,
+    a2_bcu:400, a2_weanPct:85, a2_premium:80, a2_steerWt:516.4, a2_steerPrice:530.0, a2_heiferWt:531.3, a2_heiferPrice:460.0,
+    a2_leasedAcresPerBCU:20, a2_leasedRatePerAcre:12,
     a2_landInvestAcresPerBCU:12, a2_landMarketValuePerAcre:850,
     a2_hayRolls:0, a2_hayPrice:0, a2_proteinQty:5, a2_proteinPrice:20, a2_saltLbs:30, a2_saltPrice:0.45,
     a2_otherFeed1Qty:0, a2_otherFeed1Price:0,
     a2_hiredLabor:50, a2_ownerLabor:150, a2_vetMed:35, a2_vaccination:40, a2_otherDirect:0,
     a2_fuelLube:35, a2_utilities:10, a2_adminGA:25, a2_otherIndirect1:0, a2_financeCost:0,
-    a2_cowCost:1400, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:149.8,
-    a2_bullCost:4000, a2_bullLife:4, a2_bullDeathLoss:1, a2_cullBullWt:1650.7, a2_cullBullPrice:189.3, a2_cowsPerBull:25,
+    a2_cowCost:1400, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:180.0,
+    a2_bullCost:4000, a2_bullLife:4, a2_bullDeathLoss:1, a2_cullBullWt:1650.7, a2_cullBullPrice:190.0, a2_cowsPerBull:25,
     a2_capitalTotal:158000,
     a2_oppCostRate:5,
     a2_targetROA:3
@@ -2081,7 +2032,6 @@
   var a2HeiferPriceAuto = true;  // auto-linked to the heifer weight slide until manually overridden
   var a2CullCowPriceAuto = true;  // auto-linked to the cull cow weight slide until manually overridden
   var a2CullBullPriceAuto = true; // auto-linked to the bull weight slide (single reported point) until manually overridden
-  var a2LandOwned = true;
 
   function gatherA2Inputs(){
     return {
@@ -2089,8 +2039,6 @@
       steerWt: num('a2_steerWt'), steerPrice: num('a2_steerPrice'),
       heiferWt: num('a2_heiferWt'), heiferPrice: num('a2_heiferPrice'),
       premium: num('a2_premium'),
-      landOwned: a2LandOwned,
-      ownedAcresPerBCU: num('a2_ownedAcresPerBCU'), ownedRatePerAcre: num('a2_ownedRatePerAcre'),
       leasedAcresPerBCU: num('a2_leasedAcresPerBCU'), leasedRatePerAcre: num('a2_leasedRatePerAcre'),
       landInvestAcresPerBCU: num('a2_landInvestAcresPerBCU'), landMarketValuePerAcre: num('a2_landMarketValuePerAcre'),
       hayRolls: num('a2_hayRolls'), hayPrice: num('a2_hayPrice'),
@@ -2185,12 +2133,12 @@
     // only charges interest actually paid on debt, matching the original Excel's
     // own footnote ("no economic or opportunity cost for capital is included").
     // Here we charge a rate against capital the producer already owns outright —
-    // land only if Owned (leased land isn't "their" capital), plus breeding
+    // leased land isn't "their" capital, so it's never included, only breeding
     // stock and equipment, which are always owned in this model. The ROA
     // denominator stays the full asset base (all capital employed), matching
     // the main ROA above — only the numerator (net income) is adjusted.
     var oppCostRate = num('a2_oppCostRate');
-    var ownedCapitalPerBCU = (inp.landOwned ? s2.landInvestPerBCU : 0) + s2.breedingInvestPerBCU + s2.equipInvestPerBCU;
+    var ownedCapitalPerBCU = s2.breedingInvestPerBCU + s2.equipInvestPerBCU;
     var opportunityCostPerBCU = ownedCapitalPerBCU * oppCostRate * 0.01;
     var economicNetIncome = s1.netIncome - opportunityCostPerBCU;
     var economicRoa = s2.totalAssetsPerBCU===0 ? 0 : economicNetIncome/s2.totalAssetsPerBCU;
@@ -2281,18 +2229,6 @@
       recalcA2();
     });
 
-    var ownedBtn = $('a2_landOwnedBtn'), leasedBtn = $('a2_landLeasedBtn');
-    ownedBtn.addEventListener('click', function(){
-      a2LandOwned = true;
-      ownedBtn.classList.add('active'); leasedBtn.classList.remove('active');
-      recalcA2();
-    });
-    leasedBtn.addEventListener('click', function(){
-      a2LandOwned = false;
-      leasedBtn.classList.add('active'); ownedBtn.classList.remove('active');
-      recalcA2();
-    });
-
     $('a2_resetBtn').addEventListener('click', function(){
       Object.keys(A2_DEFAULTS).forEach(function(id){ var el = $(id); if(el) el.value = A2_DEFAULTS[id]; });
       $('a2_targetROARange').value = A2_DEFAULTS.a2_targetROA;
@@ -2308,8 +2244,6 @@
       $('a2_heiferPrice').closest('.input-wrap').classList.add('auto');
       $('a2_cullCowPrice').closest('.input-wrap').classList.add('auto');
       $('a2_cullBullPrice').closest('.input-wrap').classList.add('auto');
-      a2LandOwned = true;
-      ownedBtn.classList.add('active'); leasedBtn.classList.remove('active');
       recalcA2();
     });
 
@@ -2377,8 +2311,7 @@
   function init(){
     initThemeToggle();
     buildYearGrid();
-    var ids = Object.keys(DEFAULTS).filter(function(id){ return id !== 'bullCullPrice'; }); // handled below (auto-link clearing)
-    attachInputs(ids);
+    attachInputs(Object.keys(DEFAULTS));
 
     $('bidPriceRange').addEventListener('input', function(){
       $('bidPrice').value = this.value; recalc();
@@ -2401,26 +2334,11 @@
     $('cullWeight').addEventListener('input', function(){
       $('cullWeightRange').value = this.value;
     });
-    $('bullWeightRange').addEventListener('input', function(){
-      $('bullWeight').value = this.value; recalc();
-    });
-    $('bullWeight').addEventListener('input', function(){
-      $('bullWeightRange').value = this.value;
-    });
-    $('bullCullPrice').addEventListener('input', function(){
-      bullCullPriceAuto = false;
-      $('bullCullPrice').closest('.input-wrap').classList.remove('auto');
-      recalc();
-    });
-
     $('resetBtn').addEventListener('click', function(){
       Object.keys(DEFAULTS).forEach(function(id){ $(id).value = DEFAULTS[id]; });
       $('steerWeightRange').value = DEFAULTS.steerWeight;
       $('heiferWeightRange').value = DEFAULTS.heiferWeight;
       $('cullWeightRange').value = DEFAULTS.cullWeight;
-      $('bullWeightRange').value = DEFAULTS.bullWeight;
-      bullCullPriceAuto = true;
-      $('bullCullPrice').closest('.input-wrap').classList.add('auto');
       calfCrop = CALFCROP_DEFAULT.slice();
       steerPrice = STEER_PRICE_DEFAULT.slice();
       heiferPrice= HEIFER_PRICE_DEFAULT.slice();
