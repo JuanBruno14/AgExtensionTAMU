@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Beef Cattle Decision Aids</title>
+<title>Texas A&amp;M AgriLife Extension - Decision Making</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap">
 <style>
   :root{
@@ -28,6 +28,7 @@
     --ink-muted:#8a7d73;
     --focus:#2f6fb3;
     --shadow-card:0 1px 2px rgba(58,0,0,0.04), 0 4px 16px rgba(58,0,0,0.06);
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#4a3aa7;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
@@ -37,6 +38,7 @@
       --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
       --wheat-100:#33290f; --wheat-500:#d9a44a;
       --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
     }
   }
   :root[data-theme="dark"]{
@@ -46,6 +48,7 @@
     --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
     --wheat-100:#33290f; --wheat-500:#d9a44a;
     --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
   }
 
   *{box-sizing:border-box;}
@@ -170,6 +173,148 @@
     border-top:1px solid var(--border);padding-top:20px;
   }
   footer a{text-decoration:underline;}
+
+  /* ---------- Shared calculator card (Cow operating cost / BCU) ---------- */
+  .shared-tool{margin-bottom:36px;}
+
+  /* Collapsed by default and styled like the category cards below it (a "sub-index"
+     rather than a form dumped on the landing page) — a producer sees the icon, a
+     one-line description, and the live total at a glance, and only opens it to edit. */
+  .bcu-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow-card);
+    overflow:hidden;
+  }
+  .bcu-card-toggle{
+    display:block;width:100%;box-sizing:border-box;text-align:left;
+    background:none;border:none;margin:0;
+    padding:18px 18px 16px;
+    font:inherit;color:inherit;cursor:pointer;
+  }
+  .bcu-card-toggle:hover{background:var(--surface-sunken);}
+  .bcu-card-toggle:focus-visible{outline:2px solid var(--focus);outline-offset:-2px;}
+  .bcu-card-toggle .cat-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
+  .bcu-card-toggle .cat-num{
+    font-size:16px;
+    background:var(--maroon-100);
+    width:28px;height:28px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .bcu-card-toggle h3{font-family:"Fraunces",serif;font-size:15px;font-weight:600;margin:0 0 6px;line-height:1.3;color:var(--ink);}
+  .bcu-card-toggle p{font-size:12.5px;color:var(--ink-muted);margin:0;line-height:1.5;max-width:64ch;}
+  .bcu-preview{display:flex;align-items:baseline;gap:6px;margin-top:14px;flex-wrap:wrap;}
+  .bcu-preview-value{font-family:"Fraunces",serif;font-size:24px;font-weight:600;color:var(--accent);}
+  .bcu-preview-label{font-size:12px;color:var(--ink-muted);}
+  .bcu-card-toggle .go{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:12.5px;font-weight:700;color:var(--accent);margin-top:12px;
+  }
+  .bcu-card-toggle .go .chevron{transition:transform 0.18s ease;}
+  .bcu-card-toggle[aria-expanded="true"] .go .chevron{transform:rotate(180deg);}
+
+  .bcu-fields{padding:4px 18px 20px;border-top:1px solid var(--border);}
+  .bcu-fields[hidden]{display:none;}
+  .bcu-fields .card-note{margin-top:16px;}
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow-card);
+    overflow:hidden;
+  }
+  .card-head{
+    background:var(--maroon-800);
+    color:#fff;
+    padding:13px 20px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .card-head svg{flex:none;width:18px;height:18px;}
+  .card-head h2{font-size:15.5px;font-weight:600;margin:0;letter-spacing:0.01em;}
+  .card-body{padding:20px;}
+  .card-note{font-size:12.5px;color:var(--ink-muted);margin:0 0 16px;line-height:1.5;}
+
+  fieldset{border:none;padding:0;margin:0;}
+  legend{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;padding:0;}
+
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;}
+  .field-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+  @media (max-width:520px){ .field-grid, .field-grid.cols-3{grid-template-columns:1fr 1fr;} }
+  .field{display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .field label{font-size:12.5px;font-weight:600;color:var(--ink-secondary);}
+  .input-wrap{position:relative;display:flex;align-items:center;}
+  .input-wrap .prefix, .input-wrap .suffix{
+    position:absolute;font-size:12px;color:var(--ink-muted);pointer-events:none;white-space:nowrap;
+  }
+  .input-wrap .prefix{left:11px;}
+  .input-wrap .suffix{right:10px;}
+  input[type="number"]{
+    width:100%;
+    font:inherit;font-weight:600;font-size:14.5px;color:var(--ink);
+    background:var(--surface-sunken);
+    border:1.5px solid var(--border);
+    border-radius:9px;
+    padding:9px 11px;
+    font-variant-numeric:tabular-nums;
+  }
+  .input-wrap.has-prefix input{padding-left:22px;}
+  .input-wrap.has-suffix input{padding-right:40px;}
+  input[type="number"]:focus{outline:2px solid var(--focus);outline-offset:1px;border-color:var(--focus);}
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button{opacity:0.5;}
+  input[type="range"].weight-slide{display:block;width:100%;margin-top:8px;accent-color:var(--accent);}
+  .input-wrap.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
+
+  .stat-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .stat-tile{
+    background:var(--surface-sunken);
+    border:1px solid var(--border);
+    border-radius:11px;
+    padding:14px 16px;
+    display:flex;flex-direction:column;gap:3px;
+  }
+  .stat-tile.wide{grid-column:1 / -1;}
+  .stat-tile .label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);}
+  .stat-tile .value{font-family:"Fraunces",serif;font-size:28px;font-weight:600;line-height:1.1;}
+  .stat-tile .sub{font-size:12px;color:var(--ink-muted);}
+
+  .stackbar-total{font-size:12.5px;color:var(--ink-secondary);margin-bottom:8px;display:flex;justify-content:space-between;}
+  .stackbar-total strong{color:var(--ink);font-weight:700;}
+  .stackbar{display:flex;width:100%;height:26px;border-radius:6px;overflow:hidden;background:var(--surface-sunken);gap:2px;}
+  .stackbar .seg{height:100%;position:relative;cursor:pointer;outline:none;min-width:3px;transition:filter 0.12s ease;}
+  .stackbar .seg:hover,.stackbar .seg:focus-visible{filter:brightness(1.08) saturate(1.05);}
+  .stackbar .seg:first-child{border-top-left-radius:5px;border-bottom-left-radius:5px;}
+  .stackbar .seg:last-child{border-top-right-radius:5px;border-bottom-right-radius:5px;}
+  .legend-rows{margin-top:14px;display:flex;flex-direction:column;gap:7px;}
+  .legend-row{display:flex;align-items:center;gap:9px;font-size:13px;cursor:default;}
+  .legend-row .swatch{width:10px;height:10px;border-radius:2.5px;flex:none;}
+  .legend-row .lbl{color:var(--ink-secondary);flex:1;}
+  .legend-row .val{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;}
+  .legend-row .pct{color:var(--ink-muted);font-size:11.5px;min-width:38px;text-align:right;}
+
+  .viz-tooltip{
+    position:fixed;pointer-events:none;z-index:50;
+    background:var(--ink);color:var(--surface);border-radius:8px;padding:8px 11px;
+    font-size:12px;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,0.25);
+    opacity:0;transform:translate(-50%,-100%) translateY(-8px);transition:opacity 0.08s ease;
+    max-width:220px;
+  }
+  .viz-tooltip.show{opacity:1;}
+  .viz-tooltip .tt-val{font-weight:800;font-size:13.5px;}
+  .viz-tooltip .tt-lbl{color:rgba(255,255,255,0.7);font-size:11px;}
+
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:0 20px 20px;}
+  button.btn{
+    font:inherit;font-weight:700;font-size:13px;
+    padding:10px 16px;border-radius:9px;border:1.5px solid var(--accent);
+    background:var(--accent);color:#fff;cursor:pointer;
+  }
+  button.btn.secondary{background:transparent;color:var(--accent);}
+  button.btn:hover{filter:brightness(1.08);}
+  button.btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
 </style>
 </head>
 <body>
@@ -178,7 +323,7 @@
   <div class="wordmark">
     <div class="mark">A</div>
     <div class="text">
-      <div class="top">Texas A&amp;M AgriLife Extension</div>
+      <div class="top">Texas A&amp;M AgriLife Extension - Decision Making</div>
       <div class="main">Beef Cattle Decision Aids</div>
     </div>
   </div>
@@ -199,9 +344,90 @@
 </section>
 
 <main>
+  <section class="shared-tool" id="bcu-calculator">
+    <p class="section-label">Shared calculator</p>
+    <div class="bcu-card">
+      <button type="button" class="bcu-card-toggle" id="bcuToggleBtn" aria-expanded="false" aria-controls="bcuFields">
+        <div class="cat-top">
+          <span class="cat-num" aria-hidden="true">🐄</span>
+          <span class="status-pill live">Shared tool</span>
+        </div>
+        <h3>Cow operating cost (BCU)</h3>
+        <p>Feed, labor, and bull-depreciation cost per Breeding Cow Unit &mdash; set your own numbers once and every tool on this site that needs it, starting with A1's Year 1 operating cost, uses the same value automatically.</p>
+        <div class="bcu-preview">
+          <span class="bcu-preview-value" id="bcuHeaderValue">$0</span>
+          <span class="bcu-preview-label">/ BCU &middot; <span id="bcuSourceLabel">original default</span></span>
+        </div>
+        <span class="go">
+          <span id="bcuToggleLabel">Edit my numbers</span>
+          <svg class="chevron" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </button>
+
+      <div class="bcu-fields" id="bcuFields" hidden>
+        <p class="card-note">This is saved in your browser only (not sent anywhere, not shared across devices) &mdash; if you switch browsers or devices, or clear site data, you'll need to re-enter it.</p>
+
+        <fieldset style="margin-bottom:18px;">
+          <legend>Direct costs</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="bcu_landLeaseRate">Land grazing lease ($/mo)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_landLeaseRate" value="15" min="0"></div></div>
+            <div class="field"><label for="bcu_landLeaseMonths">Grazing months</label><div class="input-wrap"><input type="number" id="bcu_landLeaseMonths" value="11" min="0" max="12"></div></div>
+            <div class="field"><label for="bcu_hayRolls">Hay (rolls)</label><div class="input-wrap"><input type="number" id="bcu_hayRolls" value="1.5" min="0" step="0.1"></div></div>
+            <div class="field"><label for="bcu_hayPrice">Hay price ($/roll)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_hayPrice" value="105" min="0"></div></div>
+            <div class="field"><label for="bcu_saltLbs">Salt &amp; mineral (lb)</label><div class="input-wrap"><input type="number" id="bcu_saltLbs" value="90" min="0"></div></div>
+            <div class="field"><label for="bcu_saltPrice">Salt/mineral price ($/lb)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_saltPrice" value="0.25" min="0" step="0.01"></div></div>
+            <div class="field"><label for="bcu_laborMgmt">Labor &amp; management</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_laborMgmt" value="120" min="0"></div></div>
+            <div class="field"><label for="bcu_vetMed">Veterinarian &amp; medicine</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_vetMed" value="35" min="0"></div></div>
+          </div>
+        </fieldset>
+
+        <fieldset style="margin-bottom:18px;">
+          <legend>Herd bull depreciation (allocated per BCU)</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="bcu_bullCost">Bull cost</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_bullCost" value="4500" min="0"></div></div>
+            <div class="field"><label for="bcu_bullLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="bcu_bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
+            <div class="field"><label for="bcu_bullWeight">Bull weight</label><div class="input-wrap has-suffix"><input type="number" id="bcu_bullWeight" value="1650.7" min="0"><span class="suffix">lb</span></div><input type="range" id="bcu_bullWeightRange" class="weight-slide" min="1300" max="2000" step="50" value="1650.7" aria-label="Bull weight — auto-fills the cull bull price (only one grade reported, so the price stays constant)"></div>
+            <div class="field"><label for="bcu_bullCullPrice">Cull bull price</label><div class="input-wrap has-suffix auto"><input type="number" id="bcu_bullCullPrice" value="190.0" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="bcu_bullDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="bcu_bullDeathLoss" value="2" min="0" max="100"><span class="suffix">%</span></div></div>
+            <div class="field"><label for="bcu_cowsPerBull">Cows per bull</label><div class="input-wrap"><input type="number" id="bcu_cowsPerBull" value="25" min="1"></div></div>
+          </div>
+        </fieldset>
+
+        <fieldset style="margin-bottom:14px;">
+          <legend>Indirect costs</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="bcu_repairMaint">Vehicle/equipment repair</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_repairMaint" value="16" min="0"></div></div>
+            <div class="field"><label for="bcu_fuelOil">Fuel &amp; oil</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_fuelOil" value="5" min="0"></div></div>
+            <div class="field"><label for="bcu_utilities">Utilities</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_utilities" value="10" min="0"></div></div>
+            <div class="field"><label for="bcu_adminGA">General &amp; administration</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_adminGA" value="20" min="0"></div></div>
+            <div class="field"><label for="bcu_vehicleDepr">Vehicle/equipment depreciation</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_vehicleDepr" value="48" min="0"></div></div>
+          </div>
+        </fieldset>
+
+        <div class="stat-tile wide" style="margin-top:4px;">
+          <span class="label">Total operating cost per BCU</span>
+          <span class="value" id="bcu_opCostTotal">$0</span>
+          <span class="sub" id="bcu_opCostBreak"></span>
+        </div>
+
+        <div style="margin-top:18px;">
+          <div class="stackbar-total"><span>Where it goes</span><strong id="bcu_opCostBarTotal">$0 / BCU</strong></div>
+          <div class="stackbar" id="bcu_opCostStackbar"></div>
+          <div class="legend-rows" id="bcu_opCostLegend"></div>
+        </div>
+
+        <div class="btn-row" style="padding:18px 0 0;">
+          <button class="btn secondary" id="bcu_resetBtn" type="button">Reset to defaults</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <p class="section-label">Categories</p>
   <div class="grid" id="catGrid"></div>
 </main>
+
+<div class="viz-tooltip" id="vizTooltip"></div>
 
 <footer>
   Rebuilding <a href="https://agecoext.tamu.edu/resources/decisionaids/beef/">Texas A&amp;M AgriLife Extension's Beef Cattle Decision Aids</a> as interactive web tools, one category at a time. Starting values reproduce each original spreadsheet's own assumptions, not real producer data &mdash; always verify results before using them to make a decision.
@@ -245,11 +471,209 @@
     });
   })();
 
+  /* ---------------- Shared "Cow operating cost (BCU)" calculator ----------------
+     2026-09-16: moved here from the A1 tool page at the user's request, so a
+     producer enters it once and every tool that needs a per-BCU operating cost
+     reads the same number instead of re-asking for it on every page. Persisted
+     to localStorage (this browser only — not synced across devices) under
+     STORAGE_KEY below; site/cow-calf/index.html reads the same key. */
+  (function initBcuCalculator(){
+    var card = document.getElementById('bcu-calculator');
+    if(!card) return;
+
+    var STORAGE_KEY = 'tamuDecisionAidsBcuOpCost';
+    var fmtMoney0 = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+    var fmtMoney2 = new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+    function $(id){ return document.getElementById(id); }
+    function num(id){ var el = $(id); var v = el ? parseFloat(el.value) : NaN; return isFinite(v)?v:0; }
+    function round(v,d){ var m=Math.pow(10,d||0); return Math.round(v*m)/m; }
+
+    // Bulls: the Sept 2026 Texas auction report has only one grade for bulls (no
+    // weight breakdown), so this "slide" is a single point re-centered on the
+    // Rolling Plains District 3 budget's $190/cwt (see project notes) — the price
+    // stays constant regardless of the weight slider, same as on the A1/A2 tool page.
+    var BULL_PRICE_SLIDE = [ {w:1650.7, p:190.0} ];
+    function priceSlideLookup(table, w){
+      if(!table.length || !isFinite(w)) return 0;
+      if(w<=table[0].w) return table[0].p;
+      if(w>=table[table.length-1].w) return table[table.length-1].p;
+      for(var i=0;i<table.length-1;i++){
+        var a=table[i], b=table[i+1];
+        if(w>=a.w && w<=b.w){
+          var t=(w-a.w)/(b.w-a.w);
+          return a.p + (b.p-a.p)*t;
+        }
+      }
+      return table[table.length-1].p;
+    }
+
+    var BCU_DEFAULTS = {
+      bcu_landLeaseRate:15, bcu_landLeaseMonths:11, bcu_hayRolls:1.5, bcu_hayPrice:105,
+      bcu_saltLbs:90, bcu_saltPrice:0.25, bcu_laborMgmt:120, bcu_vetMed:35,
+      bcu_bullCost:4500, bcu_bullLife:4, bcu_bullWeight:1650.7, bcu_bullCullPrice:190.0, bcu_bullDeathLoss:2, bcu_cowsPerBull:25,
+      bcu_repairMaint:16, bcu_fuelOil:5, bcu_utilities:10, bcu_adminGA:20, bcu_vehicleDepr:48
+    };
+    var bullCullPriceAuto = true;
+    var customized = false; // true once the producer has their own saved numbers (vs. the shipped defaults)
+
+    /* ---- tooltip + stacked bar (same small chart pattern the tool pages use) ---- */
+    function showVizTooltip(x,y,html){
+      var tt = $('vizTooltip');
+      if(!tt) return;
+      tt.innerHTML = html;
+      tt.style.left = x+'px';
+      tt.style.top = (y-6)+'px';
+      tt.classList.add('show');
+    }
+    function hideVizTooltip(){ var tt=$('vizTooltip'); if(tt) tt.classList.remove('show'); }
+    function buildStackBar(barId, legendId, totalId, data, total, totalSuffix){
+      var bar = $(barId), legend = $(legendId);
+      if(!bar || !legend) return;
+      bar.innerHTML=''; legend.innerHTML='';
+      if(totalId && $(totalId)) $(totalId).textContent = '$'+fmtMoney2.format(total)+(totalSuffix||'');
+      data.forEach(function(d){
+        var pct = total>0 ? (d.value/total*100) : 0;
+        var seg = document.createElement('div');
+        seg.className='seg';
+        seg.style.background = d.color;
+        seg.style.width = Math.max(pct,0)+'%';
+        seg.tabIndex = 0;
+        seg.setAttribute('role','img');
+        seg.setAttribute('aria-label', d.label+': $'+fmtMoney2.format(d.value)+' ('+pct.toFixed(1)+'%)');
+        function showTt(){
+          var r = seg.getBoundingClientRect();
+          showVizTooltip(r.left+r.width/2, r.top, '<div class="tt-val">$'+fmtMoney2.format(d.value)+'</div><div class="tt-lbl">'+d.label+' &middot; '+pct.toFixed(1)+'% of total</div>');
+        }
+        seg.addEventListener('pointerenter', showTt);
+        seg.addEventListener('focus', showTt);
+        seg.addEventListener('pointerleave', hideVizTooltip);
+        seg.addEventListener('blur', hideVizTooltip);
+        bar.appendChild(seg);
+
+        var row = document.createElement('div');
+        row.className='legend-row';
+        row.innerHTML = '<span class="swatch" style="background:'+d.color+'"></span>'+
+                         '<span class="lbl"></span>'+
+                         '<span class="val">$'+fmtMoney2.format(d.value)+'</span>'+
+                         '<span class="pct">'+pct.toFixed(1)+'%</span>';
+        row.querySelector('.lbl').textContent = d.label;
+        legend.appendChild(row);
+      });
+    }
+
+    function calcAndPersist(){
+      if(bullCullPriceAuto){
+        $('bcu_bullCullPrice').value = round(priceSlideLookup(BULL_PRICE_SLIDE, num('bcu_bullWeight')), 2);
+      }
+
+      var landLease = num('bcu_landLeaseRate')*num('bcu_landLeaseMonths');
+      var hayCost = num('bcu_hayRolls')*num('bcu_hayPrice');
+      var proteinQty = num('bcu_hayRolls')*1000*0.2/100;
+      var proteinCost = proteinQty*20; // protein price fixed at $20/cwt per original sheet
+      var saltCost = num('bcu_saltLbs')*num('bcu_saltPrice');
+      var subtotalFeed = landLease+hayCost+proteinCost+saltCost;
+
+      var salvage = num('bcu_bullWeight')*num('bcu_bullCullPrice')*0.01;
+      var netSalvage = salvage*(100-num('bcu_bullDeathLoss'))*0.01;
+      var bullDeprTotal = (num('bcu_bullCost')-netSalvage)/num('bcu_bullLife');
+      var bullDeprPerBCU = bullDeprTotal/num('bcu_cowsPerBull');
+
+      var totalDirect = subtotalFeed + num('bcu_laborMgmt') + num('bcu_vetMed') + bullDeprPerBCU;
+      var totalIndirect = num('bcu_repairMaint')+num('bcu_fuelOil')+num('bcu_utilities')+num('bcu_adminGA')+num('bcu_vehicleDepr');
+      var total = totalDirect + totalIndirect;
+
+      $('bcu_opCostTotal').textContent = '$'+fmtMoney2.format(total);
+      $('bcu_opCostBreak').textContent = 'Direct $'+fmtMoney0.format(totalDirect)+' + Indirect $'+fmtMoney0.format(totalIndirect)+' (incl. bull depreciation $'+fmtMoney2.format(bullDeprPerBCU)+'/BCU)';
+
+      buildStackBar('bcu_opCostStackbar','bcu_opCostLegend','bcu_opCostBarTotal', [
+        {label:'Feed & land', value:subtotalFeed, color:'var(--s1)'},
+        {label:'Labor & management', value:num('bcu_laborMgmt'), color:'var(--s2)'},
+        {label:'Vet & health', value:num('bcu_vetMed'), color:'var(--s3)'},
+        {label:'Bull depreciation', value:bullDeprPerBCU, color:'var(--s4)'},
+        {label:'Equipment & other indirect', value:totalIndirect, color:'var(--s5)'}
+      ], total, ' / BCU');
+
+      var payload = { total: round(total,3), savedAt: new Date().toISOString() };
+      Object.keys(BCU_DEFAULTS).forEach(function(id){ payload[id] = num(id); });
+      try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }
+      catch(e){ /* private mode / blocked storage -- this session's value just won't persist or be shared with other pages */ }
+
+      // Always-visible preview on the collapsed card face, so the producer sees the
+      // number at a glance without opening the calculator.
+      var headerVal = $('bcuHeaderValue'), sourceLbl = $('bcuSourceLabel');
+      if(headerVal) headerVal.textContent = '$'+fmtMoney2.format(total);
+      if(sourceLbl) sourceLbl.textContent = customized ? 'your saved numbers' : 'original default';
+
+      return total;
+    }
+
+    function loadStored(){
+      try {
+        var raw = window.localStorage.getItem(STORAGE_KEY);
+        if(!raw) return false;
+        var data = JSON.parse(raw);
+        if(!data) return false;
+        Object.keys(BCU_DEFAULTS).forEach(function(id){
+          if(isFinite(data[id])){ var el = $(id); if(el) el.value = data[id]; }
+        });
+        return true;
+      } catch(e){ return false; }
+    }
+
+    var hadStoredValues = loadStored();
+    if(hadStoredValues){
+      // We don't persist whether the bull-cull-price field was auto-linked or
+      // manually typed in a prior session, so treat the restored value as fixed
+      // (matches the value that was actually saved either way).
+      bullCullPriceAuto = false;
+      $('bcu_bullCullPrice').closest('.input-wrap').classList.remove('auto');
+      $('bcu_bullWeightRange').value = num('bcu_bullWeight');
+      customized = true;
+    }
+
+    Object.keys(BCU_DEFAULTS).forEach(function(id){
+      var el = $(id);
+      if(el) el.addEventListener('input', function(){ customized = true; calcAndPersist(); });
+    });
+    $('bcu_bullWeightRange').addEventListener('input', function(){
+      $('bcu_bullWeight').value = this.value; customized = true; calcAndPersist();
+    });
+    $('bcu_bullWeight').addEventListener('input', function(){
+      $('bcu_bullWeightRange').value = this.value;
+    });
+    $('bcu_bullCullPrice').addEventListener('input', function(){
+      bullCullPriceAuto = false;
+      $('bcu_bullCullPrice').closest('.input-wrap').classList.remove('auto');
+      customized = true;
+      calcAndPersist();
+    });
+    $('bcu_resetBtn').addEventListener('click', function(){
+      Object.keys(BCU_DEFAULTS).forEach(function(id){ var el=$(id); if(el) el.value = BCU_DEFAULTS[id]; });
+      $('bcu_bullWeightRange').value = BCU_DEFAULTS.bcu_bullWeight;
+      bullCullPriceAuto = true;
+      $('bcu_bullCullPrice').closest('.input-wrap').classList.add('auto');
+      customized = false;
+      calcAndPersist();
+    });
+
+    /* Collapsed by default (see .bcu-card CSS) — click to open/close the editor. */
+    var toggleBtn = $('bcuToggleBtn'), fields = $('bcuFields'), toggleLabel = $('bcuToggleLabel');
+    toggleBtn.addEventListener('click', function(){
+      var open = fields.hasAttribute('hidden');
+      if(open){ fields.removeAttribute('hidden'); } else { fields.setAttribute('hidden',''); }
+      toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggleLabel.textContent = open ? 'Hide' : 'Edit my numbers';
+    });
+
+    calcAndPersist();
+  })();
+
   var categories = [
     {n:1,  name:"Cow-Calf Bid Price and Budgets", desc:"What to bid for a bred cow, and the operating budget behind it.", status:"progress", href:"cow-calf/index.html", note:"A1 live · A2 in progress"},
     {n:2,  name:"Replacement Heifer Budgets", desc:"Natural service, AI, and sexed-semen heifer development budgets and closeouts."},
     {n:3,  name:"Cow-Calf Budgeting and Herd Bull Investment", desc:"Full cow-calf enterprise budgets and bull investment analysis.", note:"C1 planned next"},
-    {n:4,  name:"Retained Ownership", desc:"Stocker, feeder, and custom-finish profit projections and closeouts."},
+    {n:4,  name:"Retained Ownership", desc:"Stocker, feeder, and custom-finish profit projections and closeouts.", status:"progress", href:"retained-ownership/index.html", note:"D1 + Stockers live"},
     {n:5,  name:"Cattle Inventories", desc:"Monthly and annual cattle inventory and balance sheet reporting."},
     {n:6,  name:"Feed Fed & Purchases", desc:"Feed record-keeping, purchases, and reconciled inventory."},
     {n:7,  name:"Hay and Grazing", desc:"Hay production vs. purchase, grazing budgets, and fencing cost estimates."},
