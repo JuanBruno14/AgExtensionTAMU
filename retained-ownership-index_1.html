@@ -1,0 +1,1887 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Texas A&amp;M AgriLife Extension - Decision Making</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{
+    --maroon-900:#3a0000;
+    --maroon-800:#500000;
+    --maroon-700:#6b0f0f;
+    --maroon-100:#f7e9e6;
+    --wheat-500:#b8862f;
+    --wheat-100:#f4e9d6;
+    --good-700:#276749;
+    --good-100:#e3f1e9;
+    --critical-700:#9a3412;
+    --critical-100:#fbe9e1;
+    --accent:var(--maroon-800);
+    --bg:#f6f3ee;
+    --surface:#ffffff;
+    --surface-sunken:#f0ece4;
+    --border:#e2dbcf;
+    --ink:#241c19;
+    --ink-secondary:#5a4f48;
+    --ink-muted:#8a7d73;
+    --focus:#2f6fb3;
+    --shadow-card:0 1px 2px rgba(58,0,0,0.04), 0 4px 16px rgba(58,0,0,0.06);
+    /* dataviz categorical (validated 5-slot set) */
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#4a3aa7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1b1512;
+      --surface:#241c19;
+      --surface-sunken:#2c221e;
+      --border:#3a2d27;
+      --ink:#f3ece5;
+      --ink-secondary:#cabdb3;
+      --ink-muted:#96877c;
+      --maroon-100:#3a1f1f;
+      --good-100:#193225;
+      --good-700:#5fbf8e;
+      --critical-100:#3a2013;
+      --critical-700:#e2895f;
+      --accent:#e2897c;
+      --wheat-100:#3a2d15;
+      --wheat-500:#d9a44a;
+      --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1b1512;
+    --surface:#241c19;
+    --surface-sunken:#2c221e;
+    --border:#3a2d27;
+    --ink:#f3ece5;
+    --ink-secondary:#cabdb3;
+    --ink-muted:#96877c;
+    --maroon-100:#3a1f1f;
+    --good-100:#193225;
+    --good-700:#5fbf8e;
+    --critical-100:#3a2013;
+    --critical-700:#e2895f;
+    --accent:#e2897c;
+    --wheat-100:#3a2d15;
+    --wheat-500:#d9a44a;
+    --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Public Sans", ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric:tabular-nums;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:"Fraunces", Georgia, serif;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;}
+
+  /* ---------- Header ---------- */
+  .topbar{
+    background:linear-gradient(180deg, var(--maroon-800), var(--maroon-900));
+    color:#fff;
+    padding:18px clamp(16px,4vw,40px);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .wordmark{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .wordmark .mark{
+    width:44px;height:44px;border-radius:9px;
+    background:rgba(255,255,255,0.12);
+    border:1.5px solid rgba(255,255,255,0.55);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Fraunces",serif;font-weight:700;font-size:20px;
+    flex:none;
+  }
+  .wordmark .text{line-height:1.15;}
+  .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
+  .wordmark .text .main{font-family:"Fraunces",serif;font-size:19px;font-weight:600;}
+  .tool-title{
+    font-family:"Fraunces",serif;
+    font-size:clamp(18px,2.4vw,26px);
+    font-weight:600;
+    margin:0;
+  }
+  .header-right{display:flex;align-items:center;gap:10px;}
+  .phase-chip{
+    font-size:12px;font-weight:700;letter-spacing:0.04em;
+    background:rgba(255,255,255,0.14);
+    border:1px solid rgba(255,255,255,0.4);
+    color:#fff;
+    padding:5px 11px;border-radius:100px;
+  }
+  .theme-toggle{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:100px;
+    background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.4);
+    color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0;
+  }
+  .theme-toggle:hover{background:rgba(255,255,255,0.24);}
+  .theme-toggle:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+
+  /* ---------- Roadmap tabs ---------- */
+  .roadmap{
+    background:var(--maroon-700);
+    padding:0 clamp(16px,4vw,40px);
+    display:flex;gap:4px;
+    overflow-x:auto;
+  }
+  .roadmap a, .roadmap span, .roadmap .tab-btn{
+    display:inline-block;
+    padding:12px 18px;
+    font-size:13.5px;
+    font-weight:600;
+    color:rgba(255,255,255,0.68);
+    border-bottom:3px solid transparent;
+    white-space:nowrap;
+  }
+  .roadmap .tab-btn{
+    font-family:inherit;
+    background:none;
+    border-top:none;border-left:none;border-right:none;
+    cursor:pointer;
+  }
+  .roadmap .tab-btn:hover{color:rgba(255,255,255,0.9);}
+  .roadmap .tab-btn:focus-visible{outline:2px solid #fff;outline-offset:-2px;}
+  .roadmap .active{
+    color:#fff;
+    border-bottom-color:var(--wheat-500);
+  }
+  .roadmap .disabled{
+    color:rgba(255,255,255,0.4);
+    cursor:not-allowed;
+  }
+  .roadmap .soon{
+    font-size:10px;
+    font-weight:700;
+    letter-spacing:0.05em;
+    background:rgba(255,255,255,0.12);
+    padding:1px 6px;
+    border-radius:100px;
+    margin-left:6px;
+    vertical-align:1px;
+  }
+
+  /* ---------- Intro strip ---------- */
+  .intro{
+    position:relative;
+    overflow:hidden;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+  }
+  .intro-inner{
+    max-width:1180px;margin:0 auto;
+    padding:30px clamp(16px,4vw,40px) 26px;
+    display:flex;
+    gap:28px;
+    align-items:flex-end;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .intro h1{font-size:clamp(22px,2.8vw,30px);margin:0 0 8px;color:var(--ink);}
+  .intro p{margin:0;max-width:62ch;color:var(--ink-secondary);font-size:15px;line-height:1.55;}
+  .intro-meta{
+    display:flex;gap:22px;flex-wrap:wrap;
+  }
+  .intro-meta div{font-size:12.5px;color:var(--ink-muted);}
+  .intro-meta strong{display:block;color:var(--ink);font-size:14px;font-weight:700;}
+  .fence-line{
+    position:absolute;left:0;right:0;bottom:0;height:10px;
+    background-image:repeating-linear-gradient(90deg, var(--wheat-500) 0 26px, transparent 26px 52px);
+    opacity:0.55;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout{
+    max-width:1180px;margin:0 auto;
+    padding:28px clamp(16px,4vw,40px) 64px;
+    display:grid;
+    grid-template-columns: 1.55fr 1fr;
+    gap:22px;
+    align-items:start;
+  }
+  @media (max-width:920px){
+    .layout{grid-template-columns:1fr;}
+  }
+  .col-inputs{display:flex;flex-direction:column;gap:18px;min-width:0;}
+  .col-results{position:sticky;top:16px;display:flex;flex-direction:column;gap:18px;min-width:0;}
+  @media (max-width:920px){ .col-results{position:static;} }
+
+  /* ---------- Card ---------- */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow-card);
+    overflow:hidden;
+  }
+  .card-head{
+    background:var(--maroon-800);
+    color:#fff;
+    padding:13px 20px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .card-head svg{flex:none;width:18px;height:18px;}
+  .card-head h2{font-size:15.5px;font-weight:600;margin:0;letter-spacing:0.01em;}
+  .card-body{padding:20px;}
+  .card-note{font-size:12.5px;color:var(--ink-muted);margin:0 0 16px;line-height:1.5;}
+
+  /* ---------- Fields ---------- */
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;}
+  .field-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+  @media (max-width:520px){ .field-grid, .field-grid.cols-3{grid-template-columns:1fr 1fr;} }
+  .field{display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .field label{font-size:12.5px;font-weight:600;color:var(--ink-secondary);}
+  .field .hint{font-size:11px;color:var(--ink-muted);margin-top:-2px;}
+  .input-wrap{position:relative;display:flex;align-items:center;}
+  .input-wrap .prefix, .input-wrap .suffix{
+    position:absolute;font-size:12px;color:var(--ink-muted);pointer-events:none;white-space:nowrap;
+  }
+  .input-wrap .prefix{left:11px;}
+  .input-wrap .suffix{right:10px;}
+  input[type="number"]{
+    width:100%;
+    font:inherit;font-weight:600;font-size:14.5px;color:var(--ink);
+    background:var(--surface-sunken);
+    border:1.5px solid var(--border);
+    border-radius:9px;
+    padding:9px 11px;
+    font-variant-numeric:tabular-nums;
+  }
+  .input-wrap.has-prefix input{padding-left:22px;}
+  .input-wrap.has-suffix input{padding-right:40px;}
+  input[type="number"]:focus{outline:2px solid var(--focus);outline-offset:1px;border-color:var(--focus);}
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button{opacity:0.5;}
+
+  .hero-field{
+    background:var(--maroon-100);
+    border:1.5px solid var(--accent);
+    border-radius:12px;
+    padding:14px 16px;
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+  }
+  .hero-field label{font-size:13px;font-weight:700;color:var(--accent);}
+  .hero-row{display:flex;align-items:center;gap:14px;}
+  .hero-row input[type="range"]{flex:1;accent-color:var(--accent);}
+  input[type="range"].weight-slide{display:block;width:100%;margin-top:8px;accent-color:var(--accent);}
+  .hero-row .input-wrap{width:118px;flex:none;}
+  .hero-row .input-wrap input{
+    background:var(--surface);
+    font-size:17px;font-weight:800;color:var(--accent);
+    border-color:var(--accent);
+  }
+
+  fieldset{border:none;padding:0;margin:0;}
+  legend{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;padding:0;}
+
+  /* ---------- Year grid table ---------- */
+  .table-scroll{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
+  table.grid{width:100%;border-collapse:collapse;min-width:640px;background:var(--surface);}
+  table.grid th, table.grid td{padding:9px 10px;border-bottom:1px solid var(--border);text-align:right;font-size:13px;}
+  table.grid th{
+    background:var(--surface-sunken);
+    color:var(--ink-secondary);
+    font-weight:700;
+    text-align:right;
+    position:sticky;top:0;
+  }
+  table.grid th:first-child, table.grid td:first-child{
+    text-align:left;position:sticky;left:0;background:var(--surface-sunken);z-index:1;min-width:170px;
+  }
+  table.grid td:first-child{background:var(--surface);font-weight:600;color:var(--ink-secondary);font-size:12.5px;}
+  table.grid input[type="number"]{
+    width:82px;padding:6px 7px;font-size:13px;text-align:right;border-radius:7px;
+  }
+  table.grid td.readonly{color:var(--ink-muted);font-style:italic;}
+  table.grid td.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
+  .input-wrap.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
+  table.grid input[type="number"].small{width:64px;}
+
+  /* ---------- Segmented toggle (Owned/Leased) ---------- */
+  .segmented{display:inline-flex;background:var(--surface-sunken);border:1.5px solid var(--border);border-radius:9px;padding:3px;gap:2px;}
+  .segmented button{
+    font:inherit;font-weight:700;font-size:12.5px;color:var(--ink-secondary);
+    background:none;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;
+  }
+  .segmented button.active{background:var(--accent);color:#fff;}
+  .segmented button:focus-visible{outline:2px solid var(--focus);outline-offset:1px;}
+
+  /* ---------- Sub-note / read-only derived value ---------- */
+  .derived-note{font-size:11.5px;color:var(--ink-muted);margin-top:4px;}
+  .derived-note strong{color:var(--ink-secondary);}
+
+  /* ---------- Panels ---------- */
+  .tool-panel[hidden]{display:none;}
+  .subtool-panel[hidden]{display:none;}
+  .path-nav{
+    max-width:1180px;margin:22px auto 0;padding:0 clamp(16px,4vw,40px);
+    display:flex;flex-wrap:wrap;
+  }
+  .path-nav .segmented{flex-wrap:wrap;}
+  .assumptions-wrap{max-width:1180px;margin:0 auto;padding:18px clamp(16px,4vw,40px) 0;}
+
+  /* ---------- Data viz: stacked bar (part-to-whole) ---------- */
+  .stackbar-total{font-size:12.5px;color:var(--ink-secondary);margin-bottom:8px;display:flex;justify-content:space-between;}
+  .stackbar-total strong{color:var(--ink);font-weight:700;}
+  .stackbar{display:flex;width:100%;height:26px;border-radius:6px;overflow:hidden;background:var(--surface-sunken);gap:2px;}
+  .stackbar .seg{height:100%;position:relative;cursor:pointer;outline:none;min-width:3px;transition:filter 0.12s ease;}
+  .stackbar .seg:hover,.stackbar .seg:focus-visible{filter:brightness(1.08) saturate(1.05);}
+  .stackbar .seg:first-child{border-top-left-radius:5px;border-bottom-left-radius:5px;}
+  .stackbar .seg:last-child{border-top-right-radius:5px;border-bottom-right-radius:5px;}
+  .legend-rows{margin-top:14px;display:flex;flex-direction:column;gap:7px;}
+  .legend-row{display:flex;align-items:center;gap:9px;font-size:13px;cursor:default;}
+  .legend-row .swatch{width:10px;height:10px;border-radius:2.5px;flex:none;}
+  .legend-row .lbl{color:var(--ink-secondary);flex:1;}
+  .legend-row .val{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;}
+  .legend-row .pct{color:var(--ink-muted);font-size:11.5px;min-width:38px;text-align:right;}
+
+  /* ---------- Data viz: line chart ---------- */
+  .linechart-wrap{position:relative;}
+  svg.linechart{width:100%;height:auto;display:block;overflow:visible;}
+  .lc-grid{stroke:var(--border);stroke-width:1;}
+  .lc-zero{stroke:var(--ink-muted);stroke-width:1;}
+  .lc-path{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
+  .lc-area{fill:var(--accent);opacity:0.08;}
+  .lc-dot{fill:var(--accent);stroke:var(--surface);stroke-width:2;}
+  .lc-dot-hit{fill:transparent;cursor:pointer;}
+  .lc-axis-label{font-size:10.5px;fill:var(--ink-muted);font-family:"Public Sans",sans-serif;}
+  .lc-callout{font-size:11px;font-weight:700;fill:var(--ink);font-family:"Public Sans",sans-serif;}
+
+  /* ---------- Data viz: grouped bar ---------- */
+  .groupbar-legend{display:flex;gap:18px;margin-bottom:14px;flex-wrap:wrap;}
+  .groupbar-legend .item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-secondary);}
+  .groupbar-legend .swatch{width:10px;height:10px;border-radius:2.5px;}
+  svg.groupbar{width:100%;height:auto;display:block;overflow:visible;}
+  .gb-bar-current{fill:var(--ink-muted);opacity:0.55;}
+  .gb-bar-required{fill:var(--accent);}
+  .gb-bar-current:hover,.gb-bar-required:hover{filter:brightness(1.1);}
+  .gb-label{font-size:11.5px;font-weight:700;fill:var(--ink);font-family:"Public Sans",sans-serif;}
+  .gb-axis{font-size:11px;fill:var(--ink-secondary);font-family:"Public Sans",sans-serif;}
+
+  /* ---------- Data viz: meter ---------- */
+  .meter-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
+  .meter-cur{font-size:26px;font-weight:700;color:var(--ink);}
+  .meter-cur.under{color:var(--critical-700);}
+  .meter-cur.over{color:var(--good-700);}
+  .meter-target-lbl{font-size:12.5px;color:var(--ink-muted);}
+  .meter-track{position:relative;height:14px;border-radius:7px;background:var(--surface-sunken);border:1px solid var(--border);overflow:visible;}
+  .meter-fill{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:var(--critical-700);transition:width 0.15s ease;}
+  .meter-fill.over{background:var(--good-700);}
+  .meter-tick{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);border-radius:1px;}
+  .meter-tick-lbl{position:absolute;top:18px;font-size:11px;color:var(--ink-secondary);font-weight:600;white-space:nowrap;}
+  .meter-scale{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-muted);margin-top:26px;}
+
+  /* ---------- Data viz: shared tooltip ---------- */
+  .viz-tooltip{
+    position:fixed;pointer-events:none;z-index:50;
+    background:var(--ink);color:var(--surface);border-radius:8px;padding:8px 11px;
+    font-size:12px;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,0.25);
+    opacity:0;transform:translate(-50%,-100%) translateY(-8px);transition:opacity 0.08s ease;
+    max-width:220px;
+  }
+  .viz-tooltip.show{opacity:1;}
+  .viz-tooltip .tt-val{font-weight:800;font-size:13.5px;}
+  .viz-tooltip .tt-lbl{color:rgba(255,255,255,0.7);font-size:11px;}
+  .viz-caption{font-size:11.5px;color:var(--ink-muted);margin-top:14px;line-height:1.5;}
+
+  /* ---------- Results ---------- */
+  .stat-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .stat-tile{
+    background:var(--surface-sunken);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 16px;
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .stat-tile.wide{grid-column:1 / -1;}
+  .stat-tile .label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);}
+  .stat-tile .value{font-family:"Fraunces",serif;font-size:28px;font-weight:600;line-height:1.1;}
+  .stat-tile .sub{font-size:12px;color:var(--ink-muted);}
+  .stat-tile.good{background:var(--good-100);border-color:color-mix(in srgb, var(--good-700) 30%, var(--good-100));}
+  .stat-tile.good .value{color:var(--good-700);}
+  .stat-tile.critical{background:var(--critical-100);border-color:color-mix(in srgb, var(--critical-700) 30%, var(--critical-100));}
+  .stat-tile.critical .value{color:var(--critical-700);}
+
+  .verdict-pill{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:12.5px;font-weight:700;
+    padding:6px 12px;border-radius:100px;
+    margin-bottom:4px;
+  }
+  .verdict-pill.good{background:var(--good-100);color:var(--good-700);}
+  .verdict-pill.critical{background:var(--critical-100);color:var(--critical-700);}
+  .verdict-pill .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+
+  .narrative{font-size:13.5px;line-height:1.6;color:var(--ink-secondary);margin:0 0 8px;}
+  .narrative strong{color:var(--ink);}
+
+  .chart-wrap{padding:4px 4px 0;}
+  .chart-legend{display:flex;gap:16px;font-size:12px;color:var(--ink-muted);padding:8px 16px 14px;}
+  .chart-legend span{display:inline-flex;align-items:center;gap:6px;}
+  .chart-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
+
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:0 20px 20px;}
+  button.btn{
+    font:inherit;font-weight:700;font-size:13px;
+    padding:10px 16px;border-radius:9px;border:1.5px solid var(--accent);
+    background:var(--accent);color:#fff;cursor:pointer;
+  }
+  button.btn.secondary{background:transparent;color:var(--accent);}
+  button.btn:hover{filter:brightness(1.08);}
+  button.btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+
+  footer{
+    max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 40px;
+    color:var(--ink-muted);font-size:12px;line-height:1.6;
+  }
+  footer a{text-decoration:underline;}
+
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wordmark">
+    <a href="../index.html" style="display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;">
+      <div class="mark">A</div>
+      <div class="text">
+        <div class="top">Texas A&amp;M AgriLife Extension - Decision Making</div>
+        <div class="main">Decision Aids · Retained Ownership</div>
+      </div>
+    </a>
+  </div>
+  <h1 class="tool-title" id="toolTitle">Sell or Keep to Upgrade</h1>
+  <div class="header-right">
+    <a href="../index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
+    <span class="phase-chip">Pilot · Phase 1</span>
+  </div>
+</header>
+
+<nav class="roadmap" aria-label="Retained ownership tools">
+  <button type="button" class="tab-btn active" data-tab="d1" data-title="Sell or Keep to Upgrade" data-source="D1 — Sell or Keep to Upgrade Cull Cows Profit Projection" data-use="advise a cull-cow marketing decision">D1 · Cull Cow: Sell or Upgrade</button>
+  <button type="button" class="tab-btn" data-tab="stockers" data-title="Stockers · Retained Ownership" data-source="Stockers Retained Feeder Profitability" data-use="advise a stocker/feeder retained-ownership decision">Stockers · Retained Ownership</button>
+</nav>
+
+<div id="panel-d1" class="tool-panel">
+<section class="intro">
+  <div class="intro-inner">
+    <div>
+      <h1>Should you sell cull cows now, or keep feeding them to upgrade?</h1>
+      <p>Enter today's cull-cow sale terms and the retained-ownership alternative (extra days on feed, target out-weight, gain, and price): the tool compares selling now against keeping the cows to add weight and grade, then shows the marketing margin, feeding margin, ROA/ROE, and the price needed to hit your target margin — just like AgriLife Extension's D1 spreadsheet, but recalculating live.</p>
+    </div>
+    <div class="intro-meta">
+      <div><strong>Sell vs. retain</strong>side-by-side comparison</div>
+      <div><strong>ROA + ROE</strong>decision criteria</div>
+      <div><strong>Editable</strong>every assumption</div>
+    </div>
+  </div>
+  <div class="fence-line"></div>
+</section>
+
+<div class="layout">
+  <div class="col-inputs">
+
+    <!-- Cull cow sale today -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9c0-2 1.5-4 4-4s4 1.5 4 2 1.5-2 4-2 4 2 4 4-2 3-2 5v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5c0-2-2-3-2-5Z"/><circle cx="9" cy="13" r=".5" fill="currentColor"/><circle cx="15" cy="13" r=".5" fill="currentColor"/></svg>
+        <h2>Cull cow sale — today</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">What you'd get if you sold these cull cows right now, at the sale barn.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="d1_headCulled">Head to market</label>
+            <div class="input-wrap"><input type="number" id="d1_headCulled" value="50" min="0"></div>
+          </div>
+          <div class="field">
+            <label for="d1_weightAtCulling">Weight at culling</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_weightAtCulling" value="1100" min="0"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_shrinkSold">Shrink if sold</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_shrinkSold" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_priceSold">Sale price</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_priceSold" value="180" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_commissionSold">Commission</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_commissionSold" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_freightSold">Freight</label>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="d1_freightSold" value="7" min="0"></div>
+          </div>
+          <div class="field">
+            <label for="d1_perHeadSold">Other per-head charges</label>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="d1_perHeadSold" value="1" min="0"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Retained ownership alternative -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
+        <h2>Retained ownership — keep &amp; feed</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Instead of selling, you put the cows in the feed pen (or on grass) to add weight and grade, then sell later. Set your target out-weight and daily gain — the tool figures the days on feed from those. To force a specific number of days instead, put it in "Manual days override" (leave at 0 to let the tool calculate).</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="d1_outWeight">Target out-weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_outWeight" value="1300" min="0"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_adg">Average daily gain</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_adg" value="2.25" min="0.01" step="0.05"><span class="suffix">lb/day</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_manualDays">Manual days override</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_manualDays" value="0" min="0"><span class="suffix">days</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_shrinkOut">Shrink when sold</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_shrinkOut" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_priceOut">Sale price (upgraded)</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_priceOut" value="90" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_deathLoss">Death loss</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_deathLoss" value="0.5" min="0" step="0.1"><span class="suffix">%</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_commissionOut">Commission</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_commissionOut" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_freightOut">Freight</label>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="d1_freightOut" value="7" min="0"></div>
+          </div>
+          <div class="field">
+            <label for="d1_perHeadOut">Other per-head charges</label>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="d1_perHeadOut" value="1" min="0"></div>
+          </div>
+        </div>
+        <p class="derived-note" id="d1_daysNote">Days on feed: calculating…</p>
+      </div>
+    </div>
+
+    <!-- Feeding & direct costs -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
+        <h2>Feeding &amp; direct costs</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">What it costs, per head, to hold and feed the cows through the retained-ownership period.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="d1_feedGrazingRate">Feed/grazing cost</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_feedGrazingRate" value="2" min="0" step="0.05"><span class="suffix">$/day</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_processingHealth">Processing &amp; health</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_processingHealth" value="10" min="0"><span class="suffix">$/hd</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_costPerLbGain">Extra cost per lb gained</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_costPerLbGain" value="0" min="0" step="0.01"><span class="suffix">$/lb</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_feedFacilitiesDays">Feed facilities &amp; labor — days</label>
+            <div class="input-wrap"><input type="number" id="d1_feedFacilitiesDays" value="111" min="0"></div>
+          </div>
+          <div class="field">
+            <label for="d1_feedFacilitiesRate">Feed facilities &amp; labor — rate</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_feedFacilitiesRate" value="0.4" min="0" step="0.01"><span class="suffix">$/day</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_otherCost">Other cost</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_otherCost" value="0" min="0"><span class="suffix">$/hd</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overhead & management -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10l8-6 8 6v10M9 20v-6h6v6"/></svg>
+        <h2>Overhead &amp; management</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">General and administrative cost, and owner/hired management time, charged per head marketed.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="d1_gaPerHd">General &amp; administrative</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_gaPerHd" value="10" min="0"><span class="suffix">$/hd</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_managementPerHd">Management cost</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_managementPerHd" value="40" min="0"><span class="suffix">$/hd</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Target margin & financing -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
+        <h2>Target margin &amp; financing</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">The net margin you want per head, and how the retained-ownership costs are financed (percent borrowed, and the interest rate charged on that borrowed capital).</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="d1_targetMarginPerHd">Target net margin</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_targetMarginPerHd" value="30" min="0"><span class="suffix">$/hd</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_pctBorrowed">Percent borrowed</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_pctBorrowed" value="30" min="0" max="100" step="1"><span class="suffix">%</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_interestRate">Interest rate</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_interestRate" value="5" min="0" step="0.1"><span class="suffix">%</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-results">
+
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
+        <h2>Result</h2>
+      </div>
+      <div class="card-body">
+        <div class="verdict-pill" id="d1_verdictPill"><span class="dot"></span><span id="d1_verdictText">—</span></div>
+        <p class="narrative" id="d1_narrativeMain">—</p>
+
+        <div class="stat-tiles" style="margin-bottom:12px;">
+          <div class="stat-tile">
+            <span class="label">Marketing margin</span>
+            <span class="value" id="d1_marketingMargin" style="font-size:20px;">$0</span>
+            <span class="sub">/head, from selling later vs. now</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Feeding / grazing margin</span>
+            <span class="value" id="d1_feedingMargin" style="font-size:20px;">$0</span>
+            <span class="sub">/head, value of gain minus cost of gain</span>
+          </div>
+          <div class="stat-tile wide" id="d1_netMarginTile">
+            <span class="label">Net margin</span>
+            <span class="value" id="d1_netMargin" style="font-size:22px;">$0</span>
+            <span class="sub">/head, above target — marketing + feeding margin</span>
+          </div>
+        </div>
+
+        <div class="stat-tiles" style="margin-bottom:12px;">
+          <div class="stat-tile">
+            <span class="label">Annualized ROA</span>
+            <span class="value" id="d1_roaValue" style="font-size:20px;">0.0%</span>
+            <span class="sub">return on assets, incl. target margin</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Annualized ROE</span>
+            <span class="value" id="d1_roeValue" style="font-size:20px;">0.0%</span>
+            <span class="sub">return on equity, incl. target margin</span>
+          </div>
+        </div>
+
+        <div class="stat-tile" style="margin-bottom:4px;">
+          <span class="label">Price necessary to hit target margin</span>
+          <span class="value" id="d1_reqPrice" style="font-size:24px;">$0.00</span>
+          <span class="sub" id="d1_reqPriceSub">$/cwt, out weight</span>
+        </div>
+
+        <button type="button" class="btn secondary" id="d1_resetBtn" style="margin-top:16px;">Reset D1 defaults</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+        <h2>Price sensitivity — necessary sale price</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">If your buy-in price or your realized cost of gain turns out different than planned, here's the sale price ($/cwt) you'd need to still hit your target margin. Rows step the cull cow's effective buy-in price; columns step the cost of gain — both centered on today's numbers.</p>
+        <div class="field-grid cols-3" style="margin-bottom:16px;">
+          <div class="field">
+            <label for="d1_priceStep">In-price step</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_priceStep" value="5" min="0.5" step="0.5"><span class="suffix">$/cwt</span></div>
+          </div>
+          <div class="field">
+            <label for="d1_gainStep">Cost-of-gain step</label>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_gainStep" value="4" min="0.5" step="0.5"><span class="suffix">$/cwt</span></div>
+          </div>
+        </div>
+        <div class="table-scroll">
+          <table class="grid" id="d1_sensGrid">
+            <thead>
+              <tr id="d1_sensGridHead"><th>In-price \ Cost of gain</th></tr>
+            </thead>
+            <tbody id="d1_sensGridBody"></tbody>
+          </table>
+        </div>
+        <p class="viz-caption">Center column and row (bold) are today's actual cost of gain and buy-in price. All values are the sale price ($/cwt of the upgraded animal) needed to hit your target margin under that combination.</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+</div>
+
+<div id="panel-stockers" class="tool-panel" hidden>
+<section class="intro">
+  <div class="intro-inner">
+    <div>
+      <h1>Should you sell your stockers now, or keep adding weight?</h1>
+      <p>Three retained-ownership paths, side by side: graze calves to about 700&nbsp;lb and sell by March 1, graze on to about 800&nbsp;lb and sell in May, or continue either one into a feedyard finishing phase. A fourth view checks whether the extra weeks of grazing from 700 to 800&nbsp;lb pay for themselves. Shared assumptions (herd size, calf price, grazing calendar) feed all four — change them once and every path updates.</p>
+    </div>
+    <div class="intro-meta">
+      <div><strong>4 paths</strong>700lb · 800lb · Feedyard · Marginal</div>
+      <div><strong>7 sensitivity grids</strong>faithful to the spreadsheet</div>
+      <div><strong>Editable</strong>every assumption</div>
+    </div>
+  </div>
+  <div class="fence-line"></div>
+</section>
+
+<div class="assumptions-wrap">
+  <div class="card">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
+      <h2>Shared assumptions</h2>
+    </div>
+    <div class="card-body">
+      <p class="card-note">These feed all four paths below, exactly like the "Assumptions" sheet in the original workbook — change a value once here and every path, result and grid recalculates.</p>
+      <div class="field-grid cols-3">
+        <div class="field">
+          <label for="sk_heads">Number of head</label>
+          <div class="input-wrap"><input type="number" id="sk_heads" value="100" min="1"></div>
+        </div>
+        <div class="field">
+          <label for="sk_calfPrice">Calf purchase price</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_calfPrice" value="530" min="0" step="1"><span class="suffix">$/cwt</span></div>
+        </div>
+        <div class="field">
+          <label for="sk_calfWeight">Calf purchase weight</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_calfWeight" value="475" min="0"><span class="suffix">lb</span></div>
+        </div>
+        <div class="field">
+          <label for="sk_price700">Sale price — 700&nbsp;lb path</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_price700" value="380" min="0" step="1"><span class="suffix">$/cwt</span></div>
+        </div>
+        <div class="field">
+          <label for="sk_price800">Sale price — 800&nbsp;lb path</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_price800" value="360" min="0" step="1"><span class="suffix">$/cwt</span></div>
+        </div>
+        <div class="field">
+          <label for="sk_grazingCost">Grazing cost</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_grazingCost" value="0.65" min="0" step="0.01"><span class="suffix">$/lb gained</span></div>
+        </div>
+        <div class="field">
+          <label for="sk_earlyStart">Early grazing phase begins</label>
+          <div class="input-wrap"><input type="date" id="sk_earlyStart" value="2019-10-01"></div>
+        </div>
+        <div class="field">
+          <label for="sk_pullOff700">Pull off — 700&nbsp;lb path</label>
+          <div class="input-wrap"><input type="date" id="sk_pullOff700" value="2020-03-15"></div>
+        </div>
+        <div class="field">
+          <label for="sk_pullOff800">Pull off — 800&nbsp;lb path</label>
+          <div class="input-wrap"><input type="date" id="sk_pullOff800" value="2020-05-01"></div>
+        </div>
+        <div class="field">
+          <label for="sk_earlyADG">Early-phase ADG</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_earlyADG" value="1.3" min="0" step="0.05"><span class="suffix">lb/day</span></div>
+        </div>
+        <div class="field">
+          <label for="sk_lateADG">Late-phase ADG</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_lateADG" value="2.3" min="0" step="0.05"><span class="suffix">lb/day</span></div>
+        </div>
+        <div class="field">
+          <label for="sk_interestRate">Interest rate</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_interestRate" value="7" min="0" step="0.1"><span class="suffix">%</span></div>
+        </div>
+        <div class="field">
+          <label for="sk_shrink700">Shrink — 700&nbsp;lb path</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_shrink700" value="0" min="0" step="0.1"><span class="suffix">%</span></div>
+        </div>
+        <div class="field">
+          <label for="sk_shrink800">Shrink — 800&nbsp;lb path</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_shrink800" value="0" min="0" step="0.1"><span class="suffix">%</span></div>
+        </div>
+        <div class="field">
+          <label for="sk_deathLoss700">Death loss — 700&nbsp;lb path</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_deathLoss700" value="1" min="0" step="0.1"><span class="suffix">%</span></div>
+        </div>
+        <div class="field">
+          <label for="sk_deathLoss800">Death loss — 800&nbsp;lb path</label>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_deathLoss800" value="1" min="0" step="0.1"><span class="suffix">%</span></div>
+        </div>
+      </div>
+      <p class="derived-note" id="sk_calendarNote">—</p>
+      <button type="button" class="btn secondary" id="sk_resetBtn" style="margin-top:14px;">Reset Stockers defaults</button>
+    </div>
+  </div>
+</div>
+
+<nav class="path-nav" aria-label="Retained-ownership path">
+  <div class="segmented" role="tablist">
+    <button type="button" class="subtab-btn active" data-subtab="p700" role="tab">700 lb (March)</button>
+    <button type="button" class="subtab-btn" data-subtab="p800" role="tab">800 lb (May)</button>
+    <button type="button" class="subtab-btn" data-subtab="fy8" role="tab">Feedyard, from 800 lb</button>
+    <button type="button" class="subtab-btn" data-subtab="fy7" role="tab">Feedyard, from 700 lb</button>
+    <button type="button" class="subtab-btn" data-subtab="rm" role="tab">Retain to May (marginal)</button>
+  </div>
+</nav>
+
+<!-- ============ 700 lb path ============ -->
+<div class="subtool-panel" id="subpanel-p700" data-subtab="p700">
+<div class="layout">
+  <div class="col-inputs">
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+        <h2>700 lb path — budget line items</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Graze the calf from the shared purchase weight through the early phase only, then sell around March&nbsp;1 at roughly 700&nbsp;lb. These per-head cost line items are specific to this path.</p>
+        <div class="field-grid cols-3">
+          <div class="field"><label for="sk700_vetRate">Vet / medicine</label><div class="input-wrap has-suffix"><input type="number" id="sk700_vetRate" value="24" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="sk700_hayLb">Hay fed</label><div class="input-wrap has-suffix"><input type="number" id="sk700_hayLb" value="125" min="0"><span class="suffix">lb/hd</span></div></div>
+          <div class="field"><label for="sk700_hayRate">Hay cost</label><div class="input-wrap has-suffix"><input type="number" id="sk700_hayRate" value="0.10" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
+          <div class="field"><label for="sk700_saltLb">Salt &amp; mineral fed</label><div class="input-wrap has-suffix"><input type="number" id="sk700_saltLb" value="15" min="0"><span class="suffix">lb/hd</span></div></div>
+          <div class="field"><label for="sk700_saltRate">Salt &amp; mineral cost</label><div class="input-wrap has-suffix"><input type="number" id="sk700_saltRate" value="0.45" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
+          <div class="field"><label for="sk700_laborRate">Labor</label><div class="input-wrap has-suffix"><input type="number" id="sk700_laborRate" value="8.42" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="sk700_fuelRate">Fuel</label><div class="input-wrap has-suffix"><input type="number" id="sk700_fuelRate" value="8.36" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="sk700_lubePct">Lube (% of fuel)</label><div class="input-wrap has-suffix"><input type="number" id="sk700_lubePct" value="10" min="0" step="1"><span class="suffix">%</span></div></div>
+          <div class="field"><label for="sk700_marketingRate">Marketing</label><div class="input-wrap has-suffix"><input type="number" id="sk700_marketingRate" value="12" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="sk700_mgmtFee">Management fee</label><div class="input-wrap has-suffix"><input type="number" id="sk700_mgmtFee" value="23.33" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-results">
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
+        <h2>Result — 700 lb path</h2>
+      </div>
+      <div class="card-body">
+        <div class="verdict-pill" id="p700_verdictPill"><span class="dot"></span><span id="p700_verdictText">—</span></div>
+        <p class="narrative" id="p700_narrative">—</p>
+        <div class="stat-tiles" style="margin-bottom:12px;">
+          <div class="stat-tile"><span class="label">Revenue</span><span class="value" id="p700_revenue" style="font-size:20px;">$0</span><span class="sub">/head at sale</span></div>
+          <div class="stat-tile"><span class="label">Total costs</span><span class="value" id="p700_totalCosts" style="font-size:20px;">$0</span><span class="sub">/head, variable + fixed</span></div>
+          <div class="stat-tile wide" id="p700_returnTile"><span class="label">Planned return</span><span class="value" id="p700_return" style="font-size:22px;">$0</span><span class="sub">/head above all costs</span></div>
+        </div>
+        <div class="stat-tiles">
+          <div class="stat-tile"><span class="label">Breakeven price</span><span class="value" id="p700_breakeven" style="font-size:18px;">$0</span><span class="sub">$/cwt to cover all costs</span></div>
+          <div class="stat-tile"><span class="label">Cost of gain</span><span class="value" id="p700_cog" style="font-size:18px;">$0</span><span class="sub">$/cwt of gain</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+        <h2>Returns sensitivity — 700 lb</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Rows step the calf purchase price ±10%/±5%; columns step the 700&nbsp;lb sale price ±20%/±10% — the spreadsheet's own fixed steps. Values are $/head above variable + other costs (before management fee).</p>
+        <div class="table-scroll">
+          <table class="grid" id="p700_grid"><thead><tr id="p700_gridHead"><th>Purchase \ Sale price</th></tr></thead><tbody id="p700_gridBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ 800 lb path ============ -->
+<div class="subtool-panel" id="subpanel-p800" data-subtab="p800" hidden>
+<div class="layout">
+  <div class="col-inputs">
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+        <h2>800 lb path — budget line items</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Graze the calf through both the early and late grazing phases, then sell around May&nbsp;1 at roughly 800&nbsp;lb.</p>
+        <div class="field-grid cols-3">
+          <div class="field"><label for="sk800_vetRate">Vet / medicine</label><div class="input-wrap has-suffix"><input type="number" id="sk800_vetRate" value="16.2" min="0" step="0.1"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="sk800_hayLb">Hay fed</label><div class="input-wrap has-suffix"><input type="number" id="sk800_hayLb" value="125" min="0"><span class="suffix">lb/hd</span></div></div>
+          <div class="field"><label for="sk800_hayRate">Hay cost</label><div class="input-wrap has-suffix"><input type="number" id="sk800_hayRate" value="0.10" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
+          <div class="field"><label for="sk800_saltLb">Salt &amp; mineral fed</label><div class="input-wrap has-suffix"><input type="number" id="sk800_saltLb" value="14" min="0"><span class="suffix">lb/hd</span></div></div>
+          <div class="field"><label for="sk800_saltRate">Salt &amp; mineral cost</label><div class="input-wrap has-suffix"><input type="number" id="sk800_saltRate" value="0.45" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
+          <div class="field"><label for="sk800_laborRate">Labor</label><div class="input-wrap has-suffix"><input type="number" id="sk800_laborRate" value="12.56" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="sk800_fuelRate">Fuel</label><div class="input-wrap has-suffix"><input type="number" id="sk800_fuelRate" value="7.50" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="sk800_lubePct">Lube (% of fuel)</label><div class="input-wrap has-suffix"><input type="number" id="sk800_lubePct" value="10" min="0" step="1"><span class="suffix">%</span></div></div>
+          <div class="field"><label for="sk800_marketingRate">Marketing</label><div class="input-wrap has-suffix"><input type="number" id="sk800_marketingRate" value="23" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="sk800_mgmtFee">Management fee</label><div class="input-wrap has-suffix"><input type="number" id="sk800_mgmtFee" value="35" min="0" step="1"><span class="suffix">$/hd</span></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-results">
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
+        <h2>Result — 800 lb path</h2>
+      </div>
+      <div class="card-body">
+        <div class="verdict-pill" id="p800_verdictPill"><span class="dot"></span><span id="p800_verdictText">—</span></div>
+        <p class="narrative" id="p800_narrative">—</p>
+        <div class="stat-tiles" style="margin-bottom:12px;">
+          <div class="stat-tile"><span class="label">Revenue</span><span class="value" id="p800_revenue" style="font-size:20px;">$0</span><span class="sub">/head at sale</span></div>
+          <div class="stat-tile"><span class="label">Total costs</span><span class="value" id="p800_totalCosts" style="font-size:20px;">$0</span><span class="sub">/head, variable + fixed</span></div>
+          <div class="stat-tile wide" id="p800_returnTile"><span class="label">Planned return</span><span class="value" id="p800_return" style="font-size:22px;">$0</span><span class="sub">/head above all costs</span></div>
+        </div>
+        <div class="stat-tiles">
+          <div class="stat-tile"><span class="label">Breakeven price</span><span class="value" id="p800_breakeven" style="font-size:18px;">$0</span><span class="sub">$/cwt to cover all costs</span></div>
+          <div class="stat-tile"><span class="label">Cost of gain</span><span class="value" id="p800_cog" style="font-size:18px;">$0</span><span class="sub">$/cwt of gain</span></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+        <h2>Returns sensitivity — 800 lb</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Rows step the calf purchase price ±10%/±5%; columns step the 800&nbsp;lb sale price ±20%/±10% — the spreadsheet's own fixed steps. Values are $/head above variable + other costs (before management fee).</p>
+        <div class="table-scroll">
+          <table class="grid" id="p800_grid"><thead><tr id="p800_gridHead"><th>Purchase \ Sale price</th></tr></thead><tbody id="p800_gridBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ Feedyard from 800 lb ============ -->
+<div class="subtool-panel" id="subpanel-fy8" data-subtab="fy8" hidden>
+<div class="layout">
+  <div class="col-inputs">
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+        <h2>Feedyard, starting from the 800 lb stocker</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Instead of selling the ~800&nbsp;lb stocker in May, ship it to a feedyard to finish. Weight in comes from the 800&nbsp;lb path above; weight out is derived from days on feed × ADG.</p>
+        <div class="field-grid cols-3">
+          <div class="field"><label for="skfy8_cog">Cost of gain</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_cog" value="72" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+          <div class="field"><label for="skfy8_days">Days on feedyard</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_days" value="180" min="1"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="skfy8_adg">ADG</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_adg" value="3.5" min="0" step="0.1"><span class="suffix">lb/day</span></div></div>
+          <div class="field"><label for="skfy8_salePrice">Sale price, fed cattle</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_salePrice" value="100" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+          <div class="field"><label for="skfy8_deathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_deathLoss" value="1" min="0" step="0.1"><span class="suffix">%</span></div></div>
+        </div>
+        <p class="derived-note" id="fy8_weightNote">—</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-results">
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
+        <h2>Result — Feedyard from 800 lb</h2>
+      </div>
+      <div class="card-body">
+        <div class="verdict-pill" id="fy8_verdictPill"><span class="dot"></span><span id="fy8_verdictText">—</span></div>
+        <p class="narrative" id="fy8_narrative">—</p>
+        <div class="stat-tile wide" id="fy8_returnTile"><span class="label">Net return</span><span class="value" id="fy8_return" style="font-size:22px;">$0</span><span class="sub">/head, revenue minus entry value, entry-value interest and gain cost</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+        <h2>Sensitivity — cost of gain</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Rows step cost of gain ±10%/±5%; columns step sale price ±10%/±5%. $/head, at the weight-out derived from days on feed × ADG.</p>
+        <div class="table-scroll">
+          <table class="grid" id="fy8_cogGrid"><thead><tr id="fy8_cogGridHead"><th>Cost of gain \ Sale price</th></tr></thead><tbody id="fy8_cogGridBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+        <h2>Sensitivity — sale weight w/ shrink</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Rows step sale weight from 80% to 100% of the full weight out (the spreadsheet's own steps — it never checks weights above); columns step sale price ±10%/±5%. Cost of gain held at its base value.</p>
+        <div class="table-scroll">
+          <table class="grid" id="fy8_wtGrid"><thead><tr id="fy8_wtGridHead"><th>Sale weight \ Sale price</th></tr></thead><tbody id="fy8_wtGridBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ Feedyard from 700 lb ============ -->
+<div class="subtool-panel" id="subpanel-fy7" data-subtab="fy7" hidden>
+<div class="layout">
+  <div class="col-inputs">
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+        <h2>Feedyard, starting from the 700 lb stocker</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Instead of selling the ~700&nbsp;lb stocker in March, ship it straight to a feedyard to finish — skipping the 800&nbsp;lb grazing phase. Weight in comes from the 700&nbsp;lb path above; more days on feed than the 800&nbsp;lb-start version since the animal enters lighter.</p>
+        <div class="field-grid cols-3">
+          <div class="field"><label for="skfy7_cog">Cost of gain</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_cog" value="72" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+          <div class="field"><label for="skfy7_days">Days on feedyard</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_days" value="210" min="1"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="skfy7_adg">ADG</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_adg" value="3.5" min="0" step="0.1"><span class="suffix">lb/day</span></div></div>
+          <div class="field"><label for="skfy7_salePrice">Sale price, fed cattle</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_salePrice" value="100" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+          <div class="field"><label for="skfy7_deathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_deathLoss" value="1" min="0" step="0.1"><span class="suffix">%</span></div></div>
+        </div>
+        <p class="derived-note" id="fy7_weightNote">—</p>
+      </div>
+    </div>
+  </div>
+  <div class="col-results">
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
+        <h2>Result — Feedyard from 700 lb</h2>
+      </div>
+      <div class="card-body">
+        <div class="verdict-pill" id="fy7_verdictPill"><span class="dot"></span><span id="fy7_verdictText">—</span></div>
+        <p class="narrative" id="fy7_narrative">—</p>
+        <div class="stat-tile wide" id="fy7_returnTile"><span class="label">Net return</span><span class="value" id="fy7_return" style="font-size:22px;">$0</span><span class="sub">/head, revenue minus entry value, entry-value interest and gain cost</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+        <h2>Sensitivity — cost of gain</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Rows step cost of gain ±10%/±5%; columns step sale price ±10%/±5%. $/head, at the weight-out derived from days on feed × ADG.</p>
+        <div class="table-scroll">
+          <table class="grid" id="fy7_cogGrid"><thead><tr id="fy7_cogGridHead"><th>Cost of gain \ Sale price</th></tr></thead><tbody id="fy7_cogGridBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+        <h2>Sensitivity — sale weight w/ shrink</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Rows step sale weight from 80% to 100% of the full weight out; columns step sale price ±10%/±5%. Cost of gain held at its base value.</p>
+        <div class="table-scroll">
+          <table class="grid" id="fy7_wtGrid"><thead><tr id="fy7_wtGridHead"><th>Sale weight \ Sale price</th></tr></thead><tbody id="fy7_wtGridBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============ Retain to May (marginal) ============ -->
+<div class="subtool-panel" id="subpanel-rm" data-subtab="rm" hidden>
+<div class="layout">
+  <div class="col-inputs">
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
+        <h2>Retaining to May — the marginal decision</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">This isn't a 4th path — it's the marginal question of whether the extra weeks of wheat grazing from ~700&nbsp;lb to ~800&nbsp;lb are worth it, holding the calf itself fixed. It nets the 800&nbsp;lb path's revenue and costs against the 700&nbsp;lb path's, minus a two-month carrying cost on the wheat-grazing rate below.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="skrm_costRate">Wheat grazing cost rate (center)</label>
+            <div class="input-wrap has-suffix"><input type="number" id="skrm_costRate" value="120" min="0" step="1"><span class="suffix">$/cwt</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-results">
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
+        <h2>Result — retain to May</h2>
+      </div>
+      <div class="card-body">
+        <div class="verdict-pill" id="rm_verdictPill"><span class="dot"></span><span id="rm_verdictText">—</span></div>
+        <p class="narrative" id="rm_narrative">—</p>
+        <div class="stat-tile wide" id="rm_returnTile"><span class="label">Marginal value of retaining</span><span class="value" id="rm_return" style="font-size:22px;">$0</span><span class="sub">/head, at today's center assumptions</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
+        <h2>Sensitivity — retaining to May</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Rows step the wheat grazing cost rate ±10%/±5%; columns step the 800&nbsp;lb sale price ±10%/±5%. $/head, marginal value of retaining vs. selling at 700&nbsp;lb.</p>
+        <div class="table-scroll">
+          <table class="grid" id="rm_grid"><thead><tr id="rm_gridHead"><th>Cost rate \ Sale price (800lb)</th></tr></thead><tbody id="rm_gridBody"></tbody></table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<footer id="toolFooter">
+  Based on the <strong>D1 — Sell or Keep to Upgrade Cull Cows Profit Projection</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; the starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a cull-cow marketing decision.
+</footer>
+
+<div class="viz-tooltip" id="vizTooltip"></div>
+
+<script>
+(function(){
+  "use strict";
+  var fmtMoney0 = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+  var fmtMoney2 = new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  function $(id){ return document.getElementById(id); }
+  function num(id){ var v=parseFloat($(id).value); return isFinite(v)?v:0; }
+  function round(v,d){ var m=Math.pow(10,d||0); return Math.round(v*m)/m; }
+  function fmtDollar(v, decimals){
+    var f = decimals===2 ? fmtMoney2 : fmtMoney0;
+    v = isFinite(v) ? v : 0;
+    return (v<0?'-':'')+'$'+f.format(Math.abs(v));
+  }
+
+  /* ================================================================
+     D1 — Sell or Keep to Upgrade Cull Cows Profit Projection
+     Faithful port of the "Sell or Upgrade Cull Cows" + "SensitivityAnalysis"
+     sheets from D1.xlsx. Two ranges are used inconsistently for "direct
+     costs" in the original workbook (SUM(E45:E52) in most places, but
+     SUM(E45:E48) — excluding Other Cost, G&A and Management — inside the
+     sensitivity grid's per-column financing delta, and E54's Total
+     Production Cost sums E45:E53 which double-counts the E53 G&A subtotal
+     on top of its own E51/E52 components). Both quirks are reproduced here
+     exactly as found in the workbook rather than "corrected," per this
+     project's fidelity rule — flagged to the user rather than silently
+     changed.
+     ================================================================ */
+  function calcD1(inp){
+    // --- Cull cow sale today ---
+    var E9 = inp.headCulled;
+    var E10 = inp.weightAtCulling;
+    var E11 = inp.shrinkSold;
+    var E12 = (1-E11*0.01)*E10;
+    var E13 = inp.priceSold;
+    var D14 = inp.commissionSold;
+    var E14 = (E12*E13*0.01)*D14*0.01;
+    var E15 = inp.freightSold;
+    var E16 = inp.perHeadSold;
+    var D19 = (E12*E13*0.01)-E14-E15-E16;
+    var C19 = E12===0 ? 0 : (D19/E12)*100;
+    var E19 = C19*E12*E9*0.01;
+    var E21 = D19*E9;
+    var F21 = (E9*E10)===0 ? 0 : E21/(E9*E10*0.01);
+
+    // --- Retained ownership alternative ---
+    var B25 = inp.outWeight;
+    var E26 = inp.adg;
+    var D25 = inp.manualDays;
+    var C25 = (B25===0 || E26===0) ? 0 : ((B25-E10)/E26);
+    var E25 = (D25===0) ? C25 : D25;
+    var E27 = E25*E26+E10;
+    var E28 = inp.shrinkOut;
+    var E29 = (1-E28*0.01)*E27;
+    var D31 = inp.priceOut;
+    var D32 = inp.commissionOut;
+    var E32 = (E29*D31*0.01)*D32*0.01;
+    var E33 = inp.freightOut;
+    var E34 = inp.perHeadOut;
+    var E35 = E32+E33+E34;
+    var D37 = inp.deathLoss;
+    var E37 = (1-D37*0.01)*E9;
+    var E38 = (E29*D31*0.01)-E34-E33-E32;
+    var E39 = E29===0 ? 0 : (E38/E29)*100;
+    var E40 = E38*E37;
+    var F37 = (E29*E37)-(E10*E9);
+    var G40 = E9===0 ? 0 : F37/E9;
+    var E42 = E40-E21;
+
+    // --- Direct costs ---
+    var D45=inp.costPerLbGain, C45=G40, E45=C45*D45*E9;
+    var D46=inp.feedGrazingRate, C46=E25, E46=C46*D46*E9;
+    var D47=inp.processingHealth, C47=1, E47=C47*D47*E9;
+    var C48=inp.feedFacilitiesDays, D48=inp.feedFacilitiesRate, E48=C48*D48*E9;
+    var D49=inp.otherCost, C49=1, E49=C49*D49*E9;
+
+    // --- G&A / management ---
+    var D51=inp.gaPerHd, C51=E9, E51=C51*D51;
+    var D52=inp.managementPerHd, C52=C51, E52=C52*D52;
+    var E53 = E51+E52;
+
+    var subtotal45_52 = E45+E46+E47+E48+E49+E51+E52; // SUM(E45:E52)
+    var E54 = subtotal45_52 + E53 + E21; // SUM(E45:E53)+E21 -- reproduces the original's G&A double count
+
+    var D55=inp.targetMarginPerHd, C55=1, E55=C55*D55*E9;
+
+    var C58=inp.pctBorrowed, D58=inp.interestRate;
+
+    var assetBase = (E25===0) ? 0 : ((subtotal45_52*0.5+E21)*(E25/365)); // K74 / K60 base
+    var K60 = assetBase*C58*0.01;
+    var E59 = K60*D58*0.01; // Financing cost $ (=L60)
+
+    var E60 = subtotal45_52 + E55 + E59; // SUM(E44:E52)+E55+E59 (E44 blank)
+    var E37safe = E37===0 ? 1 : E37;
+    var E61 = E60/E37safe;
+    var E62 = F37<=0 ? NaN : (E60/(F37*0.01));
+
+    var E65 = E42+E55-E60;
+
+    var K74 = assetBase;
+    var K69 = (C58===100) ? (subtotal45_52*0.5+E21)*(E25/365) : (subtotal45_52*0.5+E21)*(100-C58)*0.01*(E25/365);
+    var K68 = E65+E55;
+    var roePct = K69===0 ? 0 : (K68/K69)*100;
+    var K75 = E65+E59+E55;
+    var roaPct = K74===0 ? 0 : (K75/K74)*100;
+
+    var E29E37 = E29*E37;
+    var E72 = E29E37===0 ? NaN : ((E55+E59+(F21*E9*E10*0.01)+(subtotal45_52+E35*E37))/(E29E37*0.01));
+
+    // --- Summary margin analysis ---
+    var B91 = E9*E12;
+    var B93 = E37*E29;
+    var B95 = B93-B91;
+    var B97 = B95===0 ? 0 : (E60/B95)*100;
+    var B81 = E37===0 ? 0 : ((E9*E12*0.01)*(E39-C19)/E37);
+    var B83 = E37===0 ? 0 : ((E39-B97)*B95*0.01)/E37;
+    var B85 = B81+B83;
+
+    return {
+      E9:E9, E10:E10, E12:E12, E19:E19, E21:E21, F21:F21, D19:D19,
+      E25:E25, E29:E29, E35:E35, E37:E37, E45:E45, E46:E46, E47:E47, E48:E48, E49:E49,
+      subtotal45_52:subtotal45_52, E55:E55, E59:E59, E60:E60, E62:E62, E65:E65, G40:G40,
+      D31:D31, C58:C58, D58:D58,
+      roaPct:roaPct, roePct:roePct, E72:E72,
+      marketingMargin:B81, feedingMargin:B83, netMargin:B85
+    };
+  }
+
+  /* Full 5x5 sensitivity grid — rows step the cull cow's effective buy-in
+     price ($/cwt), columns step the cost of gain ($/cwt), reproducing the
+     "SensitivityAnalysis" sheet's K/L/M/N/O/P and Q/R/S helper tables
+     exactly (including its own use of SUM(E45:E48), narrower than the
+     SUM(E45:E52) used everywhere else in the model). */
+  function calcD1Grid(inp, base){
+    var E9=base.E9, E10=base.E10, E25=base.E25, D58=base.D58, C58=base.C58;
+    var C9 = base.G40; // gain/hd
+    var C13 = inp.gainStep, C14 = inp.priceStep;
+    var subtotal45_48 = base.E45+base.E46+base.E47+base.E48;
+
+    var K11 = base.subtotal45_52*0.5*((E25/365)*D58*0.01);
+    var N11 = K11*C58*0.01;
+
+    function colDelta(change){
+      var N = C9*0.01*change*0.5;
+      var M = (subtotal45_48+N)*0.5*((E25/365)*D58*0.01);
+      var O = M-K11;
+      return change===0 ? 0 : (C9*change)+O;
+    }
+    var stepE = -2*C13, stepF = -1*C13, stepH = 1*C13, stepI = 2*C13;
+    var P24 = colDelta(stepE), P22 = colDelta(stepF), P18 = colDelta(stepH), P20 = colDelta(stepI);
+    var gainCols = [
+      {step:stepE, pterm:P24},
+      {step:stepF, pterm:P22},
+      {step:0,     pterm:0},
+      {step:stepH, pterm:P18},
+      {step:stepI, pterm:P20}
+    ];
+    var baseGainCost = base.E62;
+    var colHeaders = gainCols.map(function(c){ return baseGainCost + c.step; });
+
+    var baseInPrice = base.E10===0 ? 0 : (base.D19/base.E10)*100; // C24
+    var rowPrices = [baseInPrice-2*C14, baseInPrice-C14, baseInPrice, baseInPrice+C14, baseInPrice+2*C14];
+
+    function rowS(rowPrice){
+      var R = (rowPrice*E9*E10*0.01)*((E25/365)*D58*0.01);
+      return (R*C58*0.01)+N11;
+    }
+
+    var E29E37 = base.E29*base.E37;
+    var denom = E29E37===0 ? 0 : E29E37*0.01;
+    var grid = rowPrices.map(function(rp){
+      var S = rowS(rp);
+      return gainCols.map(function(c){
+        if(denom===0) return NaN;
+        var numerator = rp*E9*E10*0.01 + base.subtotal45_52 + S + base.E55 + c.pterm + base.E35*base.E37;
+        return numerator/denom;
+      });
+    });
+
+    return { rowPrices:rowPrices, colHeaders:colHeaders, grid:grid, centerRow:2, centerCol:2 };
+  }
+
+  var D1_DEFAULTS = {
+    d1_headCulled:50, d1_weightAtCulling:1100, d1_shrinkSold:3, d1_priceSold:180,
+    d1_commissionSold:3, d1_freightSold:7, d1_perHeadSold:1,
+    d1_outWeight:1300, d1_adg:2.25, d1_manualDays:0, d1_shrinkOut:3, d1_priceOut:90,
+    d1_commissionOut:3, d1_freightOut:7, d1_perHeadOut:1, d1_deathLoss:0.5,
+    d1_costPerLbGain:0, d1_feedGrazingRate:2, d1_processingHealth:10,
+    d1_feedFacilitiesDays:111, d1_feedFacilitiesRate:0.4, d1_otherCost:0,
+    d1_gaPerHd:10, d1_managementPerHd:40,
+    d1_targetMarginPerHd:30, d1_pctBorrowed:30, d1_interestRate:5,
+    d1_priceStep:5, d1_gainStep:4
+  };
+
+  function readD1Inputs(){
+    return {
+      headCulled: num('d1_headCulled'), weightAtCulling: num('d1_weightAtCulling'),
+      shrinkSold: num('d1_shrinkSold'), priceSold: num('d1_priceSold'),
+      commissionSold: num('d1_commissionSold'), freightSold: num('d1_freightSold'), perHeadSold: num('d1_perHeadSold'),
+      outWeight: num('d1_outWeight'), adg: num('d1_adg'), manualDays: num('d1_manualDays'),
+      shrinkOut: num('d1_shrinkOut'), priceOut: num('d1_priceOut'),
+      commissionOut: num('d1_commissionOut'), freightOut: num('d1_freightOut'), perHeadOut: num('d1_perHeadOut'),
+      deathLoss: num('d1_deathLoss'),
+      costPerLbGain: num('d1_costPerLbGain'), feedGrazingRate: num('d1_feedGrazingRate'),
+      processingHealth: num('d1_processingHealth'), feedFacilitiesDays: num('d1_feedFacilitiesDays'),
+      feedFacilitiesRate: num('d1_feedFacilitiesRate'), otherCost: num('d1_otherCost'),
+      gaPerHd: num('d1_gaPerHd'), managementPerHd: num('d1_managementPerHd'),
+      targetMarginPerHd: num('d1_targetMarginPerHd'), pctBorrowed: num('d1_pctBorrowed'), interestRate: num('d1_interestRate'),
+      priceStep: num('d1_priceStep'), gainStep: num('d1_gainStep')
+    };
+  }
+
+  function renderD1Grid(gridData){
+    var head = $('d1_sensGridHead');
+    head.innerHTML = '<th>In-price \\ Cost of gain</th>' + gridData.colHeaders.map(function(c,ci){
+      var bold = ci===gridData.centerCol ? ' style="color:var(--accent);"' : '';
+      return '<th'+bold+'>'+fmtDollar(c,2)+'</th>';
+    }).join('');
+    var body = $('d1_sensGridBody');
+    body.innerHTML = gridData.rowPrices.map(function(rp, ri){
+      var rowBold = ri===gridData.centerRow;
+      var cells = gridData.grid[ri].map(function(v, ci){
+        var isCenter = ri===gridData.centerRow && ci===gridData.centerCol;
+        var style = isCenter ? ' style="color:var(--accent);font-weight:800;"' : (rowBold||ci===gridData.centerCol ? ' style="font-weight:700;"' : '');
+        return '<td'+style+'>'+(isFinite(v)?fmtDollar(v,2):'—')+'</td>';
+      }).join('');
+      var rowLabelStyle = rowBold ? ' style="color:var(--accent);font-weight:800;"' : '';
+      return '<tr><td'+rowLabelStyle+'>'+fmtDollar(rp,2)+'</td>'+cells+'</tr>';
+    }).join('');
+  }
+
+  function recalcD1(){
+    var inp = readD1Inputs();
+    var base = calcD1(inp);
+
+    var daysNote = 'Days on feed: ';
+    if(inp.manualDays>0){
+      daysNote += round(inp.manualDays,0)+' days (manual override).';
+    } else if(inp.outWeight<=inp.weightAtCulling || inp.adg<=0){
+      daysNote += 'set a target out-weight above the culling weight, and a positive daily gain.';
+    } else {
+      daysNote += round(base.E25,0)+' days, to go from '+round(inp.weightAtCulling,0)+' to '+round(inp.outWeight,0)+' lb at '+inp.adg+' lb/day.';
+    }
+    $('d1_daysNote').textContent = daysNote;
+
+    var better = base.netMargin >= 0;
+    $('d1_verdictPill').className = 'verdict-pill ' + (better ? 'good' : 'critical');
+    $('d1_verdictText').textContent = better
+      ? 'Retaining beats selling now, even above your target margin'
+      : 'Selling now looks better — retaining falls short of your target margin';
+
+    $('d1_narrativeMain').innerHTML = 'Selling now nets about <strong>'+fmtDollar(base.E21/Math.max(base.E9,1),2)+'/head</strong>. Retaining and upgrading, after all direct costs, overhead and financing (but before your '+fmtDollar(inp.targetMarginPerHd,0)+'/hd target), nets a marketing margin of <strong>'+fmtDollar(base.marketingMargin,2)+'/hd</strong> and a feeding margin of <strong>'+fmtDollar(base.feedingMargin,2)+'/hd</strong> — a net margin of <strong>'+fmtDollar(base.netMargin,2)+'/hd</strong> above your target.';
+
+    $('d1_marketingMargin').textContent = fmtDollar(base.marketingMargin,2);
+    $('d1_feedingMargin').textContent = fmtDollar(base.feedingMargin,2);
+    $('d1_netMargin').textContent = fmtDollar(base.netMargin,2);
+    $('d1_netMarginTile').className = 'stat-tile wide ' + (better ? 'good' : 'critical');
+
+    $('d1_roaValue').textContent = (isFinite(base.roaPct)?base.roaPct.toFixed(1):'0.0') + '%';
+    $('d1_roeValue').textContent = (isFinite(base.roePct)?base.roePct.toFixed(1):'0.0') + '%';
+
+    $('d1_reqPrice').textContent = isFinite(base.E72) ? fmtDollar(base.E72,2) : '—';
+    $('d1_reqPriceSub').textContent = '$/cwt out weight — you have '+fmtDollar(inp.priceOut,2)+'/cwt planned';
+
+    var gridData = calcD1Grid(inp, base);
+    renderD1Grid(gridData);
+  }
+
+  /* ---------------- Generic input binding ---------------- */
+  function attachD1Inputs(){
+    Object.keys(D1_DEFAULTS).forEach(function(id){
+      var el = $(id);
+      if(el) el.addEventListener('input', recalcD1);
+    });
+  }
+
+  $('d1_resetBtn').addEventListener('click', function(){
+    Object.keys(D1_DEFAULTS).forEach(function(id){ var el = $(id); if(el) el.value = D1_DEFAULTS[id]; });
+    recalcD1();
+  });
+
+  /* ---------------- Tab switching ---------------- */
+  function initTabs(){
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+    buttons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var tab = btn.dataset.tab;
+        buttons.forEach(function(b){ b.classList.toggle('active', b === btn); });
+        document.querySelectorAll('.tool-panel').forEach(function(panel){
+          panel.hidden = (panel.id !== 'panel-' + tab);
+        });
+        var titleEl = $('toolTitle');
+        if(titleEl && btn.dataset.title) titleEl.textContent = btn.dataset.title;
+        var footerEl = $('toolFooter');
+        if(footerEl && btn.dataset.source){
+          footerEl.innerHTML = 'Based on the <strong>' + btn.dataset.source + '</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; the starting values are the spreadsheet\'s original assumptions, not a real producer\'s data. Always verify results before using them to ' + btn.dataset.use + '.';
+        }
+        if(tab === 'd1') recalcD1();
+        if(tab === 'stockers') recalcStockers();
+      });
+    });
+  }
+
+  /* ---------------- Sub-tab switching (within Stockers) ---------------- */
+  function initSubTabs(){
+    var buttons = Array.prototype.slice.call(document.querySelectorAll('.subtab-btn'));
+    buttons.forEach(function(btn){
+      btn.addEventListener('click', function(){
+        var sub = btn.dataset.subtab;
+        buttons.forEach(function(b){ b.classList.toggle('active', b === btn); });
+        document.querySelectorAll('.subtool-panel').forEach(function(panel){
+          panel.hidden = (panel.dataset.subtab !== sub);
+        });
+      });
+    });
+  }
+
+  /* ---------------- Manual dark/light toggle ---------------- */
+  function initThemeToggle(){
+    var STORAGE_KEY = 'tamuDecisionAidsTheme';
+    var toggle = $('themeToggle');
+    if(!toggle) return;
+
+    var stored = null;
+    try { stored = window.localStorage.getItem(STORAGE_KEY); } catch(e){}
+    if(stored === 'light' || stored === 'dark'){
+      document.documentElement.setAttribute('data-theme', stored);
+    }
+
+    function currentTheme(){
+      var attr = document.documentElement.getAttribute('data-theme');
+      if(attr === 'light' || attr === 'dark') return attr;
+      return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    function updateButton(){
+      var dark = currentTheme() === 'dark';
+      toggle.textContent = dark ? '☀️' : '🌙';
+      var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+      toggle.setAttribute('aria-label', label);
+      toggle.setAttribute('title', label);
+    }
+
+    updateButton();
+    toggle.addEventListener('click', function(){
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { window.localStorage.setItem(STORAGE_KEY, next); } catch(e){}
+      updateButton();
+      recalcD1();
+      recalcStockers();
+    });
+  }
+
+
+  /* ================================================================
+     Stockers — Retained Ownership (three grazing/feeding paths +
+     one marginal-decision view), ported from
+     Stockers_Retained_Feeder_Profitability.xlsx.
+
+     Two fidelity quirks found in the original workbook are reproduced
+     here exactly, not "corrected," per this project's fidelity rule —
+     both are flagged to the user:
+       1. The "Stockers 800 Lb" budget sheet's Marketing Cost row uses
+          Assumptions!C17 (the 700 lb path's death-loss %) instead of
+          its own F17 (800 lb path's death-loss %) — a copy/paste
+          cross-reference in the source sheet. Reproduced via
+          sk_deathLoss700 inside calc800() below.
+       2. The "Stockers ~800 Lb — Returns Sensitivity" grid's two axis
+          centers (Sale Price = $115/cwt, Purchase Price = $155/cwt on
+          the 'Stockers Margins' sheet, cells L13 and I16) are typed-in
+          literals, not formulas linked to the live Assumptions sheet —
+          unlike the 700 lb grid, whose centers (L4, I7) ARE formulas.
+          $115 does not match the $137/cwt "Stockers (800 Lb)" price
+          used everywhere else in the workbook. Reproduced as fixed
+          constants in grid800() below (GRID800_SALE_CENTER,
+          GRID800_PURCHASE_CENTER) rather than tied to the live inputs.
+     ================================================================ */
+
+  var STOCKERS_DEFAULTS = {
+    sk_heads:100, sk_calfPrice:530, sk_calfWeight:475, sk_price700:380, sk_price800:360, sk_grazingCost:0.65,
+    sk_earlyStart:'2019-10-01', sk_pullOff700:'2020-03-15', sk_pullOff800:'2020-05-01',
+    sk_earlyADG:1.3, sk_lateADG:2.3, sk_interestRate:7,
+    sk_shrink700:0, sk_shrink800:0, sk_deathLoss700:1, sk_deathLoss800:1,
+
+    sk700_vetRate:24, sk700_hayLb:125, sk700_hayRate:0.10, sk700_saltLb:15, sk700_saltRate:0.45,
+    sk700_laborRate:8.42, sk700_fuelRate:8.36, sk700_lubePct:10, sk700_marketingRate:12, sk700_mgmtFee:23.33,
+
+    sk800_vetRate:16.2, sk800_hayLb:125, sk800_hayRate:0.10, sk800_saltLb:14, sk800_saltRate:0.45,
+    sk800_laborRate:12.56, sk800_fuelRate:7.50, sk800_lubePct:10, sk800_marketingRate:23, sk800_mgmtFee:35,
+
+    skfy8_cog:72, skfy8_days:180, skfy8_adg:3.5, skfy8_salePrice:100, skfy8_deathLoss:1,
+    skfy7_cog:72, skfy7_days:210, skfy7_adg:3.5, skfy7_salePrice:100, skfy7_deathLoss:1,
+
+    skrm_costRate:120
+  };
+
+  var GRID800_SALE_CENTER = 115;      // 'Stockers Margins'!L13 — hardcoded in the workbook, see quirk #2 above
+  var GRID800_PURCHASE_CENTER = 155;  // 'Stockers Margins'!I16 — hardcoded in the workbook, see quirk #2 above
+
+  function dateVal(id){ var el=$(id); return el ? el.value : ''; }
+  function daysBetween(endStr, startStr){
+    var end = new Date(endStr), start = new Date(startStr);
+    if(!isFinite(end.getTime()) || !isFinite(start.getTime())) return 0;
+    return Math.round((end.getTime()-start.getTime())/86400000);
+  }
+
+  function readStockersInputs(){
+    return {
+      sk_heads: num('sk_heads'), sk_calfPrice: num('sk_calfPrice'), sk_calfWeight: num('sk_calfWeight'),
+      sk_price700: num('sk_price700'), sk_price800: num('sk_price800'), sk_grazingCost: num('sk_grazingCost'),
+      sk_earlyStart: dateVal('sk_earlyStart'), sk_pullOff700: dateVal('sk_pullOff700'), sk_pullOff800: dateVal('sk_pullOff800'),
+      sk_earlyADG: num('sk_earlyADG'), sk_lateADG: num('sk_lateADG'), sk_interestRate: num('sk_interestRate'),
+      sk_shrink700: num('sk_shrink700'), sk_shrink800: num('sk_shrink800'),
+      sk_deathLoss700: num('sk_deathLoss700'), sk_deathLoss800: num('sk_deathLoss800'),
+
+      sk700_vetRate: num('sk700_vetRate'), sk700_hayLb: num('sk700_hayLb'), sk700_hayRate: num('sk700_hayRate'),
+      sk700_saltLb: num('sk700_saltLb'), sk700_saltRate: num('sk700_saltRate'), sk700_laborRate: num('sk700_laborRate'),
+      sk700_fuelRate: num('sk700_fuelRate'), sk700_lubePct: num('sk700_lubePct'), sk700_marketingRate: num('sk700_marketingRate'), sk700_mgmtFee: num('sk700_mgmtFee'),
+
+      sk800_vetRate: num('sk800_vetRate'), sk800_hayLb: num('sk800_hayLb'), sk800_hayRate: num('sk800_hayRate'),
+      sk800_saltLb: num('sk800_saltLb'), sk800_saltRate: num('sk800_saltRate'), sk800_laborRate: num('sk800_laborRate'),
+      sk800_fuelRate: num('sk800_fuelRate'), sk800_lubePct: num('sk800_lubePct'), sk800_marketingRate: num('sk800_marketingRate'), sk800_mgmtFee: num('sk800_mgmtFee'),
+
+      skfy8_cog: num('skfy8_cog'), skfy8_days: num('skfy8_days'), skfy8_adg: num('skfy8_adg'),
+      skfy8_salePrice: num('skfy8_salePrice'), skfy8_deathLoss: num('skfy8_deathLoss'),
+
+      skfy7_cog: num('skfy7_cog'), skfy7_days: num('skfy7_days'), skfy7_adg: num('skfy7_adg'),
+      skfy7_salePrice: num('skfy7_salePrice'), skfy7_deathLoss: num('skfy7_deathLoss'),
+
+      skrm_costRate: num('skrm_costRate')
+    };
+  }
+
+  /* ---------------- 700 lb path ("Stockers March1st") ---------------- */
+  function calc700(inp){
+    var D4 = inp.sk_heads*(100-inp.sk_deathLoss700)/100;
+    var daysEarly = daysBetween(inp.sk_pullOff700, inp.sk_earlyStart);
+    var E4 = (inp.sk_calfWeight + daysEarly*inp.sk_earlyADG) * (100-inp.sk_shrink700)/100;
+    var G4 = inp.sk_price700;
+    var H4 = D4*G4*E4/100;
+    var I4 = D4>0 ? H4/D4 : 0;
+    var I6 = I4;
+
+    var D9=inp.sk_heads, E9=inp.sk_calfWeight, G9=inp.sk_calfPrice;
+    var H9=G9*E9*D9/100, I9 = D4>0 ? H9/D4 : 0;
+    var D11=E4-E9, G11=inp.sk_grazingCost;
+    var H11=G11*D11*D4, I11 = D4>0 ? H11/D4 : 0;
+
+    var H12=inp.sk700_vetRate*D9, I12=D4>0?H12/D4:0;
+    var H13=inp.sk700_hayRate*D9*inp.sk700_hayLb, I13=D4>0?H13/D4:0;
+    var H14=inp.sk700_saltRate*D9*inp.sk700_saltLb, I14=D4>0?H14/D4:0;
+    var H15=inp.sk700_laborRate*D9, I15=D4>0?H15/D4:0;
+    var H16=inp.sk700_fuelRate*D9, I16=D4>0?H16/D4:0;
+    var H18=inp.sk700_fuelRate*D9*(inp.sk700_lubePct/100), I18=D4>0?H18/D4:0;
+    var D19=(100-inp.sk_deathLoss700)/100, I19=inp.sk700_marketingRate*D19, H19=I19*D4; // Marketing Cost
+    var D20=inp.sk_interestRate/100, H20=D20*H9/2, I20=D4>0?H20/D4:0; // 6-month interest
+
+    var otherVar = I12+I13+I14+I15+I16+I18+I19;
+    var I21 = I9+I11+otherVar+I20;
+    var I23 = I6-I21;
+
+    var H28=inp.sk700_mgmtFee*D9, I28=D4>0?H28/D4:0;
+    var I29 = I28;
+    var I31 = I21+I29;
+    var I33 = I6-I31;
+    var I34 = E4>0 ? I31/E4*100 : 0;
+    var I37 = E4-E9;
+    var I36 = I37!==0 ? I33/I37 : 0;
+    var I38 = I37!==0 ? (I31-I9)/I37*100 : 0;
+
+    return {D4:D4,E4:E4,I4:I4,I6:I6,I9:I9,I11:I11,otherVar:otherVar,I21:I21,I23:I23,I28:I28,I29:I29,I31:I31,I33:I33,I34:I34,I36:I36,I37:I37,I38:I38};
+  }
+
+  /* ---------------- 800 lb path ("Stockers 800 Lb") ---------------- */
+  function calc800(inp){
+    var D4 = inp.sk_heads*(100-inp.sk_deathLoss800)/100;
+    var daysEarly = daysBetween(inp.sk_pullOff700, inp.sk_earlyStart);
+    var daysLate = daysBetween(inp.sk_pullOff800, inp.sk_pullOff700);
+    var E4 = (inp.sk_calfWeight + daysEarly*inp.sk_earlyADG + inp.sk_lateADG*daysLate) * (100-inp.sk_shrink800)/100;
+    var G4 = inp.sk_price800;
+    var H4 = D4*G4*E4/100;
+    var I4 = D4>0 ? H4/D4 : 0;
+    var I6 = I4;
+
+    var D9=inp.sk_heads, E9=inp.sk_calfWeight, G9=inp.sk_calfPrice;
+    var H9=G9*E9*D9/100, I9 = D4>0 ? H9/D4 : 0;
+    var D11=E4-E9, G11=inp.sk_grazingCost;
+    var H11=G11*D11*D4, I11 = D4>0 ? H11/D4 : 0;
+
+    var H12=inp.sk800_vetRate*D9, I12=D4>0?H12/D4:0;
+    var H13=inp.sk800_hayRate*D9*inp.sk800_hayLb, I13=D4>0?H13/D4:0;
+    var H14=inp.sk800_saltRate*D9*inp.sk800_saltLb, I14=D4>0?H14/D4:0;
+    var H15=inp.sk800_laborRate*D9, I15=D4>0?H15/D4:0;
+    var H16=inp.sk800_fuelRate*D9, I16=D4>0?H16/D4:0;
+    var H18=inp.sk800_fuelRate*D9*(inp.sk800_lubePct/100), I18=D4>0?H18/D4:0;
+    var D19=(100-inp.sk_deathLoss700)/100, I19=inp.sk800_marketingRate*D19, H19=I19*D4; // Marketing Cost — fidelity quirk #1: uses the 700lb death loss, see block comment above
+    var D20=inp.sk_interestRate/100, H20=D20*H9*8/12, I20=D4>0?H20/D4:0; // 8-month interest
+
+    var otherVar = I12+I13+I14+I15+I16+I18+I19;
+    var I21 = I9+I11+otherVar+I20;
+    var I23 = I6-I21;
+
+    var H28=inp.sk800_mgmtFee*D9, I28=D4>0?H28/D4:0;
+    var I29 = I28;
+    var I31 = I21+I29;
+    var I33 = I6-I31;
+    var I34 = E4>0 ? I31/E4*100 : 0;
+    var I37 = E4-E9;
+    var I36 = I37!==0 ? I33/I37 : 0;
+    var I38 = I37!==0 ? (I31-I9)/I37*100 : 0;
+
+    return {D4:D4,E4:E4,I4:I4,I6:I6,I9:I9,I11:I11,otherVar:otherVar,I21:I21,I23:I23,I28:I28,I29:I29,I31:I31,I33:I33,I34:I34,I36:I36,I37:I37,I38:I38};
+  }
+
+  /* ---------------- Returns-sensitivity grids (700 lb / 800 lb) ---------------- */
+  function grid700(inp, r){
+    var C4=r.E4, C9=r.I11, C10=r.otherVar;
+    var deathLoss=inp.sk_deathLoss700, shrink=inp.sk_shrink700, calfWeight=inp.sk_calfWeight, interestRate=inp.sk_interestRate/100;
+    var L4=inp.sk_price700, cols=[L4*0.8, L4*0.9, L4, L4*1.1, L4*1.2];
+    var I7=inp.sk_calfPrice, rows=[I7*0.9, I7*0.95, I7, I7*1.05, I7*1.1];
+    var grid = rows.map(function(rowPrice){
+      return cols.map(function(salePrice){
+        return (salePrice/100)*C4*((100-deathLoss)/100)*((100-shrink)/100) - (C9+C10) - (rowPrice/100)*calfWeight - interestRate*(6/12)*(rowPrice*calfWeight/100);
+      });
+    });
+    return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:2, centerCol:2};
+  }
+
+  function grid800(inp, r){
+    var F4=r.E4, F9=r.I11, F10=r.otherVar;
+    var deathLoss=inp.sk_deathLoss800, shrink=inp.sk_shrink800, calfWeight=inp.sk_calfWeight, interestRate=inp.sk_interestRate/100;
+    var cols=[GRID800_SALE_CENTER*0.8, GRID800_SALE_CENTER*0.9, GRID800_SALE_CENTER, GRID800_SALE_CENTER*1.1, GRID800_SALE_CENTER*1.2];
+    var rows=[GRID800_PURCHASE_CENTER*0.9, GRID800_PURCHASE_CENTER*0.95, GRID800_PURCHASE_CENTER, GRID800_PURCHASE_CENTER*1.05, GRID800_PURCHASE_CENTER*1.1];
+    var grid = rows.map(function(rowPrice){
+      return cols.map(function(salePrice){
+        return (salePrice/100)*F4*((100-shrink)/100)*((100-deathLoss)/100) - (F9+F10) - (rowPrice/100)*calfWeight - interestRate*(8/12)*(rowPrice*calfWeight/100);
+      });
+    });
+    return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:2, centerCol:2};
+  }
+
+  /* ---------------- Feedyard finishing (from either stocker) ---------------- */
+  function calcFeedyardBase(weightIn, priceStocker, cog, daysOnFeed, adg, salePriceBase, deathLossPct, interestRatePct){
+    var weightOut = weightIn + daysOnFeed*adg;
+    var deathLoss = deathLossPct/100, interestRate = interestRatePct/100;
+    function netReturn(salePrice, wOut, cogRate){
+      return (salePrice*wOut)*(1-deathLoss)/100 - (weightIn*priceStocker/100) - (weightIn*priceStocker/100)*interestRate*0.5 - (wOut-weightIn)*cogRate/100;
+    }
+    return {weightIn:weightIn, weightOut:weightOut, netReturn:netReturn, baseReturn:netReturn(salePriceBase, weightOut, cog)};
+  }
+
+  function gridFeedyardCOG(fy, salePriceBase, cogBase){
+    var cols=[salePriceBase*0.9, salePriceBase*0.95, salePriceBase, salePriceBase*1.05, salePriceBase*1.1];
+    var rows=[cogBase*0.9, cogBase*0.95, cogBase, cogBase*1.05, cogBase*1.1];
+    var grid = rows.map(function(cogRow){
+      return cols.map(function(salePrice){ return fy.netReturn(salePrice, fy.weightOut, cogRow); });
+    });
+    return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:2, centerCol:2};
+  }
+
+  function gridFeedyardWeight(fy, salePriceBase, cogBase){
+    var cols=[salePriceBase*0.9, salePriceBase*0.95, salePriceBase, salePriceBase*1.05, salePriceBase*1.1];
+    var rows=[fy.weightOut*0.8, fy.weightOut*0.85, fy.weightOut*0.9, fy.weightOut*0.95, fy.weightOut]; // spreadsheet's own steps — only below the full weight-out, never above
+    var grid = rows.map(function(wOut){
+      return cols.map(function(salePrice){ return fy.netReturn(salePrice, wOut, cogBase); });
+    });
+    return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:4, centerCol:2};
+  }
+
+  /* ---------------- Retaining to May on wheat (marginal decision) ---------------- */
+  function gridRetainMay(inp, r700, r800){
+    var F4=r800.E4, F9=r800.I11, F10=r800.otherVar;
+    var C4=r700.E4, C9=r700.I11, C10=r700.otherVar;
+    var deathLoss800=inp.sk_deathLoss800, shrink800=inp.sk_shrink800, interestRate=inp.sk_interestRate/100;
+    var L22=inp.sk_price800, cols=[L22*0.9, L22*0.95, L22, L22*1.05, L22*1.1];
+    var I25=inp.skrm_costRate, rows=[I25*0.9, I25*0.95, I25, I25*1.05, I25*1.1];
+    var grid = rows.map(function(costRate){
+      return cols.map(function(salePrice800){
+        return (salePrice800/100)*F4*(100-deathLoss800)/100*(100-shrink800)/100 - (F9+F10) + (C9+C10) - (costRate/100)*C4 - interestRate*(2/12)*(costRate*C4/100);
+      });
+    });
+    return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:2, centerCol:2};
+  }
+
+  /* ---------------- Rendering ---------------- */
+  function renderStockersGrid(headId, bodyId, rowLabel, rowHeaders, colHeaders, grid, centerRow, centerCol, rowFmt){
+    rowFmt = rowFmt || function(v){ return fmtDollar(v,2); };
+    var head = $(headId);
+    head.innerHTML = '<th>'+rowLabel+'</th>' + colHeaders.map(function(c,ci){
+      var bold = ci===centerCol ? ' style="color:var(--accent);"' : '';
+      return '<th'+bold+'>'+fmtDollar(c,2)+'</th>';
+    }).join('');
+    var body = $(bodyId);
+    body.innerHTML = rowHeaders.map(function(rh, ri){
+      var rowBold = ri===centerRow;
+      var cells = grid[ri].map(function(v, ci){
+        var isCenter = ri===centerRow && ci===centerCol;
+        var style = isCenter ? ' style="color:var(--accent);font-weight:800;"' : (rowBold||ci===centerCol ? ' style="font-weight:700;"' : '');
+        return '<td'+style+'>'+(isFinite(v)?fmtDollar(v,2):'—')+'</td>';
+      }).join('');
+      var rowLabelStyle = rowBold ? ' style="color:var(--accent);font-weight:800;"' : '';
+      return '<tr><td'+rowLabelStyle+'>'+rowFmt(rh)+'</td>'+cells+'</tr>';
+    }).join('');
+  }
+
+  function updatePathResult(prefix, r){
+    var better = r.I33 >= 0;
+    $(prefix+'_verdictPill').className = 'verdict-pill ' + (better?'good':'critical');
+    $(prefix+'_verdictText').textContent = better ? 'This path pencils out above all costs' : 'This path falls short of covering all costs';
+    $(prefix+'_narrative').innerHTML = 'Revenue of <strong>'+fmtDollar(r.I6,2)+'/hd</strong> minus variable and fixed costs of <strong>'+fmtDollar(r.I31,2)+'/hd</strong> leaves a planned return of <strong>'+fmtDollar(r.I33,2)+'/hd</strong>.';
+    $(prefix+'_revenue').textContent = fmtDollar(r.I6,2);
+    $(prefix+'_totalCosts').textContent = fmtDollar(r.I31,2);
+    $(prefix+'_return').textContent = fmtDollar(r.I33,2);
+    $(prefix+'_returnTile').className = 'stat-tile wide ' + (better?'good':'critical');
+    $(prefix+'_breakeven').textContent = fmtDollar(r.I34,2);
+    $(prefix+'_cog').textContent = fmtDollar(r.I38,2);
+  }
+
+  function updateFeedyardResult(prefix, fy){
+    var better = fy.baseReturn >= 0;
+    $(prefix+'_verdictPill').className='verdict-pill '+(better?'good':'critical');
+    $(prefix+'_verdictText').textContent = better ? 'Finishing in the feedyard pencils out at these base assumptions' : 'Finishing in the feedyard falls short at these base assumptions';
+    $(prefix+'_narrative').innerHTML = 'Weight in <strong>'+Math.round(fy.weightIn)+' lb</strong>, weight out <strong>'+Math.round(fy.weightOut)+' lb</strong>. Net return at the base sale price and cost of gain: <strong>'+fmtDollar(fy.baseReturn,2)+'/hd</strong>.';
+    $(prefix+'_return').textContent = fmtDollar(fy.baseReturn,2);
+    $(prefix+'_returnTile').className='stat-tile wide '+(better?'good':'critical');
+  }
+
+  function updateRetainMay(centerValue){
+    var better = centerValue >= 0;
+    $('rm_verdictPill').className='verdict-pill '+(better?'good':'critical');
+    $('rm_verdictText').textContent = better ? 'Retaining to May adds value over selling at 700 lb' : 'Selling at 700 lb looks better than retaining to May';
+    $('rm_narrative').innerHTML = 'At your center assumptions, retaining the calf from ~700 to ~800 lb on wheat pasture is worth about <strong>'+fmtDollar(centerValue,2)+'/hd</strong> versus selling now — this is the value of the extra weeks alone, not a full budget.';
+    $('rm_return').textContent = fmtDollar(centerValue,2);
+    $('rm_returnTile').className='stat-tile wide '+(better?'good':'critical');
+  }
+
+  function recalcStockers(){
+    var inp = readStockersInputs();
+    var r700 = calc700(inp);
+    var r800 = calc800(inp);
+
+    var daysEarly = daysBetween(inp.sk_pullOff700, inp.sk_earlyStart);
+    var daysLate = daysBetween(inp.sk_pullOff800, inp.sk_pullOff700);
+    var calNote = $('sk_calendarNote');
+    if(calNote) calNote.innerHTML = 'Early grazing phase: <strong>'+daysEarly+' days</strong> (to the 700&nbsp;lb pull-off date). Late grazing phase: <strong>'+daysLate+' days</strong> (700&nbsp;lb pull-off to the 800&nbsp;lb pull-off date).';
+
+    updatePathResult('p700', r700);
+    updatePathResult('p800', r800);
+
+    var g700 = grid700(inp, r700);
+    renderStockersGrid('p700_gridHead','p700_gridBody','Purchase \\ Sale price', g700.rowHeaders, g700.colHeaders, g700.grid, g700.centerRow, g700.centerCol);
+    var g800 = grid800(inp, r800);
+    renderStockersGrid('p800_gridHead','p800_gridBody','Purchase \\ Sale price', g800.rowHeaders, g800.colHeaders, g800.grid, g800.centerRow, g800.centerCol);
+
+    var fy8 = calcFeedyardBase(r800.E4, inp.sk_price800, inp.skfy8_cog, inp.skfy8_days, inp.skfy8_adg, inp.skfy8_salePrice, inp.skfy8_deathLoss, inp.sk_interestRate);
+    updateFeedyardResult('fy8', fy8);
+    var fy8Note = $('fy8_weightNote');
+    if(fy8Note) fy8Note.innerHTML = 'Weight in: <strong>'+Math.round(fy8.weightIn)+' lb</strong> (from the 800&nbsp;lb path above). Weight out: <strong>'+Math.round(fy8.weightOut)+' lb</strong> ('+inp.skfy8_days+' days &times; '+inp.skfy8_adg+' lb/day).';
+    var gFy8Cog = gridFeedyardCOG(fy8, inp.skfy8_salePrice, inp.skfy8_cog);
+    renderStockersGrid('fy8_cogGridHead','fy8_cogGridBody','Cost of gain \\ Sale price', gFy8Cog.rowHeaders, gFy8Cog.colHeaders, gFy8Cog.grid, gFy8Cog.centerRow, gFy8Cog.centerCol);
+    var gFy8Wt = gridFeedyardWeight(fy8, inp.skfy8_salePrice, inp.skfy8_cog);
+    renderStockersGrid('fy8_wtGridHead','fy8_wtGridBody','Sale weight \\ Sale price', gFy8Wt.rowHeaders, gFy8Wt.colHeaders, gFy8Wt.grid, gFy8Wt.centerRow, gFy8Wt.centerCol, function(v){ return fmtMoney0.format(Math.round(v))+' lb'; });
+
+    var fy7 = calcFeedyardBase(r700.E4, inp.sk_price700, inp.skfy7_cog, inp.skfy7_days, inp.skfy7_adg, inp.skfy7_salePrice, inp.skfy7_deathLoss, inp.sk_interestRate);
+    updateFeedyardResult('fy7', fy7);
+    var fy7Note = $('fy7_weightNote');
+    if(fy7Note) fy7Note.innerHTML = 'Weight in: <strong>'+Math.round(fy7.weightIn)+' lb</strong> (from the 700&nbsp;lb path above). Weight out: <strong>'+Math.round(fy7.weightOut)+' lb</strong> ('+inp.skfy7_days+' days &times; '+inp.skfy7_adg+' lb/day).';
+    var gFy7Cog = gridFeedyardCOG(fy7, inp.skfy7_salePrice, inp.skfy7_cog);
+    renderStockersGrid('fy7_cogGridHead','fy7_cogGridBody','Cost of gain \\ Sale price', gFy7Cog.rowHeaders, gFy7Cog.colHeaders, gFy7Cog.grid, gFy7Cog.centerRow, gFy7Cog.centerCol);
+    var gFy7Wt = gridFeedyardWeight(fy7, inp.skfy7_salePrice, inp.skfy7_cog);
+    renderStockersGrid('fy7_wtGridHead','fy7_wtGridBody','Sale weight \\ Sale price', gFy7Wt.rowHeaders, gFy7Wt.colHeaders, gFy7Wt.grid, gFy7Wt.centerRow, gFy7Wt.centerCol, function(v){ return fmtMoney0.format(Math.round(v))+' lb'; });
+
+    var gRM = gridRetainMay(inp, r700, r800);
+    var centerVal = gRM.grid[gRM.centerRow][gRM.centerCol];
+    updateRetainMay(centerVal);
+    renderStockersGrid('rm_gridHead','rm_gridBody','Cost rate \\ Sale price (800lb)', gRM.rowHeaders, gRM.colHeaders, gRM.grid, gRM.centerRow, gRM.centerCol);
+  }
+
+  function attachStockersInputs(){
+    Object.keys(STOCKERS_DEFAULTS).forEach(function(id){
+      var el = $(id);
+      if(el) el.addEventListener('input', recalcStockers);
+    });
+  }
+
+  var skResetBtn = $('sk_resetBtn');
+  if(skResetBtn) skResetBtn.addEventListener('click', function(){
+    Object.keys(STOCKERS_DEFAULTS).forEach(function(id){ var el=$(id); if(el) el.value = STOCKERS_DEFAULTS[id]; });
+    recalcStockers();
+  });
+
+
+  function init(){
+    initThemeToggle();
+    attachD1Inputs();
+    attachStockersInputs();
+    initTabs();
+    initSubTabs();
+    recalcD1();
+    recalcStockers();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(){ recalcD1(); recalcStockers(); });
+    }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
