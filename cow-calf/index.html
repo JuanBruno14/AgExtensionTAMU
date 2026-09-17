@@ -511,7 +511,7 @@
           <label for="bidPrice">Cow bid price ($/head)</label>
           <div class="hero-row">
             <input type="range" id="bidPriceRange" min="400" max="7000" step="10" value="1300">
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="1300" min="0" step="10"></div>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="2828.62" min="0" step="10"></div>
           </div>
         </div>
 
@@ -877,7 +877,7 @@
         <fieldset style="margin-bottom:16px;">
           <legend>Breeding cows</legend>
           <div class="field-grid cols-3">
-            <div class="field"><label for="a2_cowCost">Cost/head</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="1400" min="0"></div></div>
+            <div class="field"><label for="a2_cowCost">Cost/head</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="2828.62" min="0"></div></div>
             <div class="field"><label for="a2_cowLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowLife" value="7" min="1"><span class="suffix">yrs</span></div></div>
             <div class="field"><label for="a2_cowDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
             <div class="field"><label for="a2_cullCowWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1279.4" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullCowWtRange" class="weight-slide" min="1100" max="1550" step="50" value="1279.4" aria-label="Cull cow weight — drag to auto-fill the matching auction price"></div>
@@ -1394,8 +1394,20 @@
     }
   }
 
+  /* bidPrice (2026-09-17, twenty-third round): was $1,300 - the original
+     spreadsheet's bred-cow/replacement-female assumption, never updated when
+     the cull-cow salvage price was refreshed to $180/cwt, which made cull
+     salvage value ($2,302.92 at the 1,279.4 lb default) exceed the purchase
+     price and produced an unrealistic NPV/IRR (see the twenty-second-round
+     audit). Fixed with a real, current, sourced number: USDA AMS's weekly
+     Dalhart, TX livestock auction report (ams_1953.pdf) - the same Cattlemen's
+     Livestock Dalhart auction already used for this project's steer/heifer/
+     cull-cow prices - carries a "Bred Cows" (Medium & Large 1, 2-4 yr,
+     2nd-trimester) line: 17 hd, 1,243-1,327 lb, $2,800.00-$2,850.00/hd,
+     average $2,828.62/hd, week of 2026-09-03. Not fabricated - sourced and
+     disclosed; a2_cowCost below uses the same figure. */
   var DEFAULTS = {
-    bidPrice:1300, steerWeight:516.4, heiferWeight:531.3, cullWeight:1279.4,
+    bidPrice:2828.62, steerWeight:516.4, heiferWeight:531.3, cullWeight:1279.4,
     discountRate:5, calvingYears:7, startYear:2026,
     equityPct:20, loanTerm:5, interestRate:5
   };
@@ -2012,7 +2024,7 @@
     a2_otherFeed1Qty:0, a2_otherFeed1Price:0,
     a2_hiredLabor:50, a2_ownerLabor:150, a2_vetMed:35, a2_vaccination:40, a2_otherDirect:0,
     a2_fuelLube:35, a2_utilities:10, a2_adminGA:25, a2_otherIndirect1:0, a2_financeCost:0,
-    a2_cowCost:1400, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:180.0,
+    a2_cowCost:2828.62, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:180.0, // sourced bred-cow price, see DEFAULTS.bidPrice comment above
     a2_bullCost:4000, a2_bullLife:4, a2_bullDeathLoss:1, a2_cullBullWt:1650.7, a2_cullBullPrice:190.0, a2_cowsPerBull:25,
     a2_capitalTotal:158000,
     a2_oppCostRate:5,
