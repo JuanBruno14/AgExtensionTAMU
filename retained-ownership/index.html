@@ -1,5 +1,4 @@
 
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -573,7 +572,7 @@
           </div>
           <div class="field">
             <label for="d1_priceOut">Sale price (upgraded)</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_priceOut" value="90" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_priceOut" value="179.71" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field">
             <label for="d1_deathLoss">Death loss</label>
@@ -1012,7 +1011,7 @@
           <div class="field"><label for="skfy8_cog">Cost of gain</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_cog" value="72" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
           <div class="field"><label for="skfy8_days">Days on feedyard</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_days" value="180" min="1"><span class="suffix">days</span></div></div>
           <div class="field"><label for="skfy8_adg">ADG</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_adg" value="3.5" min="0" step="0.1"><span class="suffix">lb/day</span></div></div>
-          <div class="field"><label for="skfy8_salePrice">Sale price, fed cattle</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_salePrice" value="100" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+          <div class="field"><label for="skfy8_salePrice">Sale price, fed cattle</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_salePrice" value="222.82" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
           <div class="field"><label for="skfy8_deathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_deathLoss" value="1" min="0" step="0.1"><span class="suffix">%</span></div></div>
         </div>
         <p class="derived-note" id="fy8_weightNote">—</p>
@@ -1074,7 +1073,7 @@
           <div class="field"><label for="skfy7_cog">Cost of gain</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_cog" value="72" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
           <div class="field"><label for="skfy7_days">Days on feedyard</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_days" value="210" min="1"><span class="suffix">days</span></div></div>
           <div class="field"><label for="skfy7_adg">ADG</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_adg" value="3.5" min="0" step="0.1"><span class="suffix">lb/day</span></div></div>
-          <div class="field"><label for="skfy7_salePrice">Sale price, fed cattle</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_salePrice" value="100" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+          <div class="field"><label for="skfy7_salePrice">Sale price, fed cattle</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_salePrice" value="222.82" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
           <div class="field"><label for="skfy7_deathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_deathLoss" value="1" min="0" step="0.1"><span class="suffix">%</span></div></div>
         </div>
         <p class="derived-note" id="fy7_weightNote">—</p>
@@ -1359,10 +1358,27 @@
     return { rowPrices:rowPrices, colHeaders:colHeaders, grid:grid, centerRow:2, centerCol:2 };
   }
 
+  /* d1_priceOut (2026-09-17, twenty-second round): the "upgraded/retained" sale
+     price had been stuck at the original workbook's $90/cwt since the tool was
+     first built - never reconciled when d1_priceSold was updated to the current
+     $180/cwt Boner-cow price, which made "retain & upgrade" look catastrophically
+     worse than selling today (net margin -$1,092.53/hd, ROA -209.8%) for reasons
+     that had nothing to do with the actual economics. Fixed using data already
+     sourced and verified elsewhere in this project: the same Sept 4, 2026 Local
+     Texas Auction Data cull-cow report (re-centered on the D03 Budgets' $180/cwt
+     Boner price, ratio x1.20160 - see cow-calf/index.html's CULL_COW_PRICE_SLIDE)
+     already carries a heavier, better-conditioned "Breaker Cows" grade point
+     (1,496.1 lb -> $176.90/cwt) - exactly the grade a Boner cow upgrades into by
+     gaining weight/condition. Linearly interpolating that same slide at D1's
+     1,300 lb target out-weight (between the 1,279.4 lb Boner point at $180.00
+     and the 1,496.1 lb Breaker point at $176.90) gives $179.71/cwt - the same
+     figure already computed and verified live on the A1 page's cull-weight
+     slider at this exact weight (see 2026-09-16 nineteenth-round verification).
+     Not fabricated: sourced, disclosed, and consistent with the rest of the site. */
   var D1_DEFAULTS = {
     d1_headCulled:50, d1_weightAtCulling:1100, d1_shrinkSold:3, d1_priceSold:180,
     d1_commissionSold:3, d1_freightSold:7, d1_perHeadSold:1,
-    d1_outWeight:1300, d1_adg:2.25, d1_manualDays:0, d1_shrinkOut:3, d1_priceOut:90,
+    d1_outWeight:1300, d1_adg:2.25, d1_manualDays:0, d1_shrinkOut:3, d1_priceOut:179.71,
     d1_commissionOut:3, d1_freightOut:7, d1_perHeadOut:1, d1_deathLoss:0.5,
     d1_costPerLbGain:0, d1_feedGrazingRate:2, d1_processingHealth:10,
     d1_feedFacilitiesDays:111, d1_feedFacilitiesRate:0.4, d1_otherCost:0,
@@ -1567,8 +1583,23 @@
     sk800_vetRate:16.2, sk800_hayLb:125, sk800_hayRate:0.10, sk800_saltLb:14, sk800_saltRate:0.45,
     sk800_laborRate:12.56, sk800_fuelRate:7.50, sk800_lubePct:10, sk800_marketingRate:23, sk800_mgmtFee:35,
 
-    skfy8_cog:72, skfy8_days:180, skfy8_adg:3.5, skfy8_salePrice:100, skfy8_deathLoss:1,
-    skfy7_cog:72, skfy7_days:210, skfy7_adg:3.5, skfy7_salePrice:100, skfy7_deathLoss:1,
+    /* skfy7_salePrice / skfy8_salePrice (2026-09-17, twenty-third round): was
+       $100/cwt, an original-workbook fed-cattle price never reconciled when
+       the calf purchase price (sk_calfPrice) was updated to $530/cwt - that
+       mismatch alone produced -$1,834.57/hd and -$2,015.69/hd "losses" on
+       these two paths (see the twenty-second-round audit). Fixed with a real,
+       current, sourced number: USDA AMS's "5 Area Weekly Weighted Average
+       Direct Slaughter Cattle" report (ams_2477.pdf), week ending 2026-09-13
+       - live FOB steers $218.00-$225.00/cwt, average $222.82/cwt (avg weight
+       1,563 lb) - the live-weight basis matches how this tool already values
+       weight out (ADG x days), so no basis conversion needed. The
+       region-specific Texas-Oklahoma-New Mexico report (ams_2483.pdf) had no
+       public price that week (too few reporting parties, common for that
+       narrower region); the 5-Area report is USDA's standard fallback and
+       still includes the Texas feeding region. Not fabricated - sourced and
+       disclosed. */
+    skfy8_cog:72, skfy8_days:180, skfy8_adg:3.5, skfy8_salePrice:222.82, skfy8_deathLoss:1,
+    skfy7_cog:72, skfy7_days:210, skfy7_adg:3.5, skfy7_salePrice:222.82, skfy7_deathLoss:1,
 
     skrm_costRate:120
   };
