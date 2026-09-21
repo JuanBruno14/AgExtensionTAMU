@@ -1,0 +1,1063 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Texas A&amp;M AgriLife Extension - Decision Making</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{
+    --maroon-900:#3a0000;
+    --maroon-800:#500000;
+    --maroon-700:#6b0f0f;
+    --maroon-100:#f7e9e6;
+    --wheat-500:#b8862f;
+    --wheat-100:#f4e9d6;
+    --good-700:#276749;
+    --good-100:#e3f1e9;
+    --critical-700:#9a3412;
+    --critical-100:#fbe9e1;
+    --accent:var(--maroon-800);
+    --bg:#f6f3ee;
+    --surface:#ffffff;
+    --surface-sunken:#f0ece4;
+    --border:#e2dbcf;
+    --ink:#241c19;
+    --ink-secondary:#5a4f48;
+    --ink-muted:#8a7d73;
+    --focus:#2f6fb3;
+    --shadow-card:0 1px 2px rgba(58,0,0,0.04), 0 4px 16px rgba(58,0,0,0.06);
+    /* dataviz categorical (validated 5-slot set) */
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#4a3aa7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1b1512;
+      --surface:#241c19;
+      --surface-sunken:#2c221e;
+      --border:#3a2d27;
+      --ink:#f3ece5;
+      --ink-secondary:#cabdb3;
+      --ink-muted:#96877c;
+      --maroon-100:#3a1f1f;
+      --good-100:#193225;
+      --good-700:#5fbf8e;
+      --critical-100:#3a2013;
+      --critical-700:#e2895f;
+      --accent:#e2897c;
+      --wheat-100:#3a2d15;
+      --wheat-500:#d9a44a;
+      --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1b1512;
+    --surface:#241c19;
+    --surface-sunken:#2c221e;
+    --border:#3a2d27;
+    --ink:#f3ece5;
+    --ink-secondary:#cabdb3;
+    --ink-muted:#96877c;
+    --maroon-100:#3a1f1f;
+    --good-100:#193225;
+    --good-700:#5fbf8e;
+    --critical-100:#3a2013;
+    --critical-700:#e2895f;
+    --accent:#e2897c;
+    --wheat-100:#3a2d15;
+    --wheat-500:#d9a44a;
+    --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Public Sans", ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric:tabular-nums;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,.display{
+    font-family:"Fraunces", Georgia, serif;
+    text-wrap:balance;
+    letter-spacing:-0.01em;
+  }
+  a{color:inherit;}
+
+  /* ---------- Header ---------- */
+  .topbar{
+    background:linear-gradient(180deg, var(--maroon-800), var(--maroon-900));
+    color:#fff;
+    padding:18px clamp(16px,4vw,40px);
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:24px;
+    flex-wrap:wrap;
+  }
+  .wordmark{
+    display:flex;
+    align-items:center;
+    gap:14px;
+  }
+  .wordmark .mark{
+    width:44px;height:44px;border-radius:9px;
+    background:rgba(255,255,255,0.12);
+    border:1.5px solid rgba(255,255,255,0.55);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Fraunces",serif;font-weight:700;font-size:20px;
+    flex:none;
+  }
+  .wordmark .text{line-height:1.15;}
+  .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
+  .wordmark .text .main{font-family:"Fraunces",serif;font-size:19px;font-weight:600;}
+  .tool-title{
+    font-family:"Fraunces",serif;
+    font-size:clamp(18px,2.4vw,26px);
+    font-weight:600;
+    margin:0;
+  }
+  .header-right{display:flex;align-items:center;gap:10px;}
+  .phase-chip{
+    font-size:12px;font-weight:700;letter-spacing:0.04em;
+    background:rgba(255,255,255,0.14);
+    border:1px solid rgba(255,255,255,0.4);
+    color:#fff;
+    padding:5px 11px;border-radius:100px;
+  }
+  .theme-toggle{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:100px;
+    background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.4);
+    color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0;
+  }
+  .theme-toggle:hover{background:rgba(255,255,255,0.24);}
+  .theme-toggle:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+
+  /* ---------- Intro strip ---------- */
+  .intro{
+    position:relative;
+    overflow:hidden;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+  }
+  .intro-inner{
+    max-width:1180px;margin:0 auto;
+    padding:30px clamp(16px,4vw,40px) 26px;
+    display:flex;
+    gap:28px;
+    align-items:flex-end;
+    justify-content:space-between;
+    flex-wrap:wrap;
+  }
+  .intro h1{font-size:clamp(22px,2.8vw,30px);margin:0 0 8px;color:var(--ink);}
+  .intro p{margin:0;max-width:62ch;color:var(--ink-secondary);font-size:15px;line-height:1.55;}
+  .intro-meta{
+    display:flex;gap:22px;flex-wrap:wrap;
+  }
+  .intro-meta div{font-size:12.5px;color:var(--ink-muted);}
+  .intro-meta strong{display:block;color:var(--ink);font-size:14px;font-weight:700;}
+  .fence-line{
+    position:absolute;left:0;right:0;bottom:0;height:10px;
+    background-image:repeating-linear-gradient(90deg, var(--wheat-500) 0 26px, transparent 26px 52px);
+    opacity:0.55;
+  }
+
+  /* ---------- Layout ---------- */
+  .layout{
+    max-width:1180px;margin:0 auto;
+    padding:28px clamp(16px,4vw,40px) 64px;
+    display:grid;
+    grid-template-columns: 1.55fr 1fr;
+    gap:22px;
+    align-items:start;
+  }
+  @media (max-width:920px){
+    .layout{grid-template-columns:1fr;}
+  }
+  .col-inputs{display:flex;flex-direction:column;gap:18px;min-width:0;}
+  .col-results{position:sticky;top:16px;display:flex;flex-direction:column;gap:18px;min-width:0;}
+  @media (max-width:920px){ .col-results{position:static;} }
+
+  /* ---------- Card ---------- */
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow-card);
+    overflow:hidden;
+  }
+  .card-head{
+    background:var(--maroon-800);
+    color:#fff;
+    padding:13px 20px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .card-head svg{flex:none;width:18px;height:18px;}
+  .card-head h2{font-size:15.5px;font-weight:600;margin:0;letter-spacing:0.01em;}
+  .card-body{padding:20px;}
+  .card-note{font-size:12.5px;color:var(--ink-muted);margin:0 0 16px;line-height:1.5;}
+
+  /* ---------- Fields ---------- */
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;}
+  .field-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+  @media (max-width:520px){ .field-grid, .field-grid.cols-3{grid-template-columns:1fr 1fr;} }
+  .field{display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .field label{font-size:12.5px;font-weight:600;color:var(--ink-secondary);}
+  .field .hint{font-size:11px;color:var(--ink-muted);margin-top:-2px;}
+  .input-wrap{position:relative;display:flex;align-items:center;}
+  .input-wrap .prefix, .input-wrap .suffix{
+    position:absolute;font-size:12px;color:var(--ink-muted);pointer-events:none;white-space:nowrap;
+  }
+  .input-wrap .prefix{left:11px;}
+  .input-wrap .suffix{right:10px;}
+  input[type="number"], input[type="date"]{
+    width:100%;
+    font:inherit;font-weight:600;font-size:14.5px;color:var(--ink);
+    background:var(--surface-sunken);
+    border:1.5px solid var(--border);
+    border-radius:9px;
+    padding:9px 11px;
+    font-variant-numeric:tabular-nums;
+  }
+  .input-wrap.has-prefix input{padding-left:22px;}
+  .input-wrap.has-suffix input{padding-right:40px;}
+  input:focus{outline:2px solid var(--focus);outline-offset:1px;border-color:var(--focus);}
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button{opacity:0.5;}
+  .input-wrap.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
+
+  fieldset{border:none;padding:0;margin:0;}
+  legend{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;padding:0;}
+
+  .derived-note{font-size:11.5px;color:var(--ink-muted);margin-top:4px;}
+  .derived-note strong{color:var(--ink-secondary);}
+
+  .disclosure{
+    background:var(--wheat-100);
+    border:1px solid var(--wheat-500);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:12.5px;
+    line-height:1.55;
+    color:var(--ink-secondary);
+    margin:0 0 16px;
+  }
+  .disclosure strong{color:var(--ink);}
+
+  details.advanced{border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  details.advanced > summary{
+    list-style:none;cursor:pointer;padding:12px 16px;font-weight:700;font-size:13.5px;
+    color:var(--accent);background:var(--surface-sunken);display:flex;align-items:center;gap:8px;
+  }
+  details.advanced > summary::-webkit-details-marker{display:none;}
+  details.advanced > summary::before{content:"\25B8";transition:transform 0.15s ease;}
+  details.advanced[open] > summary::before{transform:rotate(90deg);}
+  details.advanced .adv-body{padding:16px;}
+
+  /* ---------- Data viz: stacked bar (part-to-whole) ---------- */
+  .stackbar-total{font-size:12.5px;color:var(--ink-secondary);margin-bottom:8px;display:flex;justify-content:space-between;}
+  .stackbar-total strong{color:var(--ink);font-weight:700;}
+  .stackbar{display:flex;width:100%;height:26px;border-radius:6px;overflow:hidden;background:var(--surface-sunken);gap:2px;}
+  .stackbar .seg{height:100%;position:relative;cursor:pointer;outline:none;min-width:3px;transition:filter 0.12s ease;}
+  .stackbar .seg:hover,.stackbar .seg:focus-visible{filter:brightness(1.08) saturate(1.05);}
+  .stackbar .seg:first-child{border-top-left-radius:5px;border-bottom-left-radius:5px;}
+  .stackbar .seg:last-child{border-top-right-radius:5px;border-bottom-right-radius:5px;}
+  .legend-rows{margin-top:14px;display:flex;flex-direction:column;gap:7px;}
+  .legend-row{display:flex;align-items:center;gap:9px;font-size:13px;cursor:default;}
+  .legend-row .swatch{width:10px;height:10px;border-radius:2.5px;flex:none;}
+  .legend-row .lbl{color:var(--ink-secondary);flex:1;}
+  .legend-row .val{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;}
+  .legend-row .pct{color:var(--ink-muted);font-size:11.5px;min-width:38px;text-align:right;}
+
+  /* ---------- Data viz: shared tooltip ---------- */
+  .viz-tooltip{
+    position:fixed;pointer-events:none;z-index:50;
+    background:var(--ink);color:var(--surface);border-radius:8px;padding:8px 11px;
+    font-size:12px;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,0.25);
+    opacity:0;transform:translate(-50%,-100%) translateY(-8px);transition:opacity 0.08s ease;
+    max-width:220px;
+  }
+  .viz-tooltip.show{opacity:1;}
+  .viz-tooltip .tt-val{font-weight:800;font-size:13.5px;}
+  .viz-tooltip .tt-lbl{color:rgba(255,255,255,0.7);font-size:11px;}
+
+  /* ---------- Results ---------- */
+  .stat-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .stat-tile{
+    background:var(--surface-sunken);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:14px 16px;
+    display:flex;flex-direction:column;gap:4px;
+  }
+  .stat-tile.wide{grid-column:1 / -1;}
+  .stat-tile .label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);}
+  .stat-tile .value{font-family:"Fraunces",serif;font-size:28px;font-weight:600;line-height:1.1;}
+  .stat-tile .sub{font-size:12px;color:var(--ink-muted);}
+  .stat-tile.good{background:var(--good-100);border-color:color-mix(in srgb, var(--good-700) 30%, var(--good-100));}
+  .stat-tile.good .value{color:var(--good-700);}
+  .stat-tile.critical{background:var(--critical-100);border-color:color-mix(in srgb, var(--critical-700) 30%, var(--critical-100));}
+  .stat-tile.critical .value{color:var(--critical-700);}
+
+  .verdict-pill{
+    display:inline-flex;align-items:center;gap:7px;
+    font-size:12.5px;font-weight:700;
+    padding:6px 12px;border-radius:100px;
+    margin-bottom:4px;
+  }
+  .verdict-pill.good{background:var(--good-100);color:var(--good-700);}
+  .verdict-pill.critical{background:var(--critical-100);color:var(--critical-700);}
+  .verdict-pill .dot{width:7px;height:7px;border-radius:50%;background:currentColor;}
+
+  .narrative{font-size:13.5px;line-height:1.6;color:var(--ink-secondary);margin:0 0 8px;}
+  .narrative strong{color:var(--ink);}
+
+  button.btn{
+    font:inherit;font-weight:700;font-size:13px;
+    padding:10px 16px;border-radius:9px;border:1.5px solid var(--accent);
+    background:var(--accent);color:#fff;cursor:pointer;
+  }
+  button.btn.secondary{background:transparent;color:var(--accent);}
+  button.btn:hover{filter:brightness(1.08);}
+  button.btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:0 20px 20px;}
+
+  footer{
+    max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 40px;
+    color:var(--ink-muted);font-size:12px;line-height:1.6;
+  }
+  footer a{text-decoration:underline;}
+
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wordmark">
+    <a href="../index.html" style="display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;">
+      <div class="mark">A</div>
+      <div class="text">
+        <div class="top">Texas A&amp;M AgriLife Extension - Decision Making</div>
+        <div class="main">Decision Aids &middot; Replacement Heifer Budgets</div>
+      </div>
+    </a>
+  </div>
+  <h1 class="tool-title" id="toolTitle">Weaned Calf to Bred Heifer Cost</h1>
+  <div class="header-right">
+    <a href="../index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
+    <span class="phase-chip">Pilot &middot; Phase 1</span>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="intro-inner">
+    <div>
+      <h1>What does a bred replacement heifer actually cost you, natural service?</h1>
+      <p>Enter your weaned heifer numbers, culling and breeding schedule, grazing/feeding costs, and bull investment: the tool walks a set of weaned heifer calves through pre-breeding culling, a natural-service breeding season, and open-heifer culling, then shows the total unit cost per head, the net cost per bred heifer after cull-sale credit, the net margin, and the annualized return on investment &mdash; just like AgriLife Extension's B1a spreadsheet, but recalculating live.</p>
+    </div>
+    <div class="intro-meta">
+      <div><strong>Natural service</strong>Angus, low birth-weight bulls</div>
+      <div><strong>Cull credit</strong>pre-breeding + open heifers</div>
+      <div><strong>Editable</strong>every assumption</div>
+    </div>
+  </div>
+  <div class="fence-line"></div>
+</section>
+
+<div class="layout">
+  <div class="col-inputs">
+
+    <!-- Starting heifers -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9c0-2 1.5-4 4-4s4 1.5 4 2 1.5-2 4-2 4 2 4 4-2 3-2 5v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5c0-2-2-3-2-5Z"/><circle cx="9" cy="13" r=".5" fill="currentColor"/><circle cx="15" cy="13" r=".5" fill="currentColor"/></svg>
+        <h2>Starting heifers</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Natural service Angus, bred to low birth-weight bulls &mdash; matches the original workbook's description. Change the head count, dates, and starting weight to match your operation.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="rh_head">Head, starting</label>
+            <div class="input-wrap"><input type="number" id="rh_head" value="100" min="1"></div>
+          </div>
+          <div class="field">
+            <label for="rh_startDate">Starting date</label>
+            <div class="input-wrap"><input type="date" id="rh_startDate" value="2026-10-15"></div>
+          </div>
+          <div class="field">
+            <label for="rh_birthDate">Calf birth date</label>
+            <div class="input-wrap"><input type="date" id="rh_birthDate" value="2026-02-15"></div>
+            <span class="hint">Only used to show age in months below</span>
+          </div>
+          <div class="field">
+            <label for="rh_weanWeight">Weaning weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_weanWeight" value="500" min="0"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="rh_purchasePrice">Raised/purchase value</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_purchasePrice" value="473.51" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
+          </div>
+          <div class="field"></div>
+        </div>
+        <p class="derived-note" id="rh_ageNote">&mdash;</p>
+      </div>
+    </div>
+
+    <!-- Pre-breeding culling -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        <h2>Pre-breeding culling</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">A share of the starting heifers are culled for structural or health reasons before the breeding season even starts, and sold as feeder heifers.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="rh_precullDate">Cull date</label>
+            <div class="input-wrap"><input type="date" id="rh_precullDate" value="2027-02-25"></div>
+          </div>
+          <div class="field">
+            <label for="rh_precullPct">Culled, pre-breeding</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_precullPct" value="2" min="0" max="100" step="0.5"><span class="suffix">%</span></div>
+          </div>
+          <div class="field"></div>
+          <div class="field">
+            <label for="rh_precullWeight">Sale weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_precullWeight" value="650" min="0"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="rh_precullPrice">Sale price</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_precullPrice" value="427.04" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
+          </div>
+          <div class="field"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breeding season -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.35-9.5-8.5C1 9 2.5 5 6.5 5c2 0 3.5 1.2 4.5 2.7C12 6.2 13.5 5 15.5 5c4 0 5.5 4 4 7.5C21 16.65 12 21 12 21Z"/></svg>
+        <h2>Breeding season &amp; pregnancy</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Natural service breeding season, followed by a delivery window before bred heifers and open (non-pregnant) heifers are sorted out.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="rh_breedDate">Breeding date</label>
+            <div class="input-wrap"><input type="date" id="rh_breedDate" value="2027-05-07"></div>
+          </div>
+          <div class="field">
+            <label for="rh_seasonDays">Breeding season</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_seasonDays" value="60" min="1"><span class="suffix">days</span></div>
+          </div>
+          <div class="field">
+            <label for="rh_daysToDelivery">Days to delivery</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_daysToDelivery" value="45" min="0"><span class="suffix">days</span></div>
+          </div>
+          <div class="field">
+            <label for="rh_pregPct">Pregnant, of exposed</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_pregPct" value="88" min="0" max="100" step="0.5"><span class="suffix">%</span></div>
+          </div>
+          <div class="field">
+            <label for="rh_bredPrice">Bred heifer sale price</label>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="rh_bredPrice" value="3884.78" min="0" step="10"></div>
+          </div>
+          <div class="field"></div>
+        </div>
+        <p class="derived-note" id="rh_deliveryNote">&mdash;</p>
+      </div>
+    </div>
+
+    <!-- Open heifer culling -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        <h2>Open heifer culling</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Heifers that didn't settle are sorted off and sold as feeder heifers at the open-cull date.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="rh_openDate">Cull date</label>
+            <div class="input-wrap"><input type="date" id="rh_openDate" value="2027-08-10"></div>
+          </div>
+          <div class="field">
+            <label for="rh_openWeight">Sale weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_openWeight" value="900" min="0"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="rh_openPrice">Sale price</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_openPrice" value="341.19" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grazing & feeding -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg>
+        <h2>Grazing &amp; feeding</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Days on each phase &times; a per-day cost, for the whole starting head count. "Other" is 0 by default &mdash; use it for any extra phase (creep feed, weaning pen, etc.).</p>
+        <div class="field-grid cols-3">
+          <div class="field"><label for="rh_preconDays">Preconditioning</label><div class="input-wrap has-suffix"><input type="number" id="rh_preconDays" value="45" min="0"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="rh_preconRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_preconRate" value="1.10" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"></div>
+          <div class="field"><label for="rh_winterDays">Winter</label><div class="input-wrap has-suffix"><input type="number" id="rh_winterDays" value="90" min="0"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="rh_winterRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_winterRate" value="1.00" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"></div>
+          <div class="field"><label for="rh_springDays">Spring &amp; summer</label><div class="input-wrap has-suffix"><input type="number" id="rh_springDays" value="176" min="0"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="rh_springRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_springRate" value="0.60" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"></div>
+          <div class="field"><label for="rh_otherGrazeDays">Other</label><div class="input-wrap has-suffix"><input type="number" id="rh_otherGrazeDays" value="0" min="0"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="rh_otherGrazeRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_otherGrazeRate" value="0" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"></div>
+        </div>
+        <p class="derived-note" id="rh_daysFedNote">&mdash;</p>
+      </div>
+    </div>
+
+    <!-- Health, breeding & other direct costs -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6Z"/></svg>
+        <h2>Health, breeding &amp; other direct costs</h2>
+      </div>
+      <div class="card-body">
+        <div class="field-grid cols-3">
+          <div class="field"><label for="rh_processHealth">Processing &amp; health</label><div class="input-wrap has-suffix"><input type="number" id="rh_processHealth" value="20" min="0"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="rh_pregTest">Pregnancy test, exposed</label><div class="input-wrap has-suffix"><input type="number" id="rh_pregTest" value="5" min="0"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="rh_prebreedHealth">Pre-breeding health</label><div class="input-wrap has-suffix"><input type="number" id="rh_prebreedHealth" value="12" min="0"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="rh_otherDirect">Other direct costs</label><div class="input-wrap has-suffix"><input type="number" id="rh_otherDirect" value="0" min="0"><span class="suffix">$/hd</span></div></div>
+        </div>
+        <p class="derived-note" id="rh_bullCostNote">Bull breeding cost (from the bull investment section below): <strong id="rh_bullCostInline">$0.00/hd exposed</strong></p>
+      </div>
+    </div>
+
+    <!-- Indirect costs & financing -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <h2>Indirect costs &amp; financing</h2>
+      </div>
+      <div class="card-body">
+        <div class="field-grid cols-3">
+          <div class="field"><label for="rh_indirectPerDay">Indirect cost</label><div class="input-wrap has-suffix"><input type="number" id="rh_indirectPerDay" value="0.50" min="0" step="0.05"><span class="suffix">$/hd-day</span></div></div>
+          <div class="field"><label for="rh_interestRate">Interest rate</label><div class="input-wrap has-suffix"><input type="number" id="rh_interestRate" value="5" min="0" step="0.1"><span class="suffix">%</span></div></div>
+          <div class="field"><label for="rh_freight">Marketing/delivery freight</label><div class="input-wrap has-suffix"><input type="number" id="rh_freight" value="0" min="0"><span class="suffix">$/bred hd</span></div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bull investment (advanced) -->
+    <details class="advanced">
+      <summary>Bull investment (advanced)</summary>
+      <div class="adv-body">
+        <div class="disclosure">
+          <strong>Not updated to current prices.</strong> Bull purchase cost ($4,000/hd) and salvage price ($80/cwt) are still the original 2018 AgriLife workbook's assumptions. A reliable current price for a <em>commercial</em> low birth-weight herd bull (as opposed to an elite registered seedstock sale) wasn't found while sourcing this tool's other prices, so both numbers were left untouched rather than mixing a fresh salvage price against a stale purchase price. Edit them yourself if you have current numbers, or ask for this to be researched further.
+        </div>
+        <div class="field-grid cols-3">
+          <div class="field"><label for="rh_heifersPerBull">Heifers per bull</label><div class="input-wrap"><input type="number" id="rh_heifersPerBull" value="25" min="1"></div></div>
+          <div class="field"><label for="rh_bullsRequired">Bulls used</label><div class="input-wrap"><input type="number" id="rh_bullsRequired" value="4" min="1" step="1"></div></div>
+          <div class="field"></div>
+          <div class="field"><label for="rh_bullFeed">Bull feed &amp; grazing</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullFeed" value="700" min="0"><span class="suffix">$/bull/yr</span></div></div>
+          <div class="field"><label for="rh_bullOther">Bull other cost</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullOther" value="0" min="0"><span class="suffix">$/bull/yr</span></div></div>
+          <div class="field"><label for="rh_bullVet">Bull vet &amp; medicine</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullVet" value="75" min="0"><span class="suffix">$/bull/yr</span></div></div>
+          <div class="field"><label for="rh_bullCost">Bull purchase cost</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="rh_bullCost" value="4000" min="0"></div></div>
+          <div class="field"><label for="rh_bullLife">Bull useful life</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
+          <div class="field"><label for="rh_bullDeathLoss">Bull death loss</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullDeathLoss" value="2" min="0" step="0.5"><span class="suffix">%</span></div></div>
+          <div class="field"><label for="rh_bullSalvageWt">Bull salvage weight</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullSalvageWt" value="1800" min="0"><span class="suffix">lb</span></div></div>
+          <div class="field"><label for="rh_bullSalvagePrice">Bull salvage price</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullSalvagePrice" value="80" min="0" step="0.5"><span class="suffix">$/cwt</span></div></div>
+          <div class="field"></div>
+        </div>
+        <p class="derived-note" id="rh_bullsNeededNote">&mdash;</p>
+      </div>
+    </details>
+
+  </div>
+
+  <div class="col-results">
+
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
+        <h2>Result</h2>
+      </div>
+      <div class="card-body">
+        <div class="verdict-pill" id="rh_verdictPill"><span class="dot"></span><span id="rh_verdictText">&mdash;</span></div>
+        <p class="narrative" id="rh_narrativeMain">&mdash;</p>
+
+        <div class="stat-tiles" style="margin-bottom:12px;">
+          <div class="stat-tile">
+            <span class="label">Total unit cost</span>
+            <span class="value" id="rh_tucValue" style="font-size:20px;">$0</span>
+            <span class="sub">/hd, all starting heifers</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Net cost, delivered</span>
+            <span class="value" id="rh_netCostValue" style="font-size:20px;">$0</span>
+            <span class="sub">/bred heifer, after cull credit</span>
+          </div>
+          <div class="stat-tile wide" id="rh_netMarginTile">
+            <span class="label">Net margin</span>
+            <span class="value" id="rh_netMarginValue" style="font-size:22px;">$0</span>
+            <span class="sub" id="rh_netMarginSub">/bred heifer</span>
+          </div>
+        </div>
+
+        <div class="stat-tiles" style="margin-bottom:12px;">
+          <div class="stat-tile" id="rh_roiTile">
+            <span class="label">Annualized ROI</span>
+            <span class="value" id="rh_roiValue" style="font-size:20px;">0.0%</span>
+            <span class="sub">return on capital, incl. interest</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Net margin, all heifers</span>
+            <span class="value" id="rh_netMarginAllValue" style="font-size:20px;">$0</span>
+            <span class="sub">/hd, spread over all starting heifers</span>
+          </div>
+        </div>
+
+        <div class="stat-tiles">
+          <div class="stat-tile"><span class="label">Exposed</span><span class="value" id="rh_exposedValue" style="font-size:17px;">0</span><span class="sub">head bred to bulls</span></div>
+          <div class="stat-tile"><span class="label">Bred</span><span class="value" id="rh_bredValue" style="font-size:17px;">0</span><span class="sub">head, delivered</span></div>
+          <div class="stat-tile"><span class="label">Open, culled</span><span class="value" id="rh_openValue" style="font-size:17px;">0</span><span class="sub">head sold as feeders</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M7 19V9m5 10V5m5 14v-7"/></svg>
+        <h2>Where the cost per head goes</h2>
+      </div>
+      <div class="card-body">
+        <div class="stackbar-total"><span>Total unit cost</span><strong id="rh_costBarTotal">$0 / hd</strong></div>
+        <div class="stackbar" id="rh_costStackbar"></div>
+        <div class="legend-rows" id="rh_costLegend"></div>
+      </div>
+    </div>
+
+    <footer style="padding:0;margin:0;">
+      <p>Starting values reproduce the original B1a spreadsheet's own formulas and structure (natural service, weaned calf through bred-heifer delivery). Purchase, cull-sale, and bred-heifer sale prices were updated from the workbook's 2018 defaults to sourced September 2026 USDA AMS market data &mdash; see the project notes for exact sources. Bull purchase/salvage prices are still the original 2018 figures (see the disclosure in "Bull investment" above). Always verify results before using them to make a decision.</p>
+    </footer>
+
+  </div>
+</div>
+
+<div class="viz-tooltip" id="vizTooltip"></div>
+
+<script>
+(function(){
+  "use strict";
+  var fmtMoney0 = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+  var fmtMoney2 = new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+  function $(id){ return document.getElementById(id); }
+  function num(id){ var v=parseFloat($(id).value); return isFinite(v)?v:0; }
+  function dateOf(id){ var v=$(id).value; return v ? new Date(v+'T00:00:00') : null; }
+  function round(v,d){ var m=Math.pow(10,d||0); return Math.round(v*m)/m; }
+  function fmtDollar(v, decimals){
+    var f = decimals===2 ? fmtMoney2 : fmtMoney0;
+    v = isFinite(v) ? v : 0;
+    return (v<0?'-':'')+'$'+f.format(Math.abs(v));
+  }
+  function daysBetween(a,b){ return Math.round((a-b)/86400000); }
+  function addDays(d,n){ return new Date(d.getTime()+n*86400000); }
+  function fmtDate(d){
+    if(!d) return '—';
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  }
+
+  /* ================================================================
+     B1a — Replacement Heifer: Weaning Through Breeding and Culling,
+     Natural Service. Faithful port of "1.Weaned Calf to Bred Heif Cost"
+     + "3. Bull Cost" from B1a.xlsx (version 2018-07-10). Formula-for-
+     formula, including two original-workbook quirks kept exactly as
+     found rather than "corrected" (fidelity rule — flagged here, not
+     silently changed):
+
+     1) On the bull cost sheet, "per exposed heifer" bull costs (H32,
+        H33 → J26/J27 → G21) are divided by the bull sheet's own $C$4
+        (= this sheet's starting head count, e.g. 100), NOT by the
+        actual number of heifers exposed to breeding (E15, e.g. 98,
+        after pre-breeding culling). The bull *investment* total (O28),
+        by contrast, is explicitly rescaled to the exposed count (O25 =
+        this sheet's E15) before being used here. So the per-bull-sheet
+        "cost per head" and "investment per head" figures use two
+        different head-count denominators inside the same workbook.
+     2) N48/N49/R49 (a "Production Costs" / "Total capital" side
+        calculation in the corner of the sheet) double-counts the F46
+        subtotal — it sums F38:F49, and F46 (itself already
+        SUM(F38:F45)) sits inside that range. This does not feed the
+        reported Annualized ROI (which instead uses N51, built cleanly
+        from F46+F50 without double-counting) — those cells are simply
+        unused leftovers in the original workbook, so they're not
+        reproduced here since nothing downstream reads them.
+
+     Prices updated from the workbook's 2018 defaults to sourced
+     September 2026 USDA AMS data — see the "Sourced defaults" note
+     further down and the project doc for exact citations. Bull
+     purchase/salvage prices were deliberately left at the original
+     2018 values (see the on-page disclosure) since no reliable current
+     commercial bull price was found.
+     ================================================================ */
+
+  function readInputs(){
+    return {
+      head: num('rh_head'),
+      startDate: dateOf('rh_startDate'),
+      birthDate: dateOf('rh_birthDate'),
+      weanWeight: num('rh_weanWeight'),
+      purchasePrice: num('rh_purchasePrice'),
+      precullDate: dateOf('rh_precullDate'),
+      precullPct: num('rh_precullPct'),
+      precullWeight: num('rh_precullWeight'),
+      precullPrice: num('rh_precullPrice'),
+      breedDate: dateOf('rh_breedDate'),
+      seasonDays: num('rh_seasonDays'),
+      daysToDelivery: num('rh_daysToDelivery'),
+      pregPct: num('rh_pregPct'),
+      bredPrice: num('rh_bredPrice'),
+      openDate: dateOf('rh_openDate'),
+      openWeight: num('rh_openWeight'),
+      openPrice: num('rh_openPrice'),
+      preconDays: num('rh_preconDays'), preconRate: num('rh_preconRate'),
+      winterDays: num('rh_winterDays'), winterRate: num('rh_winterRate'),
+      springDays: num('rh_springDays'), springRate: num('rh_springRate'),
+      otherGrazeDays: num('rh_otherGrazeDays'), otherGrazeRate: num('rh_otherGrazeRate'),
+      processHealth: num('rh_processHealth'),
+      pregTest: num('rh_pregTest'),
+      prebreedHealth: num('rh_prebreedHealth'),
+      otherDirect: num('rh_otherDirect'),
+      indirectPerDay: num('rh_indirectPerDay'),
+      interestRate: num('rh_interestRate'),
+      freight: num('rh_freight'),
+      heifersPerBull: num('rh_heifersPerBull'),
+      bullsRequired: num('rh_bullsRequired'),
+      bullFeed: num('rh_bullFeed'),
+      bullOther: num('rh_bullOther'),
+      bullVet: num('rh_bullVet'),
+      bullCost: num('rh_bullCost'),
+      bullLife: num('rh_bullLife'),
+      bullDeathLoss: num('rh_bullDeathLoss'),
+      bullSalvageWt: num('rh_bullSalvageWt'),
+      bullSalvagePrice: num('rh_bullSalvagePrice')
+    };
+  }
+
+  function calcBullSheet(inp, exposedHeifers){
+    var E8=inp.bullFeed, E9=inp.bullOther, E10=inp.bullVet;
+    var E28 = inp.interestRate; // linked to Sheet1!C52
+    var E11 = (E8+E9+E10)*0.5*E28*0.01;
+    var E12 = E8+E9+E10+E11;
+    var G23 = inp.bullCost, G24 = inp.bullLife;
+    var G26 = inp.bullSalvageWt*inp.bullSalvagePrice*0.01;
+    var E15 = (G23-G26)/G24; // depreciation
+    var E17 = G23*inp.bullDeathLoss*0.01; // death loss cost
+    var E16 = 0; // unpaid-balance interest input, blank in the original workbook
+    var E18 = E15+E16+E17;
+    var E20 = E12+E18;
+    var F20 = inp.heifersPerBull;
+    var G20 = F20>0 ? E20/F20 : 0;
+
+    var C32 = inp.bullsRequired;
+    var E32 = E20-E11-E16;
+    var G32 = C32*E32;
+    var C4denom = inp.head; // Sheet1!G4 — the *starting* head count, see fidelity note above
+    var H32 = C4denom>0 ? G32/C4denom : 0;
+
+    var E33 = E11+E16;
+    var G33 = C32*E33;
+    var H33 = C4denom>0 ? G33/C4denom : 0;
+    var J26 = H33;
+    var J27 = G20-J26; // = G21, non-interest cost per exposed heifer
+
+    var F38 = (G23+G26)/2;
+    var G36 = F38*C32;
+    var H36 = C4denom>0 ? G36/C4denom : 0;
+    var J28 = H36;
+    var O28 = J28*exposedHeifers; // total bull investment, rescaled to the *exposed* count
+
+    return {
+      G21: J27,          // bull breeding cost per exposed heifer, non-interest
+      O26: G33,          // total interest cost across all bulls
+      O28: O28,          // total bull investment (avg cost+salvage /2), all bulls
+      bullsCalc: F20>0 ? (inp.head/F20) : 0 // "you need about X bulls" helper
+    };
+  }
+
+  function calc(inp){
+    var G4 = inp.head;
+    var E6 = inp.weanWeight*inp.purchasePrice*0.01;
+    var F6 = G4*E6;
+
+    var E9 = G4*inp.precullPct*0.01;
+    var E11 = inp.precullWeight*inp.precullPrice*0.01;
+    var F11 = E11*E9;
+
+    var E13 = 0; // death loss %, not exposed as a UI input (0 in the original workbook)
+    var E15 = G4-E9-E13; // exposed to breeding
+
+    var E16 = E15*inp.pregPct*0.01; // bred
+    var E17 = E15-E16; // open
+
+    var E19 = inp.openWeight*inp.openPrice*0.01;
+    var F19 = E17*E19;
+
+    var E20 = inp.bredPrice;
+    var F20 = E20*E16;
+    var F21 = F20+F19+F11;
+
+    var C25 = addDays(inp.breedDate, inp.seasonDays+inp.daysToDelivery);
+
+    var I22 = daysBetween(inp.precullDate, inp.startDate);
+    var J22 = I22*G4;
+    var I23 = daysBetween(inp.breedDate, inp.precullDate);
+    var J23 = I23*E15;
+    var I24 = daysBetween(inp.openDate, inp.breedDate);
+    var J24 = I24*E17;
+    var I25 = daysBetween(C25, inp.breedDate);
+    var J25 = I25*E16;
+    var J26 = (E16+E17)>0 ? (J22+J23+J24+J25)/(E16+E17) : 0;
+
+    var C29 = J26; // average days fed per head marketed
+
+    var F31 = inp.preconDays*inp.preconRate*G4;
+    var F32 = inp.winterDays*inp.winterRate*G4;
+    var F33 = inp.springDays*inp.springRate*G4;
+    var F34 = inp.otherGrazeDays*inp.otherGrazeRate*G4;
+    var F35 = F31+F32+F33+F34;
+    var D35 = G4>0 ? F35/G4 : 0;
+
+    var D38 = D35;
+    var F38 = D38*G4;
+    var F39 = inp.processHealth*G4;
+    var F41 = inp.pregTest*G4;
+    var F42 = inp.prebreedHealth*G4;
+
+    var bull = calcBullSheet(inp, E15);
+    var D43 = bull.G21;
+    var F43 = D43*G4;
+    var F44 = inp.otherDirect*G4;
+    var F45 = 0;
+
+    var F46 = F38+F39+F41+F42+F43+F44+F45+F6;
+    var D46 = G4>0 ? F46/G4 : 0;
+
+    var F48 = C29*inp.indirectPerDay*E15;
+    var F49 = 0;
+    var F50 = F48+F49;
+    var D50 = G4>0 ? F50/G4 : 0;
+
+    var C52 = inp.interestRate;
+    var I53 = bull.O26;
+    var I54 = E15>0 ? I53/E15 : 0;
+    var D52 = (E6 + (D46+D50)*0.5)*(C52*0.01*(C29/365)) + I54;
+    var F52 = D52*G4;
+    var D54 = D46+D50+D52;
+    var F54 = F46+F50+F52;
+
+    var I55 = bull.O28;
+
+    var F56 = F11+F19; // cull credit, total $
+    var D56 = E16>0 ? F56/E16 : 0;
+    var F57 = F54-F56;
+    var D57 = E16>0 ? F57/E16 : 0;
+    var F58 = E16*inp.freight;
+    var F60 = F57+F58;
+    var D60 = E16>0 ? F60/E16 : 0;
+
+    var F62 = F20;
+    var F64 = F62-F60; // F51 term in the workbook is a blank cell (0)
+    var D64 = E16>0 ? F64/E16 : 0;
+    var D66 = G4>0 ? F64/G4 : 0;
+    var F66 = F64;
+
+    var N51 = (F6 + (F46+F50)*0.5)*(C29/365) + I55;
+    var N53 = F52+F66;
+    var O53 = N51>0 ? N53/N51 : 0;
+
+    return {
+      E6:E6, F6:F6, E9:E9, F11:F11, E15:E15, E16:E16, E17:E17, F19:F19, F20:F20, F21:F21,
+      C25:C25, C29:C29, D35:D35, D46:D46, D50:D50, D52:D52, D54:D54, F54:F54,
+      D56:D56, F56:F56, D57:D57, D60:D60, F64:F64, D64:D64, D66:D66, N51:N51, O53:O53,
+      bull:bull,
+      breakdown:{
+        heiferInitial: E6,
+        feedGrazing: D38,
+        healthBreeding: inp.processHealth+inp.pregTest+inp.prebreedHealth+D43+inp.otherDirect,
+        indirect: D50,
+        finance: D52
+      }
+    };
+  }
+
+  function buildStackBar(barId, legendId, totalId, data, total, totalSuffix){
+    var bar = $(barId), legend = $(legendId);
+    if(!bar || !legend) return;
+    bar.innerHTML=''; legend.innerHTML='';
+    if(totalId && $(totalId)) $(totalId).textContent = fmtDollar(total,2)+(totalSuffix||'');
+    data.forEach(function(d){
+      var pct = total>0 ? (d.value/total*100) : 0;
+      var seg = document.createElement('div');
+      seg.className='seg';
+      seg.style.background = d.color;
+      seg.style.width = Math.max(pct,0)+'%';
+      seg.tabIndex = 0;
+      seg.setAttribute('role','img');
+      seg.setAttribute('aria-label', d.label+': $'+fmtMoney2.format(d.value)+' ('+pct.toFixed(1)+'%)');
+      function showTt(){
+        var r = seg.getBoundingClientRect();
+        showVizTooltip(r.left+r.width/2, r.top, '<div class="tt-val">$'+fmtMoney2.format(d.value)+'</div><div class="tt-lbl">'+d.label+' &middot; '+pct.toFixed(1)+'% of total</div>');
+      }
+      seg.addEventListener('pointerenter', showTt);
+      seg.addEventListener('focus', showTt);
+      seg.addEventListener('pointerleave', hideVizTooltip);
+      seg.addEventListener('blur', hideVizTooltip);
+      bar.appendChild(seg);
+
+      var row = document.createElement('div');
+      row.className='legend-row';
+      row.innerHTML = '<span class="swatch" style="background:'+d.color+'"></span>'+
+                       '<span class="lbl"></span>'+
+                       '<span class="val">$'+fmtMoney2.format(d.value)+'</span>'+
+                       '<span class="pct">'+pct.toFixed(1)+'%</span>';
+      row.querySelector('.lbl').textContent = d.label;
+      legend.appendChild(row);
+    });
+  }
+  function showVizTooltip(x,y,html){
+    var tt = $('vizTooltip');
+    tt.innerHTML = html;
+    tt.style.left = x+'px';
+    tt.style.top = (y-6)+'px';
+    tt.classList.add('show');
+  }
+  function hideVizTooltip(){ var tt=$('vizTooltip'); if(tt) tt.classList.remove('show'); }
+
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  function recalc(){
+    var inp = readInputs();
+    var r = calc(inp);
+
+    // Age helper note
+    if(inp.birthDate && inp.startDate){
+      var monthsAt = function(d){ return d ? ((d-inp.birthDate)/(365.25/12*86400000)).toFixed(1) : '—'; };
+      $('rh_ageNote').innerHTML = 'Weaning age: <strong>'+monthsAt(inp.startDate)+' mo</strong> &middot; Breeding age: <strong>'+monthsAt(inp.breedDate)+' mo</strong> &middot; Delivery age: <strong>'+monthsAt(r.C25)+' mo</strong>';
+    }
+    $('rh_deliveryNote').innerHTML = 'Delivery date: <strong>'+fmtDate(r.C25)+'</strong> &middot; Calving date: <strong>'+fmtDate(addDays(inp.breedDate,283))+'</strong>';
+    $('rh_daysFedNote').innerHTML = 'Average days fed, per head marketed: <strong>'+round(r.C29,1)+' days</strong>';
+
+    var bullsNeeded = inp.heifersPerBull>0 ? inp.head/inp.heifersPerBull : 0;
+    $('rh_bullsNeededNote').innerHTML = 'At '+inp.heifersPerBull+' heifers/bull and '+inp.head+' head, you need about <strong>'+round(bullsNeeded,1)+' bulls</strong> (you\'ve set '+inp.bullsRequired+').';
+    $('rh_bullCostInline').textContent = fmtDollar(r.bull.G21,2)+'/hd exposed';
+
+    $('rh_exposedValue').textContent = fmtMoney0.format(round(r.E15,0));
+    $('rh_bredValue').textContent = fmtMoney0.format(round(r.E16,0));
+    $('rh_openValue').textContent = fmtMoney0.format(round(r.E17,0));
+
+    $('rh_tucValue').textContent = fmtDollar(r.D54,2);
+    $('rh_netCostValue').textContent = fmtDollar(r.D60,2);
+
+    var marginGood = r.D64 > 0;
+    $('rh_netMarginValue').textContent = fmtDollar(r.D64,2);
+    $('rh_netMarginSub').textContent = '/bred heifer, sale price minus net delivered cost';
+    $('rh_netMarginTile').className = 'stat-tile wide '+(marginGood?'good':'critical');
+    $('rh_netMarginAllValue').textContent = fmtDollar(r.D66,2);
+
+    var roiPct = r.O53*100;
+    var roiGood = roiPct >= inp.interestRate;
+    $('rh_roiValue').textContent = round(roiPct,1)+'%';
+    $('rh_roiTile').className = 'stat-tile '+(roiGood?'good':'critical');
+
+    var pill = $('rh_verdictPill');
+    pill.className = 'verdict-pill '+(marginGood?'good':'critical');
+    $('rh_verdictText').textContent = marginGood ? 'Profitable at today’s prices' : 'Loses money at today’s prices';
+
+    $('rh_narrativeMain').innerHTML = 'At today’s assumptions, growing a bred replacement heifer costs <strong>'+fmtDollar(r.D60,2)+'/hd</strong> net of cull-sale credit, and sells for <strong>'+fmtDollar(inp.bredPrice,2)+'/hd</strong> — a margin of <strong>'+fmtDollar(r.D64,2)+'/hd</strong>. Spread across all '+fmtMoney0.format(inp.head)+' starting heifers (including the '+fmtMoney0.format(round(r.E9+r.E17,0))+' that never make it to a bred sale), that’s <strong>'+fmtDollar(r.D66,2)+'/hd</strong>. Annualized, the return on capital invested runs <strong>'+round(roiPct,1)+'%</strong>, versus a '+inp.interestRate+'% interest rate.';
+
+    var s1=cssVar('--s1'), s2=cssVar('--s2'), s3=cssVar('--s3'), s4=cssVar('--s4'), s5=cssVar('--s5');
+    var data = [
+      {label:'Heifer initial cost', value:r.breakdown.heiferInitial, color:s1},
+      {label:'Feed & grazing', value:r.breakdown.feedGrazing, color:s2},
+      {label:'Health, breeding & other direct', value:r.breakdown.healthBreeding, color:s3},
+      {label:'Indirect costs', value:r.breakdown.indirect, color:s4},
+      {label:'Financing', value:r.breakdown.finance, color:s5}
+    ];
+    buildStackBar('rh_costStackbar','rh_costLegend','rh_costBarTotal', data, r.D54, ' / hd');
+  }
+
+  function attachInputs(){
+    var ids = ['rh_head','rh_startDate','rh_birthDate','rh_weanWeight','rh_purchasePrice',
+      'rh_precullDate','rh_precullPct','rh_precullWeight','rh_precullPrice',
+      'rh_breedDate','rh_seasonDays','rh_daysToDelivery','rh_pregPct','rh_bredPrice',
+      'rh_openDate','rh_openWeight','rh_openPrice',
+      'rh_preconDays','rh_preconRate','rh_winterDays','rh_winterRate','rh_springDays','rh_springRate','rh_otherGrazeDays','rh_otherGrazeRate',
+      'rh_processHealth','rh_pregTest','rh_prebreedHealth','rh_otherDirect',
+      'rh_indirectPerDay','rh_interestRate','rh_freight',
+      'rh_heifersPerBull','rh_bullsRequired','rh_bullFeed','rh_bullOther','rh_bullVet','rh_bullCost','rh_bullLife','rh_bullDeathLoss','rh_bullSalvageWt','rh_bullSalvagePrice'];
+    ids.forEach(function(id){
+      var el = $(id);
+      if(el) el.addEventListener('input', recalc);
+    });
+  }
+
+  function initThemeToggle(){
+    var STORAGE_KEY = 'tamuDecisionAidsTheme';
+    var toggle = $('themeToggle');
+    if(!toggle) return;
+
+    var stored = null;
+    try { stored = window.localStorage.getItem(STORAGE_KEY); } catch(e){}
+    if(stored === 'light' || stored === 'dark'){
+      document.documentElement.setAttribute('data-theme', stored);
+    }
+
+    function currentTheme(){
+      var attr = document.documentElement.getAttribute('data-theme');
+      if(attr === 'light' || attr === 'dark') return attr;
+      return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    function updateButton(){
+      var dark = currentTheme() === 'dark';
+      toggle.textContent = dark ? '☀️' : '🌙';
+      var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+      toggle.setAttribute('aria-label', label);
+      toggle.setAttribute('title', label);
+    }
+
+    updateButton();
+    toggle.addEventListener('click', function(){
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { window.localStorage.setItem(STORAGE_KEY, next); } catch(e){}
+      updateButton();
+      recalc();
+    });
+  }
+
+  function init(){
+    initThemeToggle();
+    attachInputs();
+    recalc();
+    if(window.matchMedia){
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', recalc);
+    }
+  }
+
+  init();
+})();
+</script>
+</body>
+</html>
