@@ -469,6 +469,7 @@
   <div class="header-right">
     <a href="../index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
     <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
+    <a href="../data-sources.html" class="phase-chip" style="text-decoration:none;cursor:pointer;" title="See where every market price on this page comes from, and how current it is">Prices: Sep 2026</a>
     <span class="phase-chip">Pilot · Phase 1</span>
   </div>
 </header>
@@ -485,6 +486,7 @@
     <div>
       <h1>How much can you afford to pay for a bred cow?</h1>
       <p>Enter the bid price, the discount rate, and the financing terms: the tool projects 7 years of cash flow and calculates Net Present Value, Internal Rate of Return, and payback period — just like AgriLife Extension's A1 spreadsheet, but recalculating live.</p>
+      <p style="margin-top:10px;font-size:13px;"><a href="../replacement-heifer/index.html" style="color:var(--accent);font-weight:700;text-decoration:none;">&rarr; Weighing this against raising your own replacement heifer instead? See Replacement Heifer Budgets (B1a)</a></p>
     </div>
     <div class="intro-meta">
       <div><strong>7 years</strong>projection horizon</div>
@@ -887,13 +889,14 @@
         </fieldset>
         <fieldset style="margin-bottom:14px;">
           <legend>Herd bull</legend>
+          <p class="card-note">Bull cost, productive life, death loss and cows-per-bull now come from the <strong>"Market prices &amp; factors"</strong> calculator on the home page &mdash; edit them there so BCU, A2 and the Replacement Heifer budget all stay in sync. Cull weight still uses this page's own auction weight-slide.</p>
           <div class="field-grid cols-3">
-            <div class="field"><label for="a2_bullCost">Cost/head</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_bullCost" value="4000" min="0"></div></div>
-            <div class="field"><label for="a2_bullLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
-            <div class="field"><label for="a2_bullDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_bullDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
+            <div class="field"><span class="hint" style="margin-top:0;">Bull cost</span><strong id="a2Bull_cost">$0</strong></div>
+            <div class="field"><span class="hint" style="margin-top:0;">Productive life</span><strong id="a2Bull_life">0 yrs</strong></div>
+            <div class="field"><span class="hint" style="margin-top:0;">Death loss</span><strong id="a2Bull_deathLoss">0%</strong></div>
             <div class="field"><label for="a2_cullBullWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullWt" value="1650.7" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullBullWtRange" class="weight-slide" min="1300" max="2000" step="50" value="1650.7" aria-label="Bull weight — auto-fills the cull bull price (only one grade reported, so the price stays constant)"></div>
             <div class="field"><label for="a2_cullBullPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullBullPrice" value="190.0" min="0"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="a2_cowsPerBull">Cows/bull</label><div class="input-wrap"><input type="number" id="a2_cowsPerBull" value="25" min="1"></div></div>
+            <div class="field"><span class="hint" style="margin-top:0;">Cows per bull</span><strong id="a2Bull_perBull">0</strong></div>
           </div>
         </fieldset>
         <div class="stat-tile wide">
@@ -1442,7 +1445,7 @@
      auction data at every point any more - see the project doc for the
      exact ratios and the alternative (keep as pure Sept-4 data, or replace
      with a flat single price) that were offered and declined. */
-  var STEER_PRICE_SLIDE = [
+  var STEER_PRICE_SLIDE_BASE = [
     {w:397.0,  p:629.0},
     {w:463.8,  p:565.3},
     {w:516.4,  p:530.0},
@@ -1452,7 +1455,7 @@
     {w:962.3,  p:392.1},
     {w:1140.0, p:318.2}
   ];
-  var HEIFER_PRICE_SLIDE = [
+  var HEIFER_PRICE_SLIDE_BASE = [
     {w:337.0, p:554.1},
     {w:455.1, p:492.9},
     {w:531.3, p:460.0},
@@ -1470,7 +1473,7 @@
      forced into a clean downward slope. Cull BULLS only have one reported
      row (no grade breakdown), so there's nothing to slide there - that
      field stays a plain input. Rescaled 2026-09-16, see note above. */
-  var CULL_COW_PRICE_SLIDE = [
+  var CULL_COW_PRICE_SLIDE_BASE = [
     {w:1143.4, p:178.7}, // Lean Cows
     {w:1279.4, p:180.0}, // Boner Cows
     {w:1496.1, p:176.9}  // Breaker Cows
@@ -1482,7 +1485,7 @@
      it just won't visibly change as you drag it until a weight-class
      breakdown for bulls is reported. Rescaled 2026-09-16, see note above
      (with only one point, this is simply the new source's $190/cwt). */
-  var BULL_PRICE_SLIDE = [
+  var BULL_PRICE_SLIDE_BASE = [
     {w:1650.7, p:190.0} // Bulls
   ];
   function priceSlideLookup(table, w){
@@ -1498,6 +1501,64 @@
     }
     return table[table.length-1].p;
   }
+
+  /* ---------------- Shared "Market prices & factors" store (site/index.html) ----------------
+     2026-09-21: every price/factor below used to be a hardcoded flat number
+     baked into this page's own price-slide tables. It's now read from the
+     shared calculator on the home page (site/index.html#market-prices-calculator),
+     persisted under MP_STORAGE_KEY, so a producer enters it once and every tool
+     that needs it (BCU, A1/A2 here, Replacement Heifer B1a) reads the same
+     number. The fallback values below reproduce this page's own prior
+     defaults exactly, so a visitor who never opened the home page still sees
+     the same numbers as before this change. STEER/HEIFER/CULL_COW/BULL_PRICE_SLIDE
+     above are kept as the frozen Sept-4-2026-auction *shape*; the live tables
+     used everywhere below are re-derived from that shape any time the shared
+     store changes, by rescaling every point by (shared price / this shape's
+     own price at its reference weight) -- see rescaleSlide(). */
+  var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
+  var MP_FALLBACK = {
+    mp_steerPrice:530.0, mp_heiferPrice:460.0, mp_cullCowPrice:180.0, mp_cullBullPrice:190.0,
+    mp_bredCowPrice:2828.62, mp_bullCost:4500, mp_bullLife:4, mp_bullDeathLoss:2, mp_perBull:25
+  };
+  function getMarketPrices(){
+    try {
+      var raw = window.localStorage.getItem(MP_STORAGE_KEY);
+      if(raw){
+        var data = JSON.parse(raw);
+        if(data){
+          var out = {};
+          Object.keys(MP_FALLBACK).forEach(function(k){ out[k] = isFinite(data[k]) ? data[k] : MP_FALLBACK[k]; });
+          return out;
+        }
+      }
+    } catch(e){ /* private mode / blocked storage -- fall back below */ }
+    var fb = {};
+    Object.keys(MP_FALLBACK).forEach(function(k){ fb[k] = MP_FALLBACK[k]; });
+    return fb;
+  }
+  // Reference (weight, price) each base table was itself rescaled to on 2026-09-16 --
+  // i.e. the table's own point at that weight. Used to compute the ratio.
+  var STEER_ANCHOR = {w:516.4, p:530.0};
+  var HEIFER_ANCHOR = {w:531.3, p:460.0};
+  var CULLCOW_ANCHOR = {w:1279.4, p:180.0};
+  var BULL_ANCHOR = {w:1650.7, p:190.0};
+  function rescaleSlideAt(baseTable, anchor, newPrice){
+    if(!newPrice || !anchor.p) return baseTable.map(function(pt){ return {w:pt.w, p:pt.p}; });
+    var ratio = newPrice/anchor.p;
+    return baseTable.map(function(pt){ return {w:pt.w, p:round(pt.p*ratio,2)}; });
+  }
+  var STEER_PRICE_SLIDE, HEIFER_PRICE_SLIDE, CULL_COW_PRICE_SLIDE, BULL_PRICE_SLIDE;
+  function refreshPriceSlides(){
+    var mp = getMarketPrices();
+    STEER_PRICE_SLIDE = rescaleSlideAt(STEER_PRICE_SLIDE_BASE, STEER_ANCHOR, mp.mp_steerPrice);
+    HEIFER_PRICE_SLIDE = rescaleSlideAt(HEIFER_PRICE_SLIDE_BASE, HEIFER_ANCHOR, mp.mp_heiferPrice);
+    CULL_COW_PRICE_SLIDE = rescaleSlideAt(CULL_COW_PRICE_SLIDE_BASE, CULLCOW_ANCHOR, mp.mp_cullCowPrice);
+    BULL_PRICE_SLIDE = rescaleSlideAt(BULL_PRICE_SLIDE_BASE, BULL_ANCHOR, mp.mp_cullBullPrice);
+    return mp;
+  }
+  refreshPriceSlides();
+  DEFAULTS.bidPrice = getMarketPrices().mp_bredCowPrice; // sourced bred-cow price, see comment above DEFAULTS
+  if($('bidPrice')) $('bidPrice').value = DEFAULTS.bidPrice; // pre-fill from the shared store at load; still freely editable
 
   var calfCrop   = CALFCROP_DEFAULT.slice();
   var steerPrice = STEER_PRICE_DEFAULT.slice();
@@ -1593,6 +1654,7 @@
   // Live-refresh if the home page's calculator is updated in another open tab.
   window.addEventListener('storage', function(e){
     if(e.key === SHARED_OPCOST_KEY) recalc();
+    if(e.key === MP_STORAGE_KEY){ recalc(); recalcA2(); }
   });
 
   /* ---------------- Chart ---------------- */
@@ -1725,6 +1787,7 @@
   var yearWords = {1:'one',2:'two',3:'three',4:'four',5:'five',6:'six',7:'seven'};
 
   function recalc(){
+    refreshPriceSlides(); // pick up any change to the shared Market Prices store
     var bidPrice = num('bidPrice');
     $('bidPriceRange').value = bidPrice;
     var steerWeight = num('steerWeight');
@@ -2026,11 +2089,16 @@
     a2_hiredLabor:50, a2_ownerLabor:150, a2_vetMed:35, a2_vaccination:40, a2_otherDirect:0,
     a2_fuelLube:35, a2_utilities:10, a2_adminGA:25, a2_otherIndirect1:0, a2_financeCost:0,
     a2_cowCost:2828.62, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:180.0, // sourced bred-cow price, see DEFAULTS.bidPrice comment above
-    a2_bullCost:4000, a2_bullLife:4, a2_bullDeathLoss:1, a2_cullBullWt:1650.7, a2_cullBullPrice:190.0, a2_cowsPerBull:25,
+    a2_cullBullWt:1650.7, a2_cullBullPrice:190.0,
+    // a2_bullCost/a2_bullLife/a2_bullDeathLoss/a2_cowsPerBull removed 2026-09-21: these now
+    // come from the shared "Market prices & factors" store (see refreshPriceSlides() /
+    // getMarketPrices() above) instead of being their own editable copy here.
     a2_capitalTotal:158000,
     a2_oppCostRate:5,
     a2_targetROA:3
   };
+  A2_DEFAULTS.a2_cowCost = getMarketPrices().mp_bredCowPrice; // sourced bred-cow price, kept in sync with DEFAULTS.bidPrice above
+  if($('a2_cowCost')) $('a2_cowCost').value = A2_DEFAULTS.a2_cowCost; // pre-fill from the shared store at load; still freely editable
   // Effective capital-asset rates, derived from the original Excel's 5-item equipment
   // schedule (Pickups $80k/5yr/10% salvage, Trailers $10k/10yr, Tractor $40k/10yr/10%
   // salvage, Feeders $8k/7yr, Cattle equipment $20k/10yr — all 5% repair, 100% alloc.,
@@ -2046,7 +2114,14 @@
   var a2CullCowPriceAuto = true;  // auto-linked to the cull cow weight slide until manually overridden
   var a2CullBullPriceAuto = true; // auto-linked to the bull weight slide (single reported point) until manually overridden
 
-  function gatherA2Inputs(){
+  function renderA2BullReadout(mp){
+    if($('a2Bull_cost')) $('a2Bull_cost').textContent = '$'+Math.round(mp.mp_bullCost).toLocaleString('en-US');
+    if($('a2Bull_life')) $('a2Bull_life').textContent = mp.mp_bullLife+' yrs';
+    if($('a2Bull_deathLoss')) $('a2Bull_deathLoss').textContent = mp.mp_bullDeathLoss+'%';
+    if($('a2Bull_perBull')) $('a2Bull_perBull').textContent = mp.mp_perBull;
+  }
+
+  function gatherA2Inputs(mp){
     return {
       bcu: num('a2_bcu'), weanPct: num('a2_weanPct'),
       steerWt: num('a2_steerWt'), steerPrice: num('a2_steerPrice'),
@@ -2066,13 +2141,16 @@
       financeCost: num('a2_financeCost'),
       cowCost: num('a2_cowCost'), cowLife: num('a2_cowLife'), cowDeathLoss: num('a2_cowDeathLoss'),
       cullCowWt: num('a2_cullCowWt'), cullCowPrice: num('a2_cullCowPrice'),
-      bullCost: num('a2_bullCost'), bullLife: num('a2_bullLife'), bullDeathLoss: num('a2_bullDeathLoss'),
-      cullBullWt: num('a2_cullBullWt'), cullBullPrice: num('a2_cullBullPrice'), cowsPerBull: num('a2_cowsPerBull'),
+      // bull cost/life/death-loss/cows-per-bull now come from the shared Market Prices store, not this page's own inputs
+      bullCost: mp.mp_bullCost, bullLife: mp.mp_bullLife, bullDeathLoss: mp.mp_bullDeathLoss,
+      cullBullWt: num('a2_cullBullWt'), cullBullPrice: num('a2_cullBullPrice'), cowsPerBull: mp.mp_perBull,
       targetROA: num('a2_targetROA')
     };
   }
 
   function recalcA2(){
+    var mp = refreshPriceSlides(); // pick up any change to the shared Market Prices store
+    renderA2BullReadout(mp);
     // steer/heifer price slide -> auto-link the price field to the weight slider
     if(a2SteerPriceAuto){
       $('a2_steerPrice').value = round(priceSlideLookup(STEER_PRICE_SLIDE, num('a2_steerWt')), 2);
@@ -2087,7 +2165,7 @@
       $('a2_cullBullPrice').value = round(priceSlideLookup(BULL_PRICE_SLIDE, num('a2_cullBullWt')), 2);
     }
 
-    var inp = gatherA2Inputs();
+    var inp = gatherA2Inputs(mp);
     var bcu = inp.bcu || 1;
 
     // Capital assets: the producer enters one total dollar figure; depreciation,
