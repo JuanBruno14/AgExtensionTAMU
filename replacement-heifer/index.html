@@ -351,6 +351,7 @@
   <div class="header-right">
     <a href="../index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
     <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
+    <a href="../data-sources.html" class="phase-chip" style="text-decoration:none;cursor:pointer;" title="See where every market price on this page comes from, and how current it is">Prices: Sep 2026</a>
     <span class="phase-chip">Pilot &middot; Phase 1</span>
   </div>
 </header>
@@ -360,6 +361,7 @@
     <div>
       <h1>What does a bred replacement heifer actually cost you, natural service?</h1>
       <p>Enter your weaned heifer numbers, culling and breeding schedule, grazing/feeding costs, and bull investment: the tool walks a set of weaned heifer calves through pre-breeding culling, a natural-service breeding season, and open-heifer culling, then shows the total unit cost per head, the net cost per bred heifer after cull-sale credit, the net margin, and the annualized return on investment &mdash; just like AgriLife Extension's B1a spreadsheet, but recalculating live.</p>
+      <p style="margin-top:10px;font-size:13px;"><a href="../cow-calf/index.html" style="color:var(--accent);font-weight:700;text-decoration:none;">&rarr; Weighing this against buying a bred cow instead? See Cow-Calf Bid Price and Budgets (A1/A2)</a></p>
     </div>
     <div class="intro-meta">
       <div><strong>Natural service</strong>Angus, low birth-weight bulls</div>
@@ -401,7 +403,7 @@
           </div>
           <div class="field">
             <label for="rh_purchasePrice">Raised/purchase value</label>
-            <div class="input-wrap has-suffix"><input type="number" id="rh_purchasePrice" value="473.51" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-suffix auto"><input type="number" id="rh_purchasePrice" value="473.51" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field"></div>
         </div>
@@ -433,7 +435,7 @@
           </div>
           <div class="field">
             <label for="rh_precullPrice">Sale price</label>
-            <div class="input-wrap has-suffix"><input type="number" id="rh_precullPrice" value="427.04" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-suffix auto"><input type="number" id="rh_precullPrice" value="427.04" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field"></div>
         </div>
@@ -494,7 +496,7 @@
           </div>
           <div class="field">
             <label for="rh_openPrice">Sale price</label>
-            <div class="input-wrap has-suffix"><input type="number" id="rh_openPrice" value="341.19" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-suffix auto"><input type="number" id="rh_openPrice" value="341.19" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
           </div>
         </div>
       </div>
@@ -562,21 +564,19 @@
     <details class="advanced">
       <summary>Bull investment (advanced)</summary>
       <div class="adv-body">
-        <div class="disclosure">
-          <strong>Not updated to current prices.</strong> Bull purchase cost ($4,000/hd) and salvage price ($80/cwt) are still the original 2018 AgriLife workbook's assumptions. A reliable current price for a <em>commercial</em> low birth-weight herd bull (as opposed to an elite registered seedstock sale) wasn't found while sourcing this tool's other prices, so both numbers were left untouched rather than mixing a fresh salvage price against a stale purchase price. Edit them yourself if you have current numbers, or ask for this to be researched further.
-        </div>
+        <p class="card-note">Bull cost, useful life, death loss, salvage weight/price and heifers-per-bull come from the <strong>"Market prices &amp; factors"</strong> calculator on the home page &mdash; edit them there so BCU, A2 and this budget all stay in sync (this replaces the 2018-workbook bull price that used to live only here, never reconciled against the other tools' own bull numbers).</p>
         <div class="field-grid cols-3">
-          <div class="field"><label for="rh_heifersPerBull">Heifers per bull</label><div class="input-wrap"><input type="number" id="rh_heifersPerBull" value="25" min="1"></div></div>
+          <div class="field"><span class="hint" style="margin-top:0;">Heifers per bull</span><strong id="rhBull_perBull">0</strong></div>
           <div class="field"><label for="rh_bullsRequired">Bulls used</label><div class="input-wrap"><input type="number" id="rh_bullsRequired" value="4" min="1" step="1"></div></div>
           <div class="field"></div>
           <div class="field"><label for="rh_bullFeed">Bull feed &amp; grazing</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullFeed" value="700" min="0"><span class="suffix">$/bull/yr</span></div></div>
           <div class="field"><label for="rh_bullOther">Bull other cost</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullOther" value="0" min="0"><span class="suffix">$/bull/yr</span></div></div>
           <div class="field"><label for="rh_bullVet">Bull vet &amp; medicine</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullVet" value="75" min="0"><span class="suffix">$/bull/yr</span></div></div>
-          <div class="field"><label for="rh_bullCost">Bull purchase cost</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="rh_bullCost" value="4000" min="0"></div></div>
-          <div class="field"><label for="rh_bullLife">Bull useful life</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
-          <div class="field"><label for="rh_bullDeathLoss">Bull death loss</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullDeathLoss" value="2" min="0" step="0.5"><span class="suffix">%</span></div></div>
-          <div class="field"><label for="rh_bullSalvageWt">Bull salvage weight</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullSalvageWt" value="1800" min="0"><span class="suffix">lb</span></div></div>
-          <div class="field"><label for="rh_bullSalvagePrice">Bull salvage price</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullSalvagePrice" value="80" min="0" step="0.5"><span class="suffix">$/cwt</span></div></div>
+          <div class="field"><span class="hint" style="margin-top:0;">Bull purchase cost</span><strong id="rhBull_cost">$0</strong></div>
+          <div class="field"><span class="hint" style="margin-top:0;">Bull useful life</span><strong id="rhBull_life">0 yrs</strong></div>
+          <div class="field"><span class="hint" style="margin-top:0;">Bull death loss</span><strong id="rhBull_deathLoss">0%</strong></div>
+          <div class="field"><span class="hint" style="margin-top:0;">Bull salvage weight</span><strong id="rhBull_salvageWt">0 lb</strong></div>
+          <div class="field"><span class="hint" style="margin-top:0;">Bull salvage price</span><strong id="rhBull_salvagePrice">$0/cwt</strong></div>
           <div class="field"></div>
         </div>
         <p class="derived-note" id="rh_bullsNeededNote">&mdash;</p>
@@ -632,6 +632,35 @@
           <div class="stat-tile"><span class="label">Bred</span><span class="value" id="rh_bredValue" style="font-size:17px;">0</span><span class="sub">head, delivered</span></div>
           <div class="stat-tile"><span class="label">Open, culled</span><span class="value" id="rh_openValue" style="font-size:17px;">0</span><span class="sub">head sold as feeders</span></div>
         </div>
+
+        <button type="button" class="btn secondary" id="rh_resetBtn" style="margin-top:16px;">Reset B1a defaults</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8h13M7 8l-4 4 4 4M17 16H4M17 16l4-4-4-4"/></svg>
+        <h2>Raise your own, or buy at market?</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Compares your net cost to develop a bred heifer against simply buying one at today's bred-heifer market price &mdash; the same two numbers behind the net margin above, read as a make-or-buy decision.</p>
+        <div class="stat-tiles" style="margin-bottom:12px;">
+          <div class="stat-tile">
+            <span class="label">Cost to raise</span>
+            <span class="value" id="rh_raiseCostValue" style="font-size:20px;">$0</span>
+            <span class="sub">/hd, net delivered cost</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Buy at market</span>
+            <span class="value" id="rh_buyCostValue" style="font-size:20px;">$0</span>
+            <span class="sub">/hd, today's bred-heifer price</span>
+          </div>
+        </div>
+        <div class="stat-tile wide" id="rh_raiseVsBuyTile">
+          <span class="label" id="rh_raiseVsBuyLabel">Raising saves you</span>
+          <span class="value" id="rh_raiseVsBuyValue" style="font-size:22px;">$0</span>
+          <span class="sub">/hd vs. buying at market</span>
+        </div>
       </div>
     </div>
 
@@ -648,7 +677,7 @@
     </div>
 
     <footer style="padding:0;margin:0;">
-      <p>Starting values reproduce the original B1a spreadsheet's own formulas and structure (natural service, weaned calf through bred-heifer delivery). Purchase, cull-sale, and bred-heifer sale prices were updated from the workbook's 2018 defaults to sourced September 2026 USDA AMS market data &mdash; see the project notes for exact sources. Bull purchase/salvage prices are still the original 2018 figures (see the disclosure in "Bull investment" above). Always verify results before using them to make a decision.</p>
+      <p>Starting values reproduce the original B1a spreadsheet's own formulas and structure (natural service, weaned calf through bred-heifer delivery). Purchase, cull-sale, and bred-heifer sale prices were updated from the workbook's 2018 defaults to sourced September 2026 USDA AMS market data &mdash; see the project notes for exact sources. Bull purchase cost, life, death loss and salvage weight/price now come from the shared <a href="../index.html#market-prices-calculator">Market prices &amp; factors</a> calculator, replacing the 2018 figures this page used to carry on its own. Always verify results before using them to make a decision.</p>
     </footer>
 
   </div>
@@ -678,6 +707,74 @@
     return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   }
 
+  /* ---------------- Shared "Market prices & factors" store (site/index.html) ----------------
+     2026-09-21: purchase/cull/open heifer prices, bred-heifer sale price, and every
+     bull-investment number below used to be this page's own hardcoded copies -- and
+     the bull numbers were a THIRD, never-reconciled figure ($4,000/1,800 lb here vs.
+     $4,500/1,650.7 lb on the home page's BCU calculator vs. yet another $4,000 on
+     A2 in cow-calf/index.html), exactly the kind of drift the user asked this shared
+     store to prevent. Everything below now reads from the calculator on the home
+     page (site/index.html#market-prices-calculator), persisted under MP_STORAGE_KEY.
+     The heifer weight/price curve is the same Sept-4-2026 auction data used by
+     cow-calf/index.html's HEIFER_PRICE_SLIDE (duplicated here so this page has no
+     load-order dependency on that file), rescaled the same way -- see rescaleSlideAt(). */
+  var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
+  var MP_FALLBACK = {
+    mp_heiferPrice:460.0, mp_cullBullPrice:190.0, mp_bredHeiferPrice:3884.78,
+    mp_bullCost:4500, mp_bullLife:4, mp_bullSalvageWeight:1650.7, mp_bullDeathLoss:2, mp_perBull:25
+  };
+  function getMarketPrices(){
+    try {
+      var raw = window.localStorage.getItem(MP_STORAGE_KEY);
+      if(raw){
+        var data = JSON.parse(raw);
+        if(data){
+          var out = {};
+          Object.keys(MP_FALLBACK).forEach(function(k){ out[k] = isFinite(data[k]) ? data[k] : MP_FALLBACK[k]; });
+          return out;
+        }
+      }
+    } catch(e){ /* private mode / blocked storage -- fall back below */ }
+    var fb = {};
+    Object.keys(MP_FALLBACK).forEach(function(k){ fb[k] = MP_FALLBACK[k]; });
+    return fb;
+  }
+  function priceSlideLookup(table, w){
+    if(!table.length || !isFinite(w)) return 0;
+    if(w<=table[0].w) return table[0].p;
+    if(w>=table[table.length-1].w) return table[table.length-1].p;
+    for(var i=0;i<table.length-1;i++){
+      var a=table[i], b=table[i+1];
+      if(w>=a.w && w<=b.w){
+        var t=(w-a.w)/(b.w-a.w);
+        return a.p + (b.p-a.p)*t;
+      }
+    }
+    return table[table.length-1].p;
+  }
+  // Frozen Sept-4-2026-auction shape (matches cow-calf/index.html's HEIFER_PRICE_SLIDE exactly).
+  var HEIFER_PRICE_SLIDE_BASE = [
+    {w:337.0, p:554.1},
+    {w:455.1, p:492.9},
+    {w:531.3, p:460.0},
+    {w:654.1, p:425.9},
+    {w:765.6, p:395.8},
+    {w:862.6, p:374.5},
+    {w:922.0, p:321.6}
+  ];
+  var HEIFER_ANCHOR = {w:531.3, p:460.0}; // the table's own point at this weight, used as the rescale ratio's denominator
+  function rescaleSlideAt(baseTable, anchor, newPrice){
+    if(!newPrice || !anchor.p) return baseTable.map(function(pt){ return {w:pt.w, p:pt.p}; });
+    var ratio = newPrice/anchor.p;
+    return baseTable.map(function(pt){ return {w:pt.w, p:round(pt.p*ratio,2)}; });
+  }
+  var HEIFER_PRICE_SLIDE = HEIFER_PRICE_SLIDE_BASE.slice();
+  function refreshHeiferPriceSlide(){
+    var mp = getMarketPrices();
+    HEIFER_PRICE_SLIDE = rescaleSlideAt(HEIFER_PRICE_SLIDE_BASE, HEIFER_ANCHOR, mp.mp_heiferPrice);
+    return mp;
+  }
+
   /* ================================================================
      B1a — Replacement Heifer: Weaning Through Breeding and Culling,
      Natural Service. Faithful port of "1.Weaned Calf to Bred Heif Cost"
@@ -705,14 +802,17 @@
         reproduced here since nothing downstream reads them.
 
      Prices updated from the workbook's 2018 defaults to sourced
-     September 2026 USDA AMS data — see the "Sourced defaults" note
-     further down and the project doc for exact citations. Bull
-     purchase/salvage prices were deliberately left at the original
-     2018 values (see the on-page disclosure) since no reliable current
-     commercial bull price was found.
+     September 2026 USDA AMS / "2026 D03 Budgets" data — see the "Sourced
+     defaults" note further down and the project doc for exact citations.
+     Bull purchase cost, life, death loss, and salvage weight/price now
+     come from the shared "Market prices & factors" store on the home
+     page (site/index.html) instead of this page's own 2018 figures —
+     see getMarketPrices()/readInputs() below.
      ================================================================ */
 
   function readInputs(){
+    var mp = refreshHeiferPriceSlide();
+    renderRhBullReadout(mp);
     return {
       head: num('rh_head'),
       startDate: dateOf('rh_startDate'),
@@ -742,16 +842,20 @@
       indirectPerDay: num('rh_indirectPerDay'),
       interestRate: num('rh_interestRate'),
       freight: num('rh_freight'),
-      heifersPerBull: num('rh_heifersPerBull'),
+      // Bull cost/life/death-loss/salvage-weight/heifers-per-bull now come from the
+      // shared "Market prices & factors" store (site/index.html), not this page's own
+      // inputs -- see refreshHeiferPriceSlide()/getMarketPrices() and the note above
+      // the "Bull investment" card in the HTML.
+      heifersPerBull: mp.mp_perBull,
       bullsRequired: num('rh_bullsRequired'),
       bullFeed: num('rh_bullFeed'),
       bullOther: num('rh_bullOther'),
       bullVet: num('rh_bullVet'),
-      bullCost: num('rh_bullCost'),
-      bullLife: num('rh_bullLife'),
-      bullDeathLoss: num('rh_bullDeathLoss'),
-      bullSalvageWt: num('rh_bullSalvageWt'),
-      bullSalvagePrice: num('rh_bullSalvagePrice')
+      bullCost: mp.mp_bullCost,
+      bullLife: mp.mp_bullLife,
+      bullDeathLoss: mp.mp_bullDeathLoss,
+      bullSalvageWt: mp.mp_bullSalvageWeight,
+      bullSalvagePrice: mp.mp_cullBullPrice
     };
   }
 
@@ -947,7 +1051,16 @@
 
   function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
 
+  var rh_purchasePriceAuto = true, rh_precullPriceAuto = true, rh_openPriceAuto = true;
+  function applyHeiferPriceAutoLinks(){
+    refreshHeiferPriceSlide();
+    if(rh_purchasePriceAuto && $('rh_purchasePrice')) $('rh_purchasePrice').value = round(priceSlideLookup(HEIFER_PRICE_SLIDE, num('rh_weanWeight')), 2);
+    if(rh_precullPriceAuto && $('rh_precullPrice')) $('rh_precullPrice').value = round(priceSlideLookup(HEIFER_PRICE_SLIDE, num('rh_precullWeight')), 2);
+    if(rh_openPriceAuto && $('rh_openPrice')) $('rh_openPrice').value = round(priceSlideLookup(HEIFER_PRICE_SLIDE, num('rh_openWeight')), 2);
+  }
+
   function recalc(){
+    applyHeiferPriceAutoLinks();
     var inp = readInputs();
     var r = calc(inp);
 
@@ -976,6 +1089,16 @@
     $('rh_netMarginTile').className = 'stat-tile wide '+(marginGood?'good':'critical');
     $('rh_netMarginAllValue').textContent = fmtDollar(r.D66,2);
 
+    // Raise vs. buy — same D60/bredPrice numbers behind the net margin above,
+    // just read as a make-or-buy comparison instead of a sale-profit figure.
+    $('rh_raiseCostValue').textContent = fmtDollar(r.D60,2);
+    $('rh_buyCostValue').textContent = fmtDollar(inp.bredPrice,2);
+    var raiseCheaper = r.D60 <= inp.bredPrice;
+    var rvbDiff = Math.abs(inp.bredPrice - r.D60);
+    $('rh_raiseVsBuyLabel').textContent = raiseCheaper ? 'Raising saves you' : 'Buying saves you';
+    $('rh_raiseVsBuyValue').textContent = fmtDollar(rvbDiff,2);
+    $('rh_raiseVsBuyTile').className = 'stat-tile wide '+(raiseCheaper?'good':'critical');
+
     var roiPct = r.O53*100;
     var roiGood = roiPct >= inp.interestRate;
     $('rh_roiValue').textContent = round(roiPct,1)+'%';
@@ -998,18 +1121,86 @@
     buildStackBar('rh_costStackbar','rh_costLegend','rh_costBarTotal', data, r.D54, ' / hd');
   }
 
+  var RH_INPUT_IDS = ['rh_head','rh_startDate','rh_birthDate','rh_weanWeight','rh_purchasePrice',
+    'rh_precullDate','rh_precullPct','rh_precullWeight','rh_precullPrice',
+    'rh_breedDate','rh_seasonDays','rh_daysToDelivery','rh_pregPct','rh_bredPrice',
+    'rh_openDate','rh_openWeight','rh_openPrice',
+    'rh_preconDays','rh_preconRate','rh_winterDays','rh_winterRate','rh_springDays','rh_springRate','rh_otherGrazeDays','rh_otherGrazeRate',
+    'rh_processHealth','rh_pregTest','rh_prebreedHealth','rh_otherDirect',
+    'rh_indirectPerDay','rh_interestRate','rh_freight',
+    'rh_bullsRequired','rh_bullFeed','rh_bullOther','rh_bullVet'];
+  // rh_heifersPerBull/rh_bullCost/rh_bullLife/rh_bullDeathLoss/rh_bullSalvageWt/rh_bullSalvagePrice
+  // removed 2026-09-21: these now come from the shared "Market prices & factors" store
+  // (see getMarketPrices()/readInputs() above), not their own editable copy here.
+
+  /* Sourced 2026 defaults (see the on-page notes and the project doc for
+     citations) — captured here so "Reset B1a defaults" restores exactly
+     what the page loads with, not the original 2018 workbook values. */
+  var RH_DEFAULTS = {
+    rh_head:100, rh_startDate:'2026-10-15', rh_birthDate:'2026-02-15', rh_weanWeight:500, rh_purchasePrice:473.51,
+    rh_precullDate:'2027-02-25', rh_precullPct:2, rh_precullWeight:650, rh_precullPrice:427.04,
+    rh_breedDate:'2027-05-07', rh_seasonDays:60, rh_daysToDelivery:45, rh_pregPct:88, rh_bredPrice:3884.78,
+    rh_openDate:'2027-08-10', rh_openWeight:900, rh_openPrice:341.19,
+    rh_preconDays:45, rh_preconRate:1.10, rh_winterDays:90, rh_winterRate:1.00, rh_springDays:176, rh_springRate:0.60, rh_otherGrazeDays:0, rh_otherGrazeRate:0,
+    rh_processHealth:20, rh_pregTest:5, rh_prebreedHealth:12, rh_otherDirect:0,
+    rh_indirectPerDay:0.50, rh_interestRate:5, rh_freight:0,
+    rh_bullsRequired:4, rh_bullFeed:700, rh_bullOther:0, rh_bullVet:75
+  };
+  (function applySharedBredHeiferPrice(){
+    // rh_bredPrice is a flat number (not weight-driven), so it's pre-filled once at
+    // load from the shared store -- same treatment as cow-calf's bidPrice/a2_cowCost --
+    // and stays freely editable afterward rather than being force-relinked every recalc.
+    RH_DEFAULTS.rh_bredPrice = getMarketPrices().mp_bredHeiferPrice;
+    if($('rh_bredPrice')) $('rh_bredPrice').value = RH_DEFAULTS.rh_bredPrice;
+  })();
+
+  function renderRhBullReadout(mp){
+    if($('rhBull_perBull')) $('rhBull_perBull').textContent = mp.mp_perBull;
+    if($('rhBull_cost')) $('rhBull_cost').textContent = '$'+Math.round(mp.mp_bullCost).toLocaleString('en-US');
+    if($('rhBull_life')) $('rhBull_life').textContent = mp.mp_bullLife+' yrs';
+    if($('rhBull_deathLoss')) $('rhBull_deathLoss').textContent = mp.mp_bullDeathLoss+'%';
+    if($('rhBull_salvageWt')) $('rhBull_salvageWt').textContent = mp.mp_bullSalvageWeight+' lb';
+    if($('rhBull_salvagePrice')) $('rhBull_salvagePrice').textContent = '$'+mp.mp_cullBullPrice.toFixed(2)+'/cwt';
+  }
+
   function attachInputs(){
-    var ids = ['rh_head','rh_startDate','rh_birthDate','rh_weanWeight','rh_purchasePrice',
-      'rh_precullDate','rh_precullPct','rh_precullWeight','rh_precullPrice',
-      'rh_breedDate','rh_seasonDays','rh_daysToDelivery','rh_pregPct','rh_bredPrice',
-      'rh_openDate','rh_openWeight','rh_openPrice',
-      'rh_preconDays','rh_preconRate','rh_winterDays','rh_winterRate','rh_springDays','rh_springRate','rh_otherGrazeDays','rh_otherGrazeRate',
-      'rh_processHealth','rh_pregTest','rh_prebreedHealth','rh_otherDirect',
-      'rh_indirectPerDay','rh_interestRate','rh_freight',
-      'rh_heifersPerBull','rh_bullsRequired','rh_bullFeed','rh_bullOther','rh_bullVet','rh_bullCost','rh_bullLife','rh_bullDeathLoss','rh_bullSalvageWt','rh_bullSalvagePrice'];
-    ids.forEach(function(id){
+    RH_INPUT_IDS.forEach(function(id){
+      if(id === 'rh_purchasePrice' || id === 'rh_precullPrice' || id === 'rh_openPrice') return; // handled below (auto-link clearing)
       var el = $(id);
       if(el) el.addEventListener('input', recalc);
+    });
+    function attachAutoClear(id, setFlag){
+      var el = $(id);
+      if(!el) return;
+      el.addEventListener('input', function(){
+        setFlag(false);
+        var wrap = el.closest('.input-wrap');
+        if(wrap) wrap.classList.remove('auto');
+        recalc();
+      });
+    }
+    attachAutoClear('rh_purchasePrice', function(v){ rh_purchasePriceAuto = v; });
+    attachAutoClear('rh_precullPrice', function(v){ rh_precullPriceAuto = v; });
+    attachAutoClear('rh_openPrice', function(v){ rh_openPriceAuto = v; });
+
+    var resetBtn = $('rh_resetBtn');
+    if(resetBtn) resetBtn.addEventListener('click', function(){
+      RH_INPUT_IDS.forEach(function(id){
+        var el = $(id);
+        if(el && RH_DEFAULTS.hasOwnProperty(id)) el.value = RH_DEFAULTS[id];
+      });
+      if($('rh_bredPrice')) $('rh_bredPrice').value = RH_DEFAULTS.rh_bredPrice;
+      rh_purchasePriceAuto = true; rh_precullPriceAuto = true; rh_openPriceAuto = true;
+      ['rh_purchasePrice','rh_precullPrice','rh_openPrice'].forEach(function(id){
+        var el = $(id), wrap = el ? el.closest('.input-wrap') : null;
+        if(wrap) wrap.classList.add('auto');
+      });
+      recalc();
+    });
+
+    // Live-refresh if the home page's Market Prices calculator changes in another open tab.
+    window.addEventListener('storage', function(e){
+      if(e.key === MP_STORAGE_KEY) recalc();
     });
   }
 
