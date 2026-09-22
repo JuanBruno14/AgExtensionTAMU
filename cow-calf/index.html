@@ -1,4 +1,4 @@
- 
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -513,8 +513,9 @@
           <label for="bidPrice">Cow bid price ($/head)</label>
           <div class="hero-row">
             <input type="range" id="bidPriceRange" min="400" max="7000" step="10" value="1300">
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="2828.62" min="0" step="10"></div>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="2828.62" min="0" step="10" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
           </div>
+          <span style="display:block;font-size:11px;color:var(--ink-muted);margin-top:6px;">Pre-filled from <a href="../index.html#market-prices-calculator" style="color:inherit;">Market prices &amp; factors</a> — edit freely, this field won't update on its own</span>
         </div>
 
         <div class="field-grid">
@@ -879,7 +880,7 @@
         <fieldset style="margin-bottom:16px;">
           <legend>Breeding cows</legend>
           <div class="field-grid cols-3">
-            <div class="field"><label for="a2_cowCost">Cost/head</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="2828.62" min="0"></div></div>
+            <div class="field"><label for="a2_cowCost">Cost/head</label><span class="hint">Pre-filled from Market prices &amp; factors</span><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="2828.62" min="0" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div></div>
             <div class="field"><label for="a2_cowLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowLife" value="7" min="1"><span class="suffix">yrs</span></div></div>
             <div class="field"><label for="a2_cowDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
             <div class="field"><label for="a2_cullCowWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1279.4" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullCowWtRange" class="weight-slide" min="1100" max="1550" step="50" value="1279.4" aria-label="Cull cow weight — drag to auto-fill the matching auction price"></div>
