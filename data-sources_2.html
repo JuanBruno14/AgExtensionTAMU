@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Texas A&amp;M AgriLife Extension - Decision Making</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+  :root{
+    --maroon-900:#3a0000;
+    --maroon-800:#500000;
+    --maroon-700:#6b0f0f;
+    --maroon-100:#f7e9e6;
+    --wheat-500:#b8862f;
+    --wheat-100:#f4e9d6;
+    --good-700:#276749;
+    --good-100:#e3f1e9;
+    --critical-700:#9a3412;
+    --critical-100:#fbe9e1;
+    --accent:var(--maroon-800);
+    --bg:#f6f3ee;
+    --surface:#ffffff;
+    --surface-sunken:#f0ece4;
+    --border:#e2dbcf;
+    --ink:#241c19;
+    --ink-secondary:#5a4f48;
+    --ink-muted:#8a7d73;
+    --focus:#2f6fb3;
+    --shadow-card:0 1px 2px rgba(58,0,0,0.04), 0 4px 16px rgba(58,0,0,0.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+      --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+      --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+      --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+      --wheat-100:#3a2d15; --wheat-500:#d9a44a;
+      --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+    --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+    --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+    --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+    --wheat-100:#3a2d15; --wheat-500:#d9a44a;
+    --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Public Sans", ui-sans-serif, system-ui, sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.display{font-family:"Fraunces", Georgia, serif;text-wrap:balance;letter-spacing:-0.01em;}
+  a{color:inherit;}
+
+  .topbar{background:linear-gradient(180deg, var(--maroon-800), var(--maroon-900));color:#fff;padding:18px clamp(16px,4vw,40px);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  .wordmark{display:flex;align-items:center;gap:14px;}
+  .wordmark .mark{width:44px;height:44px;border-radius:9px;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.55);display:flex;align-items:center;justify-content:center;font-family:"Fraunces",serif;font-weight:700;font-size:20px;flex:none;}
+  .wordmark .text{line-height:1.15;}
+  .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
+  .wordmark .text .main{font-family:"Fraunces",serif;font-size:19px;font-weight:600;}
+  .tool-title{font-family:"Fraunces",serif;font-size:clamp(18px,2.4vw,26px);font-weight:600;margin:0;}
+  .header-right{display:flex;align-items:center;gap:10px;}
+  .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:100px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.4);color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0;}
+  .theme-toggle:hover{background:rgba(255,255,255,0.24);}
+  .theme-toggle:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+
+  .intro{position:relative;overflow:hidden;background:var(--surface);border-bottom:1px solid var(--border);}
+  .intro-inner{max-width:980px;margin:0 auto;padding:30px clamp(16px,4vw,40px) 26px;}
+  .intro h1{font-size:clamp(22px,2.8vw,30px);margin:0 0 8px;color:var(--ink);}
+  .intro p{margin:0;max-width:72ch;color:var(--ink-secondary);font-size:15px;line-height:1.55;}
+  .fence-line{position:absolute;left:0;right:0;bottom:0;height:10px;background-image:repeating-linear-gradient(90deg, var(--wheat-500) 0 26px, transparent 26px 52px);opacity:0.55;}
+
+  .layout{max-width:980px;margin:0 auto;padding:28px clamp(16px,4vw,40px) 64px;display:flex;flex-direction:column;gap:18px;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-card);overflow:hidden;}
+  .card-head{background:var(--maroon-800);color:#fff;padding:13px 20px;display:flex;align-items:center;gap:10px;}
+  .card-head svg{flex:none;width:18px;height:18px;}
+  .card-head h2{font-size:15.5px;font-weight:600;margin:0;letter-spacing:0.01em;}
+  .card-body{padding:20px;}
+  .card-note{font-size:13px;color:var(--ink-secondary);margin:0 0 16px;line-height:1.55;}
+
+  table.ref{width:100%;border-collapse:collapse;font-size:13px;}
+  table.ref th{text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;color:var(--ink-muted);padding:0 10px 8px;border-bottom:1.5px solid var(--border);}
+  table.ref td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink-secondary);}
+  table.ref tr:last-child td{border-bottom:none;}
+  table.ref td.field{color:var(--ink);font-weight:700;}
+  table.ref td.value{color:var(--ink);font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  table.ref td.used{font-size:12px;}
+  table.ref td.used a{color:var(--accent);font-weight:700;text-decoration:none;}
+  .table-scroll{overflow-x:auto;}
+
+  .tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:0.02em;padding:2px 8px;border-radius:100px;margin:1px 3px 1px 0;}
+  .tag.fresh{background:var(--good-100);color:var(--good-700);}
+  .tag.stale{background:var(--critical-100);color:var(--critical-700);}
+
+  .disclosure{background:var(--wheat-100);border:1px solid var(--wheat-500);border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.55;color:var(--ink-secondary);margin:0;}
+  .disclosure strong{color:var(--ink);}
+
+  footer{max-width:980px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 40px;color:var(--ink-muted);font-size:12px;line-height:1.6;}
+  footer a{text-decoration:underline;}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="wordmark">
+    <a href="index.html" style="display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;">
+      <div class="mark">A</div>
+      <div class="text">
+        <div class="top">Texas A&amp;M AgriLife Extension - Decision Making</div>
+        <div class="main">Decision Aids &middot; Market Data Used</div>
+      </div>
+    </a>
+  </div>
+  <h1 class="tool-title">Where the prices on this site come from</h1>
+  <div class="header-right">
+    <a href="index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="intro-inner">
+    <h1>One place for every sourced price on the site</h1>
+    <p>Each live tool starts with the original AgriLife spreadsheet's own default numbers, updated where a current market price was available &mdash; never guessed or invented. This page lists every one of those updates in one place: what it's for, the current value, where it came from, and how current it is &mdash; so it's easy to see at a glance what's fresh, what's still an open gap, and where to look when it's time to refresh everything at once.</p>
+  </div>
+  <div class="fence-line"></div>
+</section>
+
+<div class="layout">
+
+  <div class="card">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-9m3-3l3 3-3 3M4 17h9m-3-3l-3 3 3 3"/></svg>
+      <h2>One shared "Market prices &amp; factors" store</h2>
+    </div>
+    <div class="card-body">
+      <p class="card-note" style="margin-bottom:0;">Starting 2026-09-21, every price and bull-economics figure on this page is entered <strong>once</strong>, in the <a href="index.html#market-prices-calculator">"Market prices &amp; factors" calculator on the home page</a>, and persisted in this browser under the <code>tamuDecisionAidsMarketPrices</code> key. Every tool below (BCU, A1/A2, D1/Stockers, B1a) reads that same value instead of keeping its own separate copy &mdash; each field stays freely editable per-page as a local override, but the <em>default</em> everywhere now comes from one place. This replaces the old pattern of pasting the same number into every tool by hand, and closes the drift it caused: building this store surfaced a herd-bull cost that had silently diverged into <strong>three different numbers</strong> across the site ($4,500/hd on the home page's BCU calculator, $4,000/hd on B1a, $4,000/hd on A2) &mdash; all now unified at $4,500/hd, 4-yr life, 2% death loss, 1,650.7&nbsp;lb salvage weight (see "Herd bull economics" in the table below). Weight-based prices (steer, heifer, cull cow) still interpolate off their own weight/price curves &mdash; see the curves card below &mdash; but those curves are now rescaled live to whatever flat price is entered in the shared store, not fixed at build time.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      <h2>USDA AMS market reports</h2>
+    </div>
+    <div class="card-body">
+      <p class="card-note">Pulled directly from USDA's Agricultural Marketing Service weekly livestock auction and slaughter-cattle reports &mdash; the most direct, citable source used on this site.</p>
+      <div class="table-scroll">
+      <table class="ref">
+        <thead><tr><th>Value</th><th>Used in</th><th>Source report</th><th>As of</th></tr></thead>
+        <tbody>
+          <tr>
+            <td class="value">$2,828.62/hd</td>
+            <td class="used">Bred cow purchase price &mdash; <a href="cow-calf/index.html">A1</a> "Bid price", <a href="cow-calf/index.html">A2</a> "Cost/head"</td>
+            <td>Cattlemen's Livestock, Dalhart TX (<code>ams_1953.pdf</code>) &mdash; "BRED COWS, Medium &amp; Large 1" line, 17&nbsp;hd, 1,243&ndash;1,327&nbsp;lb, $2,800&ndash;$2,850/hd</td>
+            <td><span class="tag fresh">Sep 3, 2026</span></td>
+          </tr>
+          <tr>
+            <td class="value">$222.82/cwt</td>
+            <td class="used">Fed/finished cattle sale price &mdash; <a href="retained-ownership/index.html">Stockers</a> "Feedyard" paths (both sub-paths)</td>
+            <td>USDA AMS "5&nbsp;Area Weekly Weighted Average Direct Slaughter Cattle" (<code>ams_2477.pdf</code>) &mdash; live FOB steers, $218&ndash;$225/cwt, avg 1,563&nbsp;lb</td>
+            <td><span class="tag fresh">week ending Sep 13, 2026</span></td>
+          </tr>
+          <tr>
+            <td class="value">$3,884.78/hd</td>
+            <td class="used">Bred heifer sale price &mdash; shared store's <code>mp_bredHeiferPrice</code>, read by <a href="replacement-heifer/index.html">B1a</a> "Bred heifer sale price"</td>
+            <td>USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "BRED HEIFERS, Medium &amp; Large 1": 20&nbsp;hd @ $3,863.47/hd (T1&ndash;2) + 28&nbsp;hd @ $3,900.00/hd (T3), weighted avg across 48&nbsp;hd</td>
+            <td><span class="tag fresh">Sep 18, 2026</span></td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
+      <h2>"2026 D03 Budgets" reference workbook</h2>
+    </div>
+    <div class="card-body">
+      <p class="card-note">A budgeting workbook shared directly by the user (<code>2026 D03 Budgets 3-10-26 1.xlsm</code>), used as the flat, authoritative current price for these classes.</p>
+      <div class="table-scroll">
+      <table class="ref">
+        <thead><tr><th>Value</th><th>Used in</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td class="value">$530/cwt</td><td class="used">Steer price (516.4&nbsp;lb reference) &mdash; shared store's <code>mp_steerPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a> and <a href="retained-ownership/index.html">Stockers</a>' calf purchase price (unified 2026-09-22)</td><td>Also the anchor for <code>STEER_PRICE_SLIDE</code>, see below</td></tr>
+          <tr><td class="value">$460/cwt</td><td class="used">Heifer price (531.3&nbsp;lb reference) &mdash; shared store's <code>mp_heiferPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a> and <a href="replacement-heifer/index.html">B1a</a>'s weaned/pre-breed-cull/open-cull prices</td><td>Anchor for <code>HEIFER_PRICE_SLIDE</code>, see below</td></tr>
+          <tr><td class="value">$180/cwt</td><td class="used">Cull cow price (1,279.4&nbsp;lb Boner reference) &mdash; shared store's <code>mp_cullCowPrice</code>, read by <a href="cow-calf/index.html">A2</a> and <a href="retained-ownership/index.html">D1</a>'s sale &amp; upgraded-sale prices</td><td>Anchor for <code>CULL_COW_PRICE_SLIDE</code>, see below</td></tr>
+          <tr><td class="value">$190/cwt</td><td class="used">Cull bull price &mdash; shared store's <code>mp_cullBullPrice</code>, read by <a href="cow-calf/index.html">A2</a> and now also <a href="replacement-heifer/index.html">B1a</a>'s bull salvage price (unified 2026-09-21, see the shared-store card above &mdash; this used to be a mismatched $80/cwt on B1a alone)</td><td>Only one weight class reported, so no curve to anchor</td></tr>
+          <tr><td class="value">$222.82/cwt</td><td class="used">Fed/finished cattle sale price &mdash; shared store's <code>mp_fedCattlePrice</code>, read by <a href="retained-ownership/index.html">Stockers</a> "Feedyard" paths (both sub-paths)</td><td>Same USDA AMS figure as the market-reports card above, now centralized</td></tr>
+          <tr><td class="value">$380/cwt</td><td class="used">700&nbsp;lb path sale price &mdash; shared store's <code>mp_stocker700Price</code>, read by <a href="retained-ownership/index.html">Stockers</a></td><td>Flat, no equivalent auction-data weight class existed to cross-check</td></tr>
+          <tr><td class="value">$360/cwt</td><td class="used">800&nbsp;lb path sale price &mdash; shared store's <code>mp_stocker800Price</code>, read by <a href="retained-ownership/index.html">Stockers</a></td><td>Flat, same as above</td></tr>
+          <tr><td class="value">$2,828.62/hd</td><td class="used">Bred cow purchase price &mdash; shared store's <code>mp_bredCowPrice</code>, read by <a href="cow-calf/index.html">A1</a> "Bid price" and <a href="cow-calf/index.html">A2</a> "Cost/head"</td><td>Same USDA AMS figure as the market-reports card above, now centralized</td></tr>
+          <tr><td class="value">$4,500/hd, 4&nbsp;yr life, 1,650.7&nbsp;lb salvage wt, 2% death loss, 25 cows/bull</td><td class="used">Herd bull economics &mdash; shared store's <code>mp_bullCost</code>/<code>mp_bullLife</code>/<code>mp_bullSalvageWeight</code>/<code>mp_bullDeathLoss</code>/<code>mp_perBull</code>, read by the home page's <a href="index.html#bcu-calculator">BCU calculator</a>, <a href="cow-calf/index.html">A2</a>'s "Herd bull" card, and <a href="replacement-heifer/index.html">B1a</a>'s "Bull investment" card</td><td>The $4,500/hd figure and 1,650.7&nbsp;lb reference weight are the home page's original BCU-calculator assumption (never independently re-sourced); see the shared-store card above for why this is now the single number used everywhere instead of three drifting ones</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M7 19V9m5 10V5m5 14v-7"/></svg>
+      <h2>Weight/price curves (Sept 4, 2026 local Texas auction data)</h2>
+    </div>
+    <div class="card-body">
+      <p class="card-note">Digitized from "Local Texas Auction Data" screenshots (Cattlemen's Livestock, Dalhart &amp; Tulia TX) the user sent directly, broken out by weight class (and, for cull cows, by condition grade). Rescaled on 2026-09-16 so each curve's reference point exactly matches the "2026 D03 Budgets" flat price for that class, while keeping the curve's real shape (how price changes with weight). Since 2026-09-21 this rescale happens <em>live</em>, against whatever flat price is currently in the shared Market Prices store, instead of being baked in once &mdash; each tool that needs a curve keeps its own frozen copy of the Sept-4 shape (<code>*_PRICE_SLIDE_BASE</code> in the code) and re-derives the live table from it on every load and every shared-store change. B1a's heifer curve is a duplicate of A1/A2's (same source data, copied rather than shared across files to avoid a load-order dependency between pages).</p>
+      <div class="table-scroll">
+      <table class="ref">
+        <thead><tr><th>Curve</th><th>Used in</th><th>Range</th></tr></thead>
+        <tbody>
+          <tr><td class="field">Steer</td><td class="used"><a href="cow-calf/index.html">A1/A2</a> steer weight slider</td><td>397&ndash;1,140&nbsp;lb, $629.02&rarr;$318.20/cwt</td></tr>
+          <tr><td class="field">Heifer</td><td class="used"><a href="cow-calf/index.html">A1/A2</a> heifer weight slider; <a href="replacement-heifer/index.html">B1a</a> weaned/pre-breed-cull/open-cull prices (own embedded copy)</td><td>337&ndash;922&nbsp;lb, $554.10&rarr;$321.60/cwt</td></tr>
+          <tr><td class="field">Cull cow</td><td class="used"><a href="cow-calf/index.html">A2</a> cull-cow weight slider; <a href="retained-ownership/index.html">D1</a> upgraded-cow price (proportional to <code>mp_cullCowPrice</code>, preserving the same Boner&rarr;Breaker ratio the curve gives at 1,300&nbsp;lb, without embedding the full curve)</td><td>1,143.4&ndash;1,496.1&nbsp;lb (Lean/Boner/Breaker), $178.70&ndash;$180.00/cwt</td></tr>
+          <tr><td class="field">Cull bull</td><td class="used"><a href="cow-calf/index.html">A2</a> cull-bull field</td><td>Single point, 1,650.7&nbsp;lb, $190.00/cwt</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 9v4m0 4h.01M10.29 3.86l-8.18 14.14A2 2 0 0 0 3.82 21h16.36a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/></svg>
+      <h2>Not yet sourced &mdash; still the original workbook's numbers</h2>
+    </div>
+    <div class="card-body">
+      <p class="card-note" style="margin-bottom:12px;">Flagged on their own pages rather than silently left stale. Listed here too so they're easy to find and close out in one pass, rather than rediscovering them tool by tool.</p>
+      <div class="disclosure">
+        <strong>Herd bull cost, $4,500/hd, and salvage weight, 1,650.7&nbsp;lb.</strong> This is the home page BCU calculator's original assumption, carried unchanged into the shared store (see the card at the top of this page) &mdash; it was never independently re-sourced against a current bull sale or invoice, it was simply the number this project already had. A real invoice or quote for a commercial (non-elite-seedstock) bull purchase would let this be replaced with something properly sourced &mdash; a search during the B1a build only found an elite registered Angus sale averaging $14,019/hd, not representative of a commercial low birth-weight herd bull.
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v8m-4-5v5m8-9v9M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2Z"/></svg>
+      <h2>Refreshing all of this later</h2>
+    </div>
+    <div class="card-body">
+      <p class="card-note" style="margin:0;">When it's time to update prices again: re-pull the three USDA AMS reports above for a current week, re-screenshot or re-pull a current "Local Texas Auction Data" report for the weight-class curves, then enter the new flat numbers once in the <a href="index.html#market-prices-calculator">home page's "Market prices &amp; factors" calculator</a> &mdash; every tool that reads the shared store picks the change up automatically (live in every open tab, and on next load elsewhere), with each weight-class curve rescaling itself the same rescale-to-anchor way rather than being replaced outright, so weight sliders keep behaving sensibly across their whole range, not just at the default point. The few fields that don't yet read from the shared store (see "Not yet sourced" above) still need a manual edit on their own page. Every place a number changes, it should get the same treatment as everything on this page: cited here, dated, and flagged on its own tool page.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>This page is a reference index, not a calculator &mdash; it doesn't recompute anything itself. See each tool's own page for the live inputs and results. Report IDs (e.g. <code>ams_1953.pdf</code>) refer to USDA AMS's Market News reports at <a href="https://www.ams.usda.gov/mnreports/" target="_blank" rel="noopener">ams.usda.gov/mnreports</a>.</p>
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = 'tamuDecisionAidsTheme';
+  var toggle = document.getElementById('themeToggle');
+  if(!toggle) return;
+  var stored = null;
+  try { stored = window.localStorage.getItem(STORAGE_KEY); } catch(e){}
+  if(stored === 'light' || stored === 'dark'){ document.documentElement.setAttribute('data-theme', stored); }
+  function currentTheme(){
+    var attr = document.documentElement.getAttribute('data-theme');
+    if(attr === 'light' || attr === 'dark') return attr;
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  function updateButton(){
+    var dark = currentTheme() === 'dark';
+    toggle.textContent = dark ? '☀️' : '🌙';
+    var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+    toggle.setAttribute('aria-label', label);
+    toggle.setAttribute('title', label);
+  }
+  updateButton();
+  toggle.addEventListener('click', function(){
+    var next = currentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { window.localStorage.setItem(STORAGE_KEY, next); } catch(e){}
+    updateButton();
+  });
+})();
+</script>
+</body>
+</html>
