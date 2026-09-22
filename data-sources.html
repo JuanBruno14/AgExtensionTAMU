@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -200,6 +201,45 @@
 
   <div class="card">
     <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v2h18V7l-9-5Z"/><path d="M5 10v9M9 10v9M15 10v9M19 10v9M3 21h18"/></svg>
+      <h2>"C2" bull investment spreadsheet (1-7-2019)</h2>
+    </div>
+    <div class="card-body">
+      <p class="card-note">AgriLife Extension's own "Bull Investment &mdash; Annual Bull and Per Cow Cost Calculator" (C2), used to build the <a href="cow-calf-budget/index.html">Cow-Calf Budgeting &amp; Herd Bull Investment</a> page's C2 tab. All six of its herd-bull inputs are now pre-filled from the shared store, including salvage weight and cull-bull price &mdash; <strong>a disclosed, user-requested deviation</strong> from C2's own 2019 numbers (2026-09-22), not a fidelity bug: see the note below.</p>
+      <div class="table-scroll">
+      <table class="ref">
+        <thead><tr><th>Value</th><th>Used in</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td class="value">$4,500/hd, 4&nbsp;yr life, 2% death loss, 25 cows/bull</td><td class="used">Purchase cost, life, death loss, cows/bull &mdash; <a href="cow-calf-budget/index.html">C2</a>, pre-filled once from the shared store's <code>mp_bullCost</code>/<code>mp_bullLife</code>/<code>mp_bullDeathLoss</code>/<code>mp_perBull</code></td><td>Agreed exactly with C2's own 2019 numbers already</td></tr>
+          <tr><td class="value">1,650.7&nbsp;lb salvage wt, $190/cwt cull-bull price</td><td class="used">Bull salvage value &mdash; <a href="cow-calf-budget/index.html">C2</a>, pre-filled once from the shared store's <code>mp_bullSalvageWeight</code>/<code>mp_cullBullPrice</code></td><td>C2's own source workbook originally used 1,800&nbsp;lb / $70/cwt (dated 1-7-2019). The user confirmed on 2026-09-22 to use the shared-store value here instead, so this tool stays consistent with BCU, A2, B1a and C1 &mdash; a deliberate, disclosed choice, not a silent overwrite.</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 17V7m6 10V7M3 21h18M5 21V9l7-6 7 6v12"/></svg>
+      <h2>"C1" 400-cow budget spreadsheet (7-23-2018) &mdash; core</h2>
+    </div>
+    <div class="card-body">
+      <p class="card-note">AgriLife Extension's "400 Cow-Calf Case Ranch Budget" (C1), a much larger 13-sheet workbook, built as the second tab of the <a href="cow-calf-budget/index.html">Cow-Calf Budgeting &amp; Herd Bull Investment</a> page. Built so far: Sheet&nbsp;1 (main budget), Sheet&nbsp;2 (vehicles/machinery/equipment), Sheet&nbsp;3 (cattle pricing), Sheet&nbsp;5 (SPA production &amp; investment measures), Sheet&nbsp;6 (production/management practice evaluation) and Sheet&nbsp;7 (sensitivity analysis). Left out by explicit user decision: Sheet&nbsp;4 (income statement &mdash; a reformatted view of numbers already shown in the budget above, so it adds little) and Sheets&nbsp;8&ndash;10 (cow investment valuation / NPV &amp; IRR by calving opportunities), because that trio answers essentially the same question as the <a href="cow-calf/index.html">A1</a> tool already live on the site (is buying/keeping a cow a good investment?) &mdash; just with a more granular, ranch-specific cost basis. Not built, could be revisited later.</p>
+      <div class="table-scroll">
+      <table class="ref">
+        <thead><tr><th>Value</th><th>Used in</th><th>Note</th></tr></thead>
+        <tbody>
+          <tr><td class="value">$4,500/hd, 4&nbsp;yr life, 25 cows/bull</td><td class="used">Herd bull purchase cost, life, cows/bull &mdash; <a href="cow-calf-budget/index.html">C1</a>, pre-filled once from the shared store's <code>mp_bullCost</code>/<code>mp_bullLife</code>/<code>mp_perBull</code></td><td>Same treatment as C2 above &mdash; agrees exactly, safe to link</td></tr>
+          <tr><td class="value">Base price/weight, tolerances, slide, market basis, quality discounts for steers, heifers, cull cows, cull bulls, cull heifers</td><td class="used">"Cattle pricing &amp; sale weights" card &mdash; <a href="cow-calf-budget/index.html">C1</a>, Sheet&nbsp;3</td><td><strong>Not</strong> linked to the shared store. Sheet&nbsp;3 is a self-contained price-slide calculator with its own structure (base price + weight tolerances + quality-discount lines), different in shape from the shared store's flat weight-class prices &mdash; it keeps the source workbook's own 2018 numbers untouched, full fidelity to C1, rather than being force-fit into the shared store's format. A genuine asymmetry in the source workbook is also preserved here: the heifer discount table has 4 quality lines (muscling/frame/fill/breed) while the steer table has 5 (adds a "breed" line) &mdash; disclosed in-page.</td></tr>
+          <tr><td class="value">Every other cost line (feed, grazing, labor, equipment, indirect, G&amp;A, finance, economic-view)</td><td class="used"><a href="cow-calf-budget/index.html">C1</a>'s remaining input cards</td><td>All are the source workbook's own 7-23-2018 defaults, not cross-checked against any other source on this site &mdash; genuinely out of scope for this round (this page documents linked/sourced prices, not a full re-audit of a 13-sheet legacy budget).</td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M7 19V9m5 10V5m5 14v-7"/></svg>
       <h2>Weight/price curves (Sept 4, 2026 local Texas auction data)</h2>
     </div>
@@ -227,7 +267,7 @@
     <div class="card-body">
       <p class="card-note" style="margin-bottom:12px;">Flagged on their own pages rather than silently left stale. Listed here too so they're easy to find and close out in one pass, rather than rediscovering them tool by tool.</p>
       <div class="disclosure">
-        <strong>Herd bull cost, $4,500/hd, and salvage weight, 1,650.7&nbsp;lb.</strong> This is the home page BCU calculator's original assumption, carried unchanged into the shared store (see the card at the top of this page) &mdash; it was never independently re-sourced against a current bull sale or invoice, it was simply the number this project already had. A real invoice or quote for a commercial (non-elite-seedstock) bull purchase would let this be replaced with something properly sourced &mdash; a search during the B1a build only found an elite registered Angus sale averaging $14,019/hd, not representative of a commercial low birth-weight herd bull.
+        <strong>Herd bull cost, $4,500/hd, and salvage weight, 1,650.7&nbsp;lb.</strong> This is the home page BCU calculator's original assumption, carried unchanged into the shared store (see the card at the top of this page) and, since 2026-09-22, into every tool that uses bull economics (BCU, A2, B1a, C1, and now also C2 &mdash; see the C2 card above). The $4,500/hd purchase cost is corroborated by AgriLife's own C2 spreadsheet (which independently used the same figure). The salvage weight/price pair (1,650.7&nbsp;lb / $190/cwt) is not independently corroborated &mdash; C2's own source workbook originally used a different pair (1,800&nbsp;lb / $70/cwt, dated 1-7-2019), and the user chose to standardize on the shared-store figure site-wide rather than keep C2 on its own older number. Neither number has been checked against a current bull sale or invoice; a real quote for a commercial (non-elite-seedstock) bull purchase would let this be replaced with something properly sourced &mdash; a search during the B1a build only found an elite registered Angus sale averaging $14,019/hd, not representative of a commercial low birth-weight herd bull.
       </div>
     </div>
   </div>
