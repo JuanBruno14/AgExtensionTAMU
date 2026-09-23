@@ -1561,6 +1561,35 @@
   DEFAULTS.bidPrice = getMarketPrices().mp_bredCowPrice; // sourced bred-cow price, see comment above DEFAULTS
   if($('bidPrice')) $('bidPrice').value = DEFAULTS.bidPrice; // pre-fill from the shared store at load; still freely editable
 
+  /* ---------------- Shared "Cow-calf operating costs & financing" store (site/index.html#opcost-calculator) ----------------
+     2026-09-23: the Financing card's interestRate (the rate used for the bred-cow
+     purchase loan's IPMT/PPMT/NPV/IRR model) now defaults from the shared calculator's
+     "Financing — interest rates" section (oc_livestockInterestRate) instead of its own
+     hardcoded flat 5%, so it stays in sync with cow-calf-budget/index.html's C1
+     livestock financing rate -- same one-shot-prefill pattern as bidPrice above:
+     read once at load, then a normal freely-editable local field. Fallback reproduces
+     this page's own prior default exactly. */
+  var OC_STORAGE_KEY = 'tamuDecisionAidsOperatingCosts';
+  var OC_FALLBACK = { oc_livestockInterestRate: 5 };
+  function getOperatingCosts(){
+    try {
+      var raw = window.localStorage.getItem(OC_STORAGE_KEY);
+      if(raw){
+        var data = JSON.parse(raw);
+        if(data){
+          var out = {};
+          Object.keys(OC_FALLBACK).forEach(function(k){ out[k] = isFinite(data[k]) ? data[k] : OC_FALLBACK[k]; });
+          return out;
+        }
+      }
+    } catch(e){ /* private mode / blocked storage -- fall back below */ }
+    var fb = {};
+    Object.keys(OC_FALLBACK).forEach(function(k){ fb[k] = OC_FALLBACK[k]; });
+    return fb;
+  }
+  DEFAULTS.interestRate = getOperatingCosts().oc_livestockInterestRate; // sourced from the shared calculator, see comment above
+  if($('interestRate')) $('interestRate').value = DEFAULTS.interestRate; // pre-fill from the shared store at load; still freely editable
+
   var calfCrop   = CALFCROP_DEFAULT.slice();
   var steerPrice = STEER_PRICE_DEFAULT.slice();
   var heiferPrice= HEIFER_PRICE_DEFAULT.slice();
@@ -1622,12 +1651,17 @@
 
   /* ---------------- Sheet 2: operating cost (shared, see site/index.html) ---------------- */
   // 2026-09-16: moved from a per-page input card to a single shared calculator on the
-  // home page (site/index.html#bcu-calculator), at the user's request, so a producer
-  // enters it once and every tool that needs it reads the same number. It's persisted
-  // to localStorage under SHARED_OPCOST_KEY by the home page; this page only reads it.
+  // home page, at the user's request, so a producer enters it once and every tool
+  // that needs it reads the same number. It's persisted to localStorage under
+  // SHARED_OPCOST_KEY by the home page; this page only reads it.
   // The fallback below reproduces the original card's own default inputs exactly
   // (verified in the project notes), so a visitor who lands here without ever having
   // opened the home page still sees the same Year-1 default as before this change.
+  // 2026-09-23: the home page's standalone "Cow operating cost (BCU)" card (which used
+  // to write this key) was retired in favor of the newer, more complete "Cow-calf
+  // operating costs & financing" calculator (site/index.html#opcost-calculator) -- that
+  // calculator's persist() now writes this same SHARED_OPCOST_KEY as its Direct+Indirect+
+  // G&A total, so this page's reading code needed no changes at all.
   var SHARED_OPCOST_KEY = 'tamuDecisionAidsBcuOpCost';
   var SHARED_OPCOST_FALLBACK = 673.264;
 
