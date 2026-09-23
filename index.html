@@ -434,7 +434,7 @@
 
         <div class="stat-tiles" style="margin-bottom:18px;">
           <div class="stat-tile"><span class="label">Direct costs</span><span class="value" id="oc_directPreview">$0</span><span class="sub">/BCU, 400-hd reference</span></div>
-          <div class="stat-tile"><span class="label">Indirect costs</span><span class="value" id="oc_indirectPreview">$0</span><span class="sub">/BCU, excl. vehicle repairs/depr.</span></div>
+          <div class="stat-tile"><span class="label">Indirect costs</span><span class="value" id="oc_indirectPreview">$0</span><span class="sub">/BCU, incl. vehicle repairs/depr.</span></div>
           <div class="stat-tile"><span class="label">General &amp; admin.</span><span class="value" id="oc_gaPreview">$0</span><span class="sub">/BCU, 400-hd reference</span></div>
           <div class="stat-tile"><span class="label">Financing rates</span><span class="value" id="oc_financePreview" style="font-size:16px;">&mdash;</span><span class="sub">interest, % per year</span></div>
         </div>
@@ -518,7 +518,23 @@
               </tbody>
             </table>
           </div>
-          <p class="card-note" style="margin:10px 0 0;">Vehicle/equipment repair &amp; depreciation are a 5th indirect-cost line, but they depend on each tool's own equipment list, so they stay on that tool's page instead of here.</p>
+        </fieldset>
+
+        <fieldset style="margin-bottom:18px;">
+          <legend>Vehicles, machinery &amp; equipment</legend>
+          <p class="card-note">Replacement cost, useful life, salvage %, and annual repair % for each item &mdash; depreciation and repairs are allocated 100% to the cow-calf enterprise, matching the source workbook. Feeds into the Indirect costs total above.</p>
+          <div class="table-scroll">
+            <table class="edit">
+              <thead><tr><th>Item</th><th>Replacement cost</th><th>Life (yrs)</th><th>Salvage %</th><th>Repair % /yr</th></tr></thead>
+              <tbody>
+                <tr><td class="lbl">Pickups (2)</td><td><input type="number" id="oc_eq0_cost" value="80000"></td><td><input type="number" id="oc_eq0_life" value="5"></td><td><input type="number" id="oc_eq0_salvage" value="10"></td><td><input type="number" id="oc_eq0_repair" value="5"></td></tr>
+                <tr><td class="lbl">Trailers (2)</td><td><input type="number" id="oc_eq1_cost" value="10000"></td><td><input type="number" id="oc_eq1_life" value="10"></td><td><input type="number" id="oc_eq1_salvage" value="0"></td><td><input type="number" id="oc_eq1_repair" value="2"></td></tr>
+                <tr><td class="lbl">Tractor</td><td><input type="number" id="oc_eq2_cost" value="40000"></td><td><input type="number" id="oc_eq2_life" value="10"></td><td><input type="number" id="oc_eq2_salvage" value="10"></td><td><input type="number" id="oc_eq2_repair" value="5"></td></tr>
+                <tr><td class="lbl">Feeders</td><td><input type="number" id="oc_eq3_cost" value="8000"></td><td><input type="number" id="oc_eq3_life" value="10"></td><td><input type="number" id="oc_eq3_salvage" value="0"></td><td><input type="number" id="oc_eq3_repair" value="5"></td></tr>
+                <tr><td class="lbl">Cattle equipment</td><td><input type="number" id="oc_eq4_cost" value="20000"></td><td><input type="number" id="oc_eq4_life" value="10"></td><td><input type="number" id="oc_eq4_salvage" value="0"></td><td><input type="number" id="oc_eq4_repair" value="5"></td></tr>
+              </tbody>
+            </table>
+          </div>
         </fieldset>
 
         <fieldset style="margin-bottom:18px;">
@@ -541,13 +557,20 @@
 
         <fieldset>
           <legend>Financing &mdash; interest rates</legend>
-          <p class="card-note" style="margin:0 0 10px;">Rates only &mdash; how much you actually have financed (in dollars) is specific to each operation, so those amounts stay on each tool's own page.</p>
-          <div class="field-grid cols-3">
+          <div class="field-grid">
             <div class="field"><label for="oc_pctLivestockBorrowed">% livestock investment borrowed</label><div class="input-wrap has-suffix"><input type="number" id="oc_pctLivestockBorrowed" value="10" step="0.1"><span class="suffix">%</span></div></div>
             <div class="field"><label for="oc_livestockInterestRate">Interest rate, borrowed livestock</label><div class="input-wrap has-suffix"><input type="number" id="oc_livestockInterestRate" value="5" step="0.1"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="oc_equipDebtRate">Interest rate, vehicles/equipment debt</label><div class="input-wrap has-suffix"><input type="number" id="oc_equipDebtRate" value="0" step="0.1"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="oc_opCapitalRate">Interest rate, operating capital</label><div class="input-wrap has-suffix"><input type="number" id="oc_opCapitalRate" value="0" step="0.1"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="oc_realEstateDebtRate">Interest rate, real estate debt</label><div class="input-wrap has-suffix"><input type="number" id="oc_realEstateDebtRate" value="0" step="0.1"><span class="suffix">%</span></div></div>
+          </div>
+          <p class="card-note" style="margin:14px 0 10px;">Other borrowed capital &mdash; if this operation carries debt on anything besides the breeding herd, enter the dollar amount financed for each; most operations leave these at $0.</p>
+          <div class="table-scroll">
+            <table class="edit">
+              <thead><tr><th>Item</th><th>Invested $</th><th>Rate %</th></tr></thead>
+              <tbody>
+                <tr><td class="lbl">Vehicles, machinery &amp; equipment</td><td><input type="number" id="oc_equipDebtInvested" value="0" step="1000"></td><td><input type="number" id="oc_equipDebtRate" value="0" step="0.1"></td></tr>
+                <tr><td class="lbl">Operating capital</td><td><input type="number" id="oc_opCapitalInvested" value="0" step="1000"></td><td><input type="number" id="oc_opCapitalRate" value="0" step="0.1"></td></tr>
+                <tr><td class="lbl">Real estate debt</td><td><input type="number" id="oc_realEstateDebtInvested" value="0" step="1000"></td><td><input type="number" id="oc_realEstateDebtRate" value="0" step="0.1"></td></tr>
+              </tbody>
+            </table>
           </div>
         </fieldset>
 
@@ -668,8 +691,14 @@
     oc_waterMgmtPerAcre:1, oc_otherNonCashDeprTotal:0,
     oc_profFeesTotal:2500, oc_utilitiesTotal:4000, oc_officeSuppliesTotal:1500,
     oc_duesTotal:500, oc_adminWagesTotal:15000, oc_insuranceTotal:7000, oc_otherGATotal:0,
+    oc_eq0_cost:80000, oc_eq0_life:5, oc_eq0_salvage:10, oc_eq0_repair:5,
+    oc_eq1_cost:10000, oc_eq1_life:10, oc_eq1_salvage:0, oc_eq1_repair:2,
+    oc_eq2_cost:40000, oc_eq2_life:10, oc_eq2_salvage:10, oc_eq2_repair:5,
+    oc_eq3_cost:8000, oc_eq3_life:10, oc_eq3_salvage:0, oc_eq3_repair:5,
+    oc_eq4_cost:20000, oc_eq4_life:10, oc_eq4_salvage:0, oc_eq4_repair:5,
     oc_pctLivestockBorrowed:10, oc_livestockInterestRate:5,
-    oc_equipDebtRate:0, oc_opCapitalRate:0, oc_realEstateDebtRate:0
+    oc_equipDebtInvested:0, oc_equipDebtRate:0, oc_opCapitalInvested:0, oc_opCapitalRate:0,
+    oc_realEstateDebtInvested:0, oc_realEstateDebtRate:0
   };
   function readOperatingCosts(){
     try {
@@ -769,10 +798,17 @@
         (num('oc_otherCash2Qty')*num('oc_otherCash2Price')) + (num('oc_otherCash3Qty')*num('oc_otherCash3Price')) +
         (num('oc_laborDays')*num('oc_laborRatePerDay'))/REF_BCU;
 
+      var eqDeprRepairTotal = 0;
+      for (var eqi=0; eqi<5; eqi++) {
+        var eqCost = num('oc_eq'+eqi+'_cost'), eqLife = num('oc_eq'+eqi+'_life'),
+            eqSalvage = num('oc_eq'+eqi+'_salvage'), eqRepairPct = num('oc_eq'+eqi+'_repair');
+        eqDeprRepairTotal += (eqLife!==0 ? (eqCost - eqSalvage*0.01*eqCost)/eqLife : 0) + (eqCost*eqRepairPct*0.01);
+      }
+
       var indirect = (num('oc_improvementsRepairsTotal')+num('oc_propertyTaxTotal')+num('oc_fuelOilTotal')+
         num('oc_otherIndirectCash1Total')+(num('oc_hiredMgmtPersons')*num('oc_hiredMgmtSalary'))+
         (num('oc_ownerMgmtPersons')*num('oc_ownerMgmtSalary'))+num('oc_otherIndirectCash2Total')+
-        num('oc_otherNonCashDeprTotal'))/REF_BCU;
+        num('oc_otherNonCashDeprTotal')+eqDeprRepairTotal)/REF_BCU;
 
       var ga = (num('oc_profFeesTotal')+num('oc_utilitiesTotal')+num('oc_officeSuppliesTotal')+num('oc_duesTotal')+
         num('oc_adminWagesTotal')+num('oc_insuranceTotal')+num('oc_otherGATotal'))/REF_BCU;
