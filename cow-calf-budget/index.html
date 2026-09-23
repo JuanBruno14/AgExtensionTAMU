@@ -162,6 +162,56 @@
   .card-body{padding:20px;}
   .card-note{font-size:12.5px;color:var(--ink-muted);margin:0 0 16px;line-height:1.5;}
 
+  /* ---------- Live summary strip (C1 wizard) ---------- */
+  .live-summary{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:10px 16px;
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;
+    padding:14px 18px;margin-bottom:18px;box-shadow:var(--shadow-card);
+  }
+  .live-summary .item{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .live-summary .item .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);white-space:nowrap;}
+  .live-summary .item .value{font-family:"Fraunces",serif;font-size:19px;font-weight:600;line-height:1.15;color:var(--ink);}
+  @media (max-width:560px){ .live-summary{grid-template-columns:1fr;gap:8px;padding:12px 14px;} }
+
+  /* ---------- Step wizard (C1) ---------- */
+  .wizard-page{max-width:720px;margin:0 auto;padding:24px clamp(16px,4vw,40px) 64px;}
+  .wizard-progress{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
+  .wizard-progress .step-count{font-size:11.5px;font-weight:700;color:var(--ink-muted);white-space:nowrap;}
+  .wizard-progress .step-label{font-size:14.5px;font-weight:700;color:var(--ink);}
+  .wizard-track{height:6px;border-radius:100px;background:var(--surface-sunken);overflow:hidden;margin-bottom:10px;}
+  .wizard-track-fill{height:100%;background:var(--accent);border-radius:100px;transition:width 0.2s ease;}
+  .wizard-dots{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;}
+  .wizard-dots button{
+    width:9px;height:9px;border-radius:100px;border:none;padding:0;cursor:pointer;
+    background:var(--border);flex:none;
+  }
+  .wizard-dots button.done{background:var(--wheat-500);}
+  .wizard-dots button.current{background:var(--accent);width:22px;border-radius:100px;}
+  .wizard-dots button:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .wizard-steps .step{display:none;}
+  .wizard-steps .step.active{display:block;animation:wizardIn 0.15s ease;}
+  @keyframes wizardIn{from{opacity:0;transform:translateY(4px);}to{opacity:1;transform:translateY(0);}}
+  .wizard-nav{display:flex;align-items:center;gap:10px;margin-top:18px;}
+  .wizard-nav .spacer{flex:1;}
+  .wizard-reset{background:none;border:none;color:var(--ink-muted);font:inherit;font-size:12.5px;text-decoration:underline;cursor:pointer;padding:6px 4px;}
+  .wizard-reset:hover{color:var(--ink);}
+  .wizard-done-banner{
+    display:flex;align-items:center;gap:10px;background:var(--good-100);border:1px solid var(--good-700);
+    color:var(--good-700);border-radius:12px;padding:12px 16px;font-size:13.5px;font-weight:600;margin-bottom:18px;
+  }
+  .wizard-done-banner svg{flex:none;width:20px;height:20px;}
+
+  /* ---------- Advanced-analysis section (C1's SPA / Prod Practice Eval / Sensitivity) ---------- */
+  .advanced-toggle{width:100%;display:flex;align-items:center;gap:10px;background:var(--surface);border:1px dashed var(--wheat-500);border-radius:14px;padding:14px 20px;cursor:pointer;font-family:inherit;text-align:left;color:var(--ink);}
+  .advanced-toggle:hover{background:var(--wheat-100);}
+  .advanced-toggle svg{flex:none;width:18px;height:18px;color:var(--wheat-500);}
+  .advanced-toggle .title{font-weight:700;font-size:14px;}
+  .advanced-toggle .sub{font-size:12px;color:var(--ink-muted);margin-top:2px;}
+  .advanced-toggle .chevron{margin-left:auto;flex:none;width:16px;height:16px;transition:transform 0.18s ease;color:var(--ink-muted);}
+  .advanced-toggle[aria-expanded="true"] .chevron{transform:rotate(180deg);}
+  #c1AdvancedSection{display:none;flex-direction:column;gap:18px;margin-top:18px;}
+  #c1AdvancedSection.open{display:flex;}
+
   /* ---------- Fields ---------- */
   .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;}
   .field-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
@@ -562,9 +612,25 @@
   </div>
 </div>
 
-<div class="layout tab-panel" id="panelC1">
-  <div class="col-inputs">
+<div class="tab-panel" id="panelC1">
+  <div class="wizard-page" id="c1WizardPage">
 
+    <div class="live-summary">
+      <div class="item"><div class="label">Total Unit Cost</div><div class="value" id="c1_live_tuc">&mdash;</div></div>
+      <div class="item"><div class="label">Net income</div><div class="value" id="c1_live_netIncome">&mdash;</div></div>
+      <div class="item"><div class="label">Breakeven steer price</div><div class="value" id="c1_live_beSteer">&mdash;</div></div>
+    </div>
+
+    <div class="wizard-progress">
+      <span class="step-label" id="c1WizardLabel"></span>
+      <span class="step-count" id="c1WizardCount"></span>
+    </div>
+    <div class="wizard-track"><div class="wizard-track-fill" id="c1WizardFill"></div></div>
+    <div class="wizard-dots" id="c1WizardDots"></div>
+
+    <div class="wizard-steps" id="c1WizardSteps">
+
+      <div class="step" data-step="0">
     <div class="card">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9c0-2 1.5-4 4-4s4 1.5 4 2 1.5-2 4-2 4 2 4 4-2 3-2 5v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5c0-2-2-3-2-5Z"/></svg>
@@ -586,7 +652,9 @@
         </div>
       </div>
     </div>
+      </div>
 
+      <div class="step" data-step="1">
     <div class="card">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2 3 7v2h18V7l-9-5Z"/><path d="M5 10v9M9 10v9M15 10v9M19 10v9M3 21h18"/></svg>
@@ -612,15 +680,16 @@
           <div class="field"><label for="c1_purchasedCowCost">Cost, purchased cow/pair</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="c1_purchasedCowCost" value="1400"></div></div>
           <div class="field"><label for="c1_replHeiferWeanTo1yr">Repl. heifer value, weaning-1yr</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="c1_replHeiferWeanTo1yr" value="1000"></div></div>
           <div class="field"><label for="c1_replHeifer1yrToBreeding">Repl. heifer value, 1yr-breeding</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="c1_replHeifer1yrToBreeding" value="1300"></div></div>
-          <div class="field"><label for="c1_pctLivestockBorrowed">% livestock investment borrowed</label><div class="input-wrap has-suffix"><input type="number" id="c1_pctLivestockBorrowed" value="10" step="0.1"><span class="suffix">%</span></div></div>
-          <div class="field"><label for="c1_livestockInterestRate">Interest rate, borrowed livestock</label><div class="input-wrap has-suffix"><input type="number" id="c1_livestockInterestRate" value="5" step="0.1"><span class="suffix">%</span></div></div>
           <div class="field"><label for="c1_auReplHeiferWean1yr">Repl. heifer AU, weaning-1yr</label><div class="input-wrap has-suffix"><input type="number" id="c1_auReplHeiferWean1yr" value="0.6" step="0.1"><span class="suffix">AU</span></div></div>
           <div class="field"><label for="c1_auReplHeifer1yrBreeding">Repl. heifer AU, 1yr-breeding</label><div class="input-wrap has-suffix"><input type="number" id="c1_auReplHeifer1yrBreeding" value="0.7" step="0.1"><span class="suffix">AU</span></div></div>
           <div class="field"><label for="c1_auBreedingCow">Breeding cow + calf AU</label><div class="input-wrap has-suffix"><input type="number" id="c1_auBreedingCow" value="1.3" step="0.1"><span class="suffix">AU</span></div></div>
         </div>
+        <p class="card-note" style="margin-top:12px;">Livestock financing (% borrowed &amp; interest rate) now comes from the shared <a href="../index.html#opcost-calculator" style="color:inherit;">Cow-calf operating costs &amp; financing</a> calculator &mdash; currently <strong id="c1_liveLivestockFin">&mdash;</strong>.</p>
       </div>
     </div>
+      </div>
 
+      <div class="step" data-step="2">
     <div class="card">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M7 19V9m5 10V5m5 14v-7"/></svg>
@@ -634,7 +703,9 @@
         </div>
       </div>
     </div>
+      </div>
 
+      <div class="step" data-step="3">
     <div class="card">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
@@ -687,158 +758,105 @@
         </div>
       </div>
     </div>
+      </div>
 
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        <h2>Vehicles, machinery &amp; equipment</h2>
+      <!-- The ~81 direct/indirect/G&A/financing-rate/equipment/borrowed-capital line
+           items below are no longer edited on this page -- they're pre-filled from
+           the shared "Cow-calf operating costs & financing" calculator
+           (site/index.html#opcost-calculator) by c1_applySharedOperatingCosts(), and
+           c1_gatherInputs()/c1_calcSheet1()/c1_calcSheet2() still read them from these
+           same ids, unchanged. Kept in the DOM (hidden, not display:none on individual
+           fields) purely so the existing calc engine needs zero changes -- see
+           proj_doc.md "ronda treinta y siete" and "ronda treinta y nueve" for why. The
+           "Vehicles, machinery & equipment" table and "Other borrowed capital" $
+           amounts (both previously their own wizard step / card on this page) moved
+           into the shared calculator's own "Vehicles, machinery & equipment" and
+           "Financing" fieldsets, 2026-09-23. -->
+      <div style="display:none" id="c1HiddenSharedCostInputs" aria-hidden="true">
+        <input type="number" id="c1_eq0_cost" value="80000">
+        <input type="number" id="c1_eq0_life" value="5">
+        <input type="number" id="c1_eq0_salvage" value="10">
+        <input type="number" id="c1_eq0_repair" value="5">
+        <input type="number" id="c1_eq1_cost" value="10000">
+        <input type="number" id="c1_eq1_life" value="10">
+        <input type="number" id="c1_eq1_salvage" value="0">
+        <input type="number" id="c1_eq1_repair" value="2">
+        <input type="number" id="c1_eq2_cost" value="40000">
+        <input type="number" id="c1_eq2_life" value="10">
+        <input type="number" id="c1_eq2_salvage" value="10">
+        <input type="number" id="c1_eq2_repair" value="5">
+        <input type="number" id="c1_eq3_cost" value="8000">
+        <input type="number" id="c1_eq3_life" value="10">
+        <input type="number" id="c1_eq3_salvage" value="0">
+        <input type="number" id="c1_eq3_repair" value="5">
+        <input type="number" id="c1_eq4_cost" value="20000">
+        <input type="number" id="c1_eq4_life" value="10">
+        <input type="number" id="c1_eq4_salvage" value="0">
+        <input type="number" id="c1_eq4_repair" value="5">
+        <input type="number" id="c1_equipDebtInvested" value="0" step="1000">
+        <input type="number" id="c1_opCapitalInvested" value="0" step="1000">
+        <input type="number" id="c1_realEstateDebtInvested" value="0" step="1000">
+        <input type="number" id="c1_roughageQty" value="0">
+        <input type="number" id="c1_roughagePrice" value="0" step="0.01">
+        <input type="number" id="c1_completeFeedQty" value="0">
+        <input type="number" id="c1_completeFeedPrice" value="0" step="0.01">
+        <input type="number" id="c1_mineralSaltQty" value="30">
+        <input type="number" id="c1_mineralSaltPrice" value="0.22" step="0.01">
+        <input type="number" id="c1_proteinQty" value="500">
+        <input type="number" id="c1_proteinPrice" value="0.18" step="0.01">
+        <input type="number" id="c1_otherFeedQty" value="0">
+        <input type="number" id="c1_otherFeedPrice" value="0" step="0.01">
+        <input type="number" id="c1_grazing1Qty" value="1">
+        <input type="number" id="c1_grazing1Price" value="0" step="0.5">
+        <input type="number" id="c1_grazing2Qty" value="1">
+        <input type="number" id="c1_grazing2Price" value="0" step="0.5">
+        <input type="number" id="c1_grazing3Qty" value="1">
+        <input type="number" id="c1_grazing3Price" value="0" step="0.5">
+        <input type="number" id="c1_grazing4Qty" value="1">
+        <input type="number" id="c1_grazing4Price" value="0" step="0.5">
+        <input type="number" id="c1_grazing5Total" value="0" step="50">
+        <input type="number" id="c1_grazing6Total" value="0" step="50">
+        <input type="number" id="c1_cashRentTotal" value="0" step="50">
+        <input type="number" id="c1_freightQty" value="1">
+        <input type="number" id="c1_freightPrice" value="5" step="0.5">
+        <input type="number" id="c1_vetQty" value="1">
+        <input type="number" id="c1_vetPrice" value="35" step="0.5">
+        <input type="number" id="c1_suppliesQty" value="1">
+        <input type="number" id="c1_suppliesPrice" value="5" step="0.5">
+        <input type="number" id="c1_otherCash1Qty" value="1">
+        <input type="number" id="c1_otherCash1Price" value="0" step="0.5">
+        <input type="number" id="c1_otherCash2Qty" value="1">
+        <input type="number" id="c1_otherCash2Price" value="0" step="0.5">
+        <input type="number" id="c1_otherCash3Qty" value="1">
+        <input type="number" id="c1_otherCash3Price" value="0" step="0.5">
+        <input type="number" id="c1_laborDays" value="20">
+        <input type="number" id="c1_laborRatePerDay" value="150" step="5">
+        <input type="number" id="c1_improvementsRepairsTotal" value="4000" step="100">
+        <input type="number" id="c1_propertyTaxTotal" value="2000" step="100">
+        <input type="number" id="c1_fuelOilTotal" value="12000" step="100">
+        <input type="number" id="c1_otherIndirectCash1Total" value="0" step="100">
+        <input type="number" id="c1_hiredMgmtPersons" value="1">
+        <input type="number" id="c1_hiredMgmtSalary" value="40000" step="1000">
+        <input type="number" id="c1_ownerMgmtPersons" value="1">
+        <input type="number" id="c1_ownerMgmtSalary" value="70000" step="1000">
+        <input type="number" id="c1_otherIndirectCash2Total" value="0" step="100">
+        <input type="number" id="c1_waterMgmtPerAcre" value="1" step="0.1">
+        <input type="number" id="c1_otherNonCashDeprTotal" value="0" step="100">
+        <input type="number" id="c1_profFeesTotal" value="2500" step="100">
+        <input type="number" id="c1_utilitiesTotal" value="4000" step="100">
+        <input type="number" id="c1_officeSuppliesTotal" value="1500" step="100">
+        <input type="number" id="c1_duesTotal" value="500" step="50">
+        <input type="number" id="c1_adminWagesTotal" value="15000" step="500">
+        <input type="number" id="c1_insuranceTotal" value="7000" step="100">
+        <input type="number" id="c1_otherGATotal" value="0" step="100">
+        <input type="number" id="c1_pctLivestockBorrowed" value="10" step="0.1">
+        <input type="number" id="c1_livestockInterestRate" value="5" step="0.1">
+        <input type="number" id="c1_equipDebtRate" value="0" step="0.1">
+        <input type="number" id="c1_opCapitalRate" value="0" step="0.1">
+        <input type="number" id="c1_realEstateDebtRate" value="0" step="0.1">
       </div>
-      <div class="card-body">
-        <p class="card-note">Replacement cost, useful life, salvage %, and annual repair % for each item &mdash; depreciation and repairs are allocated 100% to the cow-calf enterprise by default, matching the source workbook. The workbook's 6 blank "Other" equipment rows aren't shown here (they default to $0 either way) to keep this table manageable.</p>
-        <div class="table-scroll">
-          <table class="edit" id="c1_equipTable">
-            <thead><tr><th>Item</th><th>Replacement cost</th><th>Life (yrs)</th><th>Salvage %</th><th>Repair % /yr</th></tr></thead>
-            <tbody>
-              <tr><td class="lbl">Pickups (2)</td><td><input type="number" id="c1_eq0_cost" value="80000"></td><td><input type="number" id="c1_eq0_life" value="5"></td><td><input type="number" id="c1_eq0_salvage" value="10"></td><td><input type="number" id="c1_eq0_repair" value="5"></td></tr>
-              <tr><td class="lbl">Trailers (2)</td><td><input type="number" id="c1_eq1_cost" value="10000"></td><td><input type="number" id="c1_eq1_life" value="10"></td><td><input type="number" id="c1_eq1_salvage" value="0"></td><td><input type="number" id="c1_eq1_repair" value="2"></td></tr>
-              <tr><td class="lbl">Tractor</td><td><input type="number" id="c1_eq2_cost" value="40000"></td><td><input type="number" id="c1_eq2_life" value="10"></td><td><input type="number" id="c1_eq2_salvage" value="10"></td><td><input type="number" id="c1_eq2_repair" value="5"></td></tr>
-              <tr><td class="lbl">Feeders</td><td><input type="number" id="c1_eq3_cost" value="8000"></td><td><input type="number" id="c1_eq3_life" value="10"></td><td><input type="number" id="c1_eq3_salvage" value="0"></td><td><input type="number" id="c1_eq3_repair" value="5"></td></tr>
-              <tr><td class="lbl">Cattle equipment</td><td><input type="number" id="c1_eq4_cost" value="20000"></td><td><input type="number" id="c1_eq4_life" value="10"></td><td><input type="number" id="c1_eq4_salvage" value="0"></td><td><input type="number" id="c1_eq4_repair" value="5"></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
 
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        <h2>Direct costs</h2>
-      </div>
-      <div class="card-body">
-        <div class="section-sub">Purchased &amp; raised feed</div>
-        <div class="table-scroll">
-          <table class="edit">
-            <thead><tr><th>Item</th><th>Qty (lb/BCU)</th><th>Price ($/lb)</th></tr></thead>
-            <tbody>
-              <tr><td class="lbl">Roughage</td><td><input type="number" id="c1_roughageQty" value="0"></td><td><input type="number" id="c1_roughagePrice" value="0" step="0.01"></td></tr>
-              <tr><td class="lbl">Complete feed / concentrate</td><td><input type="number" id="c1_completeFeedQty" value="0"></td><td><input type="number" id="c1_completeFeedPrice" value="0" step="0.01"></td></tr>
-              <tr><td class="lbl">Mineral &amp; salt</td><td><input type="number" id="c1_mineralSaltQty" value="30"></td><td><input type="number" id="c1_mineralSaltPrice" value="0.22" step="0.01"></td></tr>
-              <tr><td class="lbl">Protein supplement</td><td><input type="number" id="c1_proteinQty" value="500"></td><td><input type="number" id="c1_proteinPrice" value="0.18" step="0.01"></td></tr>
-              <tr><td class="lbl">Other feed purchase</td><td><input type="number" id="c1_otherFeedQty" value="0"></td><td><input type="number" id="c1_otherFeedPrice" value="0" step="0.01"></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="section-sub">Grazing (non-land)</div>
-        <div class="table-scroll">
-          <table class="edit">
-            <thead><tr><th>Item</th><th>Multiplier</th><th>$/BCU</th></tr></thead>
-            <tbody>
-              <tr><td class="lbl">Other grazing 1</td><td><input type="number" id="c1_grazing1Qty" value="1"></td><td><input type="number" id="c1_grazing1Price" value="0" step="0.5"></td></tr>
-              <tr><td class="lbl">Other grazing 2</td><td><input type="number" id="c1_grazing2Qty" value="1"></td><td><input type="number" id="c1_grazing2Price" value="0" step="0.5"></td></tr>
-              <tr><td class="lbl">Other grazing 3</td><td><input type="number" id="c1_grazing3Qty" value="1"></td><td><input type="number" id="c1_grazing3Price" value="0" step="0.5"></td></tr>
-              <tr><td class="lbl">Other grazing 4</td><td><input type="number" id="c1_grazing4Qty" value="1"></td><td><input type="number" id="c1_grazing4Price" value="0" step="0.5"></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="table-scroll" style="margin-top:8px;">
-          <table class="edit">
-            <thead><tr><th>Item</th><th>Total $</th></tr></thead>
-            <tbody>
-              <tr><td class="lbl">Other grazing 5 (total)</td><td><input type="number" id="c1_grazing5Total" value="0" step="50"></td></tr>
-              <tr><td class="lbl">Other grazing 6 (total)</td><td><input type="number" id="c1_grazing6Total" value="0" step="50"></td></tr>
-              <tr><td class="lbl">Cash rent paid (total)</td><td><input type="number" id="c1_cashRentTotal" value="0" step="50"></td></tr>
-            </tbody>
-          </table>
-        </div>
-        <div class="section-sub">Other select cash costs</div>
-        <div class="table-scroll">
-          <table class="edit">
-            <thead><tr><th>Item</th><th>Qty</th><th>$/unit</th></tr></thead>
-            <tbody>
-              <tr><td class="lbl">Freight &amp; trucking</td><td><input type="number" id="c1_freightQty" value="1"></td><td><input type="number" id="c1_freightPrice" value="5" step="0.5"></td></tr>
-              <tr><td class="lbl">Veterinary, medicine &amp; breeding</td><td><input type="number" id="c1_vetQty" value="1"></td><td><input type="number" id="c1_vetPrice" value="35" step="0.5"></td></tr>
-              <tr><td class="lbl">Supplies</td><td><input type="number" id="c1_suppliesQty" value="1"></td><td><input type="number" id="c1_suppliesPrice" value="5" step="0.5"></td></tr>
-              <tr><td class="lbl">Other cash cost 1</td><td><input type="number" id="c1_otherCash1Qty" value="1"></td><td><input type="number" id="c1_otherCash1Price" value="0" step="0.5"></td></tr>
-              <tr><td class="lbl">Other cash cost 2</td><td><input type="number" id="c1_otherCash2Qty" value="1"></td><td><input type="number" id="c1_otherCash2Price" value="0" step="0.5"></td></tr>
-              <tr><td class="lbl">Other cash cost 3</td><td><input type="number" id="c1_otherCash3Qty" value="1"></td><td><input type="number" id="c1_otherCash3Price" value="0" step="0.5"></td></tr>
-              <tr><td class="lbl">Hired temporary labor</td><td><input type="number" id="c1_laborDays" value="20"></td><td><input type="number" id="c1_laborRatePerDay" value="150" step="5"></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        <h2>Indirect costs</h2>
-      </div>
-      <div class="card-body">
-        <div class="table-scroll">
-          <table class="edit">
-            <thead><tr><th>Item</th><th>Total $ (or $/unit)</th></tr></thead>
-            <tbody>
-              <tr><td class="lbl">Repairs &amp; maint. of improvements</td><td><input type="number" id="c1_improvementsRepairsTotal" value="4000" step="100"></td></tr>
-              <tr><td class="lbl">Property / land tax, total</td><td><input type="number" id="c1_propertyTaxTotal" value="2000" step="100"></td></tr>
-              <tr><td class="lbl">Gasoline, fuel &amp; oil</td><td><input type="number" id="c1_fuelOilTotal" value="12000" step="100"></td></tr>
-              <tr><td class="lbl">Other indirect cash cost 1</td><td><input type="number" id="c1_otherIndirectCash1Total" value="0" step="100"></td></tr>
-              <tr><td class="lbl">Hired permanent management, persons</td><td><input type="number" id="c1_hiredMgmtPersons" value="1"></td></tr>
-              <tr><td class="lbl">Hired permanent management, $/person</td><td><input type="number" id="c1_hiredMgmtSalary" value="40000" step="1000"></td></tr>
-              <tr><td class="lbl">Owner operator mgmt. &amp; labor, persons</td><td><input type="number" id="c1_ownerMgmtPersons" value="1"></td></tr>
-              <tr><td class="lbl">Owner operator mgmt. &amp; labor, $/person</td><td><input type="number" id="c1_ownerMgmtSalary" value="70000" step="1000"></td></tr>
-              <tr><td class="lbl">Other indirect cash cost 2</td><td><input type="number" id="c1_otherIndirectCash2Total" value="0" step="100"></td></tr>
-              <tr><td class="lbl">Water mgmt. &amp; improvement, $/acre</td><td><input type="number" id="c1_waterMgmtPerAcre" value="1" step="0.1"></td></tr>
-              <tr><td class="lbl">Other non-cash depreciation, total</td><td><input type="number" id="c1_otherNonCashDeprTotal" value="0" step="100"></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        <h2>General &amp; administrative</h2>
-      </div>
-      <div class="card-body">
-        <div class="table-scroll">
-          <table class="edit">
-            <thead><tr><th>Item</th><th>Total $</th></tr></thead>
-            <tbody>
-              <tr><td class="lbl">Professional fees (accounting &amp; legal)</td><td><input type="number" id="c1_profFeesTotal" value="2500" step="100"></td></tr>
-              <tr><td class="lbl">Utilities, phone, computer, etc.</td><td><input type="number" id="c1_utilitiesTotal" value="4000" step="100"></td></tr>
-              <tr><td class="lbl">Office supplies</td><td><input type="number" id="c1_officeSuppliesTotal" value="1500" step="100"></td></tr>
-              <tr><td class="lbl">Dues &amp; subscriptions</td><td><input type="number" id="c1_duesTotal" value="500" step="50"></td></tr>
-              <tr><td class="lbl">Administrative wages, payroll, etc.</td><td><input type="number" id="c1_adminWagesTotal" value="15000" step="500"></td></tr>
-              <tr><td class="lbl">Insurance</td><td><input type="number" id="c1_insuranceTotal" value="7000" step="100"></td></tr>
-              <tr><td class="lbl">Other G&amp;A</td><td><input type="number" id="c1_otherGATotal" value="0" step="100"></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
-        <h2>Finance cost (interest on debt)</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Livestock investment's interest cost is computed automatically from the herd's own capital investment (above) &mdash; these three lines are for <em>other</em> borrowed capital, if any.</p>
-        <div class="table-scroll">
-          <table class="edit">
-            <thead><tr><th>Item</th><th>Invested $</th><th>Rate %</th></tr></thead>
-            <tbody>
-              <tr><td class="lbl">Vehicles, machinery &amp; equipment</td><td><input type="number" id="c1_equipDebtInvested" value="0" step="1000"></td><td><input type="number" id="c1_equipDebtRate" value="0" step="0.1"></td></tr>
-              <tr><td class="lbl">Operating capital</td><td><input type="number" id="c1_opCapitalInvested" value="0" step="1000"></td><td><input type="number" id="c1_opCapitalRate" value="0" step="0.1"></td></tr>
-              <tr><td class="lbl">Real estate debt</td><td><input type="number" id="c1_realEstateDebtInvested" value="0" step="1000"></td><td><input type="number" id="c1_realEstateDebtRate" value="0" step="0.1"></td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
+      <div class="step" data-step="4">
     <div class="card">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v8m-4-5v5m8-9v9M5 21h14a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2Z"/></svg>
@@ -855,15 +873,13 @@
         </div>
       </div>
     </div>
+      </div>
 
-    <div class="btn-row" style="padding:0;">
-      <button type="button" class="btn secondary" id="c1ResetBtn">Reset C1 defaults</button>
-    </div>
-
-  </div>
-
-  <div class="col-results">
-
+      <div class="step" data-step="5">
+        <div class="wizard-done-banner">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          <span>Budget complete &mdash; here&rsquo;s your bottom line.</span>
+        </div>
     <div class="card">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>
@@ -981,11 +997,32 @@
         </div>
       </div>
     </div>
+      </div>
+
+    </div>
+
+    <div class="wizard-nav">
+      <button type="button" class="btn secondary" id="c1WizardBack">&larr; Back</button>
+      <div class="spacer"></div>
+      <button type="button" class="wizard-reset" id="c1ResetBtn">Reset all to defaults</button>
+      <button type="button" class="btn" id="c1WizardNext">Next &rarr;</button>
+    </div>
 
   </div>
 </div>
 
 <div class="layout tab-panel" id="panelC1Extra" style="padding-top:0;">
+
+  <button type="button" class="advanced-toggle" id="c1AdvancedToggle" aria-expanded="false" aria-controls="c1AdvancedSection">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+    <span>
+      <span class="title">View advanced analysis</span>
+      <div class="sub">SPA measures, production-practice evaluation &amp; sensitivity analysis (Sheets 5-7).</div>
+    </span>
+    <svg class="chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>
+  </button>
+
+  <div id="c1AdvancedSection">
 
   <div class="card">
     <div class="card-head">
@@ -1134,6 +1171,8 @@
     </div>
   </div>
 
+  </div>
+
 </div>
 
 <div class="viz-tooltip" id="vizTooltip"></div>
@@ -1178,6 +1217,78 @@
     var fb = {};
     Object.keys(MP_FALLBACK).forEach(function(k){ fb[k] = MP_FALLBACK[k]; });
     return fb;
+  }
+
+  /* ---------------- Shared "Cow-calf operating costs & financing" ----------------
+     2026-09-23: at the user's request, C1's Direct costs, Indirect costs, G&A and
+     financing-rate line items (58 inputs) moved to a shared calculator on the home
+     page (site/index.html#opcost-calculator) instead of being entered here. This
+     reads that same localStorage key. The underlying c1_calcSheet1() formulas did
+     NOT change -- only where each input's value is set from.
+     2026-09-23 (same day, follow-up #1): the wizard originally kept a standalone
+     "Operating costs & financing" step showing read-only Direct/Indirect/G&A/
+     Livestock-financing summary tiles for transparency. The user asked for these
+     categories to be fully out of C1's own page, not just the raw inputs -- so
+     that whole step (and its summary tiles) was removed. The wizard went from 8
+     steps to 7. The "Other borrowed capital" $ amounts (equipment/operating-
+     capital/real-estate debt invested) were moved into the "Vehicles, machinery &
+     equipment" step as their own small card, since at that point they still
+     needed somewhere to be entered.
+     2026-09-23 (same day, follow-up #2): the user then asked for the "Vehicles,
+     machinery & equipment" step itself -- both the 5-item equipment table and the
+     "Other borrowed capital" card added in follow-up #1 -- to also move to the
+     shared calculator, since nothing else on this page (or any other tool) reads
+     those 23 fields, so centralizing them causes no cross-tool fidelity conflict.
+     The shared calculator (site/index.html#opcost-calculator) gained its own
+     "Vehicles, machinery & equipment" fieldset (same 5 rows, same original 2018
+     defaults) and its "Financing" fieldset gained the 3 "Invested $" fields
+     alongside their existing rate fields. The wizard is now 6 steps instead of 7.
+     All 23 inputs live in the hidden c1HiddenSharedCostInputs container below,
+     same pattern as the other 58 -- c1_recalc()/c1_calcSheet2() read them by id
+     unchanged, so the equipment depreciation/repair-allocation formulas (including
+     the row-0-rounds-repairsAlloc quirk) are untouched. */
+  var OC_STORAGE_KEY = 'tamuDecisionAidsOperatingCosts';
+  var OC_FALLBACK = {
+    oc_roughageQty:0, oc_roughagePrice:0, oc_completeFeedQty:0, oc_completeFeedPrice:0,
+    oc_mineralSaltQty:30, oc_mineralSaltPrice:0.22, oc_proteinQty:500, oc_proteinPrice:0.18,
+    oc_otherFeedQty:0, oc_otherFeedPrice:0,
+    oc_grazing1Qty:1, oc_grazing1Price:0, oc_grazing2Qty:1, oc_grazing2Price:0,
+    oc_grazing3Qty:1, oc_grazing3Price:0, oc_grazing4Qty:1, oc_grazing4Price:0,
+    oc_grazing5Total:0, oc_grazing6Total:0, oc_cashRentTotal:0,
+    oc_freightQty:1, oc_freightPrice:5, oc_vetQty:1, oc_vetPrice:35,
+    oc_suppliesQty:1, oc_suppliesPrice:5, oc_otherCash1Qty:1, oc_otherCash1Price:0,
+    oc_otherCash2Qty:1, oc_otherCash2Price:0, oc_otherCash3Qty:1, oc_otherCash3Price:0,
+    oc_laborDays:20, oc_laborRatePerDay:150,
+    oc_improvementsRepairsTotal:4000, oc_propertyTaxTotal:2000, oc_fuelOilTotal:12000,
+    oc_otherIndirectCash1Total:0, oc_hiredMgmtPersons:1, oc_hiredMgmtSalary:40000,
+    oc_ownerMgmtPersons:1, oc_ownerMgmtSalary:70000, oc_otherIndirectCash2Total:0,
+    oc_waterMgmtPerAcre:1, oc_otherNonCashDeprTotal:0,
+    oc_profFeesTotal:2500, oc_utilitiesTotal:4000, oc_officeSuppliesTotal:1500,
+    oc_duesTotal:500, oc_adminWagesTotal:15000, oc_insuranceTotal:7000, oc_otherGATotal:0,
+    oc_pctLivestockBorrowed:10, oc_livestockInterestRate:5,
+    oc_equipDebtRate:0, oc_opCapitalRate:0, oc_realEstateDebtRate:0,
+    oc_eq0_cost:80000, oc_eq0_life:5, oc_eq0_salvage:10, oc_eq0_repair:5,
+    oc_eq1_cost:10000, oc_eq1_life:10, oc_eq1_salvage:0, oc_eq1_repair:2,
+    oc_eq2_cost:40000, oc_eq2_life:10, oc_eq2_salvage:10, oc_eq2_repair:5,
+    oc_eq3_cost:8000, oc_eq3_life:10, oc_eq3_salvage:0, oc_eq3_repair:5,
+    oc_eq4_cost:20000, oc_eq4_life:10, oc_eq4_salvage:0, oc_eq4_repair:5,
+    oc_equipDebtInvested:0, oc_opCapitalInvested:0, oc_realEstateDebtInvested:0
+  };
+  function getOperatingCosts(){
+    try {
+      var raw = window.localStorage.getItem(OC_STORAGE_KEY);
+      if(raw){
+        var data = JSON.parse(raw);
+        if(data){
+          var out = {};
+          Object.keys(OC_FALLBACK).forEach(function(k){ out[k] = isFinite(data[k]) ? data[k] : OC_FALLBACK[k]; });
+          return out;
+        }
+      }
+    } catch(e){ /* private mode / blocked storage -- fall back below */ }
+    var fb2 = {};
+    Object.keys(OC_FALLBACK).forEach(function(k){ fb2[k] = OC_FALLBACK[k]; });
+    return fb2;
   }
 
   /* ---------------- C2 engine -- verbatim port of C2.xlsx "Bull Investment Cost " sheet,
@@ -2035,6 +2146,51 @@
     });
   }
 
+  var OC_KEY_MAP = {
+    oc_roughageQty:'c1_roughageQty', oc_roughagePrice:'c1_roughagePrice',
+    oc_completeFeedQty:'c1_completeFeedQty', oc_completeFeedPrice:'c1_completeFeedPrice',
+    oc_mineralSaltQty:'c1_mineralSaltQty', oc_mineralSaltPrice:'c1_mineralSaltPrice',
+    oc_proteinQty:'c1_proteinQty', oc_proteinPrice:'c1_proteinPrice',
+    oc_otherFeedQty:'c1_otherFeedQty', oc_otherFeedPrice:'c1_otherFeedPrice',
+    oc_grazing1Qty:'c1_grazing1Qty', oc_grazing1Price:'c1_grazing1Price',
+    oc_grazing2Qty:'c1_grazing2Qty', oc_grazing2Price:'c1_grazing2Price',
+    oc_grazing3Qty:'c1_grazing3Qty', oc_grazing3Price:'c1_grazing3Price',
+    oc_grazing4Qty:'c1_grazing4Qty', oc_grazing4Price:'c1_grazing4Price',
+    oc_grazing5Total:'c1_grazing5Total', oc_grazing6Total:'c1_grazing6Total', oc_cashRentTotal:'c1_cashRentTotal',
+    oc_freightQty:'c1_freightQty', oc_freightPrice:'c1_freightPrice',
+    oc_vetQty:'c1_vetQty', oc_vetPrice:'c1_vetPrice',
+    oc_suppliesQty:'c1_suppliesQty', oc_suppliesPrice:'c1_suppliesPrice',
+    oc_otherCash1Qty:'c1_otherCash1Qty', oc_otherCash1Price:'c1_otherCash1Price',
+    oc_otherCash2Qty:'c1_otherCash2Qty', oc_otherCash2Price:'c1_otherCash2Price',
+    oc_otherCash3Qty:'c1_otherCash3Qty', oc_otherCash3Price:'c1_otherCash3Price',
+    oc_laborDays:'c1_laborDays', oc_laborRatePerDay:'c1_laborRatePerDay',
+    oc_improvementsRepairsTotal:'c1_improvementsRepairsTotal', oc_propertyTaxTotal:'c1_propertyTaxTotal',
+    oc_fuelOilTotal:'c1_fuelOilTotal', oc_otherIndirectCash1Total:'c1_otherIndirectCash1Total',
+    oc_hiredMgmtPersons:'c1_hiredMgmtPersons', oc_hiredMgmtSalary:'c1_hiredMgmtSalary',
+    oc_ownerMgmtPersons:'c1_ownerMgmtPersons', oc_ownerMgmtSalary:'c1_ownerMgmtSalary',
+    oc_otherIndirectCash2Total:'c1_otherIndirectCash2Total', oc_waterMgmtPerAcre:'c1_waterMgmtPerAcre',
+    oc_otherNonCashDeprTotal:'c1_otherNonCashDeprTotal',
+    oc_profFeesTotal:'c1_profFeesTotal', oc_utilitiesTotal:'c1_utilitiesTotal',
+    oc_officeSuppliesTotal:'c1_officeSuppliesTotal', oc_duesTotal:'c1_duesTotal',
+    oc_adminWagesTotal:'c1_adminWagesTotal', oc_insuranceTotal:'c1_insuranceTotal', oc_otherGATotal:'c1_otherGATotal',
+    oc_pctLivestockBorrowed:'c1_pctLivestockBorrowed', oc_livestockInterestRate:'c1_livestockInterestRate',
+    oc_equipDebtRate:'c1_equipDebtRate', oc_opCapitalRate:'c1_opCapitalRate', oc_realEstateDebtRate:'c1_realEstateDebtRate',
+    oc_eq0_cost:'c1_eq0_cost', oc_eq0_life:'c1_eq0_life', oc_eq0_salvage:'c1_eq0_salvage', oc_eq0_repair:'c1_eq0_repair',
+    oc_eq1_cost:'c1_eq1_cost', oc_eq1_life:'c1_eq1_life', oc_eq1_salvage:'c1_eq1_salvage', oc_eq1_repair:'c1_eq1_repair',
+    oc_eq2_cost:'c1_eq2_cost', oc_eq2_life:'c1_eq2_life', oc_eq2_salvage:'c1_eq2_salvage', oc_eq2_repair:'c1_eq2_repair',
+    oc_eq3_cost:'c1_eq3_cost', oc_eq3_life:'c1_eq3_life', oc_eq3_salvage:'c1_eq3_salvage', oc_eq3_repair:'c1_eq3_repair',
+    oc_eq4_cost:'c1_eq4_cost', oc_eq4_life:'c1_eq4_life', oc_eq4_salvage:'c1_eq4_salvage', oc_eq4_repair:'c1_eq4_repair',
+    oc_equipDebtInvested:'c1_equipDebtInvested', oc_opCapitalInvested:'c1_opCapitalInvested', oc_realEstateDebtInvested:'c1_realEstateDebtInvested'
+  };
+  function c1_applySharedOperatingCosts(){
+    var oc = getOperatingCosts();
+    Object.keys(OC_KEY_MAP).forEach(function(ocKey){
+      var c1Key = OC_KEY_MAP[ocKey];
+      C1_DEFAULTS[c1Key] = oc[ocKey];
+      if($(c1Key)) $(c1Key).value = C1_DEFAULTS[c1Key];
+    });
+  }
+
   function c1_gatherInputs(){
     var g = {};
     Object.keys(C1_DEFAULTS).forEach(function(id){
@@ -2070,6 +2226,12 @@
     });
     var s1 = c1_calcSheet1(inp, s2, s3);
     c567_render(s1, s2, s3);
+
+    if($('c1_live_tuc')) $('c1_live_tuc').textContent = money(s1.F145);
+    if($('c1_live_netIncome')) $('c1_live_netIncome').textContent = money(s1.F154);
+    if($('c1_live_beSteer')) $('c1_live_beSteer').textContent = money(s1.F168) + '/cwt';
+
+    if($('c1_liveLivestockFin')) $('c1_liveLivestockFin').textContent = fmt1.format(inp.pctLivestockBorrowed) + '% borrowed @ ' + fmt1.format(inp.livestockInterestRate) + '% interest';
 
     $('c1_out_tuc').textContent = money(s1.F145);
     $('c1_out_tucTotal').textContent = money0(s1.G145) + ' total herd';
@@ -2136,6 +2298,89 @@
     });
     window.addEventListener('storage', function(e){
       if(e.key === MP_STORAGE_KEY){ c1_applySharedMarketPrices(); c1_recalc(); }
+      if(e.key === OC_STORAGE_KEY){ c1_applySharedOperatingCosts(); c1_recalc(); }
+    });
+  }
+
+  var C1_WIZARD_STEPS = [
+    {label:'Herd size & coefficients'},
+    {label:'Bulls, horses & breeding stock'},
+    {label:'Land'},
+    {label:'Cattle pricing & sale weights'},
+    {label:'Economic cost view (optional)'},
+    {label:'Your results'}
+  ];
+  var c1WizardIndex = 0;
+
+  function c1WizardRender(){
+    var n = C1_WIZARD_STEPS.length;
+    document.querySelectorAll('#c1WizardSteps .step').forEach(function(step){
+      var idx = parseInt(step.getAttribute('data-step'), 10);
+      step.classList.toggle('active', idx === c1WizardIndex);
+    });
+    var countEl = $('c1WizardCount'), labelEl = $('c1WizardLabel'), fillEl = $('c1WizardFill');
+    if(countEl) countEl.textContent = 'Step ' + (c1WizardIndex+1) + ' of ' + n;
+    if(labelEl) labelEl.textContent = C1_WIZARD_STEPS[c1WizardIndex].label;
+    if(fillEl) fillEl.style.width = (((c1WizardIndex+1)/n)*100) + '%';
+    document.querySelectorAll('#c1WizardDots button').forEach(function(dot){
+      var idx = parseInt(dot.getAttribute('data-step'), 10);
+      dot.classList.toggle('current', idx === c1WizardIndex);
+      dot.classList.toggle('done', idx < c1WizardIndex);
+      dot.setAttribute('aria-current', idx === c1WizardIndex ? 'step' : 'false');
+    });
+    var backBtn = $('c1WizardBack'), nextBtn = $('c1WizardNext');
+    if(backBtn) backBtn.style.visibility = (c1WizardIndex === 0) ? 'hidden' : 'visible';
+    if(nextBtn){
+      if(c1WizardIndex === n-2){ nextBtn.textContent = 'See my results →'; }
+      else if(c1WizardIndex === n-1){ nextBtn.style.display = 'none'; }
+      else { nextBtn.textContent = 'Next →'; nextBtn.style.display = ''; }
+    }
+    var advToggle = $('c1AdvancedToggle');
+    if(advToggle){
+      var wrap = advToggle.closest('.layout') || advToggle.parentElement;
+      var showAdvanced = (c1WizardIndex === n-1);
+      if(wrap) wrap.style.display = showAdvanced ? '' : 'none';
+    }
+  }
+
+  function c1WizardGoTo(idx){
+    var n = C1_WIZARD_STEPS.length;
+    if(idx < 0) idx = 0;
+    if(idx > n-1) idx = n-1;
+    c1WizardIndex = idx;
+    c1WizardRender();
+    var page = $('c1WizardPage');
+    if(page) page.scrollIntoView({block:'start', behavior:'smooth'});
+  }
+
+  function initC1Wizard(){
+    var stepsWrap = $('c1WizardSteps');
+    if(!stepsWrap) return;
+    var dotsWrap = $('c1WizardDots');
+    C1_WIZARD_STEPS.forEach(function(s, i){
+      var dot = document.createElement('button');
+      dot.type = 'button';
+      dot.setAttribute('data-step', i);
+      dot.title = s.label;
+      dot.setAttribute('aria-label', 'Go to step ' + (i+1) + ': ' + s.label);
+      dot.addEventListener('click', function(){ c1WizardGoTo(i); });
+      dotsWrap.appendChild(dot);
+    });
+    var backBtn = $('c1WizardBack'), nextBtn = $('c1WizardNext');
+    if(backBtn) backBtn.addEventListener('click', function(){ c1WizardGoTo(c1WizardIndex-1); });
+    if(nextBtn) nextBtn.addEventListener('click', function(){ c1WizardGoTo(c1WizardIndex+1); });
+    c1WizardRender();
+  }
+
+  function initAdvancedToggle(){
+    var btn = $('c1AdvancedToggle'), section = $('c1AdvancedSection');
+    if(!btn || !section) return;
+    btn.addEventListener('click', function(){
+      var willOpen = !section.classList.contains('open');
+      section.classList.toggle('open', willOpen);
+      btn.setAttribute('aria-expanded', willOpen ? 'true' : 'false');
+      var sub = btn.querySelector('.sub');
+      if(sub) sub.textContent = willOpen ? 'Click to hide the SPA, practice-evaluation and sensitivity tools.' : 'SPA measures, production-practice evaluation & sensitivity analysis (Sheets 5-7).';
     });
   }
 
@@ -2163,12 +2408,15 @@
   function init(){
     initThemeToggle();
     initTabs();
+    initAdvancedToggle();
     applySharedMarketPrices();
     attachInputs();
     recalc();
     c1_applySharedMarketPrices();
+    c1_applySharedOperatingCosts();
     c1_attachInputs();
     c1_recalc();
+    initC1Wizard();
   }
 
   if(document.readyState === 'loading'){
