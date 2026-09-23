@@ -138,49 +138,6 @@
   .theme-toggle:hover{background:rgba(255,255,255,0.24);}
   .theme-toggle:focus-visible{outline:2px solid #fff;outline-offset:2px;}
 
-  /* ---------- Roadmap tabs ---------- */
-  .roadmap{
-    background:var(--maroon-700);
-    padding:0 clamp(16px,4vw,40px);
-    display:flex;gap:4px;
-    overflow-x:auto;
-  }
-  .roadmap a, .roadmap span, .roadmap .tab-btn{
-    display:inline-block;
-    padding:12px 18px;
-    font-size:13.5px;
-    font-weight:600;
-    color:rgba(255,255,255,0.68);
-    border-bottom:3px solid transparent;
-    white-space:nowrap;
-  }
-  .roadmap .tab-btn{
-    font-family:inherit;
-    background:none;
-    border-top:none;border-left:none;border-right:none;
-    cursor:pointer;
-  }
-  .roadmap .tab-btn:hover{color:rgba(255,255,255,0.9);}
-  .roadmap .tab-btn:focus-visible{outline:2px solid #fff;outline-offset:-2px;}
-  .roadmap .active{
-    color:#fff;
-    border-bottom-color:var(--wheat-500);
-  }
-  .roadmap .disabled{
-    color:rgba(255,255,255,0.4);
-    cursor:not-allowed;
-  }
-  .roadmap .soon{
-    font-size:10px;
-    font-weight:700;
-    letter-spacing:0.05em;
-    background:rgba(255,255,255,0.12);
-    padding:1px 6px;
-    border-radius:100px;
-    margin-left:6px;
-    vertical-align:1px;
-  }
-
   /* ---------- Intro strip ---------- */
   .intro{
     position:relative;
@@ -258,7 +215,7 @@
   }
   .input-wrap .prefix{left:11px;}
   .input-wrap .suffix{right:10px;}
-  input[type="number"]{
+  input[type="number"], input[type="date"]{
     width:100%;
     font:inherit;font-weight:600;font-size:14.5px;color:var(--ink);
     background:var(--surface-sunken);
@@ -269,78 +226,38 @@
   }
   .input-wrap.has-prefix input{padding-left:22px;}
   .input-wrap.has-suffix input{padding-right:40px;}
-  input[type="number"]:focus{outline:2px solid var(--focus);outline-offset:1px;border-color:var(--focus);}
+  input:focus{outline:2px solid var(--focus);outline-offset:1px;border-color:var(--focus);}
   input[type="number"]::-webkit-outer-spin-button,
   input[type="number"]::-webkit-inner-spin-button{opacity:0.5;}
-
-  .hero-field{
-    background:var(--maroon-100);
-    border:1.5px solid var(--accent);
-    border-radius:12px;
-    padding:14px 16px;
-    display:flex;
-    flex-direction:column;
-    gap:8px;
-  }
-  .hero-field label{font-size:13px;font-weight:700;color:var(--accent);}
-  .hero-row{display:flex;align-items:center;gap:14px;}
-  .hero-row input[type="range"]{flex:1;accent-color:var(--accent);}
-  input[type="range"].weight-slide{display:block;width:100%;margin-top:8px;accent-color:var(--accent);}
-  .hero-row .input-wrap{width:118px;flex:none;}
-  .hero-row .input-wrap input{
-    background:var(--surface);
-    font-size:17px;font-weight:800;color:var(--accent);
-    border-color:var(--accent);
-  }
+  .input-wrap.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
 
   fieldset{border:none;padding:0;margin:0;}
   legend{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;padding:0;}
 
-  /* ---------- Year grid table ---------- */
-  .table-scroll{overflow-x:auto;border-radius:10px;border:1px solid var(--border);}
-  table.grid{width:100%;border-collapse:collapse;min-width:640px;background:var(--surface);}
-  table.grid th, table.grid td{padding:9px 10px;border-bottom:1px solid var(--border);text-align:right;font-size:13px;}
-  table.grid th{
-    background:var(--surface-sunken);
-    color:var(--ink-secondary);
-    font-weight:700;
-    text-align:right;
-    position:sticky;top:0;
-  }
-  table.grid th:first-child, table.grid td:first-child{
-    text-align:left;position:sticky;left:0;background:var(--surface-sunken);z-index:1;min-width:170px;
-  }
-  table.grid td:first-child{background:var(--surface);font-weight:600;color:var(--ink-secondary);font-size:12.5px;}
-  table.grid input[type="number"]{
-    width:82px;padding:6px 7px;font-size:13px;text-align:right;border-radius:7px;
-  }
-  table.grid td.readonly{color:var(--ink-muted);font-style:italic;}
-  table.grid td.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
-  .input-wrap.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
-  table.grid input[type="number"].small{width:64px;}
-
-  /* ---------- Segmented toggle (Owned/Leased) ---------- */
-  .segmented{display:inline-flex;background:var(--surface-sunken);border:1.5px solid var(--border);border-radius:9px;padding:3px;gap:2px;}
-  .segmented button{
-    font:inherit;font-weight:700;font-size:12.5px;color:var(--ink-secondary);
-    background:none;border:none;border-radius:6px;padding:7px 14px;cursor:pointer;
-  }
-  .segmented button.active{background:var(--accent);color:#fff;}
-  .segmented button:focus-visible{outline:2px solid var(--focus);outline-offset:1px;}
-
-  /* ---------- Sub-note / read-only derived value ---------- */
   .derived-note{font-size:11.5px;color:var(--ink-muted);margin-top:4px;}
   .derived-note strong{color:var(--ink-secondary);}
 
-  /* ---------- Panels ---------- */
-  .tool-panel[hidden]{display:none;}
-  .subtool-panel[hidden]{display:none;}
-  .path-nav{
-    max-width:1180px;margin:22px auto 0;padding:0 clamp(16px,4vw,40px);
-    display:flex;flex-wrap:wrap;
+  .disclosure{
+    background:var(--wheat-100);
+    border:1px solid var(--wheat-500);
+    border-radius:10px;
+    padding:12px 14px;
+    font-size:12.5px;
+    line-height:1.55;
+    color:var(--ink-secondary);
+    margin:0 0 16px;
   }
-  .path-nav .segmented{flex-wrap:wrap;}
-  .assumptions-wrap{max-width:1180px;margin:0 auto;padding:18px clamp(16px,4vw,40px) 0;}
+  .disclosure strong{color:var(--ink);}
+
+  details.advanced{border:1px solid var(--border);border-radius:10px;overflow:hidden;}
+  details.advanced > summary{
+    list-style:none;cursor:pointer;padding:12px 16px;font-weight:700;font-size:13.5px;
+    color:var(--accent);background:var(--surface-sunken);display:flex;align-items:center;gap:8px;
+  }
+  details.advanced > summary::-webkit-details-marker{display:none;}
+  details.advanced > summary::before{content:"\25B8";transition:transform 0.15s ease;}
+  details.advanced[open] > summary::before{transform:rotate(90deg);}
+  details.advanced .adv-body{padding:16px;}
 
   /* ---------- Data viz: stacked bar (part-to-whole) ---------- */
   .stackbar-total{font-size:12.5px;color:var(--ink-secondary);margin-bottom:8px;display:flex;justify-content:space-between;}
@@ -357,42 +274,6 @@
   .legend-row .val{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;}
   .legend-row .pct{color:var(--ink-muted);font-size:11.5px;min-width:38px;text-align:right;}
 
-  /* ---------- Data viz: line chart ---------- */
-  .linechart-wrap{position:relative;}
-  svg.linechart{width:100%;height:auto;display:block;overflow:visible;}
-  .lc-grid{stroke:var(--border);stroke-width:1;}
-  .lc-zero{stroke:var(--ink-muted);stroke-width:1;}
-  .lc-path{fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round;stroke-linejoin:round;}
-  .lc-area{fill:var(--accent);opacity:0.08;}
-  .lc-dot{fill:var(--accent);stroke:var(--surface);stroke-width:2;}
-  .lc-dot-hit{fill:transparent;cursor:pointer;}
-  .lc-axis-label{font-size:10.5px;fill:var(--ink-muted);font-family:"Public Sans",sans-serif;}
-  .lc-callout{font-size:11px;font-weight:700;fill:var(--ink);font-family:"Public Sans",sans-serif;}
-
-  /* ---------- Data viz: grouped bar ---------- */
-  .groupbar-legend{display:flex;gap:18px;margin-bottom:14px;flex-wrap:wrap;}
-  .groupbar-legend .item{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-secondary);}
-  .groupbar-legend .swatch{width:10px;height:10px;border-radius:2.5px;}
-  svg.groupbar{width:100%;height:auto;display:block;overflow:visible;}
-  .gb-bar-current{fill:var(--ink-muted);opacity:0.55;}
-  .gb-bar-required{fill:var(--accent);}
-  .gb-bar-current:hover,.gb-bar-required:hover{filter:brightness(1.1);}
-  .gb-label{font-size:11.5px;font-weight:700;fill:var(--ink);font-family:"Public Sans",sans-serif;}
-  .gb-axis{font-size:11px;fill:var(--ink-secondary);font-family:"Public Sans",sans-serif;}
-
-  /* ---------- Data viz: meter ---------- */
-  .meter-row{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;}
-  .meter-cur{font-size:26px;font-weight:700;color:var(--ink);}
-  .meter-cur.under{color:var(--critical-700);}
-  .meter-cur.over{color:var(--good-700);}
-  .meter-target-lbl{font-size:12.5px;color:var(--ink-muted);}
-  .meter-track{position:relative;height:14px;border-radius:7px;background:var(--surface-sunken);border:1px solid var(--border);overflow:visible;}
-  .meter-fill{position:absolute;left:0;top:0;bottom:0;border-radius:7px;background:var(--critical-700);transition:width 0.15s ease;}
-  .meter-fill.over{background:var(--good-700);}
-  .meter-tick{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);border-radius:1px;}
-  .meter-tick-lbl{position:absolute;top:18px;font-size:11px;color:var(--ink-secondary);font-weight:600;white-space:nowrap;}
-  .meter-scale{display:flex;justify-content:space-between;font-size:10.5px;color:var(--ink-muted);margin-top:26px;}
-
   /* ---------- Data viz: shared tooltip ---------- */
   .viz-tooltip{
     position:fixed;pointer-events:none;z-index:50;
@@ -404,7 +285,6 @@
   .viz-tooltip.show{opacity:1;}
   .viz-tooltip .tt-val{font-weight:800;font-size:13.5px;}
   .viz-tooltip .tt-lbl{color:rgba(255,255,255,0.7);font-size:11px;}
-  .viz-caption{font-size:11.5px;color:var(--ink-muted);margin-top:14px;line-height:1.5;}
 
   /* ---------- Results ---------- */
   .stat-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
@@ -437,12 +317,6 @@
   .narrative{font-size:13.5px;line-height:1.6;color:var(--ink-secondary);margin:0 0 8px;}
   .narrative strong{color:var(--ink);}
 
-  .chart-wrap{padding:4px 4px 0;}
-  .chart-legend{display:flex;gap:16px;font-size:12px;color:var(--ink-muted);padding:8px 16px 14px;}
-  .chart-legend span{display:inline-flex;align-items:center;gap:6px;}
-  .chart-legend i{width:9px;height:9px;border-radius:2px;display:inline-block;}
-
-  .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:0 20px 20px;}
   button.btn{
     font:inherit;font-weight:700;font-size:13px;
     padding:10px 16px;border-radius:9px;border:1.5px solid var(--accent);
@@ -451,6 +325,7 @@
   button.btn.secondary{background:transparent;color:var(--accent);}
   button.btn:hover{filter:brightness(1.08);}
   button.btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:0 20px 20px;}
 
   footer{
     max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 40px;
@@ -468,34 +343,29 @@
       <div class="mark">A</div>
       <div class="text">
         <div class="top">Texas A&amp;M AgriLife Extension - Decision Making</div>
-        <div class="main">Decision Aids · Retained Ownership</div>
+        <div class="main">Decision Aids &middot; Replacement Heifer Budgets</div>
       </div>
     </a>
   </div>
-  <h1 class="tool-title" id="toolTitle">Sell or Keep to Upgrade</h1>
+  <h1 class="tool-title" id="toolTitle">Weaned Calf to Bred Heifer Cost</h1>
   <div class="header-right">
     <a href="../index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
     <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
     <a href="../data-sources.html" class="phase-chip" style="text-decoration:none;cursor:pointer;" title="See where every market price on this page comes from, and how current it is">Prices: Sep 2026</a>
-    <span class="phase-chip">Pilot · Phase 1</span>
+    <span class="phase-chip">Pilot &middot; Phase 1</span>
   </div>
 </header>
 
-<nav class="roadmap" aria-label="Retained ownership tools">
-  <button type="button" class="tab-btn active" data-tab="d1" data-title="Sell or Keep to Upgrade" data-source="D1 — Sell or Keep to Upgrade Cull Cows Profit Projection" data-use="advise a cull-cow marketing decision">D1 · Cull Cow: Sell or Upgrade</button>
-  <button type="button" class="tab-btn" data-tab="stockers" data-title="Stockers · Retained Ownership" data-source="Stockers Retained Feeder Profitability" data-use="advise a stocker/feeder retained-ownership decision">Stockers · Retained Ownership</button>
-</nav>
-
-<div id="panel-d1" class="tool-panel">
 <section class="intro">
   <div class="intro-inner">
     <div>
-      <h1>Should you sell cull cows now, or keep feeding them to upgrade?</h1>
-      <p>Enter today's cull-cow sale terms and the retained-ownership alternative (extra days on feed, target out-weight, gain, and price): the tool compares selling now against keeping the cows to add weight and grade, then shows the marketing margin, feeding margin, ROA/ROE, and the price needed to hit your target margin — just like AgriLife Extension's D1 spreadsheet, but recalculating live.</p>
+      <h1>What does a bred replacement heifer actually cost you, natural service?</h1>
+      <p>Enter your weaned heifer numbers, culling and breeding schedule, grazing/feeding costs, and bull investment: the tool walks a set of weaned heifer calves through pre-breeding culling, a natural-service breeding season, and open-heifer culling, then shows the total unit cost per head, the net cost per bred heifer after cull-sale credit, the net margin, and the annualized return on investment &mdash; just like AgriLife Extension's B1a spreadsheet, but recalculating live.</p>
+      <p style="margin-top:10px;font-size:13px;"><a href="../cow-calf/index.html" style="color:var(--accent);font-weight:700;text-decoration:none;">&rarr; Weighing this against buying a bred cow instead? See Cow-Calf Bid Price and Budgets (A1/A2)</a></p>
     </div>
     <div class="intro-meta">
-      <div><strong>Sell vs. retain</strong>side-by-side comparison</div>
-      <div><strong>ROA + ROE</strong>decision criteria</div>
+      <div><strong>Natural service</strong>Angus, low birth-weight bulls</div>
+      <div><strong>Cull credit</strong>pre-breeding + open heifers</div>
       <div><strong>Editable</strong>every assumption</div>
     </div>
   </div>
@@ -505,181 +375,214 @@
 <div class="layout">
   <div class="col-inputs">
 
-    <!-- Cull cow sale today -->
+    <!-- Starting heifers -->
     <div class="card">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9c0-2 1.5-4 4-4s4 1.5 4 2 1.5-2 4-2 4 2 4 4-2 3-2 5v5a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2v-5c0-2-2-3-2-5Z"/><circle cx="9" cy="13" r=".5" fill="currentColor"/><circle cx="15" cy="13" r=".5" fill="currentColor"/></svg>
-        <h2>Cull cow sale — today</h2>
+        <h2>Starting heifers</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">What you'd get if you sold these cull cows right now, at the sale barn.</p>
+        <p class="card-note">Natural service Angus, bred to low birth-weight bulls &mdash; matches the original workbook's description. Change the head count, dates, and starting weight to match your operation.</p>
         <div class="field-grid cols-3">
           <div class="field">
-            <label for="d1_headCulled">Head to market</label>
-            <div class="input-wrap"><input type="number" id="d1_headCulled" value="50" min="0"></div>
+            <label for="rh_head">Head, starting</label>
+            <div class="input-wrap"><input type="number" id="rh_head" value="100" min="1"></div>
           </div>
           <div class="field">
-            <label for="d1_weightAtCulling">Weight at culling</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_weightAtCulling" value="1100" min="0"><span class="suffix">lb</span></div>
+            <label for="rh_startDate">Starting date</label>
+            <div class="input-wrap"><input type="date" id="rh_startDate" value="2026-10-15"></div>
           </div>
           <div class="field">
-            <label for="d1_shrinkSold">Shrink if sold</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_shrinkSold" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
+            <label for="rh_birthDate">Calf birth date</label>
+            <div class="input-wrap"><input type="date" id="rh_birthDate" value="2026-02-15"></div>
+            <span class="hint">Only used to show age in months below</span>
           </div>
           <div class="field">
-            <label for="d1_priceSold">Sale price</label>
+            <label for="rh_weanWeight">Weaning weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_weanWeight" value="500" min="0"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="rh_purchasePrice">Raised/purchase value</label>
+            <div class="input-wrap has-suffix auto"><input type="number" id="rh_purchasePrice" value="473.51" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
+          </div>
+          <div class="field"></div>
+        </div>
+        <p class="derived-note" id="rh_ageNote">&mdash;</p>
+      </div>
+    </div>
+
+    <!-- Pre-breeding culling -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        <h2>Pre-breeding culling</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">A share of the starting heifers are culled for structural or health reasons before the breeding season even starts, and sold as feeder heifers.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="rh_precullDate">Cull date</label>
+            <div class="input-wrap"><input type="date" id="rh_precullDate" value="2027-02-25"></div>
+          </div>
+          <div class="field">
+            <label for="rh_precullPct">Culled, pre-breeding</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_precullPct" value="2" min="0" max="100" step="0.5"><span class="suffix">%</span></div>
+          </div>
+          <div class="field"></div>
+          <div class="field">
+            <label for="rh_precullWeight">Sale weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_precullWeight" value="650" min="0"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="rh_precullPrice">Sale price</label>
+            <div class="input-wrap has-suffix auto"><input type="number" id="rh_precullPrice" value="427.04" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
+          </div>
+          <div class="field"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Breeding season -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.35-9.5-8.5C1 9 2.5 5 6.5 5c2 0 3.5 1.2 4.5 2.7C12 6.2 13.5 5 15.5 5c4 0 5.5 4 4 7.5C21 16.65 12 21 12 21Z"/></svg>
+        <h2>Breeding season &amp; pregnancy</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Natural service breeding season, followed by a delivery window before bred heifers and open (non-pregnant) heifers are sorted out.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="rh_breedDate">Breeding date</label>
+            <div class="input-wrap"><input type="date" id="rh_breedDate" value="2027-05-07"></div>
+          </div>
+          <div class="field">
+            <label for="rh_seasonDays">Breeding season</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_seasonDays" value="60" min="1"><span class="suffix">days</span></div>
+          </div>
+          <div class="field">
+            <label for="rh_daysToDelivery">Days to delivery</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_daysToDelivery" value="45" min="0"><span class="suffix">days</span></div>
+          </div>
+          <div class="field">
+            <label for="rh_pregPct">Pregnant, of exposed</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_pregPct" value="88" min="0" max="100" step="0.5"><span class="suffix">%</span></div>
+          </div>
+          <div class="field">
+            <label for="rh_bredPrice">Bred heifer sale price</label>
             <span class="hint">Pre-filled from Market prices &amp; factors</span>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_priceSold" value="180" min="0" step="0.5" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="rh_bredPrice" value="3884.78" min="0" step="10" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
+          </div>
+          <div class="field"></div>
+        </div>
+        <p class="derived-note" id="rh_deliveryNote">&mdash;</p>
+      </div>
+    </div>
+
+    <!-- Open heifer culling -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        <h2>Open heifer culling</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Heifers that didn't settle are sorted off and sold as feeder heifers at the open-cull date.</p>
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="rh_openDate">Cull date</label>
+            <div class="input-wrap"><input type="date" id="rh_openDate" value="2027-08-10"></div>
           </div>
           <div class="field">
-            <label for="d1_commissionSold">Commission</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_commissionSold" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
+            <label for="rh_openWeight">Sale weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="rh_openWeight" value="900" min="0"><span class="suffix">lb</span></div>
           </div>
           <div class="field">
-            <label for="d1_freightSold">Freight</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="d1_freightSold" value="7" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="d1_perHeadSold">Other per-head charges</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="d1_perHeadSold" value="1" min="0"></div>
+            <label for="rh_openPrice">Sale price</label>
+            <div class="input-wrap has-suffix auto"><input type="number" id="rh_openPrice" value="341.19" min="0" step="0.5"><span class="suffix">$/cwt</span></div>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Retained ownership alternative -->
+    <!-- Grazing & feeding -->
     <div class="card">
       <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
-        <h2>Retained ownership — keep &amp; feed</h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18M5 21V9l7-5 7 5v12M9 21v-6h6v6"/></svg>
+        <h2>Grazing &amp; feeding</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Instead of selling, you put the cows in the feed pen (or on grass) to add weight and grade, then sell later. Set your target out-weight and daily gain — the tool figures the days on feed from those. To force a specific number of days instead, put it in "Manual days override" (leave at 0 to let the tool calculate).</p>
+        <p class="card-note">Days on each phase &times; a per-day cost, for the whole starting head count. "Other" is 0 by default &mdash; use it for any extra phase (creep feed, weaning pen, etc.).</p>
         <div class="field-grid cols-3">
-          <div class="field">
-            <label for="d1_outWeight">Target out-weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_outWeight" value="1300" min="0"><span class="suffix">lb</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_adg">Average daily gain</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_adg" value="2.25" min="0.01" step="0.05"><span class="suffix">lb/day</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_manualDays">Manual days override</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_manualDays" value="0" min="0"><span class="suffix">days</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_shrinkOut">Shrink when sold</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_shrinkOut" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_priceOut">Sale price (upgraded)</label>
-            <span class="hint">Pre-filled from Market prices &amp; factors</span>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_priceOut" value="179.71" min="0" step="0.5" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page (Boner→Breaker upgrade ratio applied). Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_deathLoss">Death loss</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_deathLoss" value="0.5" min="0" step="0.1"><span class="suffix">%</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_commissionOut">Commission</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_commissionOut" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_freightOut">Freight</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="d1_freightOut" value="7" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="d1_perHeadOut">Other per-head charges</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="d1_perHeadOut" value="1" min="0"></div>
-          </div>
+          <div class="field"><label for="rh_preconDays">Preconditioning</label><div class="input-wrap has-suffix"><input type="number" id="rh_preconDays" value="45" min="0"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="rh_preconRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_preconRate" value="1.10" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"></div>
+          <div class="field"><label for="rh_winterDays">Winter</label><div class="input-wrap has-suffix"><input type="number" id="rh_winterDays" value="90" min="0"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="rh_winterRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_winterRate" value="1.00" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"></div>
+          <div class="field"><label for="rh_springDays">Spring &amp; summer</label><div class="input-wrap has-suffix"><input type="number" id="rh_springDays" value="176" min="0"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="rh_springRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_springRate" value="0.60" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"></div>
+          <div class="field"><label for="rh_otherGrazeDays">Other</label><div class="input-wrap has-suffix"><input type="number" id="rh_otherGrazeDays" value="0" min="0"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="rh_otherGrazeRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_otherGrazeRate" value="0" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"></div>
         </div>
-        <p class="derived-note" id="d1_daysNote">Days on feed: calculating…</p>
+        <p class="derived-note" id="rh_daysFedNote">&mdash;</p>
       </div>
     </div>
 
-    <!-- Feeding & direct costs -->
+    <!-- Health, breeding & other direct costs -->
     <div class="card">
       <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        <h2>Feeding &amp; direct costs</h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1 3-6Z"/></svg>
+        <h2>Health, breeding &amp; other direct costs</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">What it costs, per head, to hold and feed the cows through the retained-ownership period.</p>
         <div class="field-grid cols-3">
-          <div class="field">
-            <label for="d1_feedGrazingRate">Feed/grazing cost</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_feedGrazingRate" value="2" min="0" step="0.05"><span class="suffix">$/day</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_processingHealth">Processing &amp; health</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_processingHealth" value="10" min="0"><span class="suffix">$/hd</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_costPerLbGain">Extra cost per lb gained</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_costPerLbGain" value="0" min="0" step="0.01"><span class="suffix">$/lb</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_feedFacilitiesDays">Feed facilities &amp; labor — days</label>
-            <div class="input-wrap"><input type="number" id="d1_feedFacilitiesDays" value="111" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="d1_feedFacilitiesRate">Feed facilities &amp; labor — rate</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_feedFacilitiesRate" value="0.4" min="0" step="0.01"><span class="suffix">$/day</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_otherCost">Other cost</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_otherCost" value="0" min="0"><span class="suffix">$/hd</span></div>
-          </div>
+          <div class="field"><label for="rh_processHealth">Processing &amp; health</label><div class="input-wrap has-suffix"><input type="number" id="rh_processHealth" value="20" min="0"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="rh_pregTest">Pregnancy test, exposed</label><div class="input-wrap has-suffix"><input type="number" id="rh_pregTest" value="5" min="0"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="rh_prebreedHealth">Pre-breeding health</label><div class="input-wrap has-suffix"><input type="number" id="rh_prebreedHealth" value="12" min="0"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="rh_otherDirect">Other direct costs</label><div class="input-wrap has-suffix"><input type="number" id="rh_otherDirect" value="0" min="0"><span class="suffix">$/hd</span></div></div>
+        </div>
+        <p class="derived-note" id="rh_bullCostNote">Bull breeding cost (from the bull investment section below): <strong id="rh_bullCostInline">$0.00/hd exposed</strong></p>
+      </div>
+    </div>
+
+    <!-- Indirect costs & financing -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <h2>Indirect costs &amp; financing</h2>
+      </div>
+      <div class="card-body">
+        <div class="field-grid cols-3">
+          <div class="field"><label for="rh_indirectPerDay">Indirect cost</label><div class="input-wrap has-suffix"><input type="number" id="rh_indirectPerDay" value="0.50" min="0" step="0.05"><span class="suffix">$/hd-day</span></div></div>
+          <div class="field"><label for="rh_interestRate">Interest rate</label><div class="input-wrap has-suffix"><input type="number" id="rh_interestRate" value="5" min="0" step="0.1"><span class="suffix">%</span></div></div>
+          <div class="field"><label for="rh_freight">Marketing/delivery freight</label><div class="input-wrap has-suffix"><input type="number" id="rh_freight" value="0" min="0"><span class="suffix">$/bred hd</span></div></div>
         </div>
       </div>
     </div>
 
-    <!-- Overhead & management -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10l8-6 8 6v10M9 20v-6h6v6"/></svg>
-        <h2>Overhead &amp; management</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">General and administrative cost, and owner/hired management time, charged per head marketed.</p>
+    <!-- Bull investment (advanced) -->
+    <details class="advanced">
+      <summary>Bull investment (advanced)</summary>
+      <div class="adv-body">
+        <p class="card-note">Bull cost, useful life, death loss, salvage weight/price and heifers-per-bull come from the <strong>"Market prices &amp; factors"</strong> calculator on the home page &mdash; edit them there so BCU, A2 and this budget all stay in sync (this replaces the 2018-workbook bull price that used to live only here, never reconciled against the other tools' own bull numbers).</p>
         <div class="field-grid cols-3">
-          <div class="field">
-            <label for="d1_gaPerHd">General &amp; administrative</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_gaPerHd" value="10" min="0"><span class="suffix">$/hd</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_managementPerHd">Management cost</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_managementPerHd" value="40" min="0"><span class="suffix">$/hd</span></div>
-          </div>
+          <div class="field"><span class="hint" style="margin-top:0;">Heifers per bull</span><strong id="rhBull_perBull">0</strong></div>
+          <div class="field"><label for="rh_bullsRequired">Bulls used</label><div class="input-wrap"><input type="number" id="rh_bullsRequired" value="4" min="1" step="1"></div></div>
+          <div class="field"></div>
+          <div class="field"><label for="rh_bullFeed">Bull feed &amp; grazing</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullFeed" value="700" min="0"><span class="suffix">$/bull/yr</span></div></div>
+          <div class="field"><label for="rh_bullOther">Bull other cost</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullOther" value="0" min="0"><span class="suffix">$/bull/yr</span></div></div>
+          <div class="field"><label for="rh_bullVet">Bull vet &amp; medicine</label><div class="input-wrap has-suffix"><input type="number" id="rh_bullVet" value="75" min="0"><span class="suffix">$/bull/yr</span></div></div>
+          <div class="field"><span class="hint" style="margin-top:0;">Bull purchase cost</span><strong id="rhBull_cost">$0</strong></div>
+          <div class="field"><span class="hint" style="margin-top:0;">Bull useful life</span><strong id="rhBull_life">0 yrs</strong></div>
+          <div class="field"><span class="hint" style="margin-top:0;">Bull death loss</span><strong id="rhBull_deathLoss">0%</strong></div>
+          <div class="field"><span class="hint" style="margin-top:0;">Bull salvage weight</span><strong id="rhBull_salvageWt">0 lb</strong></div>
+          <div class="field"><span class="hint" style="margin-top:0;">Bull salvage price</span><strong id="rhBull_salvagePrice">$0/cwt</strong></div>
+          <div class="field"></div>
         </div>
+        <p class="derived-note" id="rh_bullsNeededNote">&mdash;</p>
       </div>
-    </div>
-
-    <!-- Target margin & financing -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>
-        <h2>Target margin &amp; financing</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">The net margin you want per head, and how the retained-ownership costs are financed (percent borrowed, and the interest rate charged on that borrowed capital).</p>
-        <div class="field-grid cols-3">
-          <div class="field">
-            <label for="d1_targetMarginPerHd">Target net margin</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_targetMarginPerHd" value="30" min="0"><span class="suffix">$/hd</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_pctBorrowed">Percent borrowed</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_pctBorrowed" value="30" min="0" max="100" step="1"><span class="suffix">%</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_interestRate">Interest rate</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_interestRate" value="5" min="0" step="0.1"><span class="suffix">%</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
+    </details>
 
   </div>
 
@@ -691,494 +594,95 @@
         <h2>Result</h2>
       </div>
       <div class="card-body">
-        <div class="verdict-pill" id="d1_verdictPill"><span class="dot"></span><span id="d1_verdictText">—</span></div>
-        <p class="narrative" id="d1_narrativeMain">—</p>
+        <div class="verdict-pill" id="rh_verdictPill"><span class="dot"></span><span id="rh_verdictText">&mdash;</span></div>
+        <p class="narrative" id="rh_narrativeMain">&mdash;</p>
 
         <div class="stat-tiles" style="margin-bottom:12px;">
           <div class="stat-tile">
-            <span class="label">Marketing margin</span>
-            <span class="value" id="d1_marketingMargin" style="font-size:20px;">$0</span>
-            <span class="sub">/head, from selling later vs. now</span>
+            <span class="label">Total unit cost</span>
+            <span class="value" id="rh_tucValue" style="font-size:20px;">$0</span>
+            <span class="sub">/hd, all starting heifers</span>
           </div>
           <div class="stat-tile">
-            <span class="label">Feeding / grazing margin</span>
-            <span class="value" id="d1_feedingMargin" style="font-size:20px;">$0</span>
-            <span class="sub">/head, value of gain minus cost of gain</span>
+            <span class="label">Net cost, delivered</span>
+            <span class="value" id="rh_netCostValue" style="font-size:20px;">$0</span>
+            <span class="sub">/bred heifer, after cull credit</span>
           </div>
-          <div class="stat-tile wide" id="d1_netMarginTile">
+          <div class="stat-tile wide" id="rh_netMarginTile">
             <span class="label">Net margin</span>
-            <span class="value" id="d1_netMargin" style="font-size:22px;">$0</span>
-            <span class="sub">/head, above target — marketing + feeding margin</span>
+            <span class="value" id="rh_netMarginValue" style="font-size:22px;">$0</span>
+            <span class="sub" id="rh_netMarginSub">/bred heifer</span>
           </div>
         </div>
 
+        <div class="stat-tiles" style="margin-bottom:12px;">
+          <div class="stat-tile" id="rh_roiTile">
+            <span class="label">Annualized ROI</span>
+            <span class="value" id="rh_roiValue" style="font-size:20px;">0.0%</span>
+            <span class="sub">return on capital, incl. interest</span>
+          </div>
+          <div class="stat-tile">
+            <span class="label">Net margin, all heifers</span>
+            <span class="value" id="rh_netMarginAllValue" style="font-size:20px;">$0</span>
+            <span class="sub">/hd, spread over all starting heifers</span>
+          </div>
+        </div>
+
+        <div class="stat-tiles">
+          <div class="stat-tile"><span class="label">Exposed</span><span class="value" id="rh_exposedValue" style="font-size:17px;">0</span><span class="sub">head bred to bulls</span></div>
+          <div class="stat-tile"><span class="label">Bred</span><span class="value" id="rh_bredValue" style="font-size:17px;">0</span><span class="sub">head, delivered</span></div>
+          <div class="stat-tile"><span class="label">Open, culled</span><span class="value" id="rh_openValue" style="font-size:17px;">0</span><span class="sub">head sold as feeders</span></div>
+        </div>
+
+        <button type="button" class="btn secondary" id="rh_resetBtn" style="margin-top:16px;">Reset B1a defaults</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 8h13M7 8l-4 4 4 4M17 16H4M17 16l4-4-4-4"/></svg>
+        <h2>Raise your own, or buy at market?</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Compares your net cost to develop a bred heifer against simply buying one at today's bred-heifer market price &mdash; the same two numbers behind the net margin above, read as a make-or-buy decision.</p>
         <div class="stat-tiles" style="margin-bottom:12px;">
           <div class="stat-tile">
-            <span class="label">Annualized ROA</span>
-            <span class="value" id="d1_roaValue" style="font-size:20px;">0.0%</span>
-            <span class="sub">return on assets, incl. target margin</span>
+            <span class="label">Cost to raise</span>
+            <span class="value" id="rh_raiseCostValue" style="font-size:20px;">$0</span>
+            <span class="sub">/hd, net delivered cost</span>
           </div>
           <div class="stat-tile">
-            <span class="label">Annualized ROE</span>
-            <span class="value" id="d1_roeValue" style="font-size:20px;">0.0%</span>
-            <span class="sub">return on equity, incl. target margin</span>
+            <span class="label">Buy at market</span>
+            <span class="value" id="rh_buyCostValue" style="font-size:20px;">$0</span>
+            <span class="sub">/hd, today's bred-heifer price</span>
           </div>
         </div>
-
-        <div class="stat-tile" style="margin-bottom:4px;">
-          <span class="label">Price necessary to hit target margin</span>
-          <span class="value" id="d1_reqPrice" style="font-size:24px;">$0.00</span>
-          <span class="sub" id="d1_reqPriceSub">$/cwt, out weight</span>
+        <div class="stat-tile wide" id="rh_raiseVsBuyTile">
+          <span class="label" id="rh_raiseVsBuyLabel">Raising saves you</span>
+          <span class="value" id="rh_raiseVsBuyValue" style="font-size:22px;">$0</span>
+          <span class="sub">/hd vs. buying at market</span>
         </div>
-
-        <button type="button" class="btn secondary" id="d1_resetBtn" style="margin-top:16px;">Reset D1 defaults</button>
       </div>
     </div>
 
     <div class="card">
       <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
-        <h2>Price sensitivity — necessary sale price</h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16M7 19V9m5 10V5m5 14v-7"/></svg>
+        <h2>Where the cost per head goes</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">If your buy-in price or your realized cost of gain turns out different than planned, here's the sale price ($/cwt) you'd need to still hit your target margin. Rows step the cull cow's effective buy-in price; columns step the cost of gain — both centered on today's numbers.</p>
-        <div class="field-grid cols-3" style="margin-bottom:16px;">
-          <div class="field">
-            <label for="d1_priceStep">In-price step</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_priceStep" value="5" min="0.5" step="0.5"><span class="suffix">$/cwt</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_gainStep">Cost-of-gain step</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_gainStep" value="4" min="0.5" step="0.5"><span class="suffix">$/cwt</span></div>
-          </div>
-        </div>
-        <div class="table-scroll">
-          <table class="grid" id="d1_sensGrid">
-            <thead>
-              <tr id="d1_sensGridHead"><th>In-price \ Cost of gain</th></tr>
-            </thead>
-            <tbody id="d1_sensGridBody"></tbody>
-          </table>
-        </div>
-        <p class="viz-caption">Center column and row (bold) are today's actual cost of gain and buy-in price. All values are the sale price ($/cwt of the upgraded animal) needed to hit your target margin under that combination.</p>
+        <div class="stackbar-total"><span>Total unit cost</span><strong id="rh_costBarTotal">$0 / hd</strong></div>
+        <div class="stackbar" id="rh_costStackbar"></div>
+        <div class="legend-rows" id="rh_costLegend"></div>
       </div>
     </div>
 
-  </div>
-</div>
-</div>
-</div>
+    <footer style="padding:0;margin:0;">
+      <p>Starting values reproduce the original B1a spreadsheet's own formulas and structure (natural service, weaned calf through bred-heifer delivery). Purchase, cull-sale, and bred-heifer sale prices were updated from the workbook's 2018 defaults to sourced September 2026 USDA AMS market data &mdash; see the project notes for exact sources. Bull purchase cost, life, death loss and salvage weight/price now come from the shared <a href="../index.html#market-prices-calculator">Market prices &amp; factors</a> calculator, replacing the 2018 figures this page used to carry on its own. Always verify results before using them to make a decision.</p>
+    </footer>
 
-<div id="panel-stockers" class="tool-panel" hidden>
-<section class="intro">
-  <div class="intro-inner">
-    <div>
-      <h1>Should you sell your stockers now, or keep adding weight?</h1>
-      <p>Three retained-ownership paths, side by side: graze calves to about 700&nbsp;lb and sell by March 1, graze on to about 800&nbsp;lb and sell in May, or continue either one into a feedyard finishing phase. A fourth view checks whether the extra weeks of grazing from 700 to 800&nbsp;lb pay for themselves. Shared assumptions (herd size, calf price, grazing calendar) feed all four — change them once and every path updates.</p>
-    </div>
-    <div class="intro-meta">
-      <div><strong>4 paths</strong>700lb · 800lb · Feedyard · Marginal</div>
-      <div><strong>7 sensitivity grids</strong>faithful to the spreadsheet</div>
-      <div><strong>Editable</strong>every assumption</div>
-    </div>
-  </div>
-  <div class="fence-line"></div>
-</section>
-
-<div class="assumptions-wrap">
-  <div class="card">
-    <div class="card-head">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/></svg>
-      <h2>Shared assumptions</h2>
-    </div>
-    <div class="card-body">
-      <p class="card-note">These feed all four paths below, exactly like the "Assumptions" sheet in the original workbook — change a value once here and every path, result and grid recalculates.</p>
-      <div class="field-grid cols-3">
-        <div class="field">
-          <label for="sk_heads">Number of head</label>
-          <div class="input-wrap"><input type="number" id="sk_heads" value="100" min="1"></div>
-        </div>
-        <div class="field">
-          <label for="sk_calfPrice">Calf purchase price</label>
-          <span class="hint">Pre-filled from Market prices &amp; factors</span>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_calfPrice" value="530" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator's steer price. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
-        </div>
-        <div class="field">
-          <label for="sk_calfWeight">Calf purchase weight</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_calfWeight" value="475" min="0"><span class="suffix">lb</span></div>
-        </div>
-        <div class="field">
-          <label for="sk_price700">Sale price — 700&nbsp;lb path</label>
-          <span class="hint">Pre-filled from Market prices &amp; factors</span>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_price700" value="380" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
-        </div>
-        <div class="field">
-          <label for="sk_price800">Sale price — 800&nbsp;lb path</label>
-          <span class="hint">Pre-filled from Market prices &amp; factors</span>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_price800" value="360" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
-        </div>
-        <div class="field">
-          <label for="sk_grazingCost">Grazing cost</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_grazingCost" value="0.65" min="0" step="0.01"><span class="suffix">$/lb gained</span></div>
-        </div>
-        <div class="field">
-          <label for="sk_earlyStart">Early grazing phase begins</label>
-          <div class="input-wrap"><input type="date" id="sk_earlyStart" value="2019-10-01"></div>
-        </div>
-        <div class="field">
-          <label for="sk_pullOff700">Pull off — 700&nbsp;lb path</label>
-          <div class="input-wrap"><input type="date" id="sk_pullOff700" value="2020-03-15"></div>
-        </div>
-        <div class="field">
-          <label for="sk_pullOff800">Pull off — 800&nbsp;lb path</label>
-          <div class="input-wrap"><input type="date" id="sk_pullOff800" value="2020-05-01"></div>
-        </div>
-        <div class="field">
-          <label for="sk_earlyADG">Early-phase ADG</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_earlyADG" value="1.3" min="0" step="0.05"><span class="suffix">lb/day</span></div>
-        </div>
-        <div class="field">
-          <label for="sk_lateADG">Late-phase ADG</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_lateADG" value="2.3" min="0" step="0.05"><span class="suffix">lb/day</span></div>
-        </div>
-        <div class="field">
-          <label for="sk_interestRate">Interest rate</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_interestRate" value="7" min="0" step="0.1"><span class="suffix">%</span></div>
-        </div>
-        <div class="field">
-          <label for="sk_shrink700">Shrink — 700&nbsp;lb path</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_shrink700" value="0" min="0" step="0.1"><span class="suffix">%</span></div>
-        </div>
-        <div class="field">
-          <label for="sk_shrink800">Shrink — 800&nbsp;lb path</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_shrink800" value="0" min="0" step="0.1"><span class="suffix">%</span></div>
-        </div>
-        <div class="field">
-          <label for="sk_deathLoss700">Death loss — 700&nbsp;lb path</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_deathLoss700" value="1" min="0" step="0.1"><span class="suffix">%</span></div>
-        </div>
-        <div class="field">
-          <label for="sk_deathLoss800">Death loss — 800&nbsp;lb path</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_deathLoss800" value="1" min="0" step="0.1"><span class="suffix">%</span></div>
-        </div>
-      </div>
-      <p class="derived-note" id="sk_calendarNote">—</p>
-      <button type="button" class="btn secondary" id="sk_resetBtn" style="margin-top:14px;">Reset Stockers defaults</button>
-    </div>
   </div>
 </div>
-
-<nav class="path-nav" aria-label="Retained-ownership path">
-  <div class="segmented" role="tablist">
-    <button type="button" class="subtab-btn active" data-subtab="p700" role="tab">700 lb (March)</button>
-    <button type="button" class="subtab-btn" data-subtab="p800" role="tab">800 lb (May)</button>
-    <button type="button" class="subtab-btn" data-subtab="fy8" role="tab">Feedyard, from 800 lb</button>
-    <button type="button" class="subtab-btn" data-subtab="fy7" role="tab">Feedyard, from 700 lb</button>
-    <button type="button" class="subtab-btn" data-subtab="rm" role="tab">Retain to May (marginal)</button>
-  </div>
-</nav>
-
-<!-- ============ 700 lb path ============ -->
-<div class="subtool-panel" id="subpanel-p700" data-subtab="p700">
-<div class="layout">
-  <div class="col-inputs">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
-        <h2>700 lb path — budget line items</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Graze the calf from the shared purchase weight through the early phase only, then sell around March&nbsp;1 at roughly 700&nbsp;lb. These per-head cost line items are specific to this path.</p>
-        <div class="field-grid cols-3">
-          <div class="field"><label for="sk700_vetRate">Vet / medicine</label><div class="input-wrap has-suffix"><input type="number" id="sk700_vetRate" value="24" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
-          <div class="field"><label for="sk700_hayLb">Hay fed</label><div class="input-wrap has-suffix"><input type="number" id="sk700_hayLb" value="125" min="0"><span class="suffix">lb/hd</span></div></div>
-          <div class="field"><label for="sk700_hayRate">Hay cost</label><div class="input-wrap has-suffix"><input type="number" id="sk700_hayRate" value="0.10" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
-          <div class="field"><label for="sk700_saltLb">Salt &amp; mineral fed</label><div class="input-wrap has-suffix"><input type="number" id="sk700_saltLb" value="15" min="0"><span class="suffix">lb/hd</span></div></div>
-          <div class="field"><label for="sk700_saltRate">Salt &amp; mineral cost</label><div class="input-wrap has-suffix"><input type="number" id="sk700_saltRate" value="0.45" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
-          <div class="field"><label for="sk700_laborRate">Labor</label><div class="input-wrap has-suffix"><input type="number" id="sk700_laborRate" value="8.42" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
-          <div class="field"><label for="sk700_fuelRate">Fuel</label><div class="input-wrap has-suffix"><input type="number" id="sk700_fuelRate" value="8.36" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
-          <div class="field"><label for="sk700_lubePct">Lube (% of fuel)</label><div class="input-wrap has-suffix"><input type="number" id="sk700_lubePct" value="10" min="0" step="1"><span class="suffix">%</span></div></div>
-          <div class="field"><label for="sk700_marketingRate">Marketing</label><div class="input-wrap has-suffix"><input type="number" id="sk700_marketingRate" value="12" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
-          <div class="field"><label for="sk700_mgmtFee">Management fee</label><div class="input-wrap has-suffix"><input type="number" id="sk700_mgmtFee" value="23.33" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-results">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
-        <h2>Result — 700 lb path</h2>
-      </div>
-      <div class="card-body">
-        <div class="verdict-pill" id="p700_verdictPill"><span class="dot"></span><span id="p700_verdictText">—</span></div>
-        <p class="narrative" id="p700_narrative">—</p>
-        <div class="stat-tiles" style="margin-bottom:12px;">
-          <div class="stat-tile"><span class="label">Revenue</span><span class="value" id="p700_revenue" style="font-size:20px;">$0</span><span class="sub">/head at sale</span></div>
-          <div class="stat-tile"><span class="label">Total costs</span><span class="value" id="p700_totalCosts" style="font-size:20px;">$0</span><span class="sub">/head, variable + fixed</span></div>
-          <div class="stat-tile wide" id="p700_returnTile"><span class="label">Planned return</span><span class="value" id="p700_return" style="font-size:22px;">$0</span><span class="sub">/head above all costs</span></div>
-        </div>
-        <div class="stat-tiles">
-          <div class="stat-tile"><span class="label">Breakeven price</span><span class="value" id="p700_breakeven" style="font-size:18px;">$0</span><span class="sub">$/cwt to cover all costs</span></div>
-          <div class="stat-tile"><span class="label">Cost of gain</span><span class="value" id="p700_cog" style="font-size:18px;">$0</span><span class="sub">$/cwt of gain</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
-        <h2>Returns sensitivity — 700 lb</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Rows step the calf purchase price ±10%/±5%; columns step the 700&nbsp;lb sale price ±20%/±10% — the spreadsheet's own fixed steps. Values are $/head above variable + other costs (before management fee).</p>
-        <div class="table-scroll">
-          <table class="grid" id="p700_grid"><thead><tr id="p700_gridHead"><th>Purchase \ Sale price</th></tr></thead><tbody id="p700_gridBody"></tbody></table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ============ 800 lb path ============ -->
-<div class="subtool-panel" id="subpanel-p800" data-subtab="p800" hidden>
-<div class="layout">
-  <div class="col-inputs">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
-        <h2>800 lb path — budget line items</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Graze the calf through both the early and late grazing phases, then sell around May&nbsp;1 at roughly 800&nbsp;lb.</p>
-        <div class="field-grid cols-3">
-          <div class="field"><label for="sk800_vetRate">Vet / medicine</label><div class="input-wrap has-suffix"><input type="number" id="sk800_vetRate" value="16.2" min="0" step="0.1"><span class="suffix">$/hd</span></div></div>
-          <div class="field"><label for="sk800_hayLb">Hay fed</label><div class="input-wrap has-suffix"><input type="number" id="sk800_hayLb" value="125" min="0"><span class="suffix">lb/hd</span></div></div>
-          <div class="field"><label for="sk800_hayRate">Hay cost</label><div class="input-wrap has-suffix"><input type="number" id="sk800_hayRate" value="0.10" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
-          <div class="field"><label for="sk800_saltLb">Salt &amp; mineral fed</label><div class="input-wrap has-suffix"><input type="number" id="sk800_saltLb" value="14" min="0"><span class="suffix">lb/hd</span></div></div>
-          <div class="field"><label for="sk800_saltRate">Salt &amp; mineral cost</label><div class="input-wrap has-suffix"><input type="number" id="sk800_saltRate" value="0.45" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
-          <div class="field"><label for="sk800_laborRate">Labor</label><div class="input-wrap has-suffix"><input type="number" id="sk800_laborRate" value="12.56" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
-          <div class="field"><label for="sk800_fuelRate">Fuel</label><div class="input-wrap has-suffix"><input type="number" id="sk800_fuelRate" value="7.50" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
-          <div class="field"><label for="sk800_lubePct">Lube (% of fuel)</label><div class="input-wrap has-suffix"><input type="number" id="sk800_lubePct" value="10" min="0" step="1"><span class="suffix">%</span></div></div>
-          <div class="field"><label for="sk800_marketingRate">Marketing</label><div class="input-wrap has-suffix"><input type="number" id="sk800_marketingRate" value="23" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
-          <div class="field"><label for="sk800_mgmtFee">Management fee</label><div class="input-wrap has-suffix"><input type="number" id="sk800_mgmtFee" value="35" min="0" step="1"><span class="suffix">$/hd</span></div></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-results">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
-        <h2>Result — 800 lb path</h2>
-      </div>
-      <div class="card-body">
-        <div class="verdict-pill" id="p800_verdictPill"><span class="dot"></span><span id="p800_verdictText">—</span></div>
-        <p class="narrative" id="p800_narrative">—</p>
-        <div class="stat-tiles" style="margin-bottom:12px;">
-          <div class="stat-tile"><span class="label">Revenue</span><span class="value" id="p800_revenue" style="font-size:20px;">$0</span><span class="sub">/head at sale</span></div>
-          <div class="stat-tile"><span class="label">Total costs</span><span class="value" id="p800_totalCosts" style="font-size:20px;">$0</span><span class="sub">/head, variable + fixed</span></div>
-          <div class="stat-tile wide" id="p800_returnTile"><span class="label">Planned return</span><span class="value" id="p800_return" style="font-size:22px;">$0</span><span class="sub">/head above all costs</span></div>
-        </div>
-        <div class="stat-tiles">
-          <div class="stat-tile"><span class="label">Breakeven price</span><span class="value" id="p800_breakeven" style="font-size:18px;">$0</span><span class="sub">$/cwt to cover all costs</span></div>
-          <div class="stat-tile"><span class="label">Cost of gain</span><span class="value" id="p800_cog" style="font-size:18px;">$0</span><span class="sub">$/cwt of gain</span></div>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
-        <h2>Returns sensitivity — 800 lb</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Rows step the calf purchase price ±10%/±5%; columns step the 800&nbsp;lb sale price ±20%/±10% — the spreadsheet's own fixed steps. Values are $/head above variable + other costs (before management fee).</p>
-        <div class="table-scroll">
-          <table class="grid" id="p800_grid"><thead><tr id="p800_gridHead"><th>Purchase \ Sale price</th></tr></thead><tbody id="p800_gridBody"></tbody></table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ============ Feedyard from 800 lb ============ -->
-<div class="subtool-panel" id="subpanel-fy8" data-subtab="fy8" hidden>
-<div class="layout">
-  <div class="col-inputs">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
-        <h2>Feedyard, starting from the 800 lb stocker</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Instead of selling the ~800&nbsp;lb stocker in May, ship it to a feedyard to finish. Weight in comes from the 800&nbsp;lb path above; weight out is derived from days on feed × ADG.</p>
-        <div class="field-grid cols-3">
-          <div class="field"><label for="skfy8_cog">Cost of gain</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_cog" value="72" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-          <div class="field"><label for="skfy8_days">Days on feedyard</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_days" value="180" min="1"><span class="suffix">days</span></div></div>
-          <div class="field"><label for="skfy8_adg">ADG</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_adg" value="3.5" min="0" step="0.1"><span class="suffix">lb/day</span></div></div>
-          <div class="field"><label for="skfy8_salePrice">Sale price, fed cattle</label><span class="hint">Pre-filled from Market prices &amp; factors</span><div class="input-wrap has-suffix"><input type="number" id="skfy8_salePrice" value="222.82" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div></div>
-          <div class="field"><label for="skfy8_deathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_deathLoss" value="1" min="0" step="0.1"><span class="suffix">%</span></div></div>
-        </div>
-        <p class="derived-note" id="fy8_weightNote">—</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-results">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
-        <h2>Result — Feedyard from 800 lb</h2>
-      </div>
-      <div class="card-body">
-        <div class="verdict-pill" id="fy8_verdictPill"><span class="dot"></span><span id="fy8_verdictText">—</span></div>
-        <p class="narrative" id="fy8_narrative">—</p>
-        <div class="stat-tile wide" id="fy8_returnTile"><span class="label">Net return</span><span class="value" id="fy8_return" style="font-size:22px;">$0</span><span class="sub">/head, revenue minus entry value, entry-value interest and gain cost</span></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
-        <h2>Sensitivity — cost of gain</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Rows step cost of gain ±10%/±5%; columns step sale price ±10%/±5%. $/head, at the weight-out derived from days on feed × ADG.</p>
-        <div class="table-scroll">
-          <table class="grid" id="fy8_cogGrid"><thead><tr id="fy8_cogGridHead"><th>Cost of gain \ Sale price</th></tr></thead><tbody id="fy8_cogGridBody"></tbody></table>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
-        <h2>Sensitivity — sale weight w/ shrink</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Rows step sale weight from 80% to 100% of the full weight out (the spreadsheet's own steps — it never checks weights above); columns step sale price ±10%/±5%. Cost of gain held at its base value.</p>
-        <div class="table-scroll">
-          <table class="grid" id="fy8_wtGrid"><thead><tr id="fy8_wtGridHead"><th>Sale weight \ Sale price</th></tr></thead><tbody id="fy8_wtGridBody"></tbody></table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ============ Feedyard from 700 lb ============ -->
-<div class="subtool-panel" id="subpanel-fy7" data-subtab="fy7" hidden>
-<div class="layout">
-  <div class="col-inputs">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
-        <h2>Feedyard, starting from the 700 lb stocker</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Instead of selling the ~700&nbsp;lb stocker in March, ship it straight to a feedyard to finish — skipping the 800&nbsp;lb grazing phase. Weight in comes from the 700&nbsp;lb path above; more days on feed than the 800&nbsp;lb-start version since the animal enters lighter.</p>
-        <div class="field-grid cols-3">
-          <div class="field"><label for="skfy7_cog">Cost of gain</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_cog" value="72" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-          <div class="field"><label for="skfy7_days">Days on feedyard</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_days" value="210" min="1"><span class="suffix">days</span></div></div>
-          <div class="field"><label for="skfy7_adg">ADG</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_adg" value="3.5" min="0" step="0.1"><span class="suffix">lb/day</span></div></div>
-          <div class="field"><label for="skfy7_salePrice">Sale price, fed cattle</label><span class="hint">Pre-filled from Market prices &amp; factors</span><div class="input-wrap has-suffix"><input type="number" id="skfy7_salePrice" value="222.82" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div></div>
-          <div class="field"><label for="skfy7_deathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_deathLoss" value="1" min="0" step="0.1"><span class="suffix">%</span></div></div>
-        </div>
-        <p class="derived-note" id="fy7_weightNote">—</p>
-      </div>
-    </div>
-  </div>
-  <div class="col-results">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
-        <h2>Result — Feedyard from 700 lb</h2>
-      </div>
-      <div class="card-body">
-        <div class="verdict-pill" id="fy7_verdictPill"><span class="dot"></span><span id="fy7_verdictText">—</span></div>
-        <p class="narrative" id="fy7_narrative">—</p>
-        <div class="stat-tile wide" id="fy7_returnTile"><span class="label">Net return</span><span class="value" id="fy7_return" style="font-size:22px;">$0</span><span class="sub">/head, revenue minus entry value, entry-value interest and gain cost</span></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
-        <h2>Sensitivity — cost of gain</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Rows step cost of gain ±10%/±5%; columns step sale price ±10%/±5%. $/head, at the weight-out derived from days on feed × ADG.</p>
-        <div class="table-scroll">
-          <table class="grid" id="fy7_cogGrid"><thead><tr id="fy7_cogGridHead"><th>Cost of gain \ Sale price</th></tr></thead><tbody id="fy7_cogGridBody"></tbody></table>
-        </div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
-        <h2>Sensitivity — sale weight w/ shrink</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Rows step sale weight from 80% to 100% of the full weight out; columns step sale price ±10%/±5%. Cost of gain held at its base value.</p>
-        <div class="table-scroll">
-          <table class="grid" id="fy7_wtGrid"><thead><tr id="fy7_wtGridHead"><th>Sale weight \ Sale price</th></tr></thead><tbody id="fy7_wtGridBody"></tbody></table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-<!-- ============ Retain to May (marginal) ============ -->
-<div class="subtool-panel" id="subpanel-rm" data-subtab="rm" hidden>
-<div class="layout">
-  <div class="col-inputs">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg>
-        <h2>Retaining to May — the marginal decision</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">This isn't a 4th path — it's the marginal question of whether the extra weeks of wheat grazing from ~700&nbsp;lb to ~800&nbsp;lb are worth it, holding the calf itself fixed. It nets the 800&nbsp;lb path's revenue and costs against the 700&nbsp;lb path's, minus a two-month carrying cost on the wheat-grazing rate below.</p>
-        <div class="field-grid cols-3">
-          <div class="field">
-            <label for="skrm_costRate">Wheat grazing cost rate (center)</label>
-            <div class="input-wrap has-suffix"><input type="number" id="skrm_costRate" value="120" min="0" step="1"><span class="suffix">$/cwt</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-results">
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18M7 15l4-5 3 3 5-7"/></svg>
-        <h2>Result — retain to May</h2>
-      </div>
-      <div class="card-body">
-        <div class="verdict-pill" id="rm_verdictPill"><span class="dot"></span><span id="rm_verdictText">—</span></div>
-        <p class="narrative" id="rm_narrative">—</p>
-        <div class="stat-tile wide" id="rm_returnTile"><span class="label">Marginal value of retaining</span><span class="value" id="rm_return" style="font-size:22px;">$0</span><span class="sub">/head, at today's center assumptions</span></div>
-      </div>
-    </div>
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>
-        <h2>Sensitivity — retaining to May</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Rows step the wheat grazing cost rate ±10%/±5%; columns step the 800&nbsp;lb sale price ±10%/±5%. $/head, marginal value of retaining vs. selling at 700&nbsp;lb.</p>
-        <div class="table-scroll">
-          <table class="grid" id="rm_grid"><thead><tr id="rm_gridHead"><th>Cost rate \ Sale price (800lb)</th></tr></thead><tbody id="rm_gridBody"></tbody></table>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-</div>
-
-</div>
-
-<footer id="toolFooter">
-  Based on the <strong>D1 — Sell or Keep to Upgrade Cull Cows Profit Projection</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; the starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a cull-cow marketing decision.
-</footer>
 
 <div class="viz-tooltip" id="vizTooltip"></div>
 
@@ -1190,23 +694,36 @@
 
   function $(id){ return document.getElementById(id); }
   function num(id){ var v=parseFloat($(id).value); return isFinite(v)?v:0; }
+  function dateOf(id){ var v=$(id).value; return v ? new Date(v+'T00:00:00') : null; }
   function round(v,d){ var m=Math.pow(10,d||0); return Math.round(v*m)/m; }
   function fmtDollar(v, decimals){
     var f = decimals===2 ? fmtMoney2 : fmtMoney0;
     v = isFinite(v) ? v : 0;
     return (v<0?'-':'')+'$'+f.format(Math.abs(v));
   }
+  function daysBetween(a,b){ return Math.round((a-b)/86400000); }
+  function addDays(d,n){ return new Date(d.getTime()+n*86400000); }
+  function fmtDate(d){
+    if(!d) return '—';
+    return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  }
 
   /* ---------------- Shared "Market prices & factors" store (site/index.html) ----------------
-     2026-09-21: cull-cow, fed-cattle and stocker sale prices below used to be their
-     own hardcoded per-page defaults. They now read from the shared calculator on
-     the home page (site/index.html#market-prices-calculator), persisted under
-     MP_STORAGE_KEY, so a producer enters a price once and every tool that needs it
-     reads the same number. Fallbacks below reproduce this page's own prior defaults
-     exactly. Applied once at load (see D1_DEFAULTS/STOCKERS_DEFAULTS below) -- these
-     stay plain, freely-editable fields afterward, same as before this change. */
+     2026-09-21: purchase/cull/open heifer prices, bred-heifer sale price, and every
+     bull-investment number below used to be this page's own hardcoded copies -- and
+     the bull numbers were a THIRD, never-reconciled figure ($4,000/1,800 lb here vs.
+     $4,500/1,650.7 lb on the home page's BCU calculator vs. yet another $4,000 on
+     A2 in cow-calf/index.html), exactly the kind of drift the user asked this shared
+     store to prevent. Everything below now reads from the calculator on the home
+     page (site/index.html#market-prices-calculator), persisted under MP_STORAGE_KEY.
+     The heifer weight/price curve is the same Sept-4-2026 auction data used by
+     cow-calf/index.html's HEIFER_PRICE_SLIDE (duplicated here so this page has no
+     load-order dependency on that file), rescaled the same way -- see rescaleSlideAt(). */
   var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
-  var MP_FALLBACK = { mp_cullCowPrice:180.0, mp_fedCattlePrice:222.82, mp_stocker700Price:380.0, mp_stocker800Price:360.0, mp_steerPrice:530.0 };
+  var MP_FALLBACK = {
+    mp_heiferPrice:460.0, mp_cullBullPrice:190.0, mp_bredHeiferPrice:3884.78,
+    mp_bullCost:4500, mp_bullLife:4, mp_bullSalvageWeight:1650.7, mp_bullDeathLoss:2, mp_perBull:25
+  };
   function getMarketPrices(){
     try {
       var raw = window.localStorage.getItem(MP_STORAGE_KEY);
@@ -1224,335 +741,510 @@
     return fb;
   }
 
+  /* ---------------- Shared "Cow-calf operating costs & financing" store (site/index.html#opcost-calculator) ----------------
+     2026-09-23: rh_interestRate (the rate used to finance this heifer purchase/
+     development investment) now defaults from the shared calculator's "livestock
+     financing" rate (oc_livestockInterestRate) instead of its own hardcoded flat 5% --
+     same one-shot-prefill treatment as rh_bredPrice above. This field is the right
+     match both conceptually (financing a livestock purchase, same as C1's bull/cow
+     investment) and numerically: RH's own original default was already 5%, identical
+     to oc_livestockInterestRate's original default, so nothing changes for a visitor
+     who never opens the home page. (The shared calculator's generic "operating
+     capital"/"equipment debt" rates were deliberately NOT used here -- those default
+     to 0% in C1's own original spreadsheet, which would have silently changed RH's
+     effective default financing cost. The direct/indirect cost line items on this
+     page, e.g. rh_processHealth, rh_indirectPerDay, stay local: they're $/hd or
+     $/hd-day figures specific to heifer development, not the shared calculator's
+     whole-herd $/BCU categories.) */
+  var OC_STORAGE_KEY = 'tamuDecisionAidsOperatingCosts';
+  var OC_FALLBACK = { oc_livestockInterestRate: 5 };
+  function getOperatingCosts(){
+    try {
+      var raw = window.localStorage.getItem(OC_STORAGE_KEY);
+      if(raw){
+        var data = JSON.parse(raw);
+        if(data){
+          var out = {};
+          Object.keys(OC_FALLBACK).forEach(function(k){ out[k] = isFinite(data[k]) ? data[k] : OC_FALLBACK[k]; });
+          return out;
+        }
+      }
+    } catch(e){ /* private mode / blocked storage -- fall back below */ }
+    var fb = {};
+    Object.keys(OC_FALLBACK).forEach(function(k){ fb[k] = OC_FALLBACK[k]; });
+    return fb;
+  }
+  function priceSlideLookup(table, w){
+    if(!table.length || !isFinite(w)) return 0;
+    if(w<=table[0].w) return table[0].p;
+    if(w>=table[table.length-1].w) return table[table.length-1].p;
+    for(var i=0;i<table.length-1;i++){
+      var a=table[i], b=table[i+1];
+      if(w>=a.w && w<=b.w){
+        var t=(w-a.w)/(b.w-a.w);
+        return a.p + (b.p-a.p)*t;
+      }
+    }
+    return table[table.length-1].p;
+  }
+  // Frozen Sept-4-2026-auction shape (matches cow-calf/index.html's HEIFER_PRICE_SLIDE exactly).
+  var HEIFER_PRICE_SLIDE_BASE = [
+    {w:337.0, p:554.1},
+    {w:455.1, p:492.9},
+    {w:531.3, p:460.0},
+    {w:654.1, p:425.9},
+    {w:765.6, p:395.8},
+    {w:862.6, p:374.5},
+    {w:922.0, p:321.6}
+  ];
+  var HEIFER_ANCHOR = {w:531.3, p:460.0}; // the table's own point at this weight, used as the rescale ratio's denominator
+  function rescaleSlideAt(baseTable, anchor, newPrice){
+    if(!newPrice || !anchor.p) return baseTable.map(function(pt){ return {w:pt.w, p:pt.p}; });
+    var ratio = newPrice/anchor.p;
+    return baseTable.map(function(pt){ return {w:pt.w, p:round(pt.p*ratio,2)}; });
+  }
+  var HEIFER_PRICE_SLIDE = HEIFER_PRICE_SLIDE_BASE.slice();
+  function refreshHeiferPriceSlide(){
+    var mp = getMarketPrices();
+    HEIFER_PRICE_SLIDE = rescaleSlideAt(HEIFER_PRICE_SLIDE_BASE, HEIFER_ANCHOR, mp.mp_heiferPrice);
+    return mp;
+  }
+
   /* ================================================================
-     D1 — Sell or Keep to Upgrade Cull Cows Profit Projection
-     Faithful port of the "Sell or Upgrade Cull Cows" + "SensitivityAnalysis"
-     sheets from D1.xlsx. Two ranges are used inconsistently for "direct
-     costs" in the original workbook (SUM(E45:E52) in most places, but
-     SUM(E45:E48) — excluding Other Cost, G&A and Management — inside the
-     sensitivity grid's per-column financing delta, and E54's Total
-     Production Cost sums E45:E53 which double-counts the E53 G&A subtotal
-     on top of its own E51/E52 components). Both quirks are reproduced here
-     exactly as found in the workbook rather than "corrected," per this
-     project's fidelity rule — flagged to the user rather than silently
-     changed.
+     B1a — Replacement Heifer: Weaning Through Breeding and Culling,
+     Natural Service. Faithful port of "1.Weaned Calf to Bred Heif Cost"
+     + "3. Bull Cost" from B1a.xlsx (version 2018-07-10). Formula-for-
+     formula, including two original-workbook quirks kept exactly as
+     found rather than "corrected" (fidelity rule — flagged here, not
+     silently changed):
+
+     1) On the bull cost sheet, "per exposed heifer" bull costs (H32,
+        H33 → J26/J27 → G21) are divided by the bull sheet's own $C$4
+        (= this sheet's starting head count, e.g. 100), NOT by the
+        actual number of heifers exposed to breeding (E15, e.g. 98,
+        after pre-breeding culling). The bull *investment* total (O28),
+        by contrast, is explicitly rescaled to the exposed count (O25 =
+        this sheet's E15) before being used here. So the per-bull-sheet
+        "cost per head" and "investment per head" figures use two
+        different head-count denominators inside the same workbook.
+     2) N48/N49/R49 (a "Production Costs" / "Total capital" side
+        calculation in the corner of the sheet) double-counts the F46
+        subtotal — it sums F38:F49, and F46 (itself already
+        SUM(F38:F45)) sits inside that range. This does not feed the
+        reported Annualized ROI (which instead uses N51, built cleanly
+        from F46+F50 without double-counting) — those cells are simply
+        unused leftovers in the original workbook, so they're not
+        reproduced here since nothing downstream reads them.
+
+     Prices updated from the workbook's 2018 defaults to sourced
+     September 2026 USDA AMS / "2026 D03 Budgets" data — see the "Sourced
+     defaults" note further down and the project doc for exact citations.
+     Bull purchase cost, life, death loss, and salvage weight/price now
+     come from the shared "Market prices & factors" store on the home
+     page (site/index.html) instead of this page's own 2018 figures —
+     see getMarketPrices()/readInputs() below.
      ================================================================ */
-  function calcD1(inp){
-    // --- Cull cow sale today ---
-    var E9 = inp.headCulled;
-    var E10 = inp.weightAtCulling;
-    var E11 = inp.shrinkSold;
-    var E12 = (1-E11*0.01)*E10;
-    var E13 = inp.priceSold;
-    var D14 = inp.commissionSold;
-    var E14 = (E12*E13*0.01)*D14*0.01;
-    var E15 = inp.freightSold;
-    var E16 = inp.perHeadSold;
-    var D19 = (E12*E13*0.01)-E14-E15-E16;
-    var C19 = E12===0 ? 0 : (D19/E12)*100;
-    var E19 = C19*E12*E9*0.01;
-    var E21 = D19*E9;
-    var F21 = (E9*E10)===0 ? 0 : E21/(E9*E10*0.01);
 
-    // --- Retained ownership alternative ---
-    var B25 = inp.outWeight;
-    var E26 = inp.adg;
-    var D25 = inp.manualDays;
-    var C25 = (B25===0 || E26===0) ? 0 : ((B25-E10)/E26);
-    var E25 = (D25===0) ? C25 : D25;
-    var E27 = E25*E26+E10;
-    var E28 = inp.shrinkOut;
-    var E29 = (1-E28*0.01)*E27;
-    var D31 = inp.priceOut;
-    var D32 = inp.commissionOut;
-    var E32 = (E29*D31*0.01)*D32*0.01;
-    var E33 = inp.freightOut;
-    var E34 = inp.perHeadOut;
-    var E35 = E32+E33+E34;
-    var D37 = inp.deathLoss;
-    var E37 = (1-D37*0.01)*E9;
-    var E38 = (E29*D31*0.01)-E34-E33-E32;
-    var E39 = E29===0 ? 0 : (E38/E29)*100;
-    var E40 = E38*E37;
-    var F37 = (E29*E37)-(E10*E9);
-    var G40 = E9===0 ? 0 : F37/E9;
-    var E42 = E40-E21;
-
-    // --- Direct costs ---
-    var D45=inp.costPerLbGain, C45=G40, E45=C45*D45*E9;
-    var D46=inp.feedGrazingRate, C46=E25, E46=C46*D46*E9;
-    var D47=inp.processingHealth, C47=1, E47=C47*D47*E9;
-    var C48=inp.feedFacilitiesDays, D48=inp.feedFacilitiesRate, E48=C48*D48*E9;
-    var D49=inp.otherCost, C49=1, E49=C49*D49*E9;
-
-    // --- G&A / management ---
-    var D51=inp.gaPerHd, C51=E9, E51=C51*D51;
-    var D52=inp.managementPerHd, C52=C51, E52=C52*D52;
-    var E53 = E51+E52;
-
-    var subtotal45_52 = E45+E46+E47+E48+E49+E51+E52; // SUM(E45:E52)
-    var E54 = subtotal45_52 + E53 + E21; // SUM(E45:E53)+E21 -- reproduces the original's G&A double count
-
-    var D55=inp.targetMarginPerHd, C55=1, E55=C55*D55*E9;
-
-    var C58=inp.pctBorrowed, D58=inp.interestRate;
-
-    var assetBase = (E25===0) ? 0 : ((subtotal45_52*0.5+E21)*(E25/365)); // K74 / K60 base
-    var K60 = assetBase*C58*0.01;
-    var E59 = K60*D58*0.01; // Financing cost $ (=L60)
-
-    var E60 = subtotal45_52 + E55 + E59; // SUM(E44:E52)+E55+E59 (E44 blank)
-    var E37safe = E37===0 ? 1 : E37;
-    var E61 = E60/E37safe;
-    var E62 = F37<=0 ? NaN : (E60/(F37*0.01));
-
-    var E65 = E42+E55-E60;
-
-    var K74 = assetBase;
-    var K69 = (C58===100) ? (subtotal45_52*0.5+E21)*(E25/365) : (subtotal45_52*0.5+E21)*(100-C58)*0.01*(E25/365);
-    var K68 = E65+E55;
-    var roePct = K69===0 ? 0 : (K68/K69)*100;
-    var K75 = E65+E59+E55;
-    var roaPct = K74===0 ? 0 : (K75/K74)*100;
-
-    var E29E37 = E29*E37;
-    var E72 = E29E37===0 ? NaN : ((E55+E59+(F21*E9*E10*0.01)+(subtotal45_52+E35*E37))/(E29E37*0.01));
-
-    // --- Summary margin analysis ---
-    var B91 = E9*E12;
-    var B93 = E37*E29;
-    var B95 = B93-B91;
-    var B97 = B95===0 ? 0 : (E60/B95)*100;
-    var B81 = E37===0 ? 0 : ((E9*E12*0.01)*(E39-C19)/E37);
-    var B83 = E37===0 ? 0 : ((E39-B97)*B95*0.01)/E37;
-    var B85 = B81+B83;
-
+  function readInputs(){
+    var mp = refreshHeiferPriceSlide();
+    renderRhBullReadout(mp);
     return {
-      E9:E9, E10:E10, E12:E12, E19:E19, E21:E21, F21:F21, D19:D19,
-      E25:E25, E29:E29, E35:E35, E37:E37, E45:E45, E46:E46, E47:E47, E48:E48, E49:E49,
-      subtotal45_52:subtotal45_52, E55:E55, E59:E59, E60:E60, E62:E62, E65:E65, G40:G40,
-      D31:D31, C58:C58, D58:D58,
-      roaPct:roaPct, roePct:roePct, E72:E72,
-      marketingMargin:B81, feedingMargin:B83, netMargin:B85
+      head: num('rh_head'),
+      startDate: dateOf('rh_startDate'),
+      birthDate: dateOf('rh_birthDate'),
+      weanWeight: num('rh_weanWeight'),
+      purchasePrice: num('rh_purchasePrice'),
+      precullDate: dateOf('rh_precullDate'),
+      precullPct: num('rh_precullPct'),
+      precullWeight: num('rh_precullWeight'),
+      precullPrice: num('rh_precullPrice'),
+      breedDate: dateOf('rh_breedDate'),
+      seasonDays: num('rh_seasonDays'),
+      daysToDelivery: num('rh_daysToDelivery'),
+      pregPct: num('rh_pregPct'),
+      bredPrice: num('rh_bredPrice'),
+      openDate: dateOf('rh_openDate'),
+      openWeight: num('rh_openWeight'),
+      openPrice: num('rh_openPrice'),
+      preconDays: num('rh_preconDays'), preconRate: num('rh_preconRate'),
+      winterDays: num('rh_winterDays'), winterRate: num('rh_winterRate'),
+      springDays: num('rh_springDays'), springRate: num('rh_springRate'),
+      otherGrazeDays: num('rh_otherGrazeDays'), otherGrazeRate: num('rh_otherGrazeRate'),
+      processHealth: num('rh_processHealth'),
+      pregTest: num('rh_pregTest'),
+      prebreedHealth: num('rh_prebreedHealth'),
+      otherDirect: num('rh_otherDirect'),
+      indirectPerDay: num('rh_indirectPerDay'),
+      interestRate: num('rh_interestRate'),
+      freight: num('rh_freight'),
+      // Bull cost/life/death-loss/salvage-weight/heifers-per-bull now come from the
+      // shared "Market prices & factors" store (site/index.html), not this page's own
+      // inputs -- see refreshHeiferPriceSlide()/getMarketPrices() and the note above
+      // the "Bull investment" card in the HTML.
+      heifersPerBull: mp.mp_perBull,
+      bullsRequired: num('rh_bullsRequired'),
+      bullFeed: num('rh_bullFeed'),
+      bullOther: num('rh_bullOther'),
+      bullVet: num('rh_bullVet'),
+      bullCost: mp.mp_bullCost,
+      bullLife: mp.mp_bullLife,
+      bullDeathLoss: mp.mp_bullDeathLoss,
+      bullSalvageWt: mp.mp_bullSalvageWeight,
+      bullSalvagePrice: mp.mp_cullBullPrice
     };
   }
 
-  /* Full 5x5 sensitivity grid — rows step the cull cow's effective buy-in
-     price ($/cwt), columns step the cost of gain ($/cwt), reproducing the
-     "SensitivityAnalysis" sheet's K/L/M/N/O/P and Q/R/S helper tables
-     exactly (including its own use of SUM(E45:E48), narrower than the
-     SUM(E45:E52) used everywhere else in the model). */
-  function calcD1Grid(inp, base){
-    var E9=base.E9, E10=base.E10, E25=base.E25, D58=base.D58, C58=base.C58;
-    var C9 = base.G40; // gain/hd
-    var C13 = inp.gainStep, C14 = inp.priceStep;
-    var subtotal45_48 = base.E45+base.E46+base.E47+base.E48;
+  function calcBullSheet(inp, exposedHeifers){
+    var E8=inp.bullFeed, E9=inp.bullOther, E10=inp.bullVet;
+    var E28 = inp.interestRate; // linked to Sheet1!C52
+    var E11 = (E8+E9+E10)*0.5*E28*0.01;
+    var E12 = E8+E9+E10+E11;
+    var G23 = inp.bullCost, G24 = inp.bullLife;
+    var G26 = inp.bullSalvageWt*inp.bullSalvagePrice*0.01;
+    var E15 = (G23-G26)/G24; // depreciation
+    var E17 = G23*inp.bullDeathLoss*0.01; // death loss cost
+    var E16 = 0; // unpaid-balance interest input, blank in the original workbook
+    var E18 = E15+E16+E17;
+    var E20 = E12+E18;
+    var F20 = inp.heifersPerBull;
+    var G20 = F20>0 ? E20/F20 : 0;
 
-    var K11 = base.subtotal45_52*0.5*((E25/365)*D58*0.01);
-    var N11 = K11*C58*0.01;
+    var C32 = inp.bullsRequired;
+    var E32 = E20-E11-E16;
+    var G32 = C32*E32;
+    var C4denom = inp.head; // Sheet1!G4 — the *starting* head count, see fidelity note above
+    var H32 = C4denom>0 ? G32/C4denom : 0;
 
-    function colDelta(change){
-      var N = C9*0.01*change*0.5;
-      var M = (subtotal45_48+N)*0.5*((E25/365)*D58*0.01);
-      var O = M-K11;
-      return change===0 ? 0 : (C9*change)+O;
-    }
-    var stepE = -2*C13, stepF = -1*C13, stepH = 1*C13, stepI = 2*C13;
-    var P24 = colDelta(stepE), P22 = colDelta(stepF), P18 = colDelta(stepH), P20 = colDelta(stepI);
-    var gainCols = [
-      {step:stepE, pterm:P24},
-      {step:stepF, pterm:P22},
-      {step:0,     pterm:0},
-      {step:stepH, pterm:P18},
-      {step:stepI, pterm:P20}
-    ];
-    var baseGainCost = base.E62;
-    var colHeaders = gainCols.map(function(c){ return baseGainCost + c.step; });
+    var E33 = E11+E16;
+    var G33 = C32*E33;
+    var H33 = C4denom>0 ? G33/C4denom : 0;
+    var J26 = H33;
+    var J27 = G20-J26; // = G21, non-interest cost per exposed heifer
 
-    var baseInPrice = base.E10===0 ? 0 : (base.D19/base.E10)*100; // C24
-    var rowPrices = [baseInPrice-2*C14, baseInPrice-C14, baseInPrice, baseInPrice+C14, baseInPrice+2*C14];
+    var F38 = (G23+G26)/2;
+    var G36 = F38*C32;
+    var H36 = C4denom>0 ? G36/C4denom : 0;
+    var J28 = H36;
+    var O28 = J28*exposedHeifers; // total bull investment, rescaled to the *exposed* count
 
-    function rowS(rowPrice){
-      var R = (rowPrice*E9*E10*0.01)*((E25/365)*D58*0.01);
-      return (R*C58*0.01)+N11;
-    }
-
-    var E29E37 = base.E29*base.E37;
-    var denom = E29E37===0 ? 0 : E29E37*0.01;
-    var grid = rowPrices.map(function(rp){
-      var S = rowS(rp);
-      return gainCols.map(function(c){
-        if(denom===0) return NaN;
-        var numerator = rp*E9*E10*0.01 + base.subtotal45_52 + S + base.E55 + c.pterm + base.E35*base.E37;
-        return numerator/denom;
-      });
-    });
-
-    return { rowPrices:rowPrices, colHeaders:colHeaders, grid:grid, centerRow:2, centerCol:2 };
+    return {
+      G21: J27,          // bull breeding cost per exposed heifer, non-interest
+      O26: G33,          // total interest cost across all bulls
+      O28: O28,          // total bull investment (avg cost+salvage /2), all bulls
+      bullsCalc: F20>0 ? (inp.head/F20) : 0 // "you need about X bulls" helper
+    };
   }
 
-  /* d1_priceOut (2026-09-17, twenty-second round): the "upgraded/retained" sale
-     price had been stuck at the original workbook's $90/cwt since the tool was
-     first built - never reconciled when d1_priceSold was updated to the current
-     $180/cwt Boner-cow price, which made "retain & upgrade" look catastrophically
-     worse than selling today (net margin -$1,092.53/hd, ROA -209.8%) for reasons
-     that had nothing to do with the actual economics. Fixed using data already
-     sourced and verified elsewhere in this project: the same Sept 4, 2026 Local
-     Texas Auction Data cull-cow report (re-centered on the D03 Budgets' $180/cwt
-     Boner price, ratio x1.20160 - see cow-calf/index.html's CULL_COW_PRICE_SLIDE)
-     already carries a heavier, better-conditioned "Breaker Cows" grade point
-     (1,496.1 lb -> $176.90/cwt) - exactly the grade a Boner cow upgrades into by
-     gaining weight/condition. Linearly interpolating that same slide at D1's
-     1,300 lb target out-weight (between the 1,279.4 lb Boner point at $180.00
-     and the 1,496.1 lb Breaker point at $176.90) gives $179.71/cwt - the same
-     figure already computed and verified live on the A1 page's cull-weight
-     slider at this exact weight (see 2026-09-16 nineteenth-round verification).
-     Not fabricated: sourced, disclosed, and consistent with the rest of the site. */
-  var D1_DEFAULTS = {
-    d1_headCulled:50, d1_weightAtCulling:1100, d1_shrinkSold:3, d1_priceSold:180,
-    d1_commissionSold:3, d1_freightSold:7, d1_perHeadSold:1,
-    d1_outWeight:1300, d1_adg:2.25, d1_manualDays:0, d1_shrinkOut:3, d1_priceOut:179.71,
-    d1_commissionOut:3, d1_freightOut:7, d1_perHeadOut:1, d1_deathLoss:0.5,
-    d1_costPerLbGain:0, d1_feedGrazingRate:2, d1_processingHealth:10,
-    d1_feedFacilitiesDays:111, d1_feedFacilitiesRate:0.4, d1_otherCost:0,
-    d1_gaPerHd:10, d1_managementPerHd:40,
-    d1_targetMarginPerHd:30, d1_pctBorrowed:30, d1_interestRate:5,
-    d1_priceStep:5, d1_gainStep:4
+  function calc(inp){
+    var G4 = inp.head;
+    var E6 = inp.weanWeight*inp.purchasePrice*0.01;
+    var F6 = G4*E6;
+
+    var E9 = G4*inp.precullPct*0.01;
+    var E11 = inp.precullWeight*inp.precullPrice*0.01;
+    var F11 = E11*E9;
+
+    var E13 = 0; // death loss %, not exposed as a UI input (0 in the original workbook)
+    var E15 = G4-E9-E13; // exposed to breeding
+
+    var E16 = E15*inp.pregPct*0.01; // bred
+    var E17 = E15-E16; // open
+
+    var E19 = inp.openWeight*inp.openPrice*0.01;
+    var F19 = E17*E19;
+
+    var E20 = inp.bredPrice;
+    var F20 = E20*E16;
+    var F21 = F20+F19+F11;
+
+    var C25 = addDays(inp.breedDate, inp.seasonDays+inp.daysToDelivery);
+
+    var I22 = daysBetween(inp.precullDate, inp.startDate);
+    var J22 = I22*G4;
+    var I23 = daysBetween(inp.breedDate, inp.precullDate);
+    var J23 = I23*E15;
+    var I24 = daysBetween(inp.openDate, inp.breedDate);
+    var J24 = I24*E17;
+    var I25 = daysBetween(C25, inp.breedDate);
+    var J25 = I25*E16;
+    var J26 = (E16+E17)>0 ? (J22+J23+J24+J25)/(E16+E17) : 0;
+
+    var C29 = J26; // average days fed per head marketed
+
+    var F31 = inp.preconDays*inp.preconRate*G4;
+    var F32 = inp.winterDays*inp.winterRate*G4;
+    var F33 = inp.springDays*inp.springRate*G4;
+    var F34 = inp.otherGrazeDays*inp.otherGrazeRate*G4;
+    var F35 = F31+F32+F33+F34;
+    var D35 = G4>0 ? F35/G4 : 0;
+
+    var D38 = D35;
+    var F38 = D38*G4;
+    var F39 = inp.processHealth*G4;
+    var F41 = inp.pregTest*G4;
+    var F42 = inp.prebreedHealth*G4;
+
+    var bull = calcBullSheet(inp, E15);
+    var D43 = bull.G21;
+    var F43 = D43*G4;
+    var F44 = inp.otherDirect*G4;
+    var F45 = 0;
+
+    var F46 = F38+F39+F41+F42+F43+F44+F45+F6;
+    var D46 = G4>0 ? F46/G4 : 0;
+
+    var F48 = C29*inp.indirectPerDay*E15;
+    var F49 = 0;
+    var F50 = F48+F49;
+    var D50 = G4>0 ? F50/G4 : 0;
+
+    var C52 = inp.interestRate;
+    var I53 = bull.O26;
+    var I54 = E15>0 ? I53/E15 : 0;
+    var D52 = (E6 + (D46+D50)*0.5)*(C52*0.01*(C29/365)) + I54;
+    var F52 = D52*G4;
+    var D54 = D46+D50+D52;
+    var F54 = F46+F50+F52;
+
+    var I55 = bull.O28;
+
+    var F56 = F11+F19; // cull credit, total $
+    var D56 = E16>0 ? F56/E16 : 0;
+    var F57 = F54-F56;
+    var D57 = E16>0 ? F57/E16 : 0;
+    var F58 = E16*inp.freight;
+    var F60 = F57+F58;
+    var D60 = E16>0 ? F60/E16 : 0;
+
+    var F62 = F20;
+    var F64 = F62-F60; // F51 term in the workbook is a blank cell (0)
+    var D64 = E16>0 ? F64/E16 : 0;
+    var D66 = G4>0 ? F64/G4 : 0;
+    var F66 = F64;
+
+    var N51 = (F6 + (F46+F50)*0.5)*(C29/365) + I55;
+    var N53 = F52+F66;
+    var O53 = N51>0 ? N53/N51 : 0;
+
+    return {
+      E6:E6, F6:F6, E9:E9, F11:F11, E15:E15, E16:E16, E17:E17, F19:F19, F20:F20, F21:F21,
+      C25:C25, C29:C29, D35:D35, D46:D46, D50:D50, D52:D52, D54:D54, F54:F54,
+      D56:D56, F56:F56, D57:D57, D60:D60, F64:F64, D64:D64, D66:D66, N51:N51, O53:O53,
+      bull:bull,
+      breakdown:{
+        heiferInitial: E6,
+        feedGrazing: D38,
+        healthBreeding: inp.processHealth+inp.pregTest+inp.prebreedHealth+D43+inp.otherDirect,
+        indirect: D50,
+        finance: D52
+      }
+    };
+  }
+
+  function buildStackBar(barId, legendId, totalId, data, total, totalSuffix){
+    var bar = $(barId), legend = $(legendId);
+    if(!bar || !legend) return;
+    bar.innerHTML=''; legend.innerHTML='';
+    if(totalId && $(totalId)) $(totalId).textContent = fmtDollar(total,2)+(totalSuffix||'');
+    data.forEach(function(d){
+      var pct = total>0 ? (d.value/total*100) : 0;
+      var seg = document.createElement('div');
+      seg.className='seg';
+      seg.style.background = d.color;
+      seg.style.width = Math.max(pct,0)+'%';
+      seg.tabIndex = 0;
+      seg.setAttribute('role','img');
+      seg.setAttribute('aria-label', d.label+': $'+fmtMoney2.format(d.value)+' ('+pct.toFixed(1)+'%)');
+      function showTt(){
+        var r = seg.getBoundingClientRect();
+        showVizTooltip(r.left+r.width/2, r.top, '<div class="tt-val">$'+fmtMoney2.format(d.value)+'</div><div class="tt-lbl">'+d.label+' &middot; '+pct.toFixed(1)+'% of total</div>');
+      }
+      seg.addEventListener('pointerenter', showTt);
+      seg.addEventListener('focus', showTt);
+      seg.addEventListener('pointerleave', hideVizTooltip);
+      seg.addEventListener('blur', hideVizTooltip);
+      bar.appendChild(seg);
+
+      var row = document.createElement('div');
+      row.className='legend-row';
+      row.innerHTML = '<span class="swatch" style="background:'+d.color+'"></span>'+
+                       '<span class="lbl"></span>'+
+                       '<span class="val">$'+fmtMoney2.format(d.value)+'</span>'+
+                       '<span class="pct">'+pct.toFixed(1)+'%</span>';
+      row.querySelector('.lbl').textContent = d.label;
+      legend.appendChild(row);
+    });
+  }
+  function showVizTooltip(x,y,html){
+    var tt = $('vizTooltip');
+    tt.innerHTML = html;
+    tt.style.left = x+'px';
+    tt.style.top = (y-6)+'px';
+    tt.classList.add('show');
+  }
+  function hideVizTooltip(){ var tt=$('vizTooltip'); if(tt) tt.classList.remove('show'); }
+
+  function cssVar(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
+
+  var rh_purchasePriceAuto = true, rh_precullPriceAuto = true, rh_openPriceAuto = true;
+  function applyHeiferPriceAutoLinks(){
+    refreshHeiferPriceSlide();
+    if(rh_purchasePriceAuto && $('rh_purchasePrice')) $('rh_purchasePrice').value = round(priceSlideLookup(HEIFER_PRICE_SLIDE, num('rh_weanWeight')), 2);
+    if(rh_precullPriceAuto && $('rh_precullPrice')) $('rh_precullPrice').value = round(priceSlideLookup(HEIFER_PRICE_SLIDE, num('rh_precullWeight')), 2);
+    if(rh_openPriceAuto && $('rh_openPrice')) $('rh_openPrice').value = round(priceSlideLookup(HEIFER_PRICE_SLIDE, num('rh_openWeight')), 2);
+  }
+
+  function recalc(){
+    applyHeiferPriceAutoLinks();
+    var inp = readInputs();
+    var r = calc(inp);
+
+    // Age helper note
+    if(inp.birthDate && inp.startDate){
+      var monthsAt = function(d){ return d ? ((d-inp.birthDate)/(365.25/12*86400000)).toFixed(1) : '—'; };
+      $('rh_ageNote').innerHTML = 'Weaning age: <strong>'+monthsAt(inp.startDate)+' mo</strong> &middot; Breeding age: <strong>'+monthsAt(inp.breedDate)+' mo</strong> &middot; Delivery age: <strong>'+monthsAt(r.C25)+' mo</strong>';
+    }
+    $('rh_deliveryNote').innerHTML = 'Delivery date: <strong>'+fmtDate(r.C25)+'</strong> &middot; Calving date: <strong>'+fmtDate(addDays(inp.breedDate,283))+'</strong>';
+    $('rh_daysFedNote').innerHTML = 'Average days fed, per head marketed: <strong>'+round(r.C29,1)+' days</strong>';
+
+    var bullsNeeded = inp.heifersPerBull>0 ? inp.head/inp.heifersPerBull : 0;
+    $('rh_bullsNeededNote').innerHTML = 'At '+inp.heifersPerBull+' heifers/bull and '+inp.head+' head, you need about <strong>'+round(bullsNeeded,1)+' bulls</strong> (you\'ve set '+inp.bullsRequired+').';
+    $('rh_bullCostInline').textContent = fmtDollar(r.bull.G21,2)+'/hd exposed';
+
+    $('rh_exposedValue').textContent = fmtMoney0.format(round(r.E15,0));
+    $('rh_bredValue').textContent = fmtMoney0.format(round(r.E16,0));
+    $('rh_openValue').textContent = fmtMoney0.format(round(r.E17,0));
+
+    $('rh_tucValue').textContent = fmtDollar(r.D54,2);
+    $('rh_netCostValue').textContent = fmtDollar(r.D60,2);
+
+    var marginGood = r.D64 > 0;
+    $('rh_netMarginValue').textContent = fmtDollar(r.D64,2);
+    $('rh_netMarginSub').textContent = '/bred heifer, sale price minus net delivered cost';
+    $('rh_netMarginTile').className = 'stat-tile wide '+(marginGood?'good':'critical');
+    $('rh_netMarginAllValue').textContent = fmtDollar(r.D66,2);
+
+    // Raise vs. buy — same D60/bredPrice numbers behind the net margin above,
+    // just read as a make-or-buy comparison instead of a sale-profit figure.
+    $('rh_raiseCostValue').textContent = fmtDollar(r.D60,2);
+    $('rh_buyCostValue').textContent = fmtDollar(inp.bredPrice,2);
+    var raiseCheaper = r.D60 <= inp.bredPrice;
+    var rvbDiff = Math.abs(inp.bredPrice - r.D60);
+    $('rh_raiseVsBuyLabel').textContent = raiseCheaper ? 'Raising saves you' : 'Buying saves you';
+    $('rh_raiseVsBuyValue').textContent = fmtDollar(rvbDiff,2);
+    $('rh_raiseVsBuyTile').className = 'stat-tile wide '+(raiseCheaper?'good':'critical');
+
+    var roiPct = r.O53*100;
+    var roiGood = roiPct >= inp.interestRate;
+    $('rh_roiValue').textContent = round(roiPct,1)+'%';
+    $('rh_roiTile').className = 'stat-tile '+(roiGood?'good':'critical');
+
+    var pill = $('rh_verdictPill');
+    pill.className = 'verdict-pill '+(marginGood?'good':'critical');
+    $('rh_verdictText').textContent = marginGood ? 'Profitable at today’s prices' : 'Loses money at today’s prices';
+
+    $('rh_narrativeMain').innerHTML = 'At today’s assumptions, growing a bred replacement heifer costs <strong>'+fmtDollar(r.D60,2)+'/hd</strong> net of cull-sale credit, and sells for <strong>'+fmtDollar(inp.bredPrice,2)+'/hd</strong> — a margin of <strong>'+fmtDollar(r.D64,2)+'/hd</strong>. Spread across all '+fmtMoney0.format(inp.head)+' starting heifers (including the '+fmtMoney0.format(round(r.E9+r.E17,0))+' that never make it to a bred sale), that’s <strong>'+fmtDollar(r.D66,2)+'/hd</strong>. Annualized, the return on capital invested runs <strong>'+round(roiPct,1)+'%</strong>, versus a '+inp.interestRate+'% interest rate.';
+
+    var s1=cssVar('--s1'), s2=cssVar('--s2'), s3=cssVar('--s3'), s4=cssVar('--s4'), s5=cssVar('--s5');
+    var data = [
+      {label:'Heifer initial cost', value:r.breakdown.heiferInitial, color:s1},
+      {label:'Feed & grazing', value:r.breakdown.feedGrazing, color:s2},
+      {label:'Health, breeding & other direct', value:r.breakdown.healthBreeding, color:s3},
+      {label:'Indirect costs', value:r.breakdown.indirect, color:s4},
+      {label:'Financing', value:r.breakdown.finance, color:s5}
+    ];
+    buildStackBar('rh_costStackbar','rh_costLegend','rh_costBarTotal', data, r.D54, ' / hd');
+  }
+
+  var RH_INPUT_IDS = ['rh_head','rh_startDate','rh_birthDate','rh_weanWeight','rh_purchasePrice',
+    'rh_precullDate','rh_precullPct','rh_precullWeight','rh_precullPrice',
+    'rh_breedDate','rh_seasonDays','rh_daysToDelivery','rh_pregPct','rh_bredPrice',
+    'rh_openDate','rh_openWeight','rh_openPrice',
+    'rh_preconDays','rh_preconRate','rh_winterDays','rh_winterRate','rh_springDays','rh_springRate','rh_otherGrazeDays','rh_otherGrazeRate',
+    'rh_processHealth','rh_pregTest','rh_prebreedHealth','rh_otherDirect',
+    'rh_indirectPerDay','rh_interestRate','rh_freight',
+    'rh_bullsRequired','rh_bullFeed','rh_bullOther','rh_bullVet'];
+  // rh_heifersPerBull/rh_bullCost/rh_bullLife/rh_bullDeathLoss/rh_bullSalvageWt/rh_bullSalvagePrice
+  // removed 2026-09-21: these now come from the shared "Market prices & factors" store
+  // (see getMarketPrices()/readInputs() above), not their own editable copy here.
+
+  /* Sourced 2026 defaults (see the on-page notes and the project doc for
+     citations) — captured here so "Reset B1a defaults" restores exactly
+     what the page loads with, not the original 2018 workbook values. */
+  var RH_DEFAULTS = {
+    rh_head:100, rh_startDate:'2026-10-15', rh_birthDate:'2026-02-15', rh_weanWeight:500, rh_purchasePrice:473.51,
+    rh_precullDate:'2027-02-25', rh_precullPct:2, rh_precullWeight:650, rh_precullPrice:427.04,
+    rh_breedDate:'2027-05-07', rh_seasonDays:60, rh_daysToDelivery:45, rh_pregPct:88, rh_bredPrice:3884.78,
+    rh_openDate:'2027-08-10', rh_openWeight:900, rh_openPrice:341.19,
+    rh_preconDays:45, rh_preconRate:1.10, rh_winterDays:90, rh_winterRate:1.00, rh_springDays:176, rh_springRate:0.60, rh_otherGrazeDays:0, rh_otherGrazeRate:0,
+    rh_processHealth:20, rh_pregTest:5, rh_prebreedHealth:12, rh_otherDirect:0,
+    rh_indirectPerDay:0.50, rh_interestRate:5, rh_freight:0,
+    rh_bullsRequired:4, rh_bullFeed:700, rh_bullOther:0, rh_bullVet:75
   };
-  (function applySharedMarketPricesToD1(){
-    var mp = getMarketPrices();
-    D1_DEFAULTS.d1_priceSold = mp.mp_cullCowPrice;
-    // d1_priceOut preserves the Boner->Breaker upgrade relationship documented above
-    // (179.71/180 at the original $180 Boner anchor) rather than just copying the flat price.
-    D1_DEFAULTS.d1_priceOut = round(mp.mp_cullCowPrice * (179.71/180.0), 2);
-    if($('d1_priceSold')) $('d1_priceSold').value = D1_DEFAULTS.d1_priceSold;
-    if($('d1_priceOut')) $('d1_priceOut').value = D1_DEFAULTS.d1_priceOut;
+  (function applySharedBredHeiferPrice(){
+    // rh_bredPrice is a flat number (not weight-driven), so it's pre-filled once at
+    // load from the shared store -- same treatment as cow-calf's bidPrice/a2_cowCost --
+    // and stays freely editable afterward rather than being force-relinked every recalc.
+    RH_DEFAULTS.rh_bredPrice = getMarketPrices().mp_bredHeiferPrice;
+    if($('rh_bredPrice')) $('rh_bredPrice').value = RH_DEFAULTS.rh_bredPrice;
+  })();
+  (function applySharedInterestRate(){
+    // rh_interestRate pre-filled once at load from the shared operating-costs
+    // calculator's livestock financing rate -- see the comment above OC_FALLBACK.
+    RH_DEFAULTS.rh_interestRate = getOperatingCosts().oc_livestockInterestRate;
+    if($('rh_interestRate')) $('rh_interestRate').value = RH_DEFAULTS.rh_interestRate;
   })();
 
-  function readD1Inputs(){
-    return {
-      headCulled: num('d1_headCulled'), weightAtCulling: num('d1_weightAtCulling'),
-      shrinkSold: num('d1_shrinkSold'), priceSold: num('d1_priceSold'),
-      commissionSold: num('d1_commissionSold'), freightSold: num('d1_freightSold'), perHeadSold: num('d1_perHeadSold'),
-      outWeight: num('d1_outWeight'), adg: num('d1_adg'), manualDays: num('d1_manualDays'),
-      shrinkOut: num('d1_shrinkOut'), priceOut: num('d1_priceOut'),
-      commissionOut: num('d1_commissionOut'), freightOut: num('d1_freightOut'), perHeadOut: num('d1_perHeadOut'),
-      deathLoss: num('d1_deathLoss'),
-      costPerLbGain: num('d1_costPerLbGain'), feedGrazingRate: num('d1_feedGrazingRate'),
-      processingHealth: num('d1_processingHealth'), feedFacilitiesDays: num('d1_feedFacilitiesDays'),
-      feedFacilitiesRate: num('d1_feedFacilitiesRate'), otherCost: num('d1_otherCost'),
-      gaPerHd: num('d1_gaPerHd'), managementPerHd: num('d1_managementPerHd'),
-      targetMarginPerHd: num('d1_targetMarginPerHd'), pctBorrowed: num('d1_pctBorrowed'), interestRate: num('d1_interestRate'),
-      priceStep: num('d1_priceStep'), gainStep: num('d1_gainStep')
-    };
+  function renderRhBullReadout(mp){
+    if($('rhBull_perBull')) $('rhBull_perBull').textContent = mp.mp_perBull;
+    if($('rhBull_cost')) $('rhBull_cost').textContent = '$'+Math.round(mp.mp_bullCost).toLocaleString('en-US');
+    if($('rhBull_life')) $('rhBull_life').textContent = mp.mp_bullLife+' yrs';
+    if($('rhBull_deathLoss')) $('rhBull_deathLoss').textContent = mp.mp_bullDeathLoss+'%';
+    if($('rhBull_salvageWt')) $('rhBull_salvageWt').textContent = mp.mp_bullSalvageWeight+' lb';
+    if($('rhBull_salvagePrice')) $('rhBull_salvagePrice').textContent = '$'+mp.mp_cullBullPrice.toFixed(2)+'/cwt';
   }
 
-  function renderD1Grid(gridData){
-    var head = $('d1_sensGridHead');
-    head.innerHTML = '<th>In-price \\ Cost of gain</th>' + gridData.colHeaders.map(function(c,ci){
-      var bold = ci===gridData.centerCol ? ' style="color:var(--accent);"' : '';
-      return '<th'+bold+'>'+fmtDollar(c,2)+'</th>';
-    }).join('');
-    var body = $('d1_sensGridBody');
-    body.innerHTML = gridData.rowPrices.map(function(rp, ri){
-      var rowBold = ri===gridData.centerRow;
-      var cells = gridData.grid[ri].map(function(v, ci){
-        var isCenter = ri===gridData.centerRow && ci===gridData.centerCol;
-        var style = isCenter ? ' style="color:var(--accent);font-weight:800;"' : (rowBold||ci===gridData.centerCol ? ' style="font-weight:700;"' : '');
-        return '<td'+style+'>'+(isFinite(v)?fmtDollar(v,2):'—')+'</td>';
-      }).join('');
-      var rowLabelStyle = rowBold ? ' style="color:var(--accent);font-weight:800;"' : '';
-      return '<tr><td'+rowLabelStyle+'>'+fmtDollar(rp,2)+'</td>'+cells+'</tr>';
-    }).join('');
-  }
-
-  function recalcD1(){
-    var inp = readD1Inputs();
-    var base = calcD1(inp);
-
-    var daysNote = 'Days on feed: ';
-    if(inp.manualDays>0){
-      daysNote += round(inp.manualDays,0)+' days (manual override).';
-    } else if(inp.outWeight<=inp.weightAtCulling || inp.adg<=0){
-      daysNote += 'set a target out-weight above the culling weight, and a positive daily gain.';
-    } else {
-      daysNote += round(base.E25,0)+' days, to go from '+round(inp.weightAtCulling,0)+' to '+round(inp.outWeight,0)+' lb at '+inp.adg+' lb/day.';
-    }
-    $('d1_daysNote').textContent = daysNote;
-
-    var better = base.netMargin >= 0;
-    $('d1_verdictPill').className = 'verdict-pill ' + (better ? 'good' : 'critical');
-    $('d1_verdictText').textContent = better
-      ? 'Retaining beats selling now, even above your target margin'
-      : 'Selling now looks better — retaining falls short of your target margin';
-
-    $('d1_narrativeMain').innerHTML = 'Selling now nets about <strong>'+fmtDollar(base.E21/Math.max(base.E9,1),2)+'/head</strong>. Retaining and upgrading, after all direct costs, overhead and financing (but before your '+fmtDollar(inp.targetMarginPerHd,0)+'/hd target), nets a marketing margin of <strong>'+fmtDollar(base.marketingMargin,2)+'/hd</strong> and a feeding margin of <strong>'+fmtDollar(base.feedingMargin,2)+'/hd</strong> — a net margin of <strong>'+fmtDollar(base.netMargin,2)+'/hd</strong> above your target.';
-
-    $('d1_marketingMargin').textContent = fmtDollar(base.marketingMargin,2);
-    $('d1_feedingMargin').textContent = fmtDollar(base.feedingMargin,2);
-    $('d1_netMargin').textContent = fmtDollar(base.netMargin,2);
-    $('d1_netMarginTile').className = 'stat-tile wide ' + (better ? 'good' : 'critical');
-
-    $('d1_roaValue').textContent = (isFinite(base.roaPct)?base.roaPct.toFixed(1):'0.0') + '%';
-    $('d1_roeValue').textContent = (isFinite(base.roePct)?base.roePct.toFixed(1):'0.0') + '%';
-
-    $('d1_reqPrice').textContent = isFinite(base.E72) ? fmtDollar(base.E72,2) : '—';
-    $('d1_reqPriceSub').textContent = '$/cwt out weight — you have '+fmtDollar(inp.priceOut,2)+'/cwt planned';
-
-    var gridData = calcD1Grid(inp, base);
-    renderD1Grid(gridData);
-  }
-
-  /* ---------------- Generic input binding ---------------- */
-  function attachD1Inputs(){
-    Object.keys(D1_DEFAULTS).forEach(function(id){
+  function attachInputs(){
+    RH_INPUT_IDS.forEach(function(id){
+      if(id === 'rh_purchasePrice' || id === 'rh_precullPrice' || id === 'rh_openPrice') return; // handled below (auto-link clearing)
       var el = $(id);
-      if(el) el.addEventListener('input', recalcD1);
+      if(el) el.addEventListener('input', recalc);
     });
-  }
-
-  $('d1_resetBtn').addEventListener('click', function(){
-    Object.keys(D1_DEFAULTS).forEach(function(id){ var el = $(id); if(el) el.value = D1_DEFAULTS[id]; });
-    recalcD1();
-  });
-
-  /* ---------------- Tab switching ---------------- */
-  function initTabs(){
-    var buttons = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
-    buttons.forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var tab = btn.dataset.tab;
-        buttons.forEach(function(b){ b.classList.toggle('active', b === btn); });
-        document.querySelectorAll('.tool-panel').forEach(function(panel){
-          panel.hidden = (panel.id !== 'panel-' + tab);
-        });
-        var titleEl = $('toolTitle');
-        if(titleEl && btn.dataset.title) titleEl.textContent = btn.dataset.title;
-        var footerEl = $('toolFooter');
-        if(footerEl && btn.dataset.source){
-          footerEl.innerHTML = 'Based on the <strong>' + btn.dataset.source + '</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; the starting values are the spreadsheet\'s original assumptions, not a real producer\'s data. Always verify results before using them to ' + btn.dataset.use + '.';
-        }
-        if(tab === 'd1') recalcD1();
-        if(tab === 'stockers') recalcStockers();
+    function attachAutoClear(id, setFlag){
+      var el = $(id);
+      if(!el) return;
+      el.addEventListener('input', function(){
+        setFlag(false);
+        var wrap = el.closest('.input-wrap');
+        if(wrap) wrap.classList.remove('auto');
+        recalc();
       });
-    });
-  }
+    }
+    attachAutoClear('rh_purchasePrice', function(v){ rh_purchasePriceAuto = v; });
+    attachAutoClear('rh_precullPrice', function(v){ rh_precullPriceAuto = v; });
+    attachAutoClear('rh_openPrice', function(v){ rh_openPriceAuto = v; });
 
-  /* ---------------- Sub-tab switching (within Stockers) ---------------- */
-  function initSubTabs(){
-    var buttons = Array.prototype.slice.call(document.querySelectorAll('.subtab-btn'));
-    buttons.forEach(function(btn){
-      btn.addEventListener('click', function(){
-        var sub = btn.dataset.subtab;
-        buttons.forEach(function(b){ b.classList.toggle('active', b === btn); });
-        document.querySelectorAll('.subtool-panel').forEach(function(panel){
-          panel.hidden = (panel.dataset.subtab !== sub);
-        });
+    var resetBtn = $('rh_resetBtn');
+    if(resetBtn) resetBtn.addEventListener('click', function(){
+      RH_INPUT_IDS.forEach(function(id){
+        var el = $(id);
+        if(el && RH_DEFAULTS.hasOwnProperty(id)) el.value = RH_DEFAULTS[id];
       });
+      if($('rh_bredPrice')) $('rh_bredPrice').value = RH_DEFAULTS.rh_bredPrice;
+      rh_purchasePriceAuto = true; rh_precullPriceAuto = true; rh_openPriceAuto = true;
+      ['rh_purchasePrice','rh_precullPrice','rh_openPrice'].forEach(function(id){
+        var el = $(id), wrap = el ? el.closest('.input-wrap') : null;
+        if(wrap) wrap.classList.add('auto');
+      });
+      recalc();
+    });
+
+    // Live-refresh if the home page's Market Prices calculator changes in another open tab.
+    window.addEventListener('storage', function(e){
+      if(e.key === MP_STORAGE_KEY) recalc();
     });
   }
 
-  /* ---------------- Manual dark/light toggle ---------------- */
   function initThemeToggle(){
     var STORAGE_KEY = 'tamuDecisionAidsTheme';
     var toggle = $('themeToggle');
@@ -1583,390 +1275,16 @@
       document.documentElement.setAttribute('data-theme', next);
       try { window.localStorage.setItem(STORAGE_KEY, next); } catch(e){}
       updateButton();
-      recalcD1();
-      recalcStockers();
+      recalc();
     });
   }
-
-
-  /* ================================================================
-     Stockers — Retained Ownership (three grazing/feeding paths +
-     one marginal-decision view), ported from
-     Stockers_Retained_Feeder_Profitability.xlsx.
-
-     Two fidelity quirks found in the original workbook are reproduced
-     here exactly, not "corrected," per this project's fidelity rule —
-     both are flagged to the user:
-       1. The "Stockers 800 Lb" budget sheet's Marketing Cost row uses
-          Assumptions!C17 (the 700 lb path's death-loss %) instead of
-          its own F17 (800 lb path's death-loss %) — a copy/paste
-          cross-reference in the source sheet. Reproduced via
-          sk_deathLoss700 inside calc800() below.
-       2. The "Stockers ~800 Lb — Returns Sensitivity" grid's two axis
-          centers (Sale Price = $115/cwt, Purchase Price = $155/cwt on
-          the 'Stockers Margins' sheet, cells L13 and I16) are typed-in
-          literals, not formulas linked to the live Assumptions sheet —
-          unlike the 700 lb grid, whose centers (L4, I7) ARE formulas.
-          $115 does not match the $137/cwt "Stockers (800 Lb)" price
-          used everywhere else in the workbook. Reproduced as fixed
-          constants in grid800() below (GRID800_SALE_CENTER,
-          GRID800_PURCHASE_CENTER) rather than tied to the live inputs.
-     ================================================================ */
-
-  var STOCKERS_DEFAULTS = {
-    sk_heads:100, sk_calfPrice:530, sk_calfWeight:475, sk_price700:380, sk_price800:360, sk_grazingCost:0.65,
-    sk_earlyStart:'2019-10-01', sk_pullOff700:'2020-03-15', sk_pullOff800:'2020-05-01',
-    sk_earlyADG:1.3, sk_lateADG:2.3, sk_interestRate:7,
-    sk_shrink700:0, sk_shrink800:0, sk_deathLoss700:1, sk_deathLoss800:1,
-
-    sk700_vetRate:24, sk700_hayLb:125, sk700_hayRate:0.10, sk700_saltLb:15, sk700_saltRate:0.45,
-    sk700_laborRate:8.42, sk700_fuelRate:8.36, sk700_lubePct:10, sk700_marketingRate:12, sk700_mgmtFee:23.33,
-
-    sk800_vetRate:16.2, sk800_hayLb:125, sk800_hayRate:0.10, sk800_saltLb:14, sk800_saltRate:0.45,
-    sk800_laborRate:12.56, sk800_fuelRate:7.50, sk800_lubePct:10, sk800_marketingRate:23, sk800_mgmtFee:35,
-
-    /* skfy7_salePrice / skfy8_salePrice (2026-09-17, twenty-third round): was
-       $100/cwt, an original-workbook fed-cattle price never reconciled when
-       the calf purchase price (sk_calfPrice) was updated to $530/cwt - that
-       mismatch alone produced -$1,834.57/hd and -$2,015.69/hd "losses" on
-       these two paths (see the twenty-second-round audit). Fixed with a real,
-       current, sourced number: USDA AMS's "5 Area Weekly Weighted Average
-       Direct Slaughter Cattle" report (ams_2477.pdf), week ending 2026-09-13
-       - live FOB steers $218.00-$225.00/cwt, average $222.82/cwt (avg weight
-       1,563 lb) - the live-weight basis matches how this tool already values
-       weight out (ADG x days), so no basis conversion needed. The
-       region-specific Texas-Oklahoma-New Mexico report (ams_2483.pdf) had no
-       public price that week (too few reporting parties, common for that
-       narrower region); the 5-Area report is USDA's standard fallback and
-       still includes the Texas feeding region. Not fabricated - sourced and
-       disclosed. */
-    skfy8_cog:72, skfy8_days:180, skfy8_adg:3.5, skfy8_salePrice:222.82, skfy8_deathLoss:1,
-    skfy7_cog:72, skfy7_days:210, skfy7_adg:3.5, skfy7_salePrice:222.82, skfy7_deathLoss:1,
-
-    skrm_costRate:120
-  };
-  (function applySharedMarketPricesToStockers(){
-    var mp = getMarketPrices();
-    STOCKERS_DEFAULTS.sk_price700 = mp.mp_stocker700Price;
-    STOCKERS_DEFAULTS.sk_price800 = mp.mp_stocker800Price;
-    STOCKERS_DEFAULTS.skfy7_salePrice = mp.mp_fedCattlePrice;
-    STOCKERS_DEFAULTS.skfy8_salePrice = mp.mp_fedCattlePrice;
-    // 2026-09-22: sk_calfPrice used to be its own hardcoded $530/cwt, coincidentally
-    // matching the shared store's steer price by accident (both trace back to the same
-    // "2026 D03 Budgets" $530/cwt steer figure) without ever actually reading from it.
-    // Now genuinely linked, closing the last un-unified price on the site.
-    STOCKERS_DEFAULTS.sk_calfPrice = mp.mp_steerPrice;
-    ['sk_price700','sk_price800','skfy7_salePrice','skfy8_salePrice','sk_calfPrice'].forEach(function(id){
-      if($(id)) $(id).value = STOCKERS_DEFAULTS[id];
-    });
-  })();
-
-  var GRID800_SALE_CENTER = 115;      // 'Stockers Margins'!L13 — hardcoded in the workbook, see quirk #2 above
-  var GRID800_PURCHASE_CENTER = 155;  // 'Stockers Margins'!I16 — hardcoded in the workbook, see quirk #2 above
-
-  function dateVal(id){ var el=$(id); return el ? el.value : ''; }
-  function daysBetween(endStr, startStr){
-    var end = new Date(endStr), start = new Date(startStr);
-    if(!isFinite(end.getTime()) || !isFinite(start.getTime())) return 0;
-    return Math.round((end.getTime()-start.getTime())/86400000);
-  }
-
-  function readStockersInputs(){
-    return {
-      sk_heads: num('sk_heads'), sk_calfPrice: num('sk_calfPrice'), sk_calfWeight: num('sk_calfWeight'),
-      sk_price700: num('sk_price700'), sk_price800: num('sk_price800'), sk_grazingCost: num('sk_grazingCost'),
-      sk_earlyStart: dateVal('sk_earlyStart'), sk_pullOff700: dateVal('sk_pullOff700'), sk_pullOff800: dateVal('sk_pullOff800'),
-      sk_earlyADG: num('sk_earlyADG'), sk_lateADG: num('sk_lateADG'), sk_interestRate: num('sk_interestRate'),
-      sk_shrink700: num('sk_shrink700'), sk_shrink800: num('sk_shrink800'),
-      sk_deathLoss700: num('sk_deathLoss700'), sk_deathLoss800: num('sk_deathLoss800'),
-
-      sk700_vetRate: num('sk700_vetRate'), sk700_hayLb: num('sk700_hayLb'), sk700_hayRate: num('sk700_hayRate'),
-      sk700_saltLb: num('sk700_saltLb'), sk700_saltRate: num('sk700_saltRate'), sk700_laborRate: num('sk700_laborRate'),
-      sk700_fuelRate: num('sk700_fuelRate'), sk700_lubePct: num('sk700_lubePct'), sk700_marketingRate: num('sk700_marketingRate'), sk700_mgmtFee: num('sk700_mgmtFee'),
-
-      sk800_vetRate: num('sk800_vetRate'), sk800_hayLb: num('sk800_hayLb'), sk800_hayRate: num('sk800_hayRate'),
-      sk800_saltLb: num('sk800_saltLb'), sk800_saltRate: num('sk800_saltRate'), sk800_laborRate: num('sk800_laborRate'),
-      sk800_fuelRate: num('sk800_fuelRate'), sk800_lubePct: num('sk800_lubePct'), sk800_marketingRate: num('sk800_marketingRate'), sk800_mgmtFee: num('sk800_mgmtFee'),
-
-      skfy8_cog: num('skfy8_cog'), skfy8_days: num('skfy8_days'), skfy8_adg: num('skfy8_adg'),
-      skfy8_salePrice: num('skfy8_salePrice'), skfy8_deathLoss: num('skfy8_deathLoss'),
-
-      skfy7_cog: num('skfy7_cog'), skfy7_days: num('skfy7_days'), skfy7_adg: num('skfy7_adg'),
-      skfy7_salePrice: num('skfy7_salePrice'), skfy7_deathLoss: num('skfy7_deathLoss'),
-
-      skrm_costRate: num('skrm_costRate')
-    };
-  }
-
-  /* ---------------- 700 lb path ("Stockers March1st") ---------------- */
-  function calc700(inp){
-    var D4 = inp.sk_heads*(100-inp.sk_deathLoss700)/100;
-    var daysEarly = daysBetween(inp.sk_pullOff700, inp.sk_earlyStart);
-    var E4 = (inp.sk_calfWeight + daysEarly*inp.sk_earlyADG) * (100-inp.sk_shrink700)/100;
-    var G4 = inp.sk_price700;
-    var H4 = D4*G4*E4/100;
-    var I4 = D4>0 ? H4/D4 : 0;
-    var I6 = I4;
-
-    var D9=inp.sk_heads, E9=inp.sk_calfWeight, G9=inp.sk_calfPrice;
-    var H9=G9*E9*D9/100, I9 = D4>0 ? H9/D4 : 0;
-    var D11=E4-E9, G11=inp.sk_grazingCost;
-    var H11=G11*D11*D4, I11 = D4>0 ? H11/D4 : 0;
-
-    var H12=inp.sk700_vetRate*D9, I12=D4>0?H12/D4:0;
-    var H13=inp.sk700_hayRate*D9*inp.sk700_hayLb, I13=D4>0?H13/D4:0;
-    var H14=inp.sk700_saltRate*D9*inp.sk700_saltLb, I14=D4>0?H14/D4:0;
-    var H15=inp.sk700_laborRate*D9, I15=D4>0?H15/D4:0;
-    var H16=inp.sk700_fuelRate*D9, I16=D4>0?H16/D4:0;
-    var H18=inp.sk700_fuelRate*D9*(inp.sk700_lubePct/100), I18=D4>0?H18/D4:0;
-    var D19=(100-inp.sk_deathLoss700)/100, I19=inp.sk700_marketingRate*D19, H19=I19*D4; // Marketing Cost
-    var D20=inp.sk_interestRate/100, H20=D20*H9/2, I20=D4>0?H20/D4:0; // 6-month interest
-
-    var otherVar = I12+I13+I14+I15+I16+I18+I19;
-    var I21 = I9+I11+otherVar+I20;
-    var I23 = I6-I21;
-
-    var H28=inp.sk700_mgmtFee*D9, I28=D4>0?H28/D4:0;
-    var I29 = I28;
-    var I31 = I21+I29;
-    var I33 = I6-I31;
-    var I34 = E4>0 ? I31/E4*100 : 0;
-    var I37 = E4-E9;
-    var I36 = I37!==0 ? I33/I37 : 0;
-    var I38 = I37!==0 ? (I31-I9)/I37*100 : 0;
-
-    return {D4:D4,E4:E4,I4:I4,I6:I6,I9:I9,I11:I11,otherVar:otherVar,I21:I21,I23:I23,I28:I28,I29:I29,I31:I31,I33:I33,I34:I34,I36:I36,I37:I37,I38:I38};
-  }
-
-  /* ---------------- 800 lb path ("Stockers 800 Lb") ---------------- */
-  function calc800(inp){
-    var D4 = inp.sk_heads*(100-inp.sk_deathLoss800)/100;
-    var daysEarly = daysBetween(inp.sk_pullOff700, inp.sk_earlyStart);
-    var daysLate = daysBetween(inp.sk_pullOff800, inp.sk_pullOff700);
-    var E4 = (inp.sk_calfWeight + daysEarly*inp.sk_earlyADG + inp.sk_lateADG*daysLate) * (100-inp.sk_shrink800)/100;
-    var G4 = inp.sk_price800;
-    var H4 = D4*G4*E4/100;
-    var I4 = D4>0 ? H4/D4 : 0;
-    var I6 = I4;
-
-    var D9=inp.sk_heads, E9=inp.sk_calfWeight, G9=inp.sk_calfPrice;
-    var H9=G9*E9*D9/100, I9 = D4>0 ? H9/D4 : 0;
-    var D11=E4-E9, G11=inp.sk_grazingCost;
-    var H11=G11*D11*D4, I11 = D4>0 ? H11/D4 : 0;
-
-    var H12=inp.sk800_vetRate*D9, I12=D4>0?H12/D4:0;
-    var H13=inp.sk800_hayRate*D9*inp.sk800_hayLb, I13=D4>0?H13/D4:0;
-    var H14=inp.sk800_saltRate*D9*inp.sk800_saltLb, I14=D4>0?H14/D4:0;
-    var H15=inp.sk800_laborRate*D9, I15=D4>0?H15/D4:0;
-    var H16=inp.sk800_fuelRate*D9, I16=D4>0?H16/D4:0;
-    var H18=inp.sk800_fuelRate*D9*(inp.sk800_lubePct/100), I18=D4>0?H18/D4:0;
-    var D19=(100-inp.sk_deathLoss700)/100, I19=inp.sk800_marketingRate*D19, H19=I19*D4; // Marketing Cost — fidelity quirk #1: uses the 700lb death loss, see block comment above
-    var D20=inp.sk_interestRate/100, H20=D20*H9*8/12, I20=D4>0?H20/D4:0; // 8-month interest
-
-    var otherVar = I12+I13+I14+I15+I16+I18+I19;
-    var I21 = I9+I11+otherVar+I20;
-    var I23 = I6-I21;
-
-    var H28=inp.sk800_mgmtFee*D9, I28=D4>0?H28/D4:0;
-    var I29 = I28;
-    var I31 = I21+I29;
-    var I33 = I6-I31;
-    var I34 = E4>0 ? I31/E4*100 : 0;
-    var I37 = E4-E9;
-    var I36 = I37!==0 ? I33/I37 : 0;
-    var I38 = I37!==0 ? (I31-I9)/I37*100 : 0;
-
-    return {D4:D4,E4:E4,I4:I4,I6:I6,I9:I9,I11:I11,otherVar:otherVar,I21:I21,I23:I23,I28:I28,I29:I29,I31:I31,I33:I33,I34:I34,I36:I36,I37:I37,I38:I38};
-  }
-
-  /* ---------------- Returns-sensitivity grids (700 lb / 800 lb) ---------------- */
-  function grid700(inp, r){
-    var C4=r.E4, C9=r.I11, C10=r.otherVar;
-    var deathLoss=inp.sk_deathLoss700, shrink=inp.sk_shrink700, calfWeight=inp.sk_calfWeight, interestRate=inp.sk_interestRate/100;
-    var L4=inp.sk_price700, cols=[L4*0.8, L4*0.9, L4, L4*1.1, L4*1.2];
-    var I7=inp.sk_calfPrice, rows=[I7*0.9, I7*0.95, I7, I7*1.05, I7*1.1];
-    var grid = rows.map(function(rowPrice){
-      return cols.map(function(salePrice){
-        return (salePrice/100)*C4*((100-deathLoss)/100)*((100-shrink)/100) - (C9+C10) - (rowPrice/100)*calfWeight - interestRate*(6/12)*(rowPrice*calfWeight/100);
-      });
-    });
-    return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:2, centerCol:2};
-  }
-
-  function grid800(inp, r){
-    var F4=r.E4, F9=r.I11, F10=r.otherVar;
-    var deathLoss=inp.sk_deathLoss800, shrink=inp.sk_shrink800, calfWeight=inp.sk_calfWeight, interestRate=inp.sk_interestRate/100;
-    var cols=[GRID800_SALE_CENTER*0.8, GRID800_SALE_CENTER*0.9, GRID800_SALE_CENTER, GRID800_SALE_CENTER*1.1, GRID800_SALE_CENTER*1.2];
-    var rows=[GRID800_PURCHASE_CENTER*0.9, GRID800_PURCHASE_CENTER*0.95, GRID800_PURCHASE_CENTER, GRID800_PURCHASE_CENTER*1.05, GRID800_PURCHASE_CENTER*1.1];
-    var grid = rows.map(function(rowPrice){
-      return cols.map(function(salePrice){
-        return (salePrice/100)*F4*((100-shrink)/100)*((100-deathLoss)/100) - (F9+F10) - (rowPrice/100)*calfWeight - interestRate*(8/12)*(rowPrice*calfWeight/100);
-      });
-    });
-    return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:2, centerCol:2};
-  }
-
-  /* ---------------- Feedyard finishing (from either stocker) ---------------- */
-  function calcFeedyardBase(weightIn, priceStocker, cog, daysOnFeed, adg, salePriceBase, deathLossPct, interestRatePct){
-    var weightOut = weightIn + daysOnFeed*adg;
-    var deathLoss = deathLossPct/100, interestRate = interestRatePct/100;
-    function netReturn(salePrice, wOut, cogRate){
-      return (salePrice*wOut)*(1-deathLoss)/100 - (weightIn*priceStocker/100) - (weightIn*priceStocker/100)*interestRate*0.5 - (wOut-weightIn)*cogRate/100;
-    }
-    return {weightIn:weightIn, weightOut:weightOut, netReturn:netReturn, baseReturn:netReturn(salePriceBase, weightOut, cog)};
-  }
-
-  function gridFeedyardCOG(fy, salePriceBase, cogBase){
-    var cols=[salePriceBase*0.9, salePriceBase*0.95, salePriceBase, salePriceBase*1.05, salePriceBase*1.1];
-    var rows=[cogBase*0.9, cogBase*0.95, cogBase, cogBase*1.05, cogBase*1.1];
-    var grid = rows.map(function(cogRow){
-      return cols.map(function(salePrice){ return fy.netReturn(salePrice, fy.weightOut, cogRow); });
-    });
-    return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:2, centerCol:2};
-  }
-
-  function gridFeedyardWeight(fy, salePriceBase, cogBase){
-    var cols=[salePriceBase*0.9, salePriceBase*0.95, salePriceBase, salePriceBase*1.05, salePriceBase*1.1];
-    var rows=[fy.weightOut*0.8, fy.weightOut*0.85, fy.weightOut*0.9, fy.weightOut*0.95, fy.weightOut]; // spreadsheet's own steps — only below the full weight-out, never above
-    var grid = rows.map(function(wOut){
-      return cols.map(function(salePrice){ return fy.netReturn(salePrice, wOut, cogBase); });
-    });
-    return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:4, centerCol:2};
-  }
-
-  /* ---------------- Retaining to May on wheat (marginal decision) ---------------- */
-  function gridRetainMay(inp, r700, r800){
-    var F4=r800.E4, F9=r800.I11, F10=r800.otherVar;
-    var C4=r700.E4, C9=r700.I11, C10=r700.otherVar;
-    var deathLoss800=inp.sk_deathLoss800, shrink800=inp.sk_shrink800, interestRate=inp.sk_interestRate/100;
-    var L22=inp.sk_price800, cols=[L22*0.9, L22*0.95, L22, L22*1.05, L22*1.1];
-    var I25=inp.skrm_costRate, rows=[I25*0.9, I25*0.95, I25, I25*1.05, I25*1.1];
-    var grid = rows.map(function(costRate){
-      return cols.map(function(salePrice800){
-        return (salePrice800/100)*F4*(100-deathLoss800)/100*(100-shrink800)/100 - (F9+F10) + (C9+C10) - (costRate/100)*C4 - interestRate*(2/12)*(costRate*C4/100);
-      });
-    });
-    return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:2, centerCol:2};
-  }
-
-  /* ---------------- Rendering ---------------- */
-  function renderStockersGrid(headId, bodyId, rowLabel, rowHeaders, colHeaders, grid, centerRow, centerCol, rowFmt){
-    rowFmt = rowFmt || function(v){ return fmtDollar(v,2); };
-    var head = $(headId);
-    head.innerHTML = '<th>'+rowLabel+'</th>' + colHeaders.map(function(c,ci){
-      var bold = ci===centerCol ? ' style="color:var(--accent);"' : '';
-      return '<th'+bold+'>'+fmtDollar(c,2)+'</th>';
-    }).join('');
-    var body = $(bodyId);
-    body.innerHTML = rowHeaders.map(function(rh, ri){
-      var rowBold = ri===centerRow;
-      var cells = grid[ri].map(function(v, ci){
-        var isCenter = ri===centerRow && ci===centerCol;
-        var style = isCenter ? ' style="color:var(--accent);font-weight:800;"' : (rowBold||ci===centerCol ? ' style="font-weight:700;"' : '');
-        return '<td'+style+'>'+(isFinite(v)?fmtDollar(v,2):'—')+'</td>';
-      }).join('');
-      var rowLabelStyle = rowBold ? ' style="color:var(--accent);font-weight:800;"' : '';
-      return '<tr><td'+rowLabelStyle+'>'+rowFmt(rh)+'</td>'+cells+'</tr>';
-    }).join('');
-  }
-
-  function updatePathResult(prefix, r){
-    var better = r.I33 >= 0;
-    $(prefix+'_verdictPill').className = 'verdict-pill ' + (better?'good':'critical');
-    $(prefix+'_verdictText').textContent = better ? 'This path pencils out above all costs' : 'This path falls short of covering all costs';
-    $(prefix+'_narrative').innerHTML = 'Revenue of <strong>'+fmtDollar(r.I6,2)+'/hd</strong> minus variable and fixed costs of <strong>'+fmtDollar(r.I31,2)+'/hd</strong> leaves a planned return of <strong>'+fmtDollar(r.I33,2)+'/hd</strong>.';
-    $(prefix+'_revenue').textContent = fmtDollar(r.I6,2);
-    $(prefix+'_totalCosts').textContent = fmtDollar(r.I31,2);
-    $(prefix+'_return').textContent = fmtDollar(r.I33,2);
-    $(prefix+'_returnTile').className = 'stat-tile wide ' + (better?'good':'critical');
-    $(prefix+'_breakeven').textContent = fmtDollar(r.I34,2);
-    $(prefix+'_cog').textContent = fmtDollar(r.I38,2);
-  }
-
-  function updateFeedyardResult(prefix, fy){
-    var better = fy.baseReturn >= 0;
-    $(prefix+'_verdictPill').className='verdict-pill '+(better?'good':'critical');
-    $(prefix+'_verdictText').textContent = better ? 'Finishing in the feedyard pencils out at these base assumptions' : 'Finishing in the feedyard falls short at these base assumptions';
-    $(prefix+'_narrative').innerHTML = 'Weight in <strong>'+Math.round(fy.weightIn)+' lb</strong>, weight out <strong>'+Math.round(fy.weightOut)+' lb</strong>. Net return at the base sale price and cost of gain: <strong>'+fmtDollar(fy.baseReturn,2)+'/hd</strong>.';
-    $(prefix+'_return').textContent = fmtDollar(fy.baseReturn,2);
-    $(prefix+'_returnTile').className='stat-tile wide '+(better?'good':'critical');
-  }
-
-  function updateRetainMay(centerValue){
-    var better = centerValue >= 0;
-    $('rm_verdictPill').className='verdict-pill '+(better?'good':'critical');
-    $('rm_verdictText').textContent = better ? 'Retaining to May adds value over selling at 700 lb' : 'Selling at 700 lb looks better than retaining to May';
-    $('rm_narrative').innerHTML = 'At your center assumptions, retaining the calf from ~700 to ~800 lb on wheat pasture is worth about <strong>'+fmtDollar(centerValue,2)+'/hd</strong> versus selling now — this is the value of the extra weeks alone, not a full budget.';
-    $('rm_return').textContent = fmtDollar(centerValue,2);
-    $('rm_returnTile').className='stat-tile wide '+(better?'good':'critical');
-  }
-
-  function recalcStockers(){
-    var inp = readStockersInputs();
-    var r700 = calc700(inp);
-    var r800 = calc800(inp);
-
-    var daysEarly = daysBetween(inp.sk_pullOff700, inp.sk_earlyStart);
-    var daysLate = daysBetween(inp.sk_pullOff800, inp.sk_pullOff700);
-    var calNote = $('sk_calendarNote');
-    if(calNote) calNote.innerHTML = 'Early grazing phase: <strong>'+daysEarly+' days</strong> (to the 700&nbsp;lb pull-off date). Late grazing phase: <strong>'+daysLate+' days</strong> (700&nbsp;lb pull-off to the 800&nbsp;lb pull-off date).';
-
-    updatePathResult('p700', r700);
-    updatePathResult('p800', r800);
-
-    var g700 = grid700(inp, r700);
-    renderStockersGrid('p700_gridHead','p700_gridBody','Purchase \\ Sale price', g700.rowHeaders, g700.colHeaders, g700.grid, g700.centerRow, g700.centerCol);
-    var g800 = grid800(inp, r800);
-    renderStockersGrid('p800_gridHead','p800_gridBody','Purchase \\ Sale price', g800.rowHeaders, g800.colHeaders, g800.grid, g800.centerRow, g800.centerCol);
-
-    var fy8 = calcFeedyardBase(r800.E4, inp.sk_price800, inp.skfy8_cog, inp.skfy8_days, inp.skfy8_adg, inp.skfy8_salePrice, inp.skfy8_deathLoss, inp.sk_interestRate);
-    updateFeedyardResult('fy8', fy8);
-    var fy8Note = $('fy8_weightNote');
-    if(fy8Note) fy8Note.innerHTML = 'Weight in: <strong>'+Math.round(fy8.weightIn)+' lb</strong> (from the 800&nbsp;lb path above). Weight out: <strong>'+Math.round(fy8.weightOut)+' lb</strong> ('+inp.skfy8_days+' days &times; '+inp.skfy8_adg+' lb/day).';
-    var gFy8Cog = gridFeedyardCOG(fy8, inp.skfy8_salePrice, inp.skfy8_cog);
-    renderStockersGrid('fy8_cogGridHead','fy8_cogGridBody','Cost of gain \\ Sale price', gFy8Cog.rowHeaders, gFy8Cog.colHeaders, gFy8Cog.grid, gFy8Cog.centerRow, gFy8Cog.centerCol);
-    var gFy8Wt = gridFeedyardWeight(fy8, inp.skfy8_salePrice, inp.skfy8_cog);
-    renderStockersGrid('fy8_wtGridHead','fy8_wtGridBody','Sale weight \\ Sale price', gFy8Wt.rowHeaders, gFy8Wt.colHeaders, gFy8Wt.grid, gFy8Wt.centerRow, gFy8Wt.centerCol, function(v){ return fmtMoney0.format(Math.round(v))+' lb'; });
-
-    var fy7 = calcFeedyardBase(r700.E4, inp.sk_price700, inp.skfy7_cog, inp.skfy7_days, inp.skfy7_adg, inp.skfy7_salePrice, inp.skfy7_deathLoss, inp.sk_interestRate);
-    updateFeedyardResult('fy7', fy7);
-    var fy7Note = $('fy7_weightNote');
-    if(fy7Note) fy7Note.innerHTML = 'Weight in: <strong>'+Math.round(fy7.weightIn)+' lb</strong> (from the 700&nbsp;lb path above). Weight out: <strong>'+Math.round(fy7.weightOut)+' lb</strong> ('+inp.skfy7_days+' days &times; '+inp.skfy7_adg+' lb/day).';
-    var gFy7Cog = gridFeedyardCOG(fy7, inp.skfy7_salePrice, inp.skfy7_cog);
-    renderStockersGrid('fy7_cogGridHead','fy7_cogGridBody','Cost of gain \\ Sale price', gFy7Cog.rowHeaders, gFy7Cog.colHeaders, gFy7Cog.grid, gFy7Cog.centerRow, gFy7Cog.centerCol);
-    var gFy7Wt = gridFeedyardWeight(fy7, inp.skfy7_salePrice, inp.skfy7_cog);
-    renderStockersGrid('fy7_wtGridHead','fy7_wtGridBody','Sale weight \\ Sale price', gFy7Wt.rowHeaders, gFy7Wt.colHeaders, gFy7Wt.grid, gFy7Wt.centerRow, gFy7Wt.centerCol, function(v){ return fmtMoney0.format(Math.round(v))+' lb'; });
-
-    var gRM = gridRetainMay(inp, r700, r800);
-    var centerVal = gRM.grid[gRM.centerRow][gRM.centerCol];
-    updateRetainMay(centerVal);
-    renderStockersGrid('rm_gridHead','rm_gridBody','Cost rate \\ Sale price (800lb)', gRM.rowHeaders, gRM.colHeaders, gRM.grid, gRM.centerRow, gRM.centerCol);
-  }
-
-  function attachStockersInputs(){
-    Object.keys(STOCKERS_DEFAULTS).forEach(function(id){
-      var el = $(id);
-      if(el) el.addEventListener('input', recalcStockers);
-    });
-  }
-
-  var skResetBtn = $('sk_resetBtn');
-  if(skResetBtn) skResetBtn.addEventListener('click', function(){
-    Object.keys(STOCKERS_DEFAULTS).forEach(function(id){ var el=$(id); if(el) el.value = STOCKERS_DEFAULTS[id]; });
-    recalcStockers();
-  });
-
 
   function init(){
     initThemeToggle();
-    attachD1Inputs();
-    attachStockersInputs();
-    initTabs();
-    initSubTabs();
-    recalcD1();
-    recalcStockers();
+    attachInputs();
+    recalc();
     if(window.matchMedia){
-      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(){ recalcD1(); recalcStockers(); });
+      window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', recalc);
     }
   }
 
