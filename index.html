@@ -337,7 +337,7 @@
     <p>The same 24 categories of financial and production decision aids AgriLife Extension has always published as Excel spreadsheets &mdash; being rebuilt one at a time as web tools you (or a producer) can play with directly: move a number, watch the result update, no formulas or downloads required.</p>
     <div class="hero-meta">
       <div><strong>24</strong>categories, from the original spreadsheet library</div>
-      <div><strong>4</strong>categories live so far &mdash; more shipping over time</div>
+      <div><strong>3</strong>categories live so far &mdash; more shipping over time</div>
       <div><strong>Live &amp; editable</strong>every input recalculates instantly</div>
     </div>
   </div>
@@ -345,6 +345,85 @@
 </section>
 
 <main>
+  <section class="shared-tool" id="bcu-calculator">
+    <p class="section-label">Shared calculator</p>
+    <div class="bcu-card">
+      <button type="button" class="bcu-card-toggle" id="bcuToggleBtn" aria-expanded="false" aria-controls="bcuFields">
+        <div class="cat-top">
+          <span class="cat-num" aria-hidden="true">🐄</span>
+          <span class="status-pill live">Shared tool</span>
+        </div>
+        <h3>Cow operating cost (BCU)</h3>
+        <p>Feed, labor, and bull-depreciation cost per Breeding Cow Unit &mdash; set your own numbers once and every tool on this site that needs it, starting with A1's Year 1 operating cost, uses the same value automatically.</p>
+        <div class="bcu-preview">
+          <span class="bcu-preview-value" id="bcuHeaderValue">$0</span>
+          <span class="bcu-preview-label">/ BCU &middot; <span id="bcuSourceLabel">original default</span></span>
+        </div>
+        <span class="go">
+          <span id="bcuToggleLabel">Edit my numbers</span>
+          <svg class="chevron" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </button>
+
+      <div class="bcu-fields" id="bcuFields" hidden>
+        <p class="card-note">This is saved in your browser only (not sent anywhere, not shared across devices) &mdash; if you switch browsers or devices, or clear site data, you'll need to re-enter it.</p>
+
+        <fieldset style="margin-bottom:18px;">
+          <legend>Direct costs</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="bcu_landLeaseRate">Land grazing lease ($/mo)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_landLeaseRate" value="15" min="0"></div></div>
+            <div class="field"><label for="bcu_landLeaseMonths">Grazing months</label><div class="input-wrap"><input type="number" id="bcu_landLeaseMonths" value="11" min="0" max="12"></div></div>
+            <div class="field"><label for="bcu_hayRolls">Hay (rolls)</label><div class="input-wrap"><input type="number" id="bcu_hayRolls" value="1.5" min="0" step="0.1"></div></div>
+            <div class="field"><label for="bcu_hayPrice">Hay price ($/roll)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_hayPrice" value="105" min="0"></div></div>
+            <div class="field"><label for="bcu_saltLbs">Salt &amp; mineral (lb)</label><div class="input-wrap"><input type="number" id="bcu_saltLbs" value="90" min="0"></div></div>
+            <div class="field"><label for="bcu_saltPrice">Salt/mineral price ($/lb)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_saltPrice" value="0.25" min="0" step="0.01"></div></div>
+            <div class="field"><label for="bcu_laborMgmt">Labor &amp; management</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_laborMgmt" value="120" min="0"></div></div>
+            <div class="field"><label for="bcu_vetMed">Veterinarian &amp; medicine</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_vetMed" value="35" min="0"></div></div>
+          </div>
+        </fieldset>
+
+        <fieldset style="margin-bottom:18px;">
+          <legend>Herd bull depreciation (allocated per BCU)</legend>
+          <p class="card-note" style="margin:0 0 10px;">Bull cost, life, salvage weight/price and cows-per-bull now come from the <strong>"Market prices &amp; factors"</strong> calculator below &mdash; edit them there, not here, so B1a and every other tool stay in sync with this one.</p>
+          <div class="field-grid cols-3" id="bcuBullReadout">
+            <div class="field"><span class="hint" style="margin-top:0;">Bull cost</span><strong id="bcuBull_cost">$0</strong></div>
+            <div class="field"><span class="hint" style="margin-top:0;">Productive life</span><strong id="bcuBull_life">0 yrs</strong></div>
+            <div class="field"><span class="hint" style="margin-top:0;">Salvage (weight &times; cull price)</span><strong id="bcuBull_salvage">$0</strong></div>
+            <div class="field"><span class="hint" style="margin-top:0;">Death loss</span><strong id="bcuBull_deathLoss">0%</strong></div>
+            <div class="field"><span class="hint" style="margin-top:0;">Cows per bull</span><strong id="bcuBull_perBull">0</strong></div>
+          </div>
+        </fieldset>
+
+        <fieldset style="margin-bottom:14px;">
+          <legend>Indirect costs</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="bcu_repairMaint">Vehicle/equipment repair</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_repairMaint" value="16" min="0"></div></div>
+            <div class="field"><label for="bcu_fuelOil">Fuel &amp; oil</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_fuelOil" value="5" min="0"></div></div>
+            <div class="field"><label for="bcu_utilities">Utilities</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_utilities" value="10" min="0"></div></div>
+            <div class="field"><label for="bcu_adminGA">General &amp; administration</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_adminGA" value="20" min="0"></div></div>
+            <div class="field"><label for="bcu_vehicleDepr">Vehicle/equipment depreciation</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_vehicleDepr" value="48" min="0"></div></div>
+          </div>
+        </fieldset>
+
+        <div class="stat-tile wide" style="margin-top:4px;">
+          <span class="label">Total operating cost per BCU</span>
+          <span class="value" id="bcu_opCostTotal">$0</span>
+          <span class="sub" id="bcu_opCostBreak"></span>
+        </div>
+
+        <div style="margin-top:18px;">
+          <div class="stackbar-total"><span>Where it goes</span><strong id="bcu_opCostBarTotal">$0 / BCU</strong></div>
+          <div class="stackbar" id="bcu_opCostStackbar"></div>
+          <div class="legend-rows" id="bcu_opCostLegend"></div>
+        </div>
+
+        <div class="btn-row" style="padding:18px 0 0;">
+          <button class="btn secondary" id="bcu_resetBtn" type="button">Reset to defaults</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <section class="shared-tool" id="market-prices-calculator">
     <p class="section-label">Shared calculator</p>
     <div class="bcu-card">
@@ -404,178 +483,6 @@
 
         <div class="btn-row" style="padding:18px 0 0;">
           <button class="btn secondary" id="mp_resetBtn" type="button">Reset to defaults</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <section class="shared-tool" id="opcost-calculator">
-    <p class="section-label">Shared calculator</p>
-    <div class="bcu-card">
-      <button type="button" class="bcu-card-toggle" id="ocToggleBtn" aria-expanded="false" aria-controls="ocFields">
-        <div class="cat-top">
-          <span class="cat-num" aria-hidden="true">🧾</span>
-          <span class="status-pill live">Shared tool</span>
-        </div>
-        <h3>Cow-calf operating costs &amp; financing</h3>
-        <p>Direct costs, indirect costs, general &amp; administrative, and financing interest rates &mdash; set your own numbers once (or leave the defaults) and C1's full budget, plus every other tool that needs them, reads the same values automatically instead of asking again.</p>
-        <div class="bcu-preview">
-          <span class="bcu-preview-value" id="ocHeaderValue" style="font-size:16px;">4 categories</span>
-          <span class="bcu-preview-label">&middot; <span id="ocSourceLabel">original defaults</span></span>
-        </div>
-        <span class="go">
-          <span id="ocToggleLabel">Edit my numbers</span>
-          <svg class="chevron" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
-        </span>
-      </button>
-
-      <div class="bcu-fields" id="ocFields" hidden>
-        <p class="card-note">Saved in your browser only (not sent anywhere, not shared across devices) &mdash; if you switch browsers or devices, or clear site data, you'll need to re-enter it. Dollar totals below are per your own herd size on each tool (entered there, not here) &mdash; the preview total on the collapsed card above uses a 400-head reference herd just to show a representative number.</p>
-
-        <div class="stat-tiles" style="margin-bottom:18px;">
-          <div class="stat-tile"><span class="label">Direct costs</span><span class="value" id="oc_directPreview">$0</span><span class="sub">/BCU, 400-hd reference</span></div>
-          <div class="stat-tile"><span class="label">Indirect costs</span><span class="value" id="oc_indirectPreview">$0</span><span class="sub">/BCU, incl. vehicle repairs/depr.</span></div>
-          <div class="stat-tile"><span class="label">General &amp; admin.</span><span class="value" id="oc_gaPreview">$0</span><span class="sub">/BCU, 400-hd reference</span></div>
-          <div class="stat-tile"><span class="label">Financing rates</span><span class="value" id="oc_financePreview" style="font-size:16px;">&mdash;</span><span class="sub">interest, % per year</span></div>
-        </div>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Direct costs &mdash; purchased &amp; raised feed</legend>
-          <div class="table-scroll">
-            <table class="edit">
-              <thead><tr><th>Item</th><th>Qty (lb/BCU)</th><th>Price ($/lb)</th></tr></thead>
-              <tbody>
-                <tr><td class="lbl">Roughage</td><td><input type="number" id="oc_roughageQty" value="0"></td><td><input type="number" id="oc_roughagePrice" value="0" step="0.01"></td></tr>
-                <tr><td class="lbl">Complete feed / concentrate</td><td><input type="number" id="oc_completeFeedQty" value="0"></td><td><input type="number" id="oc_completeFeedPrice" value="0" step="0.01"></td></tr>
-                <tr><td class="lbl">Mineral &amp; salt</td><td><input type="number" id="oc_mineralSaltQty" value="30"></td><td><input type="number" id="oc_mineralSaltPrice" value="0.22" step="0.01"></td></tr>
-                <tr><td class="lbl">Protein supplement</td><td><input type="number" id="oc_proteinQty" value="500"></td><td><input type="number" id="oc_proteinPrice" value="0.18" step="0.01"></td></tr>
-                <tr><td class="lbl">Other feed purchase</td><td><input type="number" id="oc_otherFeedQty" value="0"></td><td><input type="number" id="oc_otherFeedPrice" value="0" step="0.01"></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </fieldset>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Direct costs &mdash; grazing (non-land)</legend>
-          <div class="table-scroll">
-            <table class="edit">
-              <thead><tr><th>Item</th><th>Multiplier</th><th>$/BCU</th></tr></thead>
-              <tbody>
-                <tr><td class="lbl">Other grazing 1</td><td><input type="number" id="oc_grazing1Qty" value="1"></td><td><input type="number" id="oc_grazing1Price" value="0" step="0.5"></td></tr>
-                <tr><td class="lbl">Other grazing 2</td><td><input type="number" id="oc_grazing2Qty" value="1"></td><td><input type="number" id="oc_grazing2Price" value="0" step="0.5"></td></tr>
-                <tr><td class="lbl">Other grazing 3</td><td><input type="number" id="oc_grazing3Qty" value="1"></td><td><input type="number" id="oc_grazing3Price" value="0" step="0.5"></td></tr>
-                <tr><td class="lbl">Other grazing 4</td><td><input type="number" id="oc_grazing4Qty" value="1"></td><td><input type="number" id="oc_grazing4Price" value="0" step="0.5"></td></tr>
-              </tbody>
-            </table>
-          </div>
-          <div class="table-scroll" style="margin-top:8px;">
-            <table class="edit">
-              <thead><tr><th>Item</th><th>Total $</th></tr></thead>
-              <tbody>
-                <tr><td class="lbl">Other grazing 5 (total)</td><td><input type="number" id="oc_grazing5Total" value="0" step="50"></td></tr>
-                <tr><td class="lbl">Other grazing 6 (total)</td><td><input type="number" id="oc_grazing6Total" value="0" step="50"></td></tr>
-                <tr><td class="lbl">Cash rent paid (total)</td><td><input type="number" id="oc_cashRentTotal" value="0" step="50"></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </fieldset>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Direct costs &mdash; other select cash costs</legend>
-          <div class="table-scroll">
-            <table class="edit">
-              <thead><tr><th>Item</th><th>Qty</th><th>$/unit</th></tr></thead>
-              <tbody>
-                <tr><td class="lbl">Freight &amp; trucking</td><td><input type="number" id="oc_freightQty" value="1"></td><td><input type="number" id="oc_freightPrice" value="5" step="0.5"></td></tr>
-                <tr><td class="lbl">Veterinary, medicine &amp; breeding</td><td><input type="number" id="oc_vetQty" value="1"></td><td><input type="number" id="oc_vetPrice" value="35" step="0.5"></td></tr>
-                <tr><td class="lbl">Supplies</td><td><input type="number" id="oc_suppliesQty" value="1"></td><td><input type="number" id="oc_suppliesPrice" value="5" step="0.5"></td></tr>
-                <tr><td class="lbl">Other cash cost 1</td><td><input type="number" id="oc_otherCash1Qty" value="1"></td><td><input type="number" id="oc_otherCash1Price" value="0" step="0.5"></td></tr>
-                <tr><td class="lbl">Other cash cost 2</td><td><input type="number" id="oc_otherCash2Qty" value="1"></td><td><input type="number" id="oc_otherCash2Price" value="0" step="0.5"></td></tr>
-                <tr><td class="lbl">Other cash cost 3</td><td><input type="number" id="oc_otherCash3Qty" value="1"></td><td><input type="number" id="oc_otherCash3Price" value="0" step="0.5"></td></tr>
-                <tr><td class="lbl">Hired temporary labor</td><td><input type="number" id="oc_laborDays" value="20"></td><td><input type="number" id="oc_laborRatePerDay" value="150" step="5"></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </fieldset>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Indirect costs</legend>
-          <div class="table-scroll">
-            <table class="edit">
-              <thead><tr><th>Item</th><th>Total $ (or $/unit)</th></tr></thead>
-              <tbody>
-                <tr><td class="lbl">Repairs &amp; maint. of improvements</td><td><input type="number" id="oc_improvementsRepairsTotal" value="4000" step="100"></td></tr>
-                <tr><td class="lbl">Property / land tax, total</td><td><input type="number" id="oc_propertyTaxTotal" value="2000" step="100"></td></tr>
-                <tr><td class="lbl">Gasoline, fuel &amp; oil</td><td><input type="number" id="oc_fuelOilTotal" value="12000" step="100"></td></tr>
-                <tr><td class="lbl">Other indirect cash cost 1</td><td><input type="number" id="oc_otherIndirectCash1Total" value="0" step="100"></td></tr>
-                <tr><td class="lbl">Hired permanent management, persons</td><td><input type="number" id="oc_hiredMgmtPersons" value="1"></td></tr>
-                <tr><td class="lbl">Hired permanent management, $/person</td><td><input type="number" id="oc_hiredMgmtSalary" value="40000" step="1000"></td></tr>
-                <tr><td class="lbl">Owner operator mgmt. &amp; labor, persons</td><td><input type="number" id="oc_ownerMgmtPersons" value="1"></td></tr>
-                <tr><td class="lbl">Owner operator mgmt. &amp; labor, $/person</td><td><input type="number" id="oc_ownerMgmtSalary" value="70000" step="1000"></td></tr>
-                <tr><td class="lbl">Other indirect cash cost 2</td><td><input type="number" id="oc_otherIndirectCash2Total" value="0" step="100"></td></tr>
-                <tr><td class="lbl">Water mgmt. &amp; improvement, $/acre</td><td><input type="number" id="oc_waterMgmtPerAcre" value="1" step="0.1"></td></tr>
-                <tr><td class="lbl">Other non-cash depreciation, total</td><td><input type="number" id="oc_otherNonCashDeprTotal" value="0" step="100"></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </fieldset>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Vehicles, machinery &amp; equipment</legend>
-          <p class="card-note">Replacement cost, useful life, salvage %, and annual repair % for each item &mdash; depreciation and repairs are allocated 100% to the cow-calf enterprise, matching the source workbook. Feeds into the Indirect costs total above.</p>
-          <div class="table-scroll">
-            <table class="edit">
-              <thead><tr><th>Item</th><th>Replacement cost</th><th>Life (yrs)</th><th>Salvage %</th><th>Repair % /yr</th></tr></thead>
-              <tbody>
-                <tr><td class="lbl">Pickups (2)</td><td><input type="number" id="oc_eq0_cost" value="80000"></td><td><input type="number" id="oc_eq0_life" value="5"></td><td><input type="number" id="oc_eq0_salvage" value="10"></td><td><input type="number" id="oc_eq0_repair" value="5"></td></tr>
-                <tr><td class="lbl">Trailers (2)</td><td><input type="number" id="oc_eq1_cost" value="10000"></td><td><input type="number" id="oc_eq1_life" value="10"></td><td><input type="number" id="oc_eq1_salvage" value="0"></td><td><input type="number" id="oc_eq1_repair" value="2"></td></tr>
-                <tr><td class="lbl">Tractor</td><td><input type="number" id="oc_eq2_cost" value="40000"></td><td><input type="number" id="oc_eq2_life" value="10"></td><td><input type="number" id="oc_eq2_salvage" value="10"></td><td><input type="number" id="oc_eq2_repair" value="5"></td></tr>
-                <tr><td class="lbl">Feeders</td><td><input type="number" id="oc_eq3_cost" value="8000"></td><td><input type="number" id="oc_eq3_life" value="10"></td><td><input type="number" id="oc_eq3_salvage" value="0"></td><td><input type="number" id="oc_eq3_repair" value="5"></td></tr>
-                <tr><td class="lbl">Cattle equipment</td><td><input type="number" id="oc_eq4_cost" value="20000"></td><td><input type="number" id="oc_eq4_life" value="10"></td><td><input type="number" id="oc_eq4_salvage" value="0"></td><td><input type="number" id="oc_eq4_repair" value="5"></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </fieldset>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>General &amp; administrative</legend>
-          <div class="table-scroll">
-            <table class="edit">
-              <thead><tr><th>Item</th><th>Total $</th></tr></thead>
-              <tbody>
-                <tr><td class="lbl">Professional fees (accounting &amp; legal)</td><td><input type="number" id="oc_profFeesTotal" value="2500" step="100"></td></tr>
-                <tr><td class="lbl">Utilities, phone, computer, etc.</td><td><input type="number" id="oc_utilitiesTotal" value="4000" step="100"></td></tr>
-                <tr><td class="lbl">Office supplies</td><td><input type="number" id="oc_officeSuppliesTotal" value="1500" step="100"></td></tr>
-                <tr><td class="lbl">Dues &amp; subscriptions</td><td><input type="number" id="oc_duesTotal" value="500" step="50"></td></tr>
-                <tr><td class="lbl">Administrative wages, payroll, etc.</td><td><input type="number" id="oc_adminWagesTotal" value="15000" step="500"></td></tr>
-                <tr><td class="lbl">Insurance</td><td><input type="number" id="oc_insuranceTotal" value="7000" step="100"></td></tr>
-                <tr><td class="lbl">Other G&amp;A</td><td><input type="number" id="oc_otherGATotal" value="0" step="100"></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Financing &mdash; interest rates</legend>
-          <div class="field-grid">
-            <div class="field"><label for="oc_pctLivestockBorrowed">% livestock investment borrowed</label><div class="input-wrap has-suffix"><input type="number" id="oc_pctLivestockBorrowed" value="10" step="0.1"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="oc_livestockInterestRate">Interest rate, borrowed livestock</label><div class="input-wrap has-suffix"><input type="number" id="oc_livestockInterestRate" value="5" step="0.1"><span class="suffix">%</span></div></div>
-          </div>
-          <p class="card-note" style="margin:14px 0 10px;">Other borrowed capital &mdash; if this operation carries debt on anything besides the breeding herd, enter the dollar amount financed for each; most operations leave these at $0.</p>
-          <div class="table-scroll">
-            <table class="edit">
-              <thead><tr><th>Item</th><th>Invested $</th><th>Rate %</th></tr></thead>
-              <tbody>
-                <tr><td class="lbl">Vehicles, machinery &amp; equipment</td><td><input type="number" id="oc_equipDebtInvested" value="0" step="1000"></td><td><input type="number" id="oc_equipDebtRate" value="0" step="0.1"></td></tr>
-                <tr><td class="lbl">Operating capital</td><td><input type="number" id="oc_opCapitalInvested" value="0" step="1000"></td><td><input type="number" id="oc_opCapitalRate" value="0" step="0.1"></td></tr>
-                <tr><td class="lbl">Real estate debt</td><td><input type="number" id="oc_realEstateDebtInvested" value="0" step="1000"></td><td><input type="number" id="oc_realEstateDebtRate" value="0" step="0.1"></td></tr>
-              </tbody>
-            </table>
-          </div>
-        </fieldset>
-
-        <div class="btn-row" style="padding:18px 0 0;">
-          <button class="btn secondary" id="oc_resetBtn" type="button">Reset to defaults</button>
         </div>
       </div>
     </div>
@@ -663,59 +570,179 @@
     return fallback;
   }
 
-  /* ---------------- Shared "Cow-calf operating costs & financing" ----------------
-     2026-09-23: added at the user's request so C1's Direct costs, Indirect costs,
-     G&A and financing-rate cards (the full line-item detail from the original
-     Excel, ~58 inputs) live in ONE shared place instead of being re-entered on
-     every tool. Dollar amounts here are the same $/BCU or $/unit assumptions C1
-     always used, unchanged — only where they're entered moved. cow-calf-budget/
-     index.html (C1) reads this same localStorage key; the 3 debt-invested dollar
-     amounts (which scale with each specific operation) and the vehicle-linked
-     share of indirect costs stay local to C1, not here — see the note in the
-     "Indirect costs" fieldset below. */
-  var OC_STORAGE_KEY = 'tamuDecisionAidsOperatingCosts';
-  var OC_DEFAULTS = {
-    oc_roughageQty:0, oc_roughagePrice:0, oc_completeFeedQty:0, oc_completeFeedPrice:0,
-    oc_mineralSaltQty:30, oc_mineralSaltPrice:0.22, oc_proteinQty:500, oc_proteinPrice:0.18,
-    oc_otherFeedQty:0, oc_otherFeedPrice:0,
-    oc_grazing1Qty:1, oc_grazing1Price:0, oc_grazing2Qty:1, oc_grazing2Price:0,
-    oc_grazing3Qty:1, oc_grazing3Price:0, oc_grazing4Qty:1, oc_grazing4Price:0,
-    oc_grazing5Total:0, oc_grazing6Total:0, oc_cashRentTotal:0,
-    oc_freightQty:1, oc_freightPrice:5, oc_vetQty:1, oc_vetPrice:35,
-    oc_suppliesQty:1, oc_suppliesPrice:5, oc_otherCash1Qty:1, oc_otherCash1Price:0,
-    oc_otherCash2Qty:1, oc_otherCash2Price:0, oc_otherCash3Qty:1, oc_otherCash3Price:0,
-    oc_laborDays:20, oc_laborRatePerDay:150,
-    oc_improvementsRepairsTotal:4000, oc_propertyTaxTotal:2000, oc_fuelOilTotal:12000,
-    oc_otherIndirectCash1Total:0, oc_hiredMgmtPersons:1, oc_hiredMgmtSalary:40000,
-    oc_ownerMgmtPersons:1, oc_ownerMgmtSalary:70000, oc_otherIndirectCash2Total:0,
-    oc_waterMgmtPerAcre:1, oc_otherNonCashDeprTotal:0,
-    oc_profFeesTotal:2500, oc_utilitiesTotal:4000, oc_officeSuppliesTotal:1500,
-    oc_duesTotal:500, oc_adminWagesTotal:15000, oc_insuranceTotal:7000, oc_otherGATotal:0,
-    oc_eq0_cost:80000, oc_eq0_life:5, oc_eq0_salvage:10, oc_eq0_repair:5,
-    oc_eq1_cost:10000, oc_eq1_life:10, oc_eq1_salvage:0, oc_eq1_repair:2,
-    oc_eq2_cost:40000, oc_eq2_life:10, oc_eq2_salvage:10, oc_eq2_repair:5,
-    oc_eq3_cost:8000, oc_eq3_life:10, oc_eq3_salvage:0, oc_eq3_repair:5,
-    oc_eq4_cost:20000, oc_eq4_life:10, oc_eq4_salvage:0, oc_eq4_repair:5,
-    oc_pctLivestockBorrowed:10, oc_livestockInterestRate:5,
-    oc_equipDebtInvested:0, oc_equipDebtRate:0, oc_opCapitalInvested:0, oc_opCapitalRate:0,
-    oc_realEstateDebtInvested:0, oc_realEstateDebtRate:0
-  };
-  function readOperatingCosts(){
-    try {
-      var raw = window.localStorage.getItem(OC_STORAGE_KEY);
-      if(raw){
-        var data = JSON.parse(raw);
-        if(data){
-          var out = {};
-          Object.keys(OC_DEFAULTS).forEach(function(id){ out[id] = isFinite(data[id]) ? data[id] : OC_DEFAULTS[id]; });
-          return out;
+  /* ---------------- Shared "Cow operating cost (BCU)" calculator ----------------
+     2026-09-16: moved here from the A1 tool page at the user's request, so a
+     producer enters it once and every tool that needs a per-BCU operating cost
+     reads the same number instead of re-asking for it on every page. Persisted
+     to localStorage (this browser only — not synced across devices) under
+     STORAGE_KEY below; site/cow-calf/index.html reads the same key.
+     2026-09-21: the bull-economics sub-inputs below now read from the shared
+     "Market prices & factors" store above (readMarketPrices()) instead of
+     keeping their own copy — see the note above. */
+  (function initBcuCalculator(){
+    var card = document.getElementById('bcu-calculator');
+    if(!card) return;
+
+    var STORAGE_KEY = 'tamuDecisionAidsBcuOpCost';
+    var fmtMoney0 = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
+    var fmtMoney2 = new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+    function $(id){ return document.getElementById(id); }
+    function num(id){ var el = $(id); var v = el ? parseFloat(el.value) : NaN; return isFinite(v)?v:0; }
+    function round(v,d){ var m=Math.pow(10,d||0); return Math.round(v*m)/m; }
+
+    var BCU_DEFAULTS = {
+      bcu_landLeaseRate:15, bcu_landLeaseMonths:11, bcu_hayRolls:1.5, bcu_hayPrice:105,
+      bcu_saltLbs:90, bcu_saltPrice:0.25, bcu_laborMgmt:120, bcu_vetMed:35,
+      bcu_repairMaint:16, bcu_fuelOil:5, bcu_utilities:10, bcu_adminGA:20, bcu_vehicleDepr:48
+    };
+    var customized = false; // true once the producer has their own saved numbers (vs. the shipped defaults)
+
+    function refreshBullReadout(mp){
+      var salvage = mp.mp_bullSalvageWeight*mp.mp_cullBullPrice*0.01;
+      if($('bcuBull_cost')) $('bcuBull_cost').textContent = '$'+fmtMoney0.format(mp.mp_bullCost);
+      if($('bcuBull_life')) $('bcuBull_life').textContent = mp.mp_bullLife+' yrs';
+      if($('bcuBull_salvage')) $('bcuBull_salvage').textContent = '$'+fmtMoney0.format(salvage)+' ('+mp.mp_bullSalvageWeight+' lb @ $'+mp.mp_cullBullPrice.toFixed(2)+'/cwt)';
+      if($('bcuBull_deathLoss')) $('bcuBull_deathLoss').textContent = mp.mp_bullDeathLoss+'%';
+      if($('bcuBull_perBull')) $('bcuBull_perBull').textContent = mp.mp_perBull;
+    }
+
+    /* ---- tooltip + stacked bar (same small chart pattern the tool pages use) ---- */
+    function showVizTooltip(x,y,html){
+      var tt = $('vizTooltip');
+      if(!tt) return;
+      tt.innerHTML = html;
+      tt.style.left = x+'px';
+      tt.style.top = (y-6)+'px';
+      tt.classList.add('show');
+    }
+    function hideVizTooltip(){ var tt=$('vizTooltip'); if(tt) tt.classList.remove('show'); }
+    function buildStackBar(barId, legendId, totalId, data, total, totalSuffix){
+      var bar = $(barId), legend = $(legendId);
+      if(!bar || !legend) return;
+      bar.innerHTML=''; legend.innerHTML='';
+      if(totalId && $(totalId)) $(totalId).textContent = '$'+fmtMoney2.format(total)+(totalSuffix||'');
+      data.forEach(function(d){
+        var pct = total>0 ? (d.value/total*100) : 0;
+        var seg = document.createElement('div');
+        seg.className='seg';
+        seg.style.background = d.color;
+        seg.style.width = Math.max(pct,0)+'%';
+        seg.tabIndex = 0;
+        seg.setAttribute('role','img');
+        seg.setAttribute('aria-label', d.label+': $'+fmtMoney2.format(d.value)+' ('+pct.toFixed(1)+'%)');
+        function showTt(){
+          var r = seg.getBoundingClientRect();
+          showVizTooltip(r.left+r.width/2, r.top, '<div class="tt-val">$'+fmtMoney2.format(d.value)+'</div><div class="tt-lbl">'+d.label+' &middot; '+pct.toFixed(1)+'% of total</div>');
         }
-      }
-    } catch(e){ /* private mode / blocked storage */ }
-    var fallback = {};
-    Object.keys(OC_DEFAULTS).forEach(function(id){ fallback[id] = OC_DEFAULTS[id]; });
-    return fallback;
-  }
+        seg.addEventListener('pointerenter', showTt);
+        seg.addEventListener('focus', showTt);
+        seg.addEventListener('pointerleave', hideVizTooltip);
+        seg.addEventListener('blur', hideVizTooltip);
+        bar.appendChild(seg);
+
+        var row = document.createElement('div');
+        row.className='legend-row';
+        row.innerHTML = '<span class="swatch" style="background:'+d.color+'"></span>'+
+                         '<span class="lbl"></span>'+
+                         '<span class="val">$'+fmtMoney2.format(d.value)+'</span>'+
+                         '<span class="pct">'+pct.toFixed(1)+'%</span>';
+        row.querySelector('.lbl').textContent = d.label;
+        legend.appendChild(row);
+      });
+    }
+
+    function calcAndPersist(){
+      var mp = readMarketPrices();
+      refreshBullReadout(mp);
+
+      var landLease = num('bcu_landLeaseRate')*num('bcu_landLeaseMonths');
+      var hayCost = num('bcu_hayRolls')*num('bcu_hayPrice');
+      var proteinQty = num('bcu_hayRolls')*1000*0.2/100;
+      var proteinCost = proteinQty*20; // protein price fixed at $20/cwt per original sheet
+      var saltCost = num('bcu_saltLbs')*num('bcu_saltPrice');
+      var subtotalFeed = landLease+hayCost+proteinCost+saltCost;
+
+      var salvage = mp.mp_bullSalvageWeight*mp.mp_cullBullPrice*0.01;
+      var netSalvage = salvage*(100-mp.mp_bullDeathLoss)*0.01;
+      var bullDeprTotal = (mp.mp_bullCost-netSalvage)/mp.mp_bullLife;
+      var bullDeprPerBCU = bullDeprTotal/mp.mp_perBull;
+
+      var totalDirect = subtotalFeed + num('bcu_laborMgmt') + num('bcu_vetMed') + bullDeprPerBCU;
+      var totalIndirect = num('bcu_repairMaint')+num('bcu_fuelOil')+num('bcu_utilities')+num('bcu_adminGA')+num('bcu_vehicleDepr');
+      var total = totalDirect + totalIndirect;
+
+      $('bcu_opCostTotal').textContent = '$'+fmtMoney2.format(total);
+      $('bcu_opCostBreak').textContent = 'Direct $'+fmtMoney0.format(totalDirect)+' + Indirect $'+fmtMoney0.format(totalIndirect)+' (incl. bull depreciation $'+fmtMoney2.format(bullDeprPerBCU)+'/BCU)';
+
+      buildStackBar('bcu_opCostStackbar','bcu_opCostLegend','bcu_opCostBarTotal', [
+        {label:'Feed & land', value:subtotalFeed, color:'var(--s1)'},
+        {label:'Labor & management', value:num('bcu_laborMgmt'), color:'var(--s2)'},
+        {label:'Vet & health', value:num('bcu_vetMed'), color:'var(--s3)'},
+        {label:'Bull depreciation', value:bullDeprPerBCU, color:'var(--s4)'},
+        {label:'Equipment & other indirect', value:totalIndirect, color:'var(--s5)'}
+      ], total, ' / BCU');
+
+      var payload = { total: round(total,3), savedAt: new Date().toISOString() };
+      Object.keys(BCU_DEFAULTS).forEach(function(id){ payload[id] = num(id); });
+      try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }
+      catch(e){ /* private mode / blocked storage -- this session's value just won't persist or be shared with other pages */ }
+
+      // Always-visible preview on the collapsed card face, so the producer sees the
+      // number at a glance without opening the calculator.
+      var headerVal = $('bcuHeaderValue'), sourceLbl = $('bcuSourceLabel');
+      if(headerVal) headerVal.textContent = '$'+fmtMoney2.format(total);
+      if(sourceLbl) sourceLbl.textContent = customized ? 'your saved numbers' : 'original default';
+
+      return total;
+    }
+
+    function loadStored(){
+      try {
+        var raw = window.localStorage.getItem(STORAGE_KEY);
+        if(!raw) return false;
+        var data = JSON.parse(raw);
+        if(!data) return false;
+        Object.keys(BCU_DEFAULTS).forEach(function(id){
+          if(isFinite(data[id])){ var el = $(id); if(el) el.value = data[id]; }
+        });
+        return true;
+      } catch(e){ return false; }
+    }
+
+    var hadStoredValues = loadStored();
+    if(hadStoredValues){
+      customized = true;
+    }
+
+    Object.keys(BCU_DEFAULTS).forEach(function(id){
+      var el = $(id);
+      if(el) el.addEventListener('input', function(){ customized = true; calcAndPersist(); });
+    });
+    $('bcu_resetBtn').addEventListener('click', function(){
+      Object.keys(BCU_DEFAULTS).forEach(function(id){ var el=$(id); if(el) el.value = BCU_DEFAULTS[id]; });
+      customized = false;
+      calcAndPersist();
+    });
+
+    // Bull economics now live in the "Market prices & factors" card above --
+    // re-read and refresh whenever it changes (same page, and cross-tab via storage).
+    window.addEventListener('tamuMarketPricesChanged', calcAndPersist);
+    window.addEventListener('storage', function(e){
+      if(e.key === 'tamuDecisionAidsMarketPrices') calcAndPersist();
+    });
+
+    /* Collapsed by default (see .bcu-card CSS) — click to open/close the editor. */
+    var toggleBtn = $('bcuToggleBtn'), fields = $('bcuFields'), toggleLabel = $('bcuToggleLabel');
+    toggleBtn.addEventListener('click', function(){
+      var open = fields.hasAttribute('hidden');
+      if(open){ fields.removeAttribute('hidden'); } else { fields.setAttribute('hidden',''); }
+      toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      toggleLabel.textContent = open ? 'Hide' : 'Edit my numbers';
+    });
+
+    calcAndPersist();
+  })();
 
   (function initMarketPricesCalculator(){
     var card = document.getElementById('market-prices-calculator');
@@ -775,114 +802,10 @@
     persist();
   })();
 
-  (function initOpCostCalculator(){
-    var card = document.getElementById('opcost-calculator');
-    if(!card) return;
-    function $(id){ return document.getElementById(id); }
-    function num(id){ var el = $(id); var v = el ? parseFloat(el.value) : NaN; return isFinite(v)?v:0; }
-    var fmtMoney0 = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
-    var fmtMoney2 = new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-    var REF_BCU = 400; // reference herd size for the collapsed-card preview only -- each
-                        // tool computes its real $/BCU using its own herd size.
-    var customized = false;
-
-    function persist(){
-      var direct = (num('oc_roughageQty')*num('oc_roughagePrice')) + (num('oc_completeFeedQty')*num('oc_completeFeedPrice')) +
-        (num('oc_mineralSaltQty')*num('oc_mineralSaltPrice')) + (num('oc_proteinQty')*num('oc_proteinPrice')) +
-        (num('oc_otherFeedQty')*num('oc_otherFeedPrice')) +
-        (num('oc_grazing1Qty')*num('oc_grazing1Price')) + (num('oc_grazing2Qty')*num('oc_grazing2Price')) +
-        (num('oc_grazing3Qty')*num('oc_grazing3Price')) + (num('oc_grazing4Qty')*num('oc_grazing4Price')) +
-        (num('oc_grazing5Total')+num('oc_grazing6Total')+num('oc_cashRentTotal'))/REF_BCU +
-        (num('oc_freightQty')*num('oc_freightPrice')) + (num('oc_vetQty')*num('oc_vetPrice')) +
-        (num('oc_suppliesQty')*num('oc_suppliesPrice')) + (num('oc_otherCash1Qty')*num('oc_otherCash1Price')) +
-        (num('oc_otherCash2Qty')*num('oc_otherCash2Price')) + (num('oc_otherCash3Qty')*num('oc_otherCash3Price')) +
-        (num('oc_laborDays')*num('oc_laborRatePerDay'))/REF_BCU;
-
-      var eqDeprRepairTotal = 0;
-      for (var eqi=0; eqi<5; eqi++) {
-        var eqCost = num('oc_eq'+eqi+'_cost'), eqLife = num('oc_eq'+eqi+'_life'),
-            eqSalvage = num('oc_eq'+eqi+'_salvage'), eqRepairPct = num('oc_eq'+eqi+'_repair');
-        eqDeprRepairTotal += (eqLife!==0 ? (eqCost - eqSalvage*0.01*eqCost)/eqLife : 0) + (eqCost*eqRepairPct*0.01);
-      }
-
-      var indirect = (num('oc_improvementsRepairsTotal')+num('oc_propertyTaxTotal')+num('oc_fuelOilTotal')+
-        num('oc_otherIndirectCash1Total')+(num('oc_hiredMgmtPersons')*num('oc_hiredMgmtSalary'))+
-        (num('oc_ownerMgmtPersons')*num('oc_ownerMgmtSalary'))+num('oc_otherIndirectCash2Total')+
-        num('oc_otherNonCashDeprTotal')+eqDeprRepairTotal)/REF_BCU;
-
-      var ga = (num('oc_profFeesTotal')+num('oc_utilitiesTotal')+num('oc_officeSuppliesTotal')+num('oc_duesTotal')+
-        num('oc_adminWagesTotal')+num('oc_insuranceTotal')+num('oc_otherGATotal'))/REF_BCU;
-
-      if($('oc_directPreview')) $('oc_directPreview').textContent = '$'+fmtMoney2.format(direct);
-      if($('oc_indirectPreview')) $('oc_indirectPreview').textContent = '$'+fmtMoney2.format(indirect);
-      if($('oc_gaPreview')) $('oc_gaPreview').textContent = '$'+fmtMoney2.format(ga);
-      if($('oc_financePreview')) $('oc_financePreview').textContent = num('oc_livestockInterestRate').toFixed(1)+'% livestock';
-
-      var payload = { savedAt: new Date().toISOString() };
-      Object.keys(OC_DEFAULTS).forEach(function(id){ payload[id] = num(id); });
-      try { window.localStorage.setItem(OC_STORAGE_KEY, JSON.stringify(payload)); }
-      catch(e){ /* private mode / blocked storage -- this session's values just won't persist or be shared */ }
-
-      // 2026-09-23: also write to the legacy "Cow operating cost (BCU)" key so
-      // site/cow-calf/index.html's existing getSharedOpCostTotal()/renderSharedOpCostCard()
-      // logic (unchanged) picks up this calculator's Direct+Indirect+G&A total automatically.
-      // That old standalone BCU calculator card has been retired -- this is now the single
-      // source for it.
-      try {
-        window.localStorage.setItem('tamuDecisionAidsBcuOpCost', JSON.stringify({
-          total: Math.round((direct+indirect+ga)*1000)/1000,
-          savedAt: new Date().toISOString()
-        }));
-      } catch(e){ /* private mode / blocked storage */ }
-
-      var headerVal = $('ocHeaderValue'), sourceLbl = $('ocSourceLabel');
-      if(headerVal) headerVal.textContent = 'Direct $'+fmtMoney0.format(direct)+' + Indirect $'+fmtMoney0.format(indirect)+' + G&A $'+fmtMoney0.format(ga);
-      if(sourceLbl) sourceLbl.textContent = customized ? 'your saved numbers' : 'original defaults';
-
-      window.dispatchEvent(new CustomEvent('tamuOperatingCostsChanged'));
-      return payload;
-    }
-
-    function loadStored(){
-      try {
-        var raw = window.localStorage.getItem(OC_STORAGE_KEY);
-        if(!raw) return false;
-        var data = JSON.parse(raw);
-        if(!data) return false;
-        Object.keys(OC_DEFAULTS).forEach(function(id){
-          if(isFinite(data[id])){ var el = $(id); if(el) el.value = data[id]; }
-        });
-        return true;
-      } catch(e){ return false; }
-    }
-
-    if(loadStored()) customized = true;
-
-    Object.keys(OC_DEFAULTS).forEach(function(id){
-      var el = $(id);
-      if(el) el.addEventListener('input', function(){ customized = true; persist(); });
-    });
-    $('oc_resetBtn').addEventListener('click', function(){
-      Object.keys(OC_DEFAULTS).forEach(function(id){ var el=$(id); if(el) el.value = OC_DEFAULTS[id]; });
-      customized = false;
-      persist();
-    });
-
-    var toggleBtn = $('ocToggleBtn'), fields = $('ocFields'), toggleLabel = $('ocToggleLabel');
-    toggleBtn.addEventListener('click', function(){
-      var open = fields.hasAttribute('hidden');
-      if(open){ fields.removeAttribute('hidden'); } else { fields.setAttribute('hidden',''); }
-      toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      toggleLabel.textContent = open ? 'Hide' : 'Edit my numbers';
-    });
-
-    persist();
-  })();
-
   var categories = [
     {n:1,  name:"Cow-Calf Bid Price and Budgets", desc:"What to bid for a bred cow, and the operating budget behind it.", status:"progress", href:"cow-calf/index.html", note:"A1 live · A2 in progress"},
     {n:2,  name:"Replacement Heifer Budgets", desc:"Natural service, AI, and sexed-semen heifer development budgets and closeouts.", status:"progress", href:"replacement-heifer/index.html", note:"B1a live · AI/sexed-semen planned next"},
-    {n:3,  name:"Cow-Calf Budgeting and Herd Bull Investment", desc:"Full cow-calf enterprise budgets and bull investment analysis.", status:"progress", href:"cow-calf-budget/index.html", note:"C1 + C2 live"},
+    {n:3,  name:"Cow-Calf Budgeting and Herd Bull Investment", desc:"Full cow-calf enterprise budgets and bull investment analysis."},
     {n:4,  name:"Retained Ownership", desc:"Stocker, feeder, and custom-finish profit projections and closeouts.", status:"progress", href:"retained-ownership/index.html", note:"D1 + Stockers live"},
     {n:5,  name:"Cattle Inventories", desc:"Monthly and annual cattle inventory and balance sheet reporting."},
     {n:6,  name:"Feed Fed & Purchases", desc:"Feed record-keeping, purchases, and reconciled inventory."},
