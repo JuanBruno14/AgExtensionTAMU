@@ -7,7 +7,7 @@
   "use strict";
 
   /* ▼▼ The ONLY line to edit after creating the Cloudflare Worker: paste its address here ▼▼ */
-  var JIM_ENDPOINT = "https://YOUR-WORKER-NAME.YOUR-ACCOUNT.workers.dev";
+  var JIM_ENDPOINT = "https://jim.j-bautista-bruno.workers.dev";
   /* ▲▲ ------------------------------------------------------------------------------ ▲▲ */
 
   if (window.__jimLoaded) return;
