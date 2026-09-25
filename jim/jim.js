@@ -239,7 +239,7 @@
       log.appendChild(chips);
     }
     state.messages.forEach(function (m) {
-      if (m.role === "user") userRow(m.content); else botRow(md(m.content));
+      if (m.role === "user") userRow(m.shown || m.content); else botRow(md(m.content));
     });
     var last = state.messages[state.messages.length - 1];
     if (last && last.role === "user" && !busy) showRetry(botRow(""), "I didn't get to answer that one.");
@@ -290,12 +290,15 @@
   /* ------------------------------------------------------------------ talking to the worker */
   function setBusy(b) { busy = b; sendBtn.disabled = b; }
 
-  function ask(question) {
+  /* ask(question[, {context}]): context is sent to Jim but only the question is shown in the chat. */
+  function ask(question, opts) {
     if (busy) return;
     if (!state.open) openPanel(false);
     var chips = log.querySelector(".jim-chips");
     if (chips) chips.remove();
-    state.messages.push({ role: "user", content: question });
+    var msg = { role: "user", content: question };
+    if (opts && opts.context) { msg.content = opts.context + "\n\nQuestion: " + question; msg.shown = question; }
+    state.messages.push(msg);
     persist();
     userRow(question);
     reply();
@@ -311,7 +314,7 @@
     }
     setBusy(true);
     var text = "", gotText = false, failed = null;
-    var history = state.messages.slice(-MAX_HISTORY);
+    var history = state.messages.slice(-MAX_HISTORY).map(function (m) { return { role: m.role, content: m.content }; });
 
     fetch(endpoint, {
       method: "POST",
