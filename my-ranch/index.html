@@ -817,6 +817,7 @@
         s.pastures = (s.pastures || []).filter(function(p){ return p && p.geometry && p.geometry.type === 'Polygon'; });
         s.points = s.points || [];
         s.pastures.forEach(function(p){ if(p.soil && p.soil.status === 'loading') p.soil = null; });
+        if(s.drought && s.drought.status === 'loading') s.drought = null;
         return s;
       }
     }catch(e){}
@@ -1263,7 +1264,7 @@
     var d = state.drought;
     var fresh = d && d.at && (Date.now() - d.at < 12*3600*1000);
     var near = d && d.lat != null && milesBetween(c, {lat:d.lat, lng:d.lng}) < 3;
-    if(!force && fresh && near && d.status !== 'error') return;
+    if(!force && fresh && near && (d.status === 'ok' || d.status === 'outside')) return;
     if(!inUSDM(c)){ state.drought = {status:'outside', lat:c.lat, lng:c.lng, at:Date.now()}; renderSummary(); save(); return; }
     if(droughtBusy) return;
     droughtBusy = true;
@@ -1848,7 +1849,7 @@
   }
 
   /* test hooks (read-only helpers; harmless in production) */
-  window.MyRanch = {polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, state:function(){ return state; },
+  window.MyRanch = {fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, state:function(){ return state; },
                     addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); renderAll(true); return r; }};
 
   init();
