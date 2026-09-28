@@ -601,6 +601,25 @@
 
   .fc-table th{white-space:normal !important;vertical-align:bottom;}
   #dec_calvTable td{white-space:nowrap;}
+  /* capacity meter, log scale */
+  .verdict-pill.caution{background:var(--wheat-100);color:var(--wheat-500);}
+  .meter.log .meter-track{overflow:visible;height:14px;}
+  .meter.log .meter-band{position:absolute;top:0;bottom:0;opacity:0.22;}
+  .meter.log .meter-band.ok{left:0;background:var(--good-700);border-radius:100px 0 0 100px;}
+  .meter.log .meter-band.warn{background:var(--wheat-500);}
+  .meter.log .meter-band.bad{background:var(--critical-700);border-radius:0 100px 100px 0;}
+  .meter.log .meter-fill{height:6px;top:4px;bottom:auto;}
+  .meter-fill.warn{background:var(--wheat-500);}
+  .meter.log .meter-tick{width:1px;background:var(--ink-muted);opacity:0.6;}
+  .meter.log .meter-tick.cap{width:2px;background:var(--ink);opacity:1;top:-4px;bottom:-4px;}
+  .meter-more{position:absolute;right:-12px;top:-4px;font-weight:700;color:var(--critical-700);}
+  .meter-scale{position:relative;height:14px;font-size:10.5px;color:var(--ink-muted);margin-top:3px;}
+  .meter-scale span{position:absolute;transform:translateX(-50%);white-space:nowrap;}
+  .meter-note{margin:6px 0 0;font-size:12.5px;color:var(--ink-muted);}
+  .p-zones.p-overlap{color:var(--critical-700);}
+  .notice.caution{background:var(--wheat-100);color:var(--ink);}
+  .zone-offer{margin:10px 16px 14px;font-size:13px;}
+  .zone-offer .tool-btn{margin:8px 6px 0 0;}
 </style>
 </head>
 <body>
@@ -679,6 +698,7 @@
           <button type="button" class="tool-btn small" id="cancelDrawBtn">Cancel</button>
         </span>
       </div>
+      <div class="notice caution zone-offer" id="zoneOffer" hidden></div>
     </div>
 
     <!-- Pastures -->
@@ -1610,7 +1630,29 @@
     return 25;
   }
   function bullCount(){ var h = state.herd; if(h.bulls != null && h.bulls >= 0) return h.bulls; return h.cows > 0 ? Math.max(1, Math.ceil(h.cows/cowsPerBull())) : 0; }
-  function herdAU(){ var h = state.herd; return (h.cows || 0)*h.cowLb/1000 + bullCount()*h.bullLb/1000; }
+  /* Animal-unit equivalents by metabolic weight: AUE = (weight / 1,000 lb)^0.75 (NRC; NDSU Manske).
+     1 AU = 1,000-lb cow with a calf up to 6 months, 26 lb of forage dry matter a day (NRCS). */
+  function aue(lb){ return lb > 0 ? Math.pow(lb/1000, 0.75) : 0; }
+  function herdAUParts(){
+    var h = state.herd, cows = h.cows || 0, bulls = bullCount();
+    var r = {cows:cows*aue(h.cowLb), bulls:bulls*aue(h.bullLb), calves:0, cowAue:aue(h.cowLb), bullAue:aue(h.bullLb)};
+    if(cows > 0){
+      try{
+        // calves still on the ranch after 6 months of age (nursing or in the weaning period) count by their own weight
+        var o = feedOptions(), cs = FEED.cohorts(o), co = FEED.calfOutcome(o, cs), days = 0;
+        cs.forEach(function(c){
+          var surv = o.calvingRate/100*(c.surv == null ? 1 : c.surv), extra = Math.max(0, c.weanAge - 183);
+          var wMid = o.birthLb + co.preAdg*(183 + extra/2);
+          var w2 = c.wWean + (o.postAdg || 0)*(o.weanPeriod || 0)/2;
+          days += c.share*surv*(extra*aue(wMid) + (o.weanPeriod || 0)*aue(w2));
+        });
+        r.calves = cows*days/365;
+      }catch(e){}
+    }
+    r.total = r.cows + r.bulls + r.calves;
+    return r;
+  }
+  function herdAU(){ return herdAUParts().total; }
 
   /* Geodesic area — same algorithm as turf.js @turf/area (spherical excess, mean earth radius). */
   function ringArea(c){
@@ -2039,6 +2081,7 @@
     if(fromDraw){ selectedId = p.id; styleSelection(); }
     renderAll(true);
     refreshDroughtIfMoved();
+    if(fromDraw) setTimeout(function(){ offerZoneFor(p); }, 0);
     if(fromDraw){
       setTimeout(function(){
         var row = document.querySelector('.pasture-row[data-id="' + p.id + '"] .p-name');
@@ -2046,6 +2089,41 @@
       }, 60);
     }
     return p;
+  }
+  /* acres of pasture p that lie inside other pastures */
+  function overlaps(p){
+    var out = [];
+    if(!window.polygonClipping) return out;
+    state.pastures.forEach(function(q){
+      if(q.id === p.id) return;
+      var ac = 0;
+      try{ polygonClipping.intersection(p.geometry.coordinates, q.geometry.coordinates).forEach(function(poly){ ac += polygonAcres({type:'Polygon', coordinates:poly}); }); }catch(e){}
+      if(ac > 0.05) out.push({p:q, ac:ac});
+    });
+    return out;
+  }
+  /* A shape drawn with "Draw pasture" inside another pasture is usually a pond, brush or a low spot:
+     offer to turn it into one so it isn't counted as extra grass. */
+  function offerZoneFor(p){
+    var ov = overlaps(p).sort(function(a, b){ return b.ac - a.ac; })[0];
+    if(!ov || ov.ac < 0.5*p.acres) return;
+    var el = $('zoneOffer'); el.hidden = false;
+    el.innerHTML = ('<strong>“' + esc(p.name) + '” is inside “' + esc(ov.p.name) + '”.</strong> As a pasture its acres would be counted twice. What is it? ' +
+      '<button type="button" class="tool-btn small" data-to-zone="water" data-pid="' + p.id + '">💧 Pond/lake</button> ' +
+      '<button type="button" class="tool-btn small" data-to-zone="brush" data-pid="' + p.id + '">🌳 Brush</button> ' +
+      '<button type="button" class="tool-btn small" data-to-zone="bottom" data-pid="' + p.id + '">〰 Bottomland</button> ' +
+      '<button type="button" class="tool-btn small" data-to-zone="keep" data-pid="' + p.id + '">Keep as pasture</button>');
+    el.scrollIntoView({block:'nearest'});
+  }
+  function pastureToZone(id, type){
+    var i = pastureIndex(id); if(i < 0) return;
+    var p = state.pastures[i];
+    state.pastures.splice(i, 1);
+    if(pastureLayers[id]){ map && map.removeLayer(pastureLayers[id]); delete pastureLayers[id]; }
+    if(selectedId === id) selectedId = null;
+    recolorLayers();
+    $('zoneOffer').hidden = true;
+    addZone(type, p.geometry);
   }
   function removePasture(id){
     var i = pastureIndex(id); if(i < 0) return;
@@ -2293,7 +2371,9 @@
     if(z.water > 0.05) parts.push('💧 ' + fmt(z.water, z.water < 10 ? 1 : 0) + ' ac pond/lake (not grazed)');
     if(z.brush > 0.05) parts.push('🌳 ' + fmt(z.brush, z.brush < 10 ? 1 : 0) + ' ac brush (' + f.brush + '% forage)');
     if(z.bottom > 0.05) parts.push('〰 ' + fmt(z.bottom, z.bottom < 10 ? 1 : 0) + ' ac bottomland (' + f.bottom + '% forage)');
-    return parts.length ? '<div class="p-zones">Inside this pasture: ' + parts.join(' · ') + '</div>' : '';
+    var ov = overlaps(p).map(function(o){ return fmt(o.ac, o.ac < 10 ? 1 : 0) + ' ac with “' + esc(o.p.name) + '”'; });
+    return (parts.length ? '<div class="p-zones">Inside this pasture: ' + parts.join(' · ') + '</div>' : '') +
+      (ov.length ? '<div class="p-zones p-overlap">⚠ Overlaps ' + ov.join(', ') + ' — those acres are counted twice. If it’s a pond, brush or bottomland, delete it and draw it with 💧 🌳 〰 instead.</div>' : '');
   }
   function condSelect(p){
     if(!isGrazed(p) || p.mode !== 'soil') return '';
@@ -2397,13 +2477,22 @@
       '<div class="stat-tile"><span class="label">Unfavorable year</span><span class="value small">' + (t.lowCap != null ? fmt(t.lowCap) + ' AU' : '—') + '</span><span class="sub">' + (t.lowCap != null ? 'soil-survey pastures at drought-year growth' : 'needs soil-survey pastures') + '</span></div>' +
       '</div>';
     if(herd > 0 && t.cap > 0){
-      var use = herd / t.cap, over = use > 1;
-      var scale = Math.max(1.5, use * 1.1);
-      html += '<div style="margin-top:16px;"><div class="verdict-pill ' + (over ? 'critical' : 'good') + '"><span class="dot"></span>' +
+      var use = herd / t.cap, over = use > 1, warn = !over && use > 0.85;
+      /* fixed log scale, 25% to 1,600% of capacity, so every change moves the bar */
+      var LO = Math.log(0.25), HI = Math.log(16), pos = function(u){ return Math.max(0, Math.min(100, (Math.log(u) - LO)/(HI - LO)*100)); };
+      var ticks = [[0.5,'½×'],[1,'capacity'],[2,'2×'],[4,'4×'],[8,'8×']];
+      var ap = herdAUParts(), perCalf = ap.calves/Math.max(1, state.herd.cows || 1);
+      var fitCows = state.herd.bulls != null ? Math.max(0, (t.cap - ap.bulls)/(ap.cowAue + perCalf)) : t.cap/(ap.cowAue + perCalf + ap.bullAue/cowsPerBull());
+      html += '<div style="margin-top:16px;"><div class="verdict-pill ' + (over ? 'critical' : warn ? 'caution' : 'good') + '"><span class="dot"></span>' +
         (over ? 'Planned herd is ' + fmt((use - 1) * 100) + '% over estimated capacity' : 'Planned herd uses ' + fmt(use * 100) + '% of estimated capacity') + '</div>' +
-        '<div class="meter"><div class="meter-track"><div class="meter-fill' + (over ? ' over' : '') + '" style="width:' + Math.min(100, use / scale * 100) + '%"></div>' +
-        '<div class="meter-tick" style="left:' + (100 / scale) + '%"></div></div>' +
-        '<div class="meter-labels"><span>' + fmt(herd) + ' AU planned</span><span>capacity ' + fmt(t.cap) + ' AU</span></div></div>' +
+        '<div class="meter log" role="img" aria-label="Planned herd ' + fmt(use*100) + '% of capacity">' +
+          '<div class="meter-track"><div class="meter-band ok" style="width:' + pos(0.85) + '%"></div><div class="meter-band warn" style="left:' + pos(0.85) + '%;width:' + (pos(1) - pos(0.85)) + '%"></div><div class="meter-band bad" style="left:' + pos(1) + '%;right:0"></div>' +
+          '<div class="meter-fill' + (over ? ' over' : warn ? ' warn' : '') + '" style="width:' + pos(use) + '%"></div>' +
+          ticks.map(function(k){ return '<div class="meter-tick' + (k[0] === 1 ? ' cap' : '') + '" style="left:' + pos(k[0]) + '%"></div>'; }).join('') +
+          (use > 16 ? '<span class="meter-more">›</span>' : '') + '</div>' +
+          '<div class="meter-scale">' + ticks.map(function(k){ return '<span style="left:' + pos(k[0]) + '%">' + k[1] + '</span>'; }).join('') + '</div>' +
+        '<div class="meter-labels"><span>' + fmt(herd, herd < 10 ? 1 : 0) + ' AU planned</span><span>capacity ' + fmt(t.cap, t.cap < 10 ? 1 : 0) + ' AU</span></div>' +
+        '<p class="meter-note">' + (over || warn ? 'At this capacity the ranch carries about <strong>' + fmt(fitCows) + ' cows</strong> with their bulls and calves.' : 'Room for about <strong>' + fmt(Math.max(0, fitCows - (state.herd.cows || 0))) + ' more cows</strong> at this capacity.') + '</p></div>' +
         (t.lowCap != null && herd > t.lowCap && !over ? '<p class="narrative" style="margin:10px 0 0;font-size:12.5px;">In an unfavorable year the soil survey’s lower forage numbers put capacity near <strong>' + fmt(t.lowCap) + ' AU</strong> — have a destocking or feeding plan ready.</p>' : '') +
         '</div>';
     } else if(t.cap > 0){
@@ -2490,9 +2579,13 @@
     var h = state.herd, b = bullCount();
     $('hd_bullsHint').textContent = h.bulls != null ? 'Your number' : 'Auto: 1 per ' + cowsPerBull() + ' cows (' + b + ')';
     $('hd_bulls').placeholder = String(b);
+    var a = herdAUParts();
     $('hd_auNote').innerHTML = h.cows > 0
-      ? '= <strong>' + fmt(herdAU(), 1) + ' animal units</strong> (1 AU = 1,000 lb of cow, calf included until weaning).'
-      : '1 animal unit (AU) = 1,000 lb of cow; a 1,200 lb cow with her calf counts as 1.2 AU.';
+      ? '= <strong>' + fmt(a.total, 1) + ' animal units</strong>: ' + fmt(h.cows) + ' cows × ' + fmt(a.cowAue, 2) + ' (calf up to 6 months included)' +
+        (a.bulls > 0 ? ' + ' + bullCount() + ' bull' + (bullCount() > 1 ? 's' : '') + ' × ' + fmt(a.bullAue, 2) : '') +
+        (a.calves > 0.05 ? ' + ' + fmt(a.calves, 1) + ' AU of calves older than 6 months (year average)' : '') +
+        '. AU by metabolic weight: (weight ÷ 1,000 lb)<sup>0.75</sup>.'
+      : '1 animal unit (AU) = a 1,000 lb cow with a calf up to 6 months (26 lb of forage a day). Heavier animals count by metabolic weight: a 1,200 lb cow = 1.15 AU.';
   }
   function mmddToDate(s){ return '2026-' + (s || '02-15'); }
   function dateToMmdd(v){ var m = String(v || '').match(/^\d{4}-(\d{2})-(\d{2})$/); return m ? m[1] + '-' + m[2] : null; }
@@ -3323,6 +3416,8 @@
     document.addEventListener('click', function(e){
       var b = e.target.closest('[data-del-point]');
       if(b){ removePoint(b.getAttribute('data-del-point')); if(map) map.closePopup(); }
+      var tz = e.target.closest('[data-to-zone]');
+      if(tz){ var zt = tz.getAttribute('data-to-zone'); $('zoneOffer').hidden = true; if(zt !== 'keep') pastureToZone(tz.getAttribute('data-pid'), zt); return; }
       var bz = e.target.closest('[data-del-zone]');
       if(bz) removeZone(bz.getAttribute('data-del-zone'));
       if(!e.target.closest('.search-box')) $('searchResults').hidden = true;
@@ -3413,7 +3508,7 @@
 
   /* test hooks (read-only helpers; harmless in production) */
   window.MyRanch = {FEED:FEED, feed:function(){ return feedLast; }, herd:function(){ return state.herd; }, fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, state:function(){ return state; },
-                    addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }};
+                    addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, herdAU:herdAU, herdAUParts:herdAUParts, addPastureDrawn:function(g){ return addPasture(g, null, true); }, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }};
 
   init();
 })();
