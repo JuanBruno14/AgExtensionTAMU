@@ -541,6 +541,66 @@
   .fc-method strong{color:var(--ink);}
   .fc-empty{margin-top:16px;padding:14px 16px;border-radius:10px;background:var(--surface-sunken);font-size:13.5px;color:var(--ink-secondary);line-height:1.55;}
   @media (max-width:640px){ .field-grid.cols-3{grid-template-columns:1fr 1fr;} }
+
+  .sub-h{font-family:"Public Sans",system-ui,sans-serif;font-size:13px;font-weight:700;margin:22px 0 10px;color:var(--ink);letter-spacing:0;}
+  .p-zones{margin-top:8px;font-size:12.5px;color:var(--ink-secondary);background:var(--surface-sunken);border-radius:8px;padding:6px 10px;}
+  .p-cond{margin-top:6px;}
+  .p-cond label{display:none;}
+  .zone-meta{flex:1;font-size:12.5px;color:var(--ink-secondary);}
+  .point-row select.zone-type{width:auto;padding:6px 8px;font-size:13px;}
+
+  :root{--dec-muted:#b9aea4;}
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){--dec-muted:#6f6259;} }
+  :root[data-theme="dark"]{--dec-muted:#6f6259;}
+  .fc-usonly[hidden], .fc-nws[hidden], .dec-panel[hidden], #fc_tableWrap[hidden], #fc_tiles[hidden]{display:none;}
+  .dec-tabs{flex-wrap:wrap;}
+  .dec-line{fill:none;stroke:var(--dec-muted);stroke-width:1.5;}
+  .dec-dot{fill:var(--dec-muted);stroke:var(--surface);stroke-width:2;}
+  .dec-dot.best{fill:var(--accent);}
+  .dec-dot.cur{stroke:var(--ink);stroke-width:2.5;}
+  .dec-lbl{fill:var(--ink);font-size:11px;font-weight:700;font-family:"Public Sans",system-ui,sans-serif;}
+  .fc-table tr.best td{background:color-mix(in srgb, var(--accent) 8%, transparent);}
+  .dec-options{display:grid;grid-template-columns:repeat(auto-fit, minmax(190px, 1fr));gap:12px;margin-top:18px;}
+  .dec-opt{border:1.5px solid var(--border);border-radius:12px;padding:14px;background:var(--surface-sunken);display:flex;flex-direction:column;gap:6px;}
+  .dec-opt.best{border-color:var(--good-700);background:var(--good-100);}
+  .dec-opt h3{font-size:14.5px;margin:0;line-height:1.3;}
+  .dec-opt p{font-size:12.5px;color:var(--ink-secondary);margin:0 0 6px;line-height:1.45;}
+  .dec-opt dl{display:grid;grid-template-columns:1fr auto;gap:4px 10px;margin:0;font-size:12.5px;}
+  .dec-opt dt{color:var(--ink-muted);}
+  .dec-opt dd{margin:0;text-align:right;font-weight:600;font-variant-numeric:tabular-nums;}
+  .dec-opt .tot{font-weight:800;color:var(--ink);border-top:1px solid var(--border);padding-top:6px;font-size:13.5px;}
+  .dec-opt .verdict-pill{align-self:flex-start;}
+  .wi-head, .wi-row{display:grid;grid-template-columns:130px 1fr 1fr;gap:8px;align-items:center;}
+  .wi-head{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);margin-top:14px;}
+  .wi-head span:nth-child(2){text-align:right;}
+  .wi-row{padding:6px 0;border-bottom:1px solid var(--border);}
+  .wi-lbl{font-size:13px;font-weight:600;color:var(--ink);}
+  .wi-side{position:relative;display:flex;align-items:center;min-height:22px;gap:6px;}
+  .wi-side.left{flex-direction:row-reverse;}
+  .wi-bar{height:14px;border-radius:3px;min-width:2px;}
+  .wi-bar.neg{background:var(--critical-700);opacity:0.75;}
+  .wi-bar.pos{background:var(--good-700);opacity:0.75;}
+  .wi-val{font-size:11.5px;color:var(--ink-secondary);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .wi-val em{font-style:normal;color:var(--ink-muted);}
+  @media (max-width:560px){ .wi-head, .wi-row{grid-template-columns:90px 1fr 1fr;} .wi-val em{display:none;} }
+  .fc-print-charts .fc-chart{margin-bottom:8px;}
+  @media print{
+    #decCard .dec-tabs{display:none !important;}
+    #decCard .dec-panel{display:block !important;}
+    details.advanced{display:none;}
+    #fc_chart, .fc-chart-head{display:none !important;}
+  }
+
+  .dec-drtable{margin-top:18px;}
+  table.plan.dec-drtable th{vertical-align:top;white-space:normal !important;min-width:150px;text-transform:none;letter-spacing:0;font-size:12.5px;color:var(--ink);}
+  table.plan.dec-drtable th:first-child{min-width:110px;}
+  .dec-drtable .opt-title{font-family:"Fraunces",serif;font-size:14px;font-weight:600;line-height:1.25;margin:4px 0;}
+  .dec-drtable .opt-sub{font-size:11.5px;font-weight:400;color:var(--ink-secondary);line-height:1.4;}
+  .dec-drtable .best{background:color-mix(in srgb, var(--good-700) 9%, transparent);}
+  .dec-drtable tfoot td{font-size:14px;border-top:1.5px solid var(--border);}
+
+  .fc-table th{white-space:normal !important;vertical-align:bottom;}
+  #dec_calvTable td{white-space:nowrap;}
 </style>
 </head>
 <body>
@@ -599,7 +659,11 @@
         <button type="button" class="tool-btn primary" id="drawPastureBtn">✏️ Draw pasture</button>
         <button type="button" class="tool-btn" id="drawRectBtn" title="Draw a square or rectangular pasture in one drag">▭ Rectangle</button>
         <span class="sep" aria-hidden="true"></span>
-        <button type="button" class="tool-btn" data-point="water">💧 Water</button>
+        <button type="button" class="tool-btn" data-zone="water" title="Draw a pond or lake inside a pasture; it's taken out of the grazing area">💧 Pond/lake</button>
+        <button type="button" class="tool-btn" data-zone="brush" title="Draw heavy brush or woods inside a pasture; it grows less grass">🌳 Brush</button>
+        <button type="button" class="tool-btn" data-zone="bottom" title="Draw bottomland inside a pasture; it usually grows more grass">〰 Bottomland</button>
+        <span class="sep" aria-hidden="true"></span>
+        <button type="button" class="tool-btn" data-point="water">🚰 Water point</button>
         <button type="button" class="tool-btn" data-point="pen">🐄 Pens</button>
         <button type="button" class="tool-btn" data-point="gate">🚪 Gate</button>
         <button type="button" class="tool-btn" data-point="feeder">🌾 Feeder</button>
@@ -626,6 +690,21 @@
       <div class="card-body">
         <p class="card-note">For rangeland, forage comes from the USDA-NRCS soil survey: its estimate of total plant growth per acre in a normal year, weighted by the soils inside each pasture. Improved pasture, wheat and hay meadows usually have no soil-survey number &mdash; enter your own estimate (your county agent can help).</p>
         <div class="pasture-list" id="pastureList"></div>
+        <h3 class="sub-h">Ponds, brush &amp; bottomland</h3>
+        <div class="point-list" id="zoneList"></div>
+        <details class="advanced" style="margin-top:14px;">
+          <summary>Land adjustments</summary>
+          <div class="adv-body">
+            <p class="card-note">The soil survey's forage is for a site in top condition. Rate each rangeland pasture's condition in its row; this sets how much of that forage it grows today. Areas drawn inside a pasture replace that part of it: ponds count as no forage, brush and bottomland as a share of the pasture's forage.</p>
+            <div class="field-grid cols-3">
+              <div class="field"><label for="la_poor">Poor condition</label><div class="input-wrap has-suffix"><input type="number" id="la_poor" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+              <div class="field"><label for="la_fair">Fair condition</label><div class="input-wrap has-suffix"><input type="number" id="la_fair" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+              <div class="field"><label for="la_excellent">Excellent condition</label><div class="input-wrap has-suffix"><input type="number" id="la_excellent" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+              <div class="field"><label for="la_brush">Brush / woods</label><div class="input-wrap has-suffix"><input type="number" id="la_brush" min="0" max="100" step="5"><span class="suffix">%</span></div><span class="hint">NRCS: grass under heavy brush ≈ 25% of open prairie</span></div>
+              <div class="field"><label for="la_bottom">Bottomland</label><div class="input-wrap has-suffix"><input type="number" id="la_bottom" min="50" max="400" step="10"><span class="suffix">%</span></div><span class="hint">NRCS: bottomland ≈ 2.5× upland (5,000 vs. 2,040 lb/ac)</span></div>
+            </div>
+          </div>
+        </details>
       </div>
     </div>
 
@@ -648,12 +727,12 @@
         <h2>Feed calendar: what the herd needs vs. what the pastures give</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Month by month, the energy (TDN) and protein your cows, bulls and calves need, next to what your pastures can supply at their typical quality for that time of year. Where the pasture falls short, the tool works out the hay and supplement to buy and what it costs.</p>
+        <p class="card-note">Month by month, the energy (TDN) and protein your cows, bulls and calves need, next to what your pastures can supply at their typical quality for that time of year. Where the pasture falls short, the tool works out the hay and supplement to buy, what it costs, and what's left from the calf check.</p>
 
         <div class="field-grid cols-3">
           <div class="field">
             <label for="fc_calving">Calving season</label>
-            <select id="fc_calving">
+            <select id="fc_calving" data-hs="calving">
               <option value="us">Not sure (U.S. average)</option>
               <option value="one">One season</option>
               <option value="two">Two seasons</option>
@@ -661,23 +740,35 @@
           </div>
           <div class="field fc-season1">
             <label for="fc_start1"><span id="fc_start1Label">Calving starts</span></label>
-            <div class="input-wrap"><input type="date" id="fc_start1"></div>
+            <div class="input-wrap"><input type="date" id="fc_start1" data-hd="start1"></div>
           </div>
           <div class="field fc-season1">
-            <label for="fc_len1">Length of calving season</label>
-            <div class="input-wrap has-suffix"><input type="number" id="fc_len1" min="10" max="180" step="5" inputmode="numeric"><span class="suffix">days</span></div>
+            <label for="fc_len1">Calving season length</label>
+            <div class="input-wrap has-suffix"><input type="number" id="fc_len1" data-h="len1" min="10" max="180" step="5" inputmode="numeric"><span class="suffix">days</span></div>
+          </div>
+          <div class="field fc-season1">
+            <label for="fc_wean1"><span id="fc_wean1Label">Weaning date</span></label>
+            <div class="input-wrap"><input type="date" id="fc_wean1" data-hd="wean1"></div>
           </div>
           <div class="field fc-season2">
             <label for="fc_start2">Fall calving starts</label>
-            <div class="input-wrap"><input type="date" id="fc_start2"></div>
+            <div class="input-wrap"><input type="date" id="fc_start2" data-hd="start2"></div>
           </div>
           <div class="field fc-season2">
             <label for="fc_len2">Fall season length</label>
-            <div class="input-wrap has-suffix"><input type="number" id="fc_len2" min="10" max="180" step="5" inputmode="numeric"><span class="suffix">days</span></div>
+            <div class="input-wrap has-suffix"><input type="number" id="fc_len2" data-h="len2" min="10" max="180" step="5" inputmode="numeric"><span class="suffix">days</span></div>
           </div>
           <div class="field fc-season2">
             <label for="fc_share2">Cows calving in the fall</label>
-            <div class="input-wrap has-suffix"><input type="number" id="fc_share2" min="1" max="99" step="1" inputmode="numeric"><span class="suffix">%</span></div>
+            <div class="input-wrap has-suffix"><input type="number" id="fc_share2" data-h="share2" min="1" max="99" step="1" inputmode="numeric"><span class="suffix">%</span></div>
+          </div>
+          <div class="field fc-season2">
+            <label for="fc_wean2">Fall calves weaned on</label>
+            <div class="input-wrap"><input type="date" id="fc_wean2" data-hd="wean2"></div>
+          </div>
+          <div class="field fc-usonly">
+            <label for="fc_weanAge">Calves weaned at</label>
+            <div class="input-wrap has-suffix"><input type="number" id="fc_weanAge" data-h="weanAge" min="90" max="300" step="5" inputmode="numeric"><span class="suffix">days</span></div>
           </div>
           <div class="field">
             <label for="fc_region">Pasture growing season</label>
@@ -686,6 +777,7 @@
           </div>
         </div>
         <p class="card-note fc-usnote" style="margin:10px 0 0;">U.S. average from USDA's NAHMS Beef 2017 survey: 55% of calves are born in February–April, with a smaller fall peak in September–November.</p>
+        <p class="card-note" id="fc_weanNote" style="margin:10px 0 0;"></p>
 
         <div class="fc-empty" id="fc_empty" hidden></div>
 
@@ -698,104 +790,164 @@
             <div class="fc-legend" id="fc_legend"></div>
           </div>
           <div class="fc-chart" id="fc_chart" role="img" aria-label="Monthly herd needs compared with pasture supply"></div>
+          <div class="print-only fc-print-charts">
+            <h3 class="sub-h">Energy (TDN), lb per day, whole herd</h3>
+            <div class="fc-chart" id="fc_chart_p_tdn"></div>
+            <h3 class="sub-h">Protein (CP), lb per day, whole herd</h3>
+            <div class="fc-chart" id="fc_chart_p_cp"></div>
+          </div>
           <p class="fc-short" id="fc_short"></p>
 
           <div class="stat-tiles fc-tiles" id="fc_tiles"></div>
 
-          <div class="table-scroll" style="margin-top:16px;">
+          <div class="table-scroll" id="fc_tableWrap" style="margin-top:16px;">
             <table class="plan fc-table" id="fc_table"></table>
-            <p class="card-note" style="margin:8px 0 0;">Need / pasture: whole herd, lb per day. Hay and supplement: lb per cow per day (bulls get theirs too; it's in the cost).</p>
+            <p class="card-note" style="margin:8px 0 0;">Need / pasture: whole herd, lb per day. Hay and supplement: lb per cow per day (bulls and weaned calves get theirs too; it's in the cost). Cost includes feeding trips and delivery.</p>
           </div>
 
           <details class="advanced" style="margin-top:16px;">
             <summary>Needs per animal, by month</summary>
             <div class="adv-body">
-              <p class="card-note">Pounds per head per day. Cows are the herd average for that month (a mix of cows nursing, dry and pregnant, depending on the calving season). Calves show only what they need <em>beyond their mother's milk</em>, averaged over every cow in the herd.</p>
+              <p class="card-note">Pounds per head per day. Cows are the herd average for that month (a mix of cows nursing, dry and pregnant). Nursing calves show only what they need <em>beyond their mother's milk</em>, averaged over every cow in the herd; weaned calves are per calf, during the weaning period.</p>
               <div class="table-scroll"><table class="plan fc-table" id="fc_perhead"></table></div>
             </div>
           </details>
 
-          <details class="advanced" style="margin-top:12px;">
-            <summary>Cow, calf &amp; feed details</summary>
+          <details class="advanced" style="margin-top:12px;" id="fc_herdDetails">
+            <summary>Herd, calves &amp; losses</summary>
             <div class="adv-body">
               <div class="field-grid cols-3">
-                <div class="field">
-                  <label for="fc_breed">Breed type</label>
-                  <select id="fc_breed"></select>
-                </div>
-                <div class="field">
-                  <label for="fc_milk">Milk production</label>
-                  <select id="fc_milk">
-                    <option value="low">Low (11 lb at peak)</option>
-                    <option value="moderate">Moderate (18 lb at peak)</option>
-                    <option value="high">High (25 lb at peak)</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="fc_bcs">Body condition score</label>
-                  <select id="fc_bcs">
-                    <option value="4">4 — thin</option>
-                    <option value="5">5 — moderate</option>
-                    <option value="6">6 — good</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="fc_activity">Terrain &amp; walking</label>
-                  <select id="fc_activity">
-                    <option value="none">No adjustment (NRC tables)</option>
-                    <option value="flat">Flat, plenty of grass (+10%)</option>
-                    <option value="rolling">Rolling or moderate grass (+20%)</option>
-                    <option value="rough">Rough or sparse range (+35%)</option>
-                    <option value="extensive">Big range, long walks to water (+50%)</option>
-                  </select>
-                </div>
-                <div class="field">
-                  <label for="fc_weanAge">Calves weaned at</label>
-                  <div class="input-wrap has-suffix"><input type="number" id="fc_weanAge" min="90" max="300" step="5" inputmode="numeric"><span class="suffix">days</span></div>
-                </div>
-                <div class="field">
-                  <label for="fc_weanLb">Weaning weight</label>
-                  <div class="input-wrap has-suffix"><input type="number" id="fc_weanLb" min="250" max="900" step="5" inputmode="numeric"><span class="suffix">lb</span></div>
-                </div>
-                <div class="field">
-                  <label for="fc_calfCrop">Calf crop weaned</label>
-                  <div class="input-wrap has-suffix"><input type="number" id="fc_calfCrop" min="10" max="100" step="1" inputmode="numeric"><span class="suffix">%</span></div>
-                </div>
+                <div class="field"><label for="fc_breed">Breed type</label><select id="fc_breed" data-hs="breed"></select></div>
+                <div class="field"><label for="fc_milk">Milk production</label>
+                  <select id="fc_milk" data-hs="milk"><option value="low">Low (11 lb at peak)</option><option value="moderate">Moderate (18 lb at peak)</option><option value="high">High (25 lb at peak)</option></select></div>
+                <div class="field"><label for="fc_bcs">Body condition score</label>
+                  <select id="fc_bcs" data-hs="bcs" data-num="1"><option value="4">4 — thin</option><option value="5">5 — moderate</option><option value="6">6 — good</option></select></div>
+                <div class="field"><label for="fc_activity">Terrain &amp; walking</label>
+                  <select id="fc_activity" data-hs="activity"><option value="none">No adjustment (NRC tables)</option><option value="flat">Flat, plenty of grass (+10%)</option><option value="rolling">Rolling or moderate grass (+20%)</option><option value="rough">Rough or sparse range (+35%)</option><option value="extensive">Big range, long walks to water (+50%)</option></select></div>
+                <div class="field"><label for="fc_calvingRate">Calving rate</label><div class="input-wrap has-suffix"><input type="number" id="fc_calvingRate" data-h="calvingRate" min="30" max="100" step="1"><span class="suffix">%</span></div></div>
+                <div class="field"><label for="fc_weanLb">Average weaning weight</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanLb" data-h="weanLb" min="250" max="900" step="5"><span class="suffix">lb</span></div><span class="hint" id="fc_weanLbHint"></span></div>
               </div>
               <fieldset style="margin-top:18px;">
-                <legend>Hay (fills in when pasture runs short)</legend>
+                <legend>Weaning period</legend>
                 <div class="field-grid cols-3">
-                  <div class="field"><label for="fc_hayTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayTdn" min="30" max="80" step="1"><span class="suffix">%</span></div></div>
-                  <div class="field"><label for="fc_hayCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayCp" min="2" max="25" step="0.5"><span class="suffix">%</span></div></div>
-                  <div class="field"><label for="fc_hayPrice">Price</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_hayPrice" min="0" step="5"><span class="suffix">/ton</span></div></div>
+                  <div class="field"><label for="fc_weanPeriod">Calves kept after weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanPeriod" data-h="weanPeriod" min="0" max="120" step="5"><span class="suffix">days</span></div><span class="hint">0 = sold off the cow; 45 = VAC-45 preconditioning</span></div>
+                  <div class="field"><label for="fc_postAdg">Gain while weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_postAdg" data-h="postAdg" min="0" max="4" step="0.1"><span class="suffix">lb/day</span></div></div>
                 </div>
               </fieldset>
               <fieldset style="margin-top:18px;">
-                <legend>Supplement (covers what hay and pasture can't)</legend>
-                <div class="btn-row" style="padding:0 0 12px;">
-                  <button type="button" class="tool-btn small" data-sup="20">20% range cubes</button>
-                  <button type="button" class="tool-btn small" data-sup="38">38% protein cubes</button>
-                </div>
+                <legend>Death loss</legend>
                 <div class="field-grid cols-3">
-                  <div class="field"><label for="fc_supCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_supCp" min="5" max="60" step="1"><span class="suffix">%</span></div></div>
-                  <div class="field"><label for="fc_supTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="fc_supTdn" min="40" max="95" step="1"><span class="suffix">%</span></div></div>
-                  <div class="field"><label for="fc_supPrice">Price</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_supPrice" min="0" step="5"><span class="suffix">/ton</span></div></div>
+                  <div class="field"><label for="fc_calfLoss">Calves lost, birth to weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_calfLoss" data-h="calfLoss" min="0" max="50" step="0.1"><span class="suffix">%</span></div><span class="hint">USDA NAHMS average: 6.4% (incl. born dead)</span></div>
+                  <div class="field"><label for="fc_cowLoss">Cows lost per year</label><div class="input-wrap has-suffix"><input type="number" id="fc_cowLoss" data-h="cowLoss" min="0" max="20" step="0.1"><span class="suffix">%</span></div><span class="hint">USDA NAHMS average: 1.5%</span></div>
+                </div>
+                <p class="card-note" id="fc_lossNote" style="margin:10px 0 0;"></p>
+              </fieldset>
+              <fieldset style="margin-top:18px;">
+                <legend>Flies</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_nws">New World screwworm</label>
+                    <select id="fc_nws" data-hs="nws"><option value="no">Not in my area</option><option value="yes">In or near my area</option></select></div>
+                  <div class="field fc-nws"><label for="fc_nwsLoss">Extra calf loss at peak fly season</label><div class="input-wrap has-suffix"><input type="number" id="fc_nwsLoss" data-h="nwsLoss" min="0" max="50" step="0.5"><span class="suffix">%</span></div></div>
+                  <div class="field fc-nws"><label for="fc_nwsCost">Checks &amp; treatment per calf</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="fc_nwsCost" data-h="nwsCost" min="0" max="500" step="1"></div></div>
+                  <div class="field"><label for="fc_hornFly">Horn flies</label>
+                    <select id="fc_hornFly" data-hs="hornFly" data-num="1"><option value="0">Controlled — no weight lost</option><option value="4">Some — calves lose up to 4%</option><option value="15">Heavy — calves lose up to 15%</option></select></div>
+                </div>
+                <p class="card-note" id="fc_flyNote" style="margin:10px 0 0;"></p>
+              </fieldset>
+            </div>
+          </details>
+
+          <details class="advanced" style="margin-top:12px;">
+            <summary>Feed, protein source &amp; feeding costs</summary>
+            <div class="adv-body">
+              <fieldset>
+                <legend>Hay (fills in when pasture runs short)</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_hayTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayTdn" data-h="hayTdn" min="30" max="80" step="1"><span class="suffix">%</span></div></div>
+                  <div class="field"><label for="fc_hayCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayCp" data-h="hayCp" min="2" max="25" step="0.5"><span class="suffix">%</span></div></div>
+                  <div class="field"><label for="fc_hayPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_hayPrice" data-h="hayPrice" min="0" max="5000" step="5"><span class="suffix">/ton</span></div></div>
                 </div>
               </fieldset>
-              <div class="btn-row" style="padding:14px 0 0;"><button type="button" class="tool-btn" id="fc_reset">Reset these details</button></div>
+              <fieldset style="margin-top:18px;">
+                <legend>Protein source (covers what hay and pasture can't)</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_source">Source</label><select id="fc_source"></select></div>
+                  <div class="field"><label for="fc_supCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_supCp" data-h="supCp" min="5" max="60" step="1"><span class="suffix">%</span></div></div>
+                  <div class="field"><label for="fc_supTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="fc_supTdn" data-h="supTdn" min="40" max="100" step="1"><span class="suffix">%</span></div></div>
+                  <div class="field"><label for="fc_supPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_supPrice" data-h="supPrice" min="0" max="5000" step="5"><span class="suffix">/ton</span></div><span class="hint" id="fc_perLbCp"></span></div>
+                </div>
+              </fieldset>
+              <fieldset style="margin-top:18px;">
+                <legend>How often you feed</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_supTrips">Supplement trips</label>
+                    <select id="fc_supTrips" data-hs="supTrips" data-num="1"><option value="7">Every day</option><option value="3">3 times a week</option><option value="2">2 times a week</option><option value="1">Once a week</option><option value="0.25">Once a month (self-fed)</option></select></div>
+                  <div class="field"><label for="fc_hayTrips">Hay trips</label>
+                    <select id="fc_hayTrips" data-hs="hayTrips" data-num="1"><option value="7">Every day</option><option value="3">3 times a week</option><option value="2">2 times a week</option><option value="1">Once a week</option></select></div>
+                  <div class="field"><label for="fc_tripCost">Cost of one feeding trip</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="fc_tripCost" data-h="tripCost" min="0" max="1000" step="1"></div><span class="hint">Fuel + your time or labor</span></div>
+                  <div class="field"><label for="fc_distPerTon">Delivery &amp; handling</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_distPerTon" data-h="distPerTon" min="0" max="500" step="1"><span class="suffix">/ton</span></div></div>
+                </div>
+                <p class="card-note" id="fc_tripNote" style="margin:10px 0 0;"></p>
+              </fieldset>
+              <div class="btn-row" style="padding:14px 0 0;"><button type="button" class="tool-btn" id="fc_reset">Reset herd &amp; feed details</button></div>
             </div>
           </details>
 
           <details class="advanced" style="margin-top:12px;">
             <summary>How this is calculated</summary>
             <div class="adv-body fc-method">
-              <p><strong>Needs</strong> use the equations in the NRC <em>Nutrient Requirements of Beef Cattle</em> (8th ed., 2016): maintenance (raised 20% while nursing for most breeds, adjusted for breed, body condition and terrain), milk (peak at 8.5 weeks), and pregnancy (calf birth weight 6.6% of the cow's weight, 365-day calving interval). TDN is shown the way extension tables show it: the pounds of TDN that meet the day's need at NRC-predicted intake. At the same inputs, the cow numbers match the University of Arkansas MP391 tables within 0.3%.</p>
-              <p><strong>Calves</strong> need energy for maintenance and to reach the weaning weight you entered. Their mother's milk is counted first; only the rest has to come from pasture. The calves' shortfall is shown, but creep feed isn't priced in.</p>
-              <p><strong>Pasture</strong> is each pasture's forage (soil survey or your estimate) times your harvest efficiency, spread over the year with NRCS ecological-site growth curves for native range. Improved pasture and small grains use typical growing seasons. Forage not eaten carries into the next month as standing forage. Quality uses typical diet values by month: dormant native range around 48% TDN and 4–5% CP in winter, growing grass near 60% TDN and 10–12% CP, wheat pasture over 20% CP. These are averages, not a forage test.</p>
-              <p><strong>Intake</strong> follows Mississippi State Extension's guide: 1.8–2.5% of body weight depending on forage quality, and a bit more for nursing cows. When pasture runs out, hay fills the rest of the intake. Supplement is whatever is still needed for protein or energy, whichever takes more.</p>
-              <p><strong>Not included:</strong> cold or heat stress, cows gaining back condition, first-calf heifers, replacement heifers, and year-to-year rainfall. In a drought year, use the lower forage numbers.</p>
+              <p><strong>Needs</strong> use the equations in the NRC <em>Nutrient Requirements of Beef Cattle</em> (8th ed., 2016): maintenance (raised 20% while nursing for most breeds, adjusted for breed, body condition and terrain), milk (peak at 8.5 weeks), and pregnancy (calf birth weight 6.6% of the cow's weight, 365-day calving interval). TDN is shown the way extension tables show it. At the same inputs, the cow numbers match the University of Arkansas MP391 tables within 0.3%.</p>
+              <p><strong>Calves</strong> grow at the rate that reaches your average weaning weight. Their mother's milk is counted first; only the rest comes from pasture. When you wean on a date, calves born earlier are older and heavier. During the weaning period they eat like growing calves and are sold at the end of it.</p>
+              <p><strong>Pasture</strong> is each pasture's forage (soil survey × range condition, or your estimate; ponds, brush and bottomland adjusted) times your harvest efficiency, spread over the year with NRCS ecological-site growth curves for native range. Forage not eaten carries into the next month. Quality uses typical diet values by month, not a forage test.</p>
+              <p><strong>Intake</strong> follows Mississippi State Extension's guide (1.8–2.7% of body weight depending on forage quality). When pasture runs out, hay fills the rest of the intake; the supplement covers whatever protein or energy is still missing.</p>
+              <p><strong>Losses:</strong> calf death loss is split into weather-related (about 10% of all losses in USDA's NAHMS study, adjusted by how cold the nights are in the birth month for your region) and everything else. Screwworm risk rises with temperature (little fly activity below 59°F, most at 77–86°F, per AgriLife); there is no published loss rate yet, so you set it. Horn flies cut calf weaning weights 4–15% (UNL); the tool applies it to the share of nursing days in June–September.</p>
+              <p><strong>Money:</strong> calves are sold at your market price slide (half steers, half heifers), taken from the site's shared market prices. The result is calf income minus the feed you buy and the cost of feeding it — not profit: land, labor, vet, bull and other costs aren't in it.</p>
+              <p><strong>Not included:</strong> cold or heat stress on cows, cows gaining back condition, first-calf heifers, replacement heifers, seasonal calf prices.</p>
             </div>
           </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decisions -->
+    <div class="card" id="decCard">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v12M18 9v12M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM6 15c0-4 12-2 12-6"/></svg>
+        <h2>Decisions: calving season, drought, what if</h2>
+      </div>
+      <div class="card-body">
+        <div class="segmented dec-tabs" role="tablist" aria-label="Decision tools">
+          <button type="button" class="seg-btn active" data-dec="calving" role="tab" aria-selected="true">Best calving season</button>
+          <button type="button" class="seg-btn" data-dec="drought" role="tab" aria-selected="false">Drought: buy feed or wean early?</button>
+          <button type="button" class="seg-btn" data-dec="whatif" role="tab" aria-selected="false">What if…</button>
+        </div>
+        <div class="fc-empty" id="dec_empty" hidden></div>
+
+        <div class="dec-panel" id="dec_calving">
+          <p class="card-note" style="margin-top:14px;">Tries a <span id="dec_calvLen">60</span>-day calving season starting in each month, with the same herd, pastures and weaning age, and compares what's left from the calf check after buying feed. It weighs the forage curve, cold-weather and screwworm losses, and horn flies.</p>
+          <div class="fc-chart" id="dec_calvChart"></div>
+          <p class="fc-short" id="dec_calvText"></p>
+          <div class="table-scroll"><table class="plan fc-table" id="dec_calvTable"></table></div>
+        </div>
+
+        <div class="dec-panel" id="dec_drought" hidden>
+          <p class="card-note" style="margin-top:14px;">A dry year or failed small grains cut the forage your pastures grow. Compare three ways through it: keep the calves on the cows and buy feed, wean early and sell, or wean early and feed the calves yourself until your normal weaning age.</p>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="dr_cut">Forage lost</label><div class="input-wrap has-suffix"><input type="number" id="dr_cut" data-dr="cut" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+            <div class="field"><label for="dr_from">Starting in</label><select id="dr_from" data-drs="from" data-num="1"></select></div>
+            <div class="field"><label for="dr_months">For</label><div class="input-wrap has-suffix"><input type="number" id="dr_months" data-dr="months" min="1" max="12" step="1"><span class="suffix">mo</span></div></div>
+            <div class="field"><label for="dr_which">Which pastures</label>
+              <select id="dr_which" data-drs="which"><option value="all">All pastures</option><option value="range">Native range only</option><option value="smallgrain">Small grains (wheat, oats) only</option><option value="improved">Improved pasture only</option></select></div>
+            <div class="field"><label for="dr_earlyAge">Early weaning at</label><div class="input-wrap has-suffix"><input type="number" id="dr_earlyAge" data-dr="earlyAge" min="60" max="250" step="5"><span class="suffix">days</span></div></div>
+            <div class="field"><label for="dr_feedAdg">Gain if you feed early-weaned calves</label><div class="input-wrap has-suffix"><input type="number" id="dr_feedAdg" data-dr="feedAdg" min="0.5" max="4" step="0.1"><span class="suffix">lb/day</span></div></div>
+          </div>
+          <div class="dec-options" id="dec_drOptions"></div>
+          <p class="fc-short" id="dec_drText"></p>
+        </div>
+
+        <div class="dec-panel" id="dec_whatif" hidden>
+          <p class="card-note" style="margin-top:14px;">How much calf income minus feed costs moves when one thing changes and everything else stays the same. Longest bars matter most.</p>
+          <div id="dec_whatifChart"></div>
         </div>
       </div>
     </div>
@@ -856,6 +1008,11 @@
           </div>
           <div class="field" style="grid-column:1 / -1;">
             <div class="derived-note" id="hd_auNote"></div>
+          </div>
+          <div class="field" style="grid-column:1 / -1;">
+            <label for="manualCap">Carrying capacity — your own number <span style="font-weight:500;color:var(--ink-muted);">(optional)</span></label>
+            <div class="input-wrap has-suffix"><input type="number" id="manualCap" min="0" step="1" inputmode="decimal" placeholder="Leave blank to use the soil survey"><span class="suffix">AU</span></div>
+            <span class="hint">If you know how many animal units your place carries, enter it; the tool then uses it instead of the soil survey (and scales the feed calendar to match).</span>
           </div>
           <div class="field">
             <label for="harvestEff">Harvest efficiency</label>
@@ -930,6 +1087,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@geoman-io/leaflet-geoman-free@2.17.0/dist/leaflet-geoman.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/polygon-clipping@0.15.7/dist/polygon-clipping.umd.min.js"></script>
 <script>
 (function(){
   'use strict';
@@ -971,20 +1129,30 @@
   ];
   /* AgriLife Extension 2026 D03 Budgets, sheet 'CowCalf' (Rolling Plains cow-calf), all per animal unit. */
   var D03 = {revenue:2189.26, variable:438.35, grossMargin:1750.91, fixed:500.34, netReturn:1250.58, acresPerAU:11.25, rentPerAcre:15};
-  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26};
+  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, cond:{poor:50, fair:75, excellent:90}, zoneF:{brush:25, bottom:200}};
+  var CONDITIONS = {poor:'Poor', fair:'Fair', excellent:'Excellent'};
+  var ZONE_TYPES = {
+    water:  {label:'Pond / lake', icon:'💧', style:{color:'#bfe3ff', weight:1.5, fillColor:'#2b7fd6', fillOpacity:0.6}},
+    brush:  {label:'Brush / woods', icon:'🌳', style:{color:'#d5f0c8', weight:1.5, dashArray:'4 3', fillColor:'#2f5d27', fillOpacity:0.55}},
+    bottom: {label:'Bottomland', icon:'〰', style:{color:'#e6fff5', weight:1.5, fillColor:'#35c29a', fillOpacity:0.45}}
+  };
   var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'rolling',
-    calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, weanLb:535, calfCrop:85, region:'auto',
-    hayTdn:55, hayCp:10, hayPrice:200, supCp:20, supTdn:70, supPrice:392};
+    calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535,
+    weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto',
+    nws:'no', nwsLoss:2, nwsCost:15, hornFly:0,
+    hayTdn:55, hayCp:10, hayPrice:200, source:'cube20', supCp:20, supTdn:70, supPrice:392,
+    supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
+    dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0}};
 
   /* ================================================================ FEED CALENDAR ENGINE
    * Requirements: NRC Nutrient Requirements of Beef Cattle, 8th rev. ed. (NASEM 2016) equations.
    * TDN requirement is expressed the way extension tables do it: the lb of TDN at the diet energy
    * that exactly meets the day's NEm need at NRC-predicted intake.
-   * Supply: pasture forage (soil survey or producer estimate x harvest efficiency) spread over the
-   * year with NRCS ecological-site growth curves, at typical monthly TDN / CP values.
+   * Supply: pasture forage x harvest efficiency spread over the year with NRCS ecological-site growth
+   * curves, at typical monthly TDN / CP values. Losses: USDA NAHMS. Climate: NOAA 1991-2020 normals.
    */
   var FEED = (function(){
-    var LB = 2.2;                       // kg -> lb, as in the extension tables
+    var LB = 2.2;
     var MONTH_DAYS = [31,28,31,30,31,30,31,31,30,31,30,31];
     var MONTH_START = [0,31,59,90,120,151,181,212,243,273,304,334];
     var MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -1001,28 +1169,35 @@
       brahman:   {label:'Brahman',                   be:0.90, l:1.2, pk:8.0},
       longhorn:  {label:'Longhorn',                  be:1.00, l:1.2, pk:5.0}
     };
-    var MILK = {low:11, moderate:18, high:25};     // peak milk, lb/day (MP391 Table 4 levels)
+    var MILK = {low:11, moderate:18, high:25};
     var MILK_FAT = 4.0, MILK_PROT = 3.8, MILK_SOLIDS = 8.3;
-    var MILK_E = 0.092*MILK_FAT + 0.049*MILK_SOLIDS - 0.0569;   // Mcal NEl per kg milk
+    var MILK_E = 0.092*MILK_FAT + 0.049*MILK_SOLIDS - 0.0569;
 
     /* USDA APHIS NAHMS Beef 2017, Part I, Table B.2.a: % of calves born by month (U.S.) */
     var NAHMS = [5.7,12.3,22.4,20.9,8.9,3.1,2.0,3.0,6.2,6.0,5.4,4.0];
+    /* USDA APHIS NAHMS Beef 2007-08 mortality: 2.9% born dead + 3.5% died before weaning; weather caused
+       22.6% of deaths under 3 weeks and 10.0% at 3 weeks or older; about 1/3 of live-born deaths happen at each age band. */
+    var LOSS_DEFAULT = 6.4;
+    var WEATHER_SHARE = (3.5*(2/3*0.226 + 1/3*0.100))/6.4;   // share of all pre-weaning losses that is weather-related
 
-    /* NRCS ecological-site reference-community growth curves (% of annual production by month) */
+    /* NRCS ecological-site growth curves + NOAA 1991-2020 normals for a representative station (°F) */
     var REGIONS = {
-      hp: {label:'High Plains',                       curve:[0,3,5,8,23,25,12,5,10,5,3,1],   src:'TX0753 · High Lime 12-17" PZ (MLRA 77B)'},
-      rp: {label:'Rolling Plains',                    curve:[0,1,5,15,25,20,5,5,15,8,1,0],   src:'TX2275 · Clay Loam 23-30" PZ (MLRA 78C)'},
-      ep: {label:'Edwards Plateau & West Texas',      curve:[3,5,5,9,13,13,11,9,12,11,5,4],  src:'TX3254 · Clay Loam 14-19" PZ (MLRA 81A)'},
-      st: {label:'South Texas',                       curve:[2,2,5,10,18,15,5,9,15,9,5,5],   src:'TX4525 · Western Clay Loam (MLRA 83A)'},
-      ce: {label:'Central & East Texas',              curve:[2,2,8,10,20,23,5,3,10,10,5,2],  src:'TX5510 · Sandy Loam 29-33" PZ (MLRA 84B)'}
+      hp: {label:'High Plains',                  curve:[0,3,5,8,23,25,12,5,10,5,3,1],  src:'TX0753 · High Lime 12-17" PZ (MLRA 77B)', station:'Amarillo',
+           tmean:[38.6,41.8,49.8,57.5,66.8,76.1,79.6,78.1,70.9,59.2,47.4,38.8], tmin:[24.9,27.5,34.8,42.5,52.6,62.4,66.4,65.3,57.8,45.4,33.5,25.7]},
+      rp: {label:'Rolling Plains',               curve:[0,1,5,15,25,20,5,5,15,8,1,0],  src:'TX2275 · Clay Loam 23-30" PZ (MLRA 78C)', station:'Abilene',
+           tmean:[46.3,50.1,58.1,66.0,74.1,81.1,84.7,84.2,76.8,67.0,55.5,47.3], tmin:[33.7,37.4,45.3,52.8,61.9,69.5,73.1,72.4,65.0,54.7,43.3,35.2]},
+      ep: {label:'Edwards Plateau & West Texas', curve:[3,5,5,9,13,13,11,9,12,11,5,4], src:'TX3254 · Clay Loam 14-19" PZ (MLRA 81A)', station:'San Angelo',
+           tmean:[45.8,50.2,57.5,65.7,74.2,80.9,83.3,82.9,76.0,66.2,54.8,47.2], tmin:[31.5,36.0,43.2,51.0,60.8,68.6,70.6,70.4,63.7,52.7,41.4,33.5]},
+      st: {label:'South Texas',                  curve:[2,2,5,10,18,15,5,9,15,9,5,5],  src:'TX4525 · Western Clay Loam (MLRA 83A)', station:'Laredo',
+           tmean:[57.6,61.9,69.6,76.6,82.8,87.6,88.7,89.1,83.7,74.8,66.0,58.5], tmin:[46.8,51.7,58.3,64.9,71.5,76.2,77.1,77.4,73.1,65.8,55.6,48.0]},
+      ce: {label:'Central & East Texas',         curve:[2,2,8,10,20,23,5,3,10,10,5,2], src:'TX5510 · Sandy Loam 29-33" PZ (MLRA 84B)', station:'Waco',
+           tmean:[47.4,51.6,58.8,66.2,74.3,81.9,85.6,85.5,78.7,68.4,57.2,49.2], tmin:[35.8,40.1,47.4,54.6,63.3,71.1,74.4,73.9,66.7,56.2,45.6,37.9]}
     };
-    /* Non-range forage types: growth distribution and typical diet quality by month */
     var CURVES = {
       improved:   [0,0,2,8,20,25,20,13,8,4,0,0],
       smallgrain: [4,5,25,30,12,0,0,0,0,8,11,5],
       hay:        [0,0,2,8,20,25,20,13,8,4,0,0]
     };
-    // [TDN %, CP %] by month, Jan..Dec
     var QUALITY = {
       range:      [[48,4.5],[48,4.5],[50,6],[60,11],[62,12],[60,10],[56,8],[54,7],[55,7.5],[52,6],[50,5],[49,4.5]],
       improved:   [[45,6],[45,6],[47,7],[60,13],[60,13],[60,12],[56,10],[56,10],[55,10],[53,9],[50,8],[48,7]],
@@ -1030,14 +1205,21 @@
       hay:        [[45,6],[45,6],[47,7],[60,13],[60,13],[60,12],[56,10],[56,10],[55,10],[53,9],[50,8],[48,7]]
     };
     var ACTIVITY = {none:0, flat:0.10, rolling:0.20, rough:0.35, extensive:0.50};
+    /* Protein sources (typical composition; price is what the producer pays) */
+    var SOURCES = {
+      cube20: {label:'20% range cubes',        cp:20, tdn:70},
+      cube38: {label:'38% protein cubes',      cp:38, tdn:75},
+      csm41:  {label:'41% cottonseed meal',    cp:41, tdn:75},
+      wcs:    {label:'Whole cottonseed',       cp:23, tdn:90},
+      alfalfa:{label:'Alfalfa hay',            cp:17, tdn:58},
+      custom: {label:'Other (enter below)',    cp:null, tdn:null}
+    };
 
     function nemaOf(tdn){ var me = tdn/100*4.409*0.82; return 1.37*me - 0.138*me*me + 0.0105*me*me*me - 1.12; }
     function negaOf(tdn){ var me = tdn/100*4.409*0.82; return 1.42*me - 0.174*me*me + 0.0122*me*me*me - 1.65; }
-
-    /* Solve the diet TDN at which NEma x NRC-predicted DMI meets the NEm requirement (as the extension tables do). */
     function solveTDN(nemReq, mbw, milkKg){
       var lo = 35, hi = 95;
-      for(var i = 0; i < 60; i++){
+      for(var i = 0; i < 50; i++){
         var mid = (lo+hi)/2, nm = nemaOf(mid);
         var dmi = mbw*((0.0384 + 0.04997*nm*nm)/nm) + 0.2*milkKg;
         if(nm*dmi < nemReq) lo = mid; else hi = mid;
@@ -1050,7 +1232,6 @@
       var t = 8.5, k = 1/t, pk = peakLb/LB, a = 1/(pk*k*Math.E), n = dim/7;
       return n/(a*Math.exp(k*n));
     }
-    /* One mature cow on one day. dim = days in milk (0 = dry), preg = days pregnant (0 = open). */
     function cowDay(o, dim, preg){
       var sbw = o.cowLb/LB*0.96, mbw = Math.pow(sbw, 0.75), br = BREEDS[o.breed] || BREEDS.angus;
       var comp = 0.8 + (o.bcs - 1)*0.05;
@@ -1076,25 +1257,23 @@
       var s = solveTDN(nem, mbw, 0);
       return {tdnLb:s.tdnLb, cpLb:mbw*3.8/0.67/1000*LB};
     }
-    /* Nursing calf: NEm + NEg for the planned gain, minus what the dam's milk provides; the rest must come from forage. */
-    function calfDay(o, age, milk, forTdn){
-      var bwKg = (o.birthLb + (o.weanLb - o.birthLb)*age/o.weanAge)/LB;
-      var adgKg = (o.weanLb - o.birthLb)/o.weanAge/LB;
+    /* Growing calf at a given weight and gain; milk (kg/day) counted first. Returns what must come from feed. */
+    function calfDay(o, bwLb, adgLb, milk, forTdn){
+      var bwKg = bwLb/LB, adgKg = Math.max(0.01, adgLb/LB);
       var sbw = bwKg*0.96, mbw = Math.pow(sbw, 0.75), br = BREEDS[o.breed] || BREEDS.angus;
       var nem = mbw*0.077*br.be*(1 + (o.activity||0)*0.5);
       var eqsbw = sbw*478/(o.cowLb/LB*0.96), eqebw = 0.891*eqsbw;
       var swg = adgKg*0.96, ewg = swg*0.96;
       var re = Math.pow(ewg/(12.341*Math.pow(eqebw, -0.6837)), 1/0.9116);
       var mpg = swg*(268 - 29.4*re/swg)/Math.max(0.492, 0.834 - 0.00114*eqsbw);
-      var mp = mbw*3.8 + mpg;
-      var milkNE = milk*MILK_E*0.85;                 // milk energy retained by the calf (assumed 85%)
-      var milkMP = milk*MILK_PROT/100*1000*0.85;     // milk protein used by the calf (assumed 85%)
+      var mp = mbw*3.8 + Math.max(0, mpg);
+      var milkNE = milk*MILK_E*0.85, milkMP = milk*MILK_PROT/100*1000*0.85;
       var nemLeft = Math.max(0, nem - milkNE), extra = Math.max(0, milkNE - nem);
       var negLeft = Math.max(0, re - extra);
       var nm = nemaOf(forTdn), ng = Math.max(0.05, negaOf(forTdn));
       var dmKg = nemLeft/nm + negLeft/ng;
       var mpLeft = Math.max(0, mp - milkMP);
-      return {tdnLb:dmKg*forTdn/100*LB, cpLb:mpLeft/0.67/1000*LB, dmLb:dmKg*LB, bwLb:bwKg*LB};
+      return {tdnLb:dmKg*forTdn/100*LB, cpLb:mpLeft/0.67/1000*LB, dmLb:dmKg*LB};
     }
     /* Forage intake capacity, % of body weight (Mississippi State Extension, Table 1) */
     function intakePct(tdn, lactating){
@@ -1102,70 +1281,125 @@
       if(tdn <= 59) return lactating ? 2.5 : 2.2;
       return lactating ? 2.7 : 2.5;
     }
-    function monthOfDay(d){ for(var m = 11; m >= 0; m--) if(d >= MONTH_START[m]) return m; return 0; }
-    /* Calving cohorts: [{day, share}] */
+    function monthOfDay(d){ d = ((d % 365) + 365) % 365; for(var m = 11; m >= 0; m--) if(d >= MONTH_START[m]) return m; return 0; }
+    function slideLookup(t, w){
+      if(!t || !t.length) return 0;
+      if(w <= t[0].w) return t[0].p;
+      if(w >= t[t.length-1].w) return t[t.length-1].p;
+      for(var i = 0; i < t.length - 1; i++){ var a = t[i], b = t[i+1]; if(w >= a.w && w <= b.w) return a.p + (b.p - a.p)*(w - a.w)/(b.w - a.w); }
+      return t[t.length-1].p;
+    }
+
+    /* Climate-driven monthly risk indices */
+    var REF_TMIN = [0,1,2,3,4,5,6,7,8,9,10,11].map(function(m){ var s = 0, n = 0; Object.keys(REGIONS).forEach(function(k){ s += REGIONS[k].tmin[m]; n++; }); return s/n; });
+    function coldIdx(t){ return Math.max(0, 50 - t); }                      // °F that normal night lows fall below 50°F
+    var REF_COLD = NAHMS.reduce(function(a, p, m){ return a + p/100*coldIdx(REF_TMIN[m]); }, 0);
+    function weatherFactor(region, m){ return coldIdx((REGIONS[region] || REGIONS.ce).tmin[m])/REF_COLD; }
+    function flyActivity(region, m){ var t = (REGIONS[region] || REGIONS.ce).tmean[m]; return Math.max(0, Math.min(1, (t - 59)/(77 - 59))); }  // screwworm: limited <59°F, ideal 77-86°F
+    function hornFlyWindow(d){ var m = monthOfDay(d); return m >= 5 && m <= 8; }   // Jun-Sep (UNL: late May-early Sep, peak Jul-Aug)
+
+    /* Calving cohorts, each with its own weaning age */
     function cohorts(o){
       var list = [];
-      function season(startDoy, len, share){
+      function season(startDoy, len, share, weanDoy){
         var n = Math.max(1, Math.min(9, Math.round(len/10)));
-        for(var i = 0; i < n; i++) list.push({day:Math.round(startDoy + (len*(i + 0.5))/n) % 365, share:share/n});
+        for(var i = 0; i < n; i++) list.push({day:Math.round(startDoy + (len*(i + 0.5))/n) % 365, share:share/n, weanDoy:weanDoy});
       }
       if(o.calving === 'us'){
-        NAHMS.forEach(function(p, m){ list.push({day:MONTH_START[m] + 15, share:p/100}); });
+        NAHMS.forEach(function(p, m){ list.push({day:MONTH_START[m] + 15, share:p/100, weanDoy:null}); });
         var t = list.reduce(function(a, c){ return a + c.share; }, 0);
         list.forEach(function(c){ c.share /= t; });
       } else if(o.calving === 'two'){
-        season(o.start1, o.len1, 1 - o.share2/100);
-        season(o.start2, o.len2, o.share2/100);
-      } else season(o.start1, o.len1, 1);
+        season(o.start1, o.len1, 1 - o.share2/100, o.weanDoy1);
+        season(o.start2, o.len2, o.share2/100, o.weanDoy2);
+      } else season(o.start1, o.len1, 1, o.weanDoy1);
+      list.forEach(function(c){
+        var age = (o.weanMode === 'date' && c.weanDoy != null) ? ((c.weanDoy - c.day + 365) % 365) : o.weanAge;
+        c.weanAge = Math.max(60, Math.min(330, age));
+        c.birthMonth = monthOfDay(c.day);
+      });
       return list;
     }
 
-    /* Main: requirements by day, aggregated to months. forageTdnByMonth feeds the calf forage estimate. */
-    function requirements(o, forageTdnByMonth){
-      var cs = cohorts(o), crop = o.calfCrop/100;
-      var gest = 283, conceive = 365 - gest;     // 365-day calving interval
-      var bull = bullDay(o);
+    /* Everything that happens to the calves: survival, weights, sale income. */
+    function calfOutcome(o, cs){
+      var avgAge = cs.reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
+      var refAge = o.refWeanAge || avgAge;
+      var preAdg = Math.max(0.3, (o.weanLb - o.birthLb)/refAge);
+      var base = o.calfLoss/100, ws = WEATHER_SHARE;
+      var out = {preAdg:preAdg, avgAge:avgAge, born:0, weaned:0, deadWeather:0, deadNws:0, deadOther:0, stillLbs:0, soldLb:0, income:0, nwsCalves:0, cohorts:[]};
+      cs.forEach(function(c){
+        var born = o.calvingRate/100*c.share;
+        var wf = weatherFactor(o.region, c.birthMonth);
+        var fly = flyActivity(o.region, c.birthMonth);
+        var lOther = base*(1 - ws), lWeather = Math.min(0.5, base*ws*wf), lNws = o.nwsPresent ? o.nwsLoss/100*fly : 0;
+        var surv = Math.max(0, 1 - lOther - lWeather - lNws);
+        // horn flies: weight lost in proportion to nursing days inside the fly season
+        var hfDays = 0; for(var k = 0; k < c.weanAge; k++) if(hornFlyWindow(c.day + k)) hfDays++;
+        var wWean = (o.birthLb + preAdg*c.weanAge)*(1 - (o.hornFly || 0)/100*hfDays/Math.max(1, c.weanAge));
+        var wSale = wWean + (o.postAdg || 0)*(o.weanPeriod || 0);
+        var price = 0.5*slideLookup(o.steerSlide, wSale) + 0.5*slideLookup(o.heiferSlide, wSale);   // $/cwt, half steers, half heifers
+        var weaned = born*surv;
+        c.surv = surv; c.wWean = wWean; c.wSale = wSale; c.price = price; c.born = born; c.weaned = weaned;
+        out.born += born; out.weaned += weaned;
+        out.deadWeather += born*lWeather; out.deadNws += born*lNws; out.deadOther += born*lOther;
+        out.soldLb += weaned*wSale; out.income += weaned*wSale/100*price;
+        out.nwsCalves += o.nwsPresent ? born*fly : 0;
+        out.cohorts.push(c);
+      });
+      out.avgSaleLb = out.weaned > 0 ? out.soldLb/out.weaned : 0;
+      out.avgWeanLb = out.weaned > 0 ? cs.reduce(function(a, c){ return a + c.weaned*c.wWean; }, 0)/out.weaned : 0;
+      out.avgPrice = out.soldLb > 0 ? out.income/(out.soldLb/100) : 0;
+      return out;
+    }
+
+    /* Daily requirements, averaged by month. Values for calves are per cow in the herd. */
+    function requirements(o, cs, co, forageTdnByMonth){
+      var gest = 283, conceive = 365 - gest, CR = o.calvingRate/100;
+      var bull = bullDay(o), memo = {};
+      function cow(dim, preg){ var k = dim + '|' + preg; return memo[k] || (memo[k] = cowDay(o, dim, preg)); }
       var out = [];
-      for(var m = 0; m < 12; m++) out.push({cowTdn:0, cowCp:0, lactFrac:0, calfTdn:0, calfCp:0, calfDm:0, calvesNursing:0, calfBw:0, bullTdn:bull.tdnLb, bullCp:bull.cpLb, days:MONTH_DAYS[m]});
+      for(var m = 0; m < 12; m++) out.push({cowTdn:0, cowCp:0, lactFrac:0, calfTdn:0, calfCp:0, calfDm:0, calvesNursing:0,
+        wcN:0, wcTdn:0, wcCp:0, wcCap:0, wcBw:0, bullTdn:bull.tdnLb, bullCp:bull.cpLb, days:MONTH_DAYS[m]});
       for(var d = 0; d < 365; d++){
         var m = monthOfDay(d), acc = out[m];
         cs.forEach(function(c){
-          var dsc = (d - c.day + 365) % 365;               // days since this cohort calved
-          var nursing = dsc < o.weanAge;
+          var dsc = (d - c.day + 365) % 365, w = c.share;
+          var nursing = dsc < c.weanAge;
+          var inPeriod = !nursing && dsc < c.weanAge + (o.weanPeriod || 0);
           var preg = dsc >= conceive ? dsc - conceive : 0;
-          // cows that raised a calf (crop) vs. open/lost-calf cows
-          var a = cowDay(o, nursing ? dsc : 0, preg);
-          var b = cowDay(o, 0, preg);
-          var w = c.share;
-          acc.cowTdn += w*(crop*a.tdnLb + (1 - crop)*b.tdnLb);
-          acc.cowCp  += w*(crop*a.cpLb  + (1 - crop)*b.cpLb);
-          acc.lactFrac += w*(nursing ? crop : 0);
+          var nurseFrac = CR*c.surv;                      // cows still raising a calf
+          var a = cow(nursing ? dsc : 0, preg), b = cow(0, preg), e = cow(0, 0);
+          acc.cowTdn += w*(nurseFrac*a.tdnLb + (CR - nurseFrac)*b.tdnLb + (1 - CR)*e.tdnLb);
+          acc.cowCp  += w*(nurseFrac*a.cpLb  + (CR - nurseFrac)*b.cpLb  + (1 - CR)*e.cpLb);
           if(nursing){
-            var k = calfDay(o, dsc, a.milkKg, forageTdnByMonth[m]);
-            acc.calfTdn += w*crop*k.tdnLb; acc.calfCp += w*crop*k.cpLb; acc.calfDm += w*crop*k.dmLb;
-            acc.calvesNursing += w*crop; acc.calfBw += w*crop*k.bwLb;
+            acc.lactFrac += w*nurseFrac;
+            var bw = o.birthLb + co.preAdg*dsc;
+            var k = calfDay(o, bw, co.preAdg, a.milkKg, forageTdnByMonth[m]);
+            acc.calfTdn += w*nurseFrac*k.tdnLb; acc.calfCp += w*nurseFrac*k.cpLb; acc.calfDm += w*nurseFrac*k.dmLb;
+            acc.calvesNursing += w*nurseFrac;
+          } else if(inPeriod){
+            var bw2 = c.wWean + (o.postAdg || 0)*(dsc - c.weanAge);
+            var k2 = calfDay(o, bw2, o.postAdg || 0.5, 0, forageTdnByMonth[m]);
+            var n2 = w*c.weaned;
+            acc.wcN += n2; acc.wcTdn += n2*k2.tdnLb; acc.wcCp += n2*k2.cpLb; acc.wcBw += n2*bw2;
+            acc.wcCap += n2*bw2/100*(intakePct(forageTdnByMonth[m], false) + 0.5);
           }
         });
       }
       out.forEach(function(r){
-        var n = r.days;
-        ['cowTdn','cowCp','lactFrac','calfTdn','calfCp','calfDm','calvesNursing','calfBw'].forEach(function(k){ r[k] /= n; });
-        // per-cow averages; calf values are per cow in the herd (i.e. already x share of cows nursing)
-        r.calfBw = r.calvesNursing > 0 ? r.calfBw/r.calvesNursing : 0;
+        ['cowTdn','cowCp','lactFrac','calfTdn','calfCp','calfDm','calvesNursing','wcN','wcTdn','wcCp','wcCap','wcBw'].forEach(function(k){ r[k] /= r.days; });
+        r.wcBw = r.wcN > 0 ? r.wcBw/r.wcN : 0;
       });
       return out;
     }
 
-    /* Monthly pasture growth (lb DM available to graze) and quality from the pasture list. */
     function pastureSupply(pastures, he, regionKey){
-      var reg = REGIONS[regionKey] || REGIONS.ce;
-      var byType = {};
+      var reg = REGIONS[regionKey] || REGIONS.ce, byType = {};
       pastures.forEach(function(p){
-        if(!p.lbAc || !p.grazed) return;
+        if(!p.annualLb || !p.grazed) return;
         var t = p.type === 'range' ? 'range' : p.type;
-        var annual = p.acres*p.lbAc*he;
-        byType[t] = (byType[t] || 0) + annual;
+        byType[t] = (byType[t] || 0) + p.annualLb*he;
       });
       return Object.keys(byType).map(function(t){
         var curve = t === 'range' ? reg.curve : CURVES[t];
@@ -1173,69 +1407,91 @@
         return {type:t, annual:byType[t], growth:curve.map(function(p){ return byType[t]*p/tot; }), quality:QUALITY[t]};
       });
     }
+    /* Returns a copy of the supply with some months' growth cut (drought / failed small grains) */
+    function adjustSupply(supply, cutPct, fromMonth, months, which){
+      return supply.map(function(g){
+        var growth = g.growth.slice();
+        if(which === 'all' || which === g.type){
+          for(var i = 0; i < months; i++){ var m = (fromMonth + i) % 12; growth[m] *= (1 - cutPct/100); }
+        }
+        return {type:g.type, annual:g.annual, growth:growth, quality:g.quality};
+      });
+    }
 
-    /* Full balance. o = herd options; supply = pastureSupply(); feeds = {hayTdn, hayCp, hayPrice ($/ton), supTdn, supCp, supPrice ($/ton)} */
     function balance(o, supply, feeds){
-      // forage TDN by month (growth-weighted) for the calf estimate; fall back to range typical values
       var ftdn = [];
       for(var m = 0; m < 12; m++){
         var w = 0, s = 0;
         supply.forEach(function(g){ var a = g.growth[m] + g.annual/12; w += a; s += a*g.quality[m][0]; });
         ftdn.push(w > 0 ? s/w : QUALITY.range[m][0]);
       }
-      var req = requirements(o, ftdn);
-      var bulls = o.bulls, cows = o.cows;
-      var stock = supply.map(function(){ return 0; });
-      var months = [];
-      for(var pass = 0; pass < 2; pass++){          // first pass sets the standing forage carried into January
+      var cs = cohorts(o), co = calfOutcome(o, cs);
+      var req = requirements(o, cs, co, ftdn);
+      var cows = o.cows*(1 - (o.cowLoss || 0)/200), bulls = o.bulls;
+      var stock = supply.map(function(){ return 0; }), months = [];
+      for(var pass = 0; pass < 2; pass++){
         months = [];
         for(var m = 0; m < 12; m++){
           var r = req[m], n = MONTH_DAYS[m];
           var avail = supply.map(function(g, i){ return stock[i] + g.growth[m]; });
           var availTot = avail.reduce(function(a, b){ return a + b; }, 0);
-          // diet quality = mix of what's available
           var dTdn = 0, dCp = 0;
           if(availTot > 0){ supply.forEach(function(g, i){ dTdn += avail[i]/availTot*g.quality[m][0]; dCp += avail[i]/availTot*g.quality[m][1]; }); }
           else { dTdn = QUALITY.range[m][0]; dCp = QUALITY.range[m][1]; }
-          // intake capacity (lb DM/head/day)
           var cowCap = o.cowLb/100*(r.lactFrac*intakePct(dTdn, true) + (1 - r.lactFrac)*intakePct(dTdn, false));
           var bullCap = o.bullLb/100*intakePct(dTdn, false);
-          var calfDm = r.calfDm;                         // per cow in herd
-          var demand = (cows*(cowCap + calfDm) + bulls*bullCap)*n;
+          var demand = (cows*(cowCap + r.calfDm + r.wcCap) + bulls*bullCap)*n;
           var f = demand > 0 ? Math.min(1, availTot/demand) : 1;
           var eaten = demand*f;
-          // take from each forage pool in proportion to what's there
           supply.forEach(function(g, i){ var take = availTot > 0 ? eaten*avail[i]/availTot : 0; stock[i] = Math.max(0, avail[i] - take); });
-          function feedFor(cap, rTdn, rCp){
+          var feedFor = function(cap, rTdn, rCp){
             var forage = cap*f, hay = cap*(1 - f);
             var tdn = forage*dTdn/100 + hay*feeds.hayTdn/100, cp = forage*dCp/100 + hay*feeds.hayCp/100;
             var eDef = Math.max(0, rTdn - tdn), pDef = Math.max(0, rCp - cp);
             var sup = Math.max(eDef/(feeds.supTdn/100), pDef/(feeds.supCp/100));
-            return {forage:forage, hay:hay, sup:sup, tdnSup:tdn, cpSup:cp, eDef:eDef, pDef:pDef};
-          }
+            return {forage:forage, hay:hay, sup:sup, eDef:eDef, pDef:pDef, protDriven:pDef/(feeds.supCp/100) >= eDef/(feeds.supTdn/100)};
+          };
           var cw = feedFor(cowCap, r.cowTdn, r.cowCp);
           var bl = feedFor(bullCap, r.bullTdn, r.bullCp);
-          // calves: forage only (their shortfall is reported, not bought)
-          var calfTdnSup = calfDm*f*dTdn/100, calfCpSup = calfDm*f*dCp/100;
-          var hayLb = (cows*cw.hay + bulls*bl.hay)*n, supLb = (cows*cw.sup + bulls*bl.sup)*n;
+          var wcHead = r.wcN > 0 ? feedFor(r.wcCap/r.wcN, r.wcTdn/r.wcN, r.wcCp/r.wcN) : {forage:0, hay:0, sup:0};
+          var calfTdnSup = r.calfDm*f*dTdn/100, calfCpSup = r.calfDm*f*dCp/100;
+          var wcHeads = cows*r.wcN;
+          var hayLb = (cows*cw.hay + bulls*bl.hay + wcHeads*wcHead.hay)*n, supLb = (cows*cw.sup + bulls*bl.sup + wcHeads*wcHead.sup)*n;
+          var weeks = n/7, trips = 0;
+          if(hayLb > 1) trips = Math.max(trips, weeks*feeds.hayTrips);
+          if(supLb > 1) trips = Math.max(trips, weeks*feeds.supTrips);
+          var feedCost = hayLb/2000*feeds.hayPrice + supLb/2000*feeds.supPrice;
+          var tripCost = trips*feeds.tripCost, distCost = (hayLb + supLb)/2000*feeds.distPerTon;
           months.push({
             m:m, name:MONTHS[m], days:n, dietTdn:dTdn, dietCp:dCp, pastureShare:f,
             forageAvailLb:availTot, forageDemandLb:demand, carryOutLb:stock.reduce(function(a, b){ return a + b; }, 0),
-            req:{cow:{tdn:r.cowTdn, cp:r.cowCp}, bull:{tdn:r.bullTdn, cp:r.bullCp}, calf:{tdn:r.calfTdn, cp:r.calfCp, dm:calfDm, bw:r.calfBw, nursing:r.calvesNursing}},
-            herdReq:{tdn:cows*(r.cowTdn + r.calfTdn) + bulls*r.bullTdn, cp:cows*(r.cowCp + r.calfCp) + bulls*r.bullCp,
-                     cowTdn:cows*r.cowTdn, bullTdn:bulls*r.bullTdn, calfTdn:cows*r.calfTdn,
-                     cowCp:cows*r.cowCp, bullCp:bulls*r.bullCp, calfCp:cows*r.calfCp},
-            pasture:{tdn:cows*(cw.forage*dTdn/100 + calfTdnSup) + bulls*bl.forage*dTdn/100,
-                     cp:cows*(cw.forage*dCp/100 + calfCpSup) + bulls*bl.forage*dCp/100},
-            cow:cw, bull:bl,
+            req:{cow:{tdn:r.cowTdn, cp:r.cowCp}, bull:{tdn:r.bullTdn, cp:r.bullCp},
+                 calf:{tdn:r.calfTdn, cp:r.calfCp, dm:r.calfDm, nursing:r.calvesNursing},
+                 weaned:{n:r.wcN, tdn:r.wcN > 0 ? r.wcTdn/r.wcN : 0, cp:r.wcN > 0 ? r.wcCp/r.wcN : 0, bw:r.wcBw}},
+            herdReq:{tdn:cows*(r.cowTdn + r.calfTdn + r.wcTdn) + bulls*r.bullTdn, cp:cows*(r.cowCp + r.calfCp + r.wcCp) + bulls*r.bullCp,
+                     cowTdn:cows*r.cowTdn, bullTdn:bulls*r.bullTdn, calfTdn:cows*r.calfTdn, wcTdn:cows*r.wcTdn,
+                     cowCp:cows*r.cowCp, bullCp:bulls*r.bullCp, calfCp:cows*r.calfCp, wcCp:cows*r.wcCp},
+            pasture:{tdn:cows*(cw.forage*dTdn/100 + calfTdnSup) + bulls*bl.forage*dTdn/100 + wcHeads*wcHead.forage*dTdn/100,
+                     cp:cows*(cw.forage*dCp/100 + calfCpSup) + bulls*bl.forage*dCp/100 + wcHeads*wcHead.forage*dCp/100},
+            cow:cw, bull:bl, wc:wcHead, wcHeads:wcHeads,
             calfShortTdn:Math.max(0, r.calfTdn - calfTdnSup), calfShortCp:Math.max(0, r.calfCp - calfCpSup),
-            hayLb:hayLb, supLb:supLb,
-            cost:hayLb/2000*feeds.hayPrice + supLb/2000*feeds.supPrice
+            hayLb:hayLb, supLb:supLb, trips:trips, feedCost:feedCost, tripCost:tripCost, distCost:distCost,
+            cost:feedCost + tripCost + distCost
           });
         }
       }
-      var tot = months.reduce(function(a, x){ a.hay += x.hayLb; a.sup += x.supLb; a.cost += x.cost; return a; }, {hay:0, sup:0, cost:0});
-      return {months:months, totals:tot, forageTdn:ftdn};
+      var tot = months.reduce(function(a, x){ a.hay += x.hayLb; a.sup += x.supLb; a.feed += x.feedCost; a.trips += x.trips; a.tripCost += x.tripCost; a.dist += x.distCost; a.cost += x.cost; return a; },
+        {hay:0, sup:0, feed:0, trips:0, tripCost:0, dist:0, cost:0});
+      var econ = {
+        calvesSold:o.cows*co.weaned, avgSaleLb:co.avgSaleLb, avgWeanLb:co.avgWeanLb, avgPrice:co.avgPrice,
+        income:o.cows*co.income, feed:tot.feed, trips:tot.tripCost, dist:tot.dist,
+        nwsCare:o.nwsPresent ? o.cows*co.nwsCalves*(o.nwsCost || 0) : 0,
+        deadWeather:o.cows*co.deadWeather, deadNws:o.cows*co.deadNws, deadOther:o.cows*co.deadOther,
+        cowDeaths:o.cows*(o.cowLoss || 0)/100
+      };
+      econ.costs = econ.feed + econ.trips + econ.dist + econ.nwsCare;
+      econ.net = econ.income - econ.costs;
+      return {months:months, totals:tot, econ:econ, calves:co, forageTdn:ftdn};
     }
 
     function doy(mmdd){ var p = String(mmdd || '').split('-'); var mo = +p[0], da = +p[1]; if(!(mo >= 1 && mo <= 12 && da >= 1)) return 45; return MONTH_START[mo - 1] + Math.min(da, MONTH_DAYS[mo - 1]) - 1; }
@@ -1257,9 +1513,11 @@
       if(c.lng < -97.8 && c.lat >= 32) return 'rp';
       return 'ce';
     }
-    return {BREEDS:BREEDS, MILK:MILK, REGIONS:REGIONS, QUALITY:QUALITY, ACTIVITY:ACTIVITY, MONTHS:MONTHS, MONTH_DAYS:MONTH_DAYS, NAHMS:NAHMS,
-            cowDay:cowDay, bullDay:bullDay, calfDay:calfDay, requirements:requirements, pastureSupply:pastureSupply, balance:balance,
-            intakePct:intakePct, doy:doy, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts};
+    return {BREEDS:BREEDS, MILK:MILK, REGIONS:REGIONS, QUALITY:QUALITY, ACTIVITY:ACTIVITY, MONTHS:MONTHS, MONTH_DAYS:MONTH_DAYS, MONTH_START:MONTH_START,
+            NAHMS:NAHMS, SOURCES:SOURCES, LOSS_DEFAULT:LOSS_DEFAULT, WEATHER_SHARE:WEATHER_SHARE,
+            cowDay:cowDay, bullDay:bullDay, calfDay:calfDay, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
+            intakePct:intakePct, doy:doy, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfOutcome:calfOutcome,
+            weatherFactor:weatherFactor, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
   })();
 
   /* ------------------------------------------------------------------ helpers */
@@ -1313,7 +1571,7 @@
   }
 
   /* ------------------------------------------------------------------ state */
-  function blankState(){ return {v:1, name:'', pastures:[], points:[], settings:Object.assign({}, DEFAULT_SETTINGS), herd:Object.assign({}, DEFAULT_HERD), drought:null, view:null, summary:null}; }
+  function blankState(){ return {v:1, name:'', pastures:[], points:[], zones:[], settings:Object.assign({}, DEFAULT_SETTINGS), herd:Object.assign({}, DEFAULT_HERD), drought:null, view:null, summary:null}; }
   function loadState(){
     try{
       var s = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
@@ -1321,6 +1579,11 @@
         s.herd = Object.assign({}, DEFAULT_HERD, s.herd || {});
         if(s.settings && s.settings.herdAU > 0 && !(s.herd.cows > 0)) s.herd.cows = Math.round(s.settings.herdAU*1000/s.herd.cowLb);
         s.settings = Object.assign({}, DEFAULT_SETTINGS, s.settings || {});
+        s.settings.cond = Object.assign({}, DEFAULT_SETTINGS.cond, s.settings.cond || {});
+        s.settings.zoneF = Object.assign({}, DEFAULT_SETTINGS.zoneF, s.settings.zoneF || {});
+        s.herd.dr = Object.assign({}, DEFAULT_HERD.dr, s.herd.dr || {});
+        s.zones = (s.zones || []).filter(function(z){ return z && z.geometry && z.geometry.type === 'Polygon' && ZONE_TYPES[z.type]; });
+        s.pastures.forEach(function(p){ if(!CONDITIONS[p.condition]) p.condition = 'fair'; });
         delete s.settings.herdAU;
         s.pastures = (s.pastures || []).filter(function(p){ return p && p.geometry && p.geometry.type === 'Polygon'; });
         s.points = s.points || [];
@@ -1340,39 +1603,86 @@
   /* ------------------------------------------------------------------ forage math */
   function annualDemandLb(){ return state.settings.intakeLb * 365; }
   function isGrazed(p){ return !!(TYPES[p.type] && TYPES[p.type].grazed); }
+  function condFactor(p){ return (state.settings.cond[p.condition || 'fair'] || 75)/100; }
+  /* forage per acre (lb/ac/yr) for the open part of the pasture; soil-survey numbers are scaled by range condition */
   function forageLb(p){
     if(!isGrazed(p)) return null;
-    if(p.mode === 'soil') return (p.soil && p.soil.status === 'ok') ? p.soil.normal : null;
+    if(p.mode === 'soil') return (p.soil && p.soil.status === 'ok') ? p.soil.normal*condFactor(p) : null;
     return (typeof p.manual === 'number' && p.manual > 0) ? p.manual : null;
   }
+  /* acres of each zone type inside a pasture (clipped to the pasture outline) */
+  var zoneCache = {};
+  function zoneAcres(p){
+    var key = p.id + '|' + JSON.stringify(p.geometry.coordinates).length + '|' + state.zones.map(function(z){ return z.id + z.type + JSON.stringify(z.geometry.coordinates).length; }).join(',');
+    if(zoneCache[p.id] && zoneCache[p.id].key === key) return zoneCache[p.id].v;
+    var v = {water:0, brush:0, bottom:0};
+    state.zones.forEach(function(z){
+      var ac = 0;
+      if(window.polygonClipping){
+        try{
+          var inter = polygonClipping.intersection(p.geometry.coordinates, z.geometry.coordinates);
+          inter.forEach(function(poly){ ac += polygonAcres({type:'Polygon', coordinates:poly}); });
+        }catch(e){ ac = 0; }
+      } else if(pointInRing(centroid(z.geometry), p.geometry.coordinates[0])) ac = polygonAcres(z.geometry);
+      v[z.type] += Math.min(ac, p.acres);
+    });
+    var tot = v.water + v.brush + v.bottom;
+    if(tot > p.acres){ var k = p.acres/tot; v.water *= k; v.brush *= k; v.bottom *= k; }
+    zoneCache[p.id] = {key:key, v:v};
+    return v;
+  }
+  function pointInRing(pt, ring){
+    var inside = false;
+    for(var i = 0, j = ring.length - 1; i < ring.length; j = i++){
+      var xi = ring[i][0], yi = ring[i][1], xj = ring[j][0], yj = ring[j][1];
+      if(((yi > pt.lat) !== (yj > pt.lat)) && (pt.lng < (xj - xi)*(pt.lat - yi)/(yj - yi) + xi)) inside = !inside;
+    }
+    return inside;
+  }
+  /* forage-weighted acres: open ground x1, brush and bottomland by their factors, ponds x0 */
+  function forageAcres(p){
+    var z = zoneAcres(p), f = state.settings.zoneF;
+    return Math.max(0, p.acres - z.water - z.brush - z.bottom) + z.brush*f.brush/100 + z.bottom*f.bottom/100;
+  }
+  function grazeableAcres(p){ return Math.max(0, p.acres - zoneAcres(p).water); }
+  function annualLb(p){ var lb = forageLb(p); return lb == null ? null : forageAcres(p)*lb; }
   function capacityAU(p){
-    var lb = forageLb(p);
+    var lb = annualLb(p);
     if(lb == null || !(annualDemandLb() > 0)) return null;
-    return p.acres * lb * (state.settings.harvestEff/100) / annualDemandLb();
+    return lb * (state.settings.harvestEff/100) / annualDemandLb();
   }
   function lowCapacityAU(p){
     if(p.mode !== 'soil' || !p.soil || p.soil.status !== 'ok' || p.soil.low == null) return null;
-    return p.acres * p.soil.low * (state.settings.harvestEff/100) / annualDemandLb();
+    return forageAcres(p) * p.soil.low * condFactor(p) * (state.settings.harvestEff/100) / annualDemandLb();
   }
   function grazingDays(p, herd){
-    var lb = forageLb(p);
+    var lb = annualLb(p);
     if(lb == null || !(herd > 0) || !(state.settings.intakeLb > 0)) return null;
-    return p.acres * lb * (state.settings.harvestEff/100) / (herd * state.settings.intakeLb);
+    return lb * (state.settings.harvestEff/100) / (herd * state.settings.intakeLb);
   }
   function totals(){
-    var t = {pastures:state.pastures.length, acres:0, grazedAcres:0, estAcres:0, cap:0, missing:0, soilCap:0, soilLow:0, lowAvailable:false};
+    var t = {pastures:state.pastures.length, acres:0, grazedAcres:0, estAcres:0, cap:0, missing:0, soilCap:0, soilLow:0, lowAvailable:false, water:0};
     state.pastures.forEach(function(p){
       t.acres += p.acres;
       if(!isGrazed(p)) return;
-      t.grazedAcres += p.acres;
+      t.water += zoneAcres(p).water;
+      t.grazedAcres += grazeableAcres(p);
       var c = capacityAU(p);
       if(c == null){ t.missing++; return; }
-      t.estAcres += p.acres; t.cap += c;
+      t.estAcres += grazeableAcres(p); t.cap += c;
       var lo = lowCapacityAU(p);
       if(lo != null){ t.soilCap += c; t.soilLow += lo; t.lowAvailable = true; }
     });
     t.lowCap = t.lowAvailable ? (t.cap - t.soilCap + t.soilLow) : null;
-    t.acresPerAU = t.cap > 0 ? t.estAcres / t.cap : null;
+    t.estCap = t.cap;
+    var mc = state.settings.manualCap;
+    t.manual = mc > 0;
+    if(t.manual){
+      if(t.lowCap != null && t.cap > 0) t.lowCap = t.lowCap*mc/t.cap;
+      t.cap = mc; t.missing = 0;
+      if(!(t.estAcres > 0)) t.estAcres = t.grazedAcres;
+    }
+    t.acresPerAU = t.cap > 0 && t.estAcres > 0 ? t.estAcres / t.cap : null;
     return t;
   }
   function ranchCenter(){
@@ -1382,7 +1692,8 @@
     return {lng:x/w, lat:y/w};
   }
   function nearestWaterMiles(p){
-    var waters = state.points.filter(function(pt){ return pt.type === 'water'; });
+    var waters = state.points.filter(function(pt){ return pt.type === 'water'; })
+      .concat(state.zones.filter(function(z){ return z.type === 'water'; }).map(function(z){ return centroid(z.geometry); }));
     if(!waters.length) return null;
     var c = centroid(p.geometry), best = Infinity;
     waters.forEach(function(w){ var d = milesBetween(c, {lat:w.lat, lng:w.lng}); if(d < best) best = d; });
@@ -1407,7 +1718,7 @@
   }
 
   /* ------------------------------------------------------------------ map */
-  var map = null, pastureLayers = {}, pointLayers = {}, drawMode = null, editOn = false, selectedId = null;
+  var map = null, pastureLayers = {}, pointLayers = {}, zoneLayers = {}, drawMode = null, editOn = false, selectedId = null;
 
   function pointIcon(type){
     var t = POINT_TYPES[type] || POINT_TYPES.other;
@@ -1444,7 +1755,11 @@
 
     map.on('pm:create', function(e){
       var layer = e.layer;
-      if(e.shape === 'Polygon' || e.shape === 'Rectangle'){
+      if((e.shape === 'Polygon' || e.shape === 'Rectangle') && drawMode && drawMode.indexOf('zone:') === 0){
+        var zg = layer.toGeoJSON().geometry;
+        map.removeLayer(layer);
+        addZone(drawMode.slice(5), zg);
+      } else if(e.shape === 'Polygon' || e.shape === 'Rectangle'){
         var geom = layer.toGeoJSON().geometry;
         map.removeLayer(layer);
         addPasture(geom, null, true);
@@ -1455,11 +1770,12 @@
       }
       setDrawMode(null);
     });
-    map.on('pm:drawstart', function(){ if(drawMode === 'pasture') $('hintActions').hidden = false; });
+    map.on('pm:drawstart', function(){ if(drawMode === 'pasture' || (drawMode && drawMode.indexOf('zone:') === 0)) $('hintActions').hidden = false; });
     map.on('moveend', function(){ if(state.pastures.length || state.view) save(); });
 
     if(state.pastures.length){
       state.pastures.forEach(function(p){ drawPastureLayer(p); });
+      state.zones.forEach(function(z){ drawZoneLayer(z); });
       state.points.forEach(function(pt){ drawPointLayer(pt); });
       if(state.view) map.setView([state.view.lat, state.view.lng], state.view.zoom);
       else fitRanch();
@@ -1528,7 +1844,7 @@
     var g = layer.toGeoJSON().geometry;
     if(g.type !== 'Polygon') return;
     p.geometry = {type:'Polygon', coordinates:cleanPolygon(g.coordinates)};
-    p.acres = polygonAcres(p.geometry);
+    p.acres = polygonAcres(p.geometry); zoneCache = {};
     layer.setTooltipContent(labelText(p));
     if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 900);
     renderAll(true);
@@ -1554,6 +1870,12 @@
       map.pm.enableDraw('Rectangle', {snappable:true});
       setHint('<strong>Drawing a rectangle:</strong> click one corner, then the opposite corner.');
       $('hintActions').hidden = false; $('undoPointBtn').hidden = true; $('finishBtn').hidden = true;
+    } else if(mode && mode.indexOf('zone:') === 0){
+      var zt = mode.slice(5), zb = document.querySelector('[data-zone="' + zt + '"]'); if(zb) zb.classList.add('active');
+      map.pm.enableDraw('Polygon', {snappable:true, finishOn:null, pathOptions:ZONE_TYPES[zt].style, templineStyle:{color:ZONE_TYPES[zt].style.fillColor, weight:2}});
+      setHint('<strong>Drawing ' + esc(ZONE_TYPES[zt].label.toLowerCase()) + ':</strong> click around its edge inside the pasture, then close it or press <strong>Finish</strong>. ' +
+        (zt === 'water' ? 'Ponds and lakes are taken out of the grazing area.' : zt === 'brush' ? 'Brush counts at ' + state.settings.zoneF.brush + '% of the pasture’s forage.' : 'Bottomland counts at ' + state.settings.zoneF.bottom + '% of the pasture’s forage.'));
+      $('hintActions').hidden = false;
     } else if(mode && mode.indexOf('point:') === 0){
       var t = mode.slice(6);
       var btn = document.querySelector('[data-point="' + t + '"]'); if(btn) btn.classList.add('active');
@@ -1574,10 +1896,45 @@
     if(!map) return;
     editOn = (on === undefined) ? !editOn : on;
     if(editOn && drawMode) setDrawMode(null);
-    Object.keys(pastureLayers).forEach(function(id){ var l = pastureLayers[id]; if(l.pm){ editOn ? l.pm.enable({allowSelfIntersection:false, snappable:true}) : l.pm.disable(); } });
+    Object.keys(pastureLayers).concat(Object.keys(zoneLayers)).forEach(function(id){ var l = pastureLayers[id] || zoneLayers[id]; if(l && l.pm){ editOn ? l.pm.enable({allowSelfIntersection:false, snappable:true}) : l.pm.disable(); } });
     $('editBtn').classList.toggle('active', editOn);
     $('editBtn').textContent = editOn ? '✓ Done editing' : '↔ Edit shapes';
     setDefaultHint();
+  }
+
+  /* ------------------------------------------------------------------ zones (pond, brush, bottomland) */
+  function zoneLabel(z){ var t = ZONE_TYPES[z.type]; return t.icon + ' ' + t.label + ' · ' + fmt(polygonAcres(z.geometry), polygonAcres(z.geometry) < 10 ? 1 : 0) + ' ac'; }
+  function drawZoneLayer(z){
+    if(!map) return;
+    if(zoneLayers[z.id]) map.removeLayer(zoneLayers[z.id]);
+    var latlngs = z.geometry.coordinates.map(function(r){ return r.slice(0, -1).map(function(c){ return [c[1], c[0]]; }); });
+    var layer = L.polygon(latlngs, ZONE_TYPES[z.type].style);
+    layer.bindTooltip(zoneLabel(z), {sticky:true, className:'pasture-label'});
+    layer.on('pm:edit', function(){
+      var g = layer.toGeoJSON().geometry; if(g.type !== 'Polygon') return;
+      z.geometry = {type:'Polygon', coordinates:cleanPolygon(g.coordinates)};
+      layer.setTooltipContent(zoneLabel(z)); zoneCache = {};
+      renderAll(true);
+    });
+    layer.addTo(map);
+    if(editOn && layer.pm) layer.pm.enable({allowSelfIntersection:false, snappable:true});
+    zoneLayers[z.id] = layer;
+  }
+  function addZone(type, geom){
+    var coords = cleanPolygon(geom.coordinates || []);
+    if(!coords.length || !ZONE_TYPES[type]) return null;
+    var z = {id:uid(), type:type, geometry:{type:'Polygon', coordinates:coords}};
+    if(!(polygonAcres(z.geometry) > 0)) return null;
+    state.zones.push(z); zoneCache = {};
+    drawZoneLayer(z);
+    renderAll(true);
+    return z;
+  }
+  function removeZone(id){
+    state.zones = state.zones.filter(function(z){ return z.id !== id; });
+    if(zoneLayers[id]){ map && map.removeLayer(zoneLayers[id]); delete zoneLayers[id]; }
+    zoneCache = {};
+    renderAll(true);
   }
 
   /* ------------------------------------------------------------------ add / remove */
@@ -1593,6 +1950,7 @@
       type: type,
       mode: props.mode || TYPES[type].mode,
       manual: (typeof props.manual === 'number') ? props.manual : null,
+      condition: CONDITIONS[props.condition] ? props.condition : 'fair',
       geometry: g,
       acres: polygonAcres(g),
       soil: null
@@ -1819,6 +2177,7 @@
   /* ------------------------------------------------------------------ rendering */
   function renderAll(listChanged){
     if(listChanged) renderPastures(); else updatePastureNumbers();
+    renderZones();
     renderPoints();
     renderSummary();
     renderRotation();
@@ -1840,7 +2199,8 @@
     }).join('');
     var more = s.soils.length > 5 ? '<tr><td colspan="3" style="color:var(--ink-muted);">+ ' + (s.soils.length - 5) + ' more soil' + (s.soils.length - 5 > 1 ? 's' : '') + '</td></tr>' : '';
     var cov = s.coverage < 0.8 ? '<div style="margin-top:6px;"><span class="tag warn">Partial data</span> Only ' + fmt(s.coverage*100) + '% of this pasture has a soil-survey forage estimate; the average is applied to the whole pasture.</div>' : '';
-    return '<div class="p-soil">Soil survey: <strong>' + fmt(s.normal) + ' lb/ac</strong> in a normal year (' + fmt(s.low) + ' unfavorable · ' + fmt(s.high) + ' favorable).' + cov +
+    var cf = condFactor(p);
+    return '<div class="p-soil">Soil survey: <strong>' + fmt(s.normal) + ' lb/ac</strong> in a normal year (' + fmt(s.low) + ' unfavorable · ' + fmt(s.high) + ' favorable) for the site in top condition. At ' + CONDITIONS[p.condition || 'fair'].toLowerCase() + ' condition this tool uses <strong>' + fmt(s.normal*cf) + ' lb/ac</strong>.' + cov +
       '<div class="table-scroll"><table><thead><tr><th>Soil</th><th class="num">Of pasture</th><th class="num">Normal year</th></tr></thead><tbody>' + rows + more + '</tbody></table></div></div>';
   }
 
@@ -1848,7 +2208,20 @@
     var c = capacityAU(p);
     if(!isGrazed(p)) return '<div class="big">—</div><div class="sub">not grazed</div>';
     if(c == null) return '<div class="big">—</div><div class="sub">' + (p.mode === 'soil' ? 'waiting on forage' : 'enter a forage estimate') + '</div>';
-    return '<div class="big">' + fmt(c, c < 10 ? 1 : 0) + ' AU</div><div class="sub">' + fmt(p.acres / c, 1) + ' ac per AU · yearlong</div>';
+    return '<div class="big">' + fmt(c, c < 10 ? 1 : 0) + ' AU</div><div class="sub">' + fmt(grazeableAcres(p) / c, 1) + ' ac per AU · yearlong</div>';
+  }
+  function zoneLine(p){
+    var z = zoneAcres(p), f = state.settings.zoneF, parts = [];
+    if(z.water > 0.05) parts.push('💧 ' + fmt(z.water, z.water < 10 ? 1 : 0) + ' ac pond/lake (not grazed)');
+    if(z.brush > 0.05) parts.push('🌳 ' + fmt(z.brush, z.brush < 10 ? 1 : 0) + ' ac brush (' + f.brush + '% forage)');
+    if(z.bottom > 0.05) parts.push('〰 ' + fmt(z.bottom, z.bottom < 10 ? 1 : 0) + ' ac bottomland (' + f.bottom + '% forage)');
+    return parts.length ? '<div class="p-zones">Inside this pasture: ' + parts.join(' · ') + '</div>' : '';
+  }
+  function condSelect(p){
+    if(!isGrazed(p) || p.mode !== 'soil') return '';
+    var c = state.settings.cond;
+    return '<div class="p-cond"><label>Range condition</label><select class="p-condition">' + Object.keys(CONDITIONS).map(function(k){
+      return '<option value="' + k + '"' + ((p.condition || 'fair') === k ? ' selected' : '') + '>' + CONDITIONS[k] + ' condition (' + c[k] + '%)</option>'; }).join('') + '</select></div>';
   }
 
   function renderPastures(){
@@ -1871,10 +2244,11 @@
           '<div><label>Land use</label><select class="p-type">' + typeOpts + '</select></div>' +
           '<div><label>Forage estimate</label>' + (grazed ?
             '<select class="p-mode"><option value="soil"' + (p.mode === 'soil' ? ' selected' : '') + '>Soil survey</option><option value="manual"' + (p.mode === 'manual' ? ' selected' : '') + '>My estimate</option></select>' +
-            (p.mode === 'manual' ? '<div class="input-wrap has-suffix" style="margin-top:6px;"><input type="number" class="p-manual" min="0" step="50" inputmode="decimal" placeholder="lb per acre" value="' + (p.manual != null ? p.manual : '') + '" aria-label="Forage per acre per year"><span class="suffix">lb/ac/yr</span></div>' : '')
+            condSelect(p) + (p.mode === 'manual' ? '<div class="input-wrap has-suffix" style="margin-top:6px;"><input type="number" class="p-manual" min="0" step="50" inputmode="decimal" placeholder="lb per acre" value="' + (p.manual != null ? p.manual : '') + '" aria-label="Forage per acre per year"><span class="suffix">lb/ac/yr</span></div>' : '')
             : '<div class="sub" style="font-size:12.5px;color:var(--ink-muted);padding-top:8px;">—</div>') + '</div>' +
           '<div class="p-cap">' + capBlock(p) + '</div>' +
         '</div>' +
+        zoneLine(p) +
         soilBlock(p) +
         '<div class="p-foot"><span class="water">' + waterTxt + '</span>' +
           (grazed && p.mode === 'soil' && p.soil && (p.soil.status === 'error' || p.soil.status === 'ok' || p.soil.status === 'nodata') ? '<button type="button" class="tool-btn small p-soil-retry">↻ Soil lookup</button>' : '') +
@@ -1888,6 +2262,8 @@
       var row = document.querySelector('.pasture-row[data-id="' + p.id + '"]');
       if(!row){ return; }
       var cap = row.querySelector('.p-cap'); if(cap) cap.innerHTML = capBlock(p);
+      var zl = row.querySelector('.p-zones'), zh = zoneLine(p);
+      if(zl && zh) zl.outerHTML = zh; else if(zl && !zh) zl.remove();
       var ac = row.querySelector('.p-acres'); if(ac) ac.textContent = fmt(p.acres, p.acres < 10 ? 1 : 0) + ' ac';
       var w = row.querySelector('.p-foot .water');
       if(w){
@@ -1898,6 +2274,17 @@
     });
   }
 
+  function renderZones(){
+    var el = $('zoneList'); if(!el) return;
+    if(!state.zones.length){ el.innerHTML = '<p class="narrative" style="margin:0;color:var(--ink-muted);font-size:13px;">No ponds, brush or bottomland marked. Use the 💧 🌳 〰 buttons above the map to draw them inside a pasture.</p>'; return; }
+    el.innerHTML = state.zones.map(function(z){
+      var inP = state.pastures.filter(function(p){ return (function(v){ return v.water + v.brush + v.bottom; })(zoneAcres(p)) > 0 && (function(){ var s = 0; try{ polygonClipping.intersection(p.geometry.coordinates, z.geometry.coordinates).forEach(function(q){ s += polygonAcres({type:'Polygon', coordinates:q}); }); }catch(e){ s = pointInRing(centroid(z.geometry), p.geometry.coordinates[0]) ? 1 : 0; } return s > 0.01; })(); }).map(function(p){ return p.name; });
+      return '<div class="point-row"><span class="ico" aria-hidden="true">' + ZONE_TYPES[z.type].icon + '</span>' +
+        '<select class="zone-type" data-id="' + z.id + '" aria-label="Area type">' + Object.keys(ZONE_TYPES).map(function(k){ return '<option value="' + k + '"' + (z.type === k ? ' selected' : '') + '>' + ZONE_TYPES[k].label + '</option>'; }).join('') + '</select>' +
+        '<span class="zone-meta">' + fmt(polygonAcres(z.geometry), 1) + ' ac' + (inP.length ? ' · in ' + esc(inP.join(', ')) : ' · <span style="color:var(--critical-700);">outside every pasture</span>') + '</span>' +
+        '<button type="button" class="tool-btn small danger" data-del-zone="' + z.id + '">Delete</button></div>';
+    }).join('');
+  }
   function renderPoints(){
     var el = $('pointList');
     if(!state.points.length){ el.innerHTML = '<p class="narrative" style="margin:0;color:var(--ink-muted);">Nothing placed yet.</p>'; return; }
@@ -1999,8 +2386,18 @@
   }
 
 
+
   /* ------------------------------------------------------------------ feed calendar UI */
-  var feedLast = null, feedKey = '', feedNutrient = 'tdn';
+  var feedLast = null, feedKey = '', feedNutrient = 'tdn', decTab = 'calving', decTimer = null, decKey = '';
+
+  /* Market price slides (same data and anchors as the Cow-Calf tools), rescaled to the shared market store */
+  var STEER_SLIDE_BASE = [{w:397.0,p:629.0},{w:463.8,p:565.3},{w:516.4,p:530.0},{w:654.7,p:441.5},{w:762.3,p:437.9},{w:835.5,p:420.8},{w:962.3,p:392.1},{w:1140.0,p:318.2}];
+  var HEIFER_SLIDE_BASE = [{w:337.0,p:554.1},{w:455.1,p:492.9},{w:531.3,p:460.0},{w:654.1,p:425.9},{w:765.6,p:395.8},{w:862.6,p:374.5},{w:922.0,p:321.6}];
+  function slides(mult){
+    var mp = {}; try{ mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null') || {}; }catch(e){}
+    var rs = (+mp.mp_steerPrice > 0 ? +mp.mp_steerPrice : 530)/530*(mult || 1), rh = (+mp.mp_heiferPrice > 0 ? +mp.mp_heiferPrice : 460)/460*(mult || 1);
+    return {steer:STEER_SLIDE_BASE.map(function(p){ return {w:p.w, p:p.p*rs}; }), heifer:HEIFER_SLIDE_BASE.map(function(p){ return {w:p.w, p:p.p*rh}; })};
+  }
 
   function bindHerdValues(){
     var h = state.herd;
@@ -2008,7 +2405,6 @@
     $('hd_cowLb').value = h.cowLb;
     $('hd_bulls').value = h.bulls != null ? h.bulls : '';
     $('hd_bullLb').value = h.bullLb;
-    $('hd_bulls').placeholder = String(bullCount());
     renderHerdNote();
     bindFeedValues();
   }
@@ -2022,6 +2418,7 @@
   }
   function mmddToDate(s){ return '2026-' + (s || '02-15'); }
   function dateToMmdd(v){ var m = String(v || '').match(/^\d{4}-(\d{2})-(\d{2})$/); return m ? m[1] + '-' + m[2] : null; }
+  function mmddText(s){ var p = String(s).split('-'); return FEED.MONTHS[+p[0] - 1] + ' ' + (+p[1]); }
   function autoRegion(){
     var w = {};
     state.pastures.forEach(function(p){
@@ -2040,29 +2437,33 @@
   function regionKey(){ return state.herd.region !== 'auto' && FEED.REGIONS[state.herd.region] ? state.herd.region : autoRegion().key; }
   function calvingText(){
     var h = state.herd;
-    function d(s){ var p = s.split('-'); return FEED.MONTHS[+p[0] - 1] + ' ' + (+p[1]); }
-    if(h.calving === 'us') return 'U.S. average spread (NAHMS 2017)';
-    if(h.calving === 'two') return (100 - h.share2) + '% from ' + d(h.start1) + ' for ' + h.len1 + ' days, ' + h.share2 + '% from ' + d(h.start2) + ' for ' + h.len2 + ' days';
-    return 'from ' + d(h.start1) + ' for ' + h.len1 + ' days';
+    if(h.calving === 'us') return 'U.S. average spread (NAHMS 2017), weaned at ' + h.weanAge + ' days';
+    if(h.calving === 'two') return (100 - h.share2) + '% from ' + mmddText(h.start1) + ' for ' + h.len1 + ' days (weaned ' + mmddText(h.wean1) + '), ' + h.share2 + '% from ' + mmddText(h.start2) + ' for ' + h.len2 + ' days (weaned ' + mmddText(h.wean2) + ')';
+    return 'from ' + mmddText(h.start1) + ' for ' + h.len1 + ' days, weaned ' + mmddText(h.wean1);
   }
 
   function bindFeedValues(){
     var h = state.herd;
-    $('fc_calving').value = h.calving;
-    $('fc_start1').value = mmddToDate(h.start1); $('fc_len1').value = h.len1;
-    $('fc_start2').value = mmddToDate(h.start2); $('fc_len2').value = h.len2; $('fc_share2').value = h.share2;
-    $('fc_breed').value = h.breed; $('fc_milk').value = h.milk; $('fc_bcs').value = String(h.bcs); $('fc_activity').value = h.activity;
-    $('fc_weanAge').value = h.weanAge; $('fc_weanLb').value = h.weanLb; $('fc_calfCrop').value = h.calfCrop;
-    $('fc_hayTdn').value = h.hayTdn; $('fc_hayCp').value = h.hayCp; $('fc_hayPrice').value = h.hayPrice;
-    $('fc_supCp').value = h.supCp; $('fc_supTdn').value = h.supTdn; $('fc_supPrice').value = h.supPrice;
-    syncCalvingFields();
+    document.querySelectorAll('[data-h]').forEach(function(el){ el.value = h[el.getAttribute('data-h')]; });
+    document.querySelectorAll('[data-hs]').forEach(function(el){ if(el.options.length) el.value = String(h[el.getAttribute('data-hs')]); });
+    document.querySelectorAll('[data-hd]').forEach(function(el){ el.value = mmddToDate(h[el.getAttribute('data-hd')]); });
+    document.querySelectorAll('[data-dr]').forEach(function(el){ el.value = h.dr[el.getAttribute('data-dr')]; });
+    document.querySelectorAll('[data-drs]').forEach(function(el){ if(el.options.length) el.value = String(h.dr[el.getAttribute('data-drs')]); });
+    if($('fc_source').options.length) $('fc_source').value = FEED.SOURCES[h.source] ? h.source : 'custom';
+    syncFields();
   }
-  function syncCalvingFields(){
-    var c = state.herd.calving;
+  function syncFields(){
+    var h = state.herd, c = h.calving;
     document.querySelectorAll('.fc-season1').forEach(function(el){ el.hidden = c === 'us'; });
     document.querySelectorAll('.fc-season2').forEach(function(el){ el.hidden = c !== 'two'; });
+    document.querySelectorAll('.fc-usonly').forEach(function(el){ el.hidden = c !== 'us'; });
     document.querySelector('.fc-usnote').hidden = c !== 'us';
     $('fc_start1Label').textContent = c === 'two' ? 'Spring calving starts' : 'Calving starts';
+    $('fc_wean1Label').textContent = c === 'two' ? 'Spring calves weaned on' : 'Weaning date';
+    document.querySelectorAll('.fc-nws').forEach(function(el){ el.hidden = h.nws !== 'yes'; });
+    var s = FEED.SOURCES[h.source];
+    $('fc_perLbCp').textContent = h.supCp > 0 ? '$' + fmt(h.supPrice/2000/(h.supCp/100), 2) + ' per lb of protein' : '';
+    $('fc_supCp').readOnly = $('fc_supTdn').readOnly = !!(s && s.cp != null);
   }
   function renderRegionSelect(){
     var sel = $('fc_region'), a = autoRegion(), cur = state.herd.region;
@@ -2070,29 +2471,53 @@
       Object.keys(FEED.REGIONS).map(function(k){ return '<option value="' + k + '">' + esc(FEED.REGIONS[k].label) + '</option>'; }).join('');
     if(sel.innerHTML !== html) sel.innerHTML = html;
     sel.value = FEED.REGIONS[cur] ? cur : 'auto';
-    var k = regionKey();
-    $('fc_regionHint').textContent = (cur === 'auto' ? 'Picked ' + a.why + '. ' : '') + 'Native-range curve: NRCS ' + FEED.REGIONS[k].src + '.';
+    var k = regionKey(), R = FEED.REGIONS[k];
+    $('fc_regionHint').textContent = (cur === 'auto' ? 'Picked ' + a.why + '. ' : '') + 'Growth curve: NRCS ' + R.src + '. Weather: ' + R.station + ' normals.';
   }
 
-  function feedOptions(){
-    var h = state.herd, br = FEED.BREEDS[h.breed] || FEED.BREEDS.angus;
-    return {cows:h.cows, bulls:bullCount(), cowLb:h.cowLb, bullLb:h.bullLb, breed:h.breed, bcs:+h.bcs, peakMilkLb:FEED.MILK[h.milk] || 18,
+  /* ---- inputs to the engine */
+  function feedOptions(over){
+    var h = state.herd, sl = slides(over && over.priceMult);
+    var o = {cows:h.cows, bulls:bullCount(), cowLb:h.cowLb, bullLb:h.bullLb, breed:h.breed, bcs:+h.bcs, peakMilkLb:FEED.MILK[h.milk] || 18,
       activity:FEED.ACTIVITY[h.activity] || 0, calving:h.calving, start1:FEED.doy(h.start1), len1:h.len1, start2:FEED.doy(h.start2), len2:h.len2, share2:h.share2,
-      weanAge:h.weanAge, weanLb:h.weanLb, birthLb:h.cowLb*0.96*0.066, calfCrop:h.calfCrop};
+      weanMode:h.calving === 'us' ? 'age' : 'date', weanAge:h.weanAge, weanDoy1:FEED.doy(h.wean1), weanDoy2:FEED.doy(h.wean2),
+      weanLb:h.weanLb, birthLb:h.cowLb*0.96*0.066, weanPeriod:h.weanPeriod, postAdg:h.postAdg,
+      calvingRate:h.calvingRate, calfLoss:h.calfLoss, cowLoss:h.cowLoss, region:regionKey(),
+      nwsPresent:h.nws === 'yes', nwsLoss:h.nwsLoss, nwsCost:h.nwsCost, hornFly:+h.hornFly,
+      steerSlide:sl.steer, heiferSlide:sl.heifer};
+    o.refWeanAge = FEED.cohorts(o).reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
+    return Object.assign(o, over || {});
+  }
+  function feedsFor(over){
+    var h = state.herd;
+    return Object.assign({hayTdn:h.hayTdn, hayCp:h.hayCp, hayPrice:h.hayPrice, supTdn:h.supTdn, supCp:h.supCp, supPrice:h.supPrice,
+      tripCost:h.tripCost, supTrips:+h.supTrips, hayTrips:+h.hayTrips, distPerTon:h.distPerTon}, over || {});
+  }
+  function supplyNow(mult){
+    var past = state.pastures.map(function(p){ return {annualLb:annualLb(p), type:p.type, grazed:isGrazed(p)}; });
+    var reg = regionKey(), he = state.settings.harvestEff/100;
+    var sup = FEED.pastureSupply(past, he, reg);
+    var t = totals(), mc = state.settings.manualCap;
+    if(mc > 0){
+      var target = mc*state.settings.intakeLb*365;            // lb/yr available to graze at the stated capacity
+      var have = sup.reduce(function(a, g){ return a + g.annual; }, 0);
+      if(have > 0) sup.forEach(function(g){ var k = target/have; g.annual *= k; g.growth = g.growth.map(function(x){ return x*k; }); });
+      else sup = FEED.pastureSupply([{annualLb:target/he, type:'range', grazed:true}], he, reg);
+    }
+    if(mult && mult !== 1) sup.forEach(function(g){ g.annual *= mult; g.growth = g.growth.map(function(x){ return x*mult; }); });
+    return sup;
   }
   function runFeed(){
-    var o = feedOptions(), h = state.herd;
-    var past = state.pastures.map(function(p){ return {acres:p.acres, lbAc:forageLb(p), type:p.type, grazed:isGrazed(p)}; });
-    var reg = regionKey();
-    var key = JSON.stringify([o, past, reg, state.settings.harvestEff, h.hayTdn, h.hayCp, h.hayPrice, h.supTdn, h.supCp, h.supPrice]);
+    var o = feedOptions(), f = feedsFor(), sup = supplyNow();
+    var key = JSON.stringify([o, f, sup]);
     if(key === feedKey && feedLast) return feedLast;
-    var supply = FEED.pastureSupply(past, state.settings.harvestEff/100, reg);
-    var res = FEED.balance(o, supply, {hayTdn:h.hayTdn, hayCp:h.hayCp, hayPrice:h.hayPrice, supTdn:h.supTdn, supCp:h.supCp, supPrice:h.supPrice});
-    res.hasSupply = supply.length > 0;
+    var res = FEED.balance(o, sup, f);
+    res.hasSupply = sup.length > 0;
     feedKey = key; feedLast = res;
     return res;
   }
 
+  /* ---- charts */
   function niceMax(v){
     if(!(v > 0)) return 10;
     var p = Math.pow(10, Math.floor(Math.log10(v))), n = v/p;
@@ -2110,65 +2535,64 @@
     }
     return runs.join(', ');
   }
-
-  function renderFeedChart(res){
-    var el = $('fc_chart'), nut = feedNutrient;
+  var SERIES = [
+    {key:'cow', label:'Cows', color:'var(--s1)', t:'cowTdn', c:'cowCp'},
+    {key:'bull', label:'Bulls', color:'var(--s2)', t:'bullTdn', c:'bullCp'},
+    {key:'calf', label:'Nursing calves (beyond milk)', color:'var(--s3)', t:'calfTdn', c:'calfCp'},
+    {key:'wc', label:'Weaned calves', color:'var(--s4)', t:'wcTdn', c:'wcCp'}
+  ];
+  function renderFeedChart(res, nut, el, interactive){
     var W = Math.round(Math.max(320, Math.min(720, el.clientWidth || 720))), H = W < 500 ? 250 : 290, ml = W < 500 ? 40 : 52, mr = 6, mt = 12, mb = 34, pw = W - ml - mr, ph = H - mt - mb;
-    var series = [
-      {key:'cow', label:'Cows', color:'var(--s1)'},
-      {key:'bull', label:'Bulls', color:'var(--s2)'},
-      {key:'calf', label:'Calves (beyond milk)', color:'var(--s3)'}
-    ];
+    var ser = SERIES.filter(function(se){ return res.months.some(function(x){ return x.herdReq[se.t] > 0.01; }); });
     var rows = res.months.map(function(x){
-      var v = {cow:x.herdReq[nut === 'tdn' ? 'cowTdn' : 'cowCp'], bull:x.herdReq[nut === 'tdn' ? 'bullTdn' : 'bullCp'], calf:x.herdReq[nut === 'tdn' ? 'calfTdn' : 'calfCp']};
-      return {x:x, v:v, total:v.cow + v.bull + v.calf, supply:x.pasture[nut]};
+      var v = {}; var tot = 0;
+      ser.forEach(function(se){ v[se.key] = x.herdReq[nut === 'tdn' ? se.t : se.c]; tot += v[se.key]; });
+      return {x:x, v:v, total:tot, supply:x.pasture[nut]};
     });
     var max = niceMax(Math.max.apply(null, rows.map(function(r){ return Math.max(r.total, res.hasSupply ? r.supply : 0); })));
     var band = pw/12, bw = Math.min(40, band*0.62);
     function y(v){ return mt + ph - v/max*ph; }
-    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" aria-hidden="true">';
-    s += '<g class="grid">';
-    for(var i = 0; i <= 4; i++){ var gv = max*i/4, gy = y(gv); s += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + gy + '" y2="' + gy + '"/>'; }
+    var s = '<svg viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="xMidYMid meet" aria-hidden="true"><g class="grid">';
+    for(var i = 0; i <= 4; i++){ var gy = y(max*i/4); s += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + gy + '" y2="' + gy + '"/>'; }
     s += '</g><g class="axis">';
-    for(i = 0; i <= 4; i++){ gv = max*i/4; s += '<text x="' + (ml - 8) + '" y="' + (y(gv) + 4) + '" text-anchor="end">' + fmt(gv) + '</text>'; }
+    for(i = 0; i <= 4; i++){ s += '<text x="' + (ml - 8) + '" y="' + (y(max*i/4) + 4) + '" text-anchor="end">' + fmt(max*i/4) + '</text>'; }
     s += '</g>';
     rows.forEach(function(r, m){
       var cx = ml + band*m + band/2, x0 = cx - bw/2, base = mt + ph, acc = 0;
-      var visible = series.filter(function(se){ return r.v[se.key] > 0; });
-      visible.forEach(function(se, j){
+      var vis = ser.filter(function(se){ return r.v[se.key] > 0; });
+      vis.forEach(function(se, j){
         var y1 = y(acc + r.v[se.key]), y0 = y(acc); acc += r.v[se.key];
         var h = Math.max(0, y0 - y1);
-        if(j === visible.length - 1 && h > 4){
+        if(j === vis.length - 1 && h > 4){
           var rr = 4;
           s += '<path class="seg" fill="' + se.color + '" d="M' + x0 + ',' + y0 + 'V' + (y1 + rr) + 'Q' + x0 + ',' + y1 + ' ' + (x0 + rr) + ',' + y1 + 'H' + (x0 + bw - rr) + 'Q' + (x0 + bw) + ',' + y1 + ' ' + (x0 + bw) + ',' + (y1 + rr) + 'V' + y0 + 'Z"/>';
         } else s += '<rect class="seg" fill="' + se.color + '" x="' + x0 + '" y="' + y1 + '" width="' + bw + '" height="' + h + '"/>';
       });
-      var short = res.hasSupply && r.supply < r.total*0.98;
       s += '<g class="axis"><text x="' + cx + '" y="' + (base + 16) + '" text-anchor="middle">' + FEED.MONTHS[m] + '</text></g>';
-      if(short) s += '<circle class="short-mark" cx="' + cx + '" cy="' + (base + 26) + '" r="3"/>';
+      if(res.hasSupply && r.supply < r.total*0.98) s += '<circle class="short-mark" cx="' + cx + '" cy="' + (base + 26) + '" r="3"/>';
     });
     if(res.hasSupply){
       var pts = rows.map(function(r, m){ return [ml + band*m + band/2, y(r.supply)]; });
       s += '<polyline class="supply-line" points="' + pts.map(function(p){ return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ') + '"/>';
       pts.forEach(function(p){ s += '<circle class="supply-dot" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="4"/>'; });
     }
-    rows.forEach(function(r, m){ s += '<rect class="hit" data-m="' + m + '" tabindex="0" x="' + (ml + band*m) + '" y="' + mt + '" width="' + band + '" height="' + (ph + mb) + '"/>'; });
+    if(interactive) rows.forEach(function(r, m){ s += '<rect class="hit" data-m="' + m + '" tabindex="0" x="' + (ml + band*m) + '" y="' + mt + '" width="' + band + '" height="' + (ph + mb) + '"/>'; });
     s += '</svg>';
     el.innerHTML = s;
     var unit = nut === 'tdn' ? 'lb TDN' : 'lb crude protein';
+    if(!interactive) return;
     el.setAttribute('aria-label', 'Whole-herd ' + unit + ' per day by month: needs of cows, bulls and calves compared with what pasture supplies. The table below has the same numbers.');
-    $('fc_legend').innerHTML = series.map(function(se){ return '<span><i class="sw" style="background:' + se.color + '"></i>' + se.label + '</span>'; }).join('') +
+    $('fc_legend').innerHTML = ser.map(function(se){ return '<span><i class="sw" style="background:' + se.color + '"></i>' + se.label + '</span>'; }).join('') +
       (res.hasSupply ? '<span><i class="ln"></i>From pasture</span>' : '') + '<span style="color:var(--ink-muted);">' + unit + ' per day, whole herd</span>';
     var tip = feedTip();
     el.querySelectorAll('.hit').forEach(function(h){
       function show(){
-        var r = rows[+h.getAttribute('data-m')], x = r.x, b = h.getBoundingClientRect();
-        var d = nut === 'tdn' ? 0 : 1;
+        var r = rows[+h.getAttribute('data-m')], x = r.x, b = h.getBoundingClientRect(), d = nut === 'tdn' ? 0 : 1;
         tip.innerHTML = '<div class="tt-val">' + x.name + '</div>' +
           '<div>Needs: <strong>' + fmt(r.total, d) + '</strong> ' + unit + '/day</div>' +
-          '<div class="tt-lbl">Cows ' + fmt(r.v.cow, d) + ' · Bulls ' + fmt(r.v.bull, d) + ' · Calves ' + fmt(r.v.calf, d) + '</div>' +
+          '<div class="tt-lbl">' + ser.map(function(se){ return se.label.split(' (')[0] + ' ' + fmt(r.v[se.key], d); }).join(' · ') + '</div>' +
           (res.hasSupply ? '<div>Pasture gives: <strong>' + fmt(r.supply, d) + '</strong></div>' +
-            '<div class="tt-lbl">' + (x.cow.hay > 0.05 || x.cow.sup > 0.05 ? 'Buy per cow/day: ' + [x.cow.hay > 0.05 ? fmt(x.cow.hay, 1) + ' lb hay' : '', x.cow.sup > 0.05 ? fmt(x.cow.sup, 1) + ' lb supplement' : ''].filter(Boolean).join(', ') : 'Pasture covers it') + '</div>' : '');
+            '<div class="tt-lbl">' + (x.cow.hay > 0.05 || x.cow.sup > 0.05 ? 'Buy per cow/day: ' + [x.cow.hay > 0.05 ? fmt(x.cow.hay, 1) + ' lb hay' : '', x.cow.sup > 0.05 ? fmt(x.cow.sup, 1) + ' lb supplement' : ''].filter(Boolean).join(', ') : 'Pasture covers the cows') + '</div>' : '');
         tip.style.left = (b.left + b.width/2) + 'px'; tip.style.top = (b.top + 10) + 'px';
         tip.classList.add('show');
       }
@@ -2178,28 +2602,45 @@
   }
   function feedTip(){
     var t = $('fcTooltip');
-    if(!t){ t = document.createElement('div'); t.id = 'fcTooltip'; t.className = 'viz-tooltip'; t.style.maxWidth = '260px'; document.body.appendChild(t); }
+    if(!t){ t = document.createElement('div'); t.id = 'fcTooltip'; t.className = 'viz-tooltip'; t.style.maxWidth = '270px'; document.body.appendChild(t); }
     return t;
   }
 
+  /* ---- main render */
   function renderFeed(){
     renderRegionSelect();
+    syncFields();
     var h = state.herd, main = $('fc_main'), empty = $('fc_empty');
     if(!(h.cows > 0)){
       main.hidden = true; empty.hidden = false;
       empty.innerHTML = 'Enter your <strong>number of cows</strong> under <em>Herd &amp; grazing assumptions</em> to build the feed calendar.';
-      feedLast = null; return;
+      feedLast = null; $('fc_weanNote').textContent = ''; renderDecisions(); return;
     }
     main.hidden = false;
-    var res = runFeed();
+    var res = runFeed(), co = res.calves, ec = res.econ;
     if(!res.hasSupply){
       empty.hidden = false;
-      empty.innerHTML = 'No pasture forage estimate yet, so the chart shows only what the herd <strong>needs</strong>. Draw pastures (or enter your own forage estimate) to compare it with what they supply and price the hay and supplement.';
+      empty.innerHTML = 'No pasture forage estimate yet, so the chart shows only what the herd <strong>needs</strong>. Draw pastures (or enter your own forage estimate or carrying capacity) to compare it with what they supply and price the hay and supplement.';
     } else empty.hidden = true;
-    renderFeedChart(res);
 
-    var ms = res.months;
-    var eShort = [], pShort = [], cShort = [], hayM = [], supM = [];
+    var ages = co.cohorts.map(function(c){ return c.weanAge; }), minA = Math.min.apply(null, ages), maxA = Math.max.apply(null, ages);
+    $('fc_weanNote').textContent = h.calving === 'us' ? '' : 'Calves will be ' + (minA === maxA ? minA : minA + '–' + maxA) + ' days old at weaning (average ' + fmt(co.avgAge) + ').';
+    $('fc_weanLbHint').textContent = 'Growth ' + fmt(co.preAdg, 2) + ' lb/day from birth; sale weight after the weaning period ≈ ' + fmt(ec.avgSaleLb) + ' lb';
+    $('fc_lossNote').innerHTML = 'At these settings: <strong>' + fmt(ec.calvesSold) + ' calves sold</strong> from ' + fmt(h.cows) + ' cows — ' +
+      fmt(ec.deadWeather, 1) + ' lost to weather, ' + fmt(ec.deadOther, 1) + ' to other causes' + (h.nws === 'yes' ? ', ' + fmt(ec.deadNws, 1) + ' to screwworm' : '') + '. Cold nights in ' + FEED.REGIONS[regionKey()].station + ' raise weather losses for calves born Nov–Mar.';
+    $('fc_flyNote').innerHTML = h.nws === 'yes'
+      ? 'Screwworm flies are most active when it’s warm (little activity below 59°F). No published loss rate exists yet — untreated newborn navel infestations are usually fatal, so set what you expect with daily checks. Calving in the cool months lowers the risk.'
+      : 'Screwworm was confirmed in 17 South and West Texas counties in 2026 (TAHC). Choose “In or near my area” to add its risk to the calving-season comparison.';
+    var protDriven = res.months.filter(function(x){ return x.cow.sup > 0.05; }).every(function(x){ return x.cow.protDriven; });
+    $('fc_tripNote').textContent = (+h.supTrips < 7 && res.totals.sup > 100 && !protDriven)
+      ? 'Heads up: some months need supplement for energy, not just protein. Energy supplements (grain, high-starch feeds) should be fed daily; protein cubes can go 2–3 times a week.'
+      : 'Protein cubes can usually be fed 2–3 times a week with the same total amount; each trip costs you fuel and time.';
+
+    renderFeedChart(res, feedNutrient, $('fc_chart'), true);
+    renderFeedChart(res, 'tdn', $('fc_chart_p_tdn'), false);
+    renderFeedChart(res, 'cp', $('fc_chart_p_cp'), false);
+
+    var ms = res.months, eShort = [], pShort = [], cShort = [], hayM = [], supM = [];
     ms.forEach(function(x, m){
       if(x.pasture.tdn < x.herdReq.tdn*0.98) eShort.push(m);
       if(x.pasture.cp < x.herdReq.cp*0.98) pShort.push(m);
@@ -2212,16 +2653,18 @@
       shortTxt = (eShort.length || pShort.length)
         ? 'Pasture alone falls short on <strong>energy</strong> in ' + (eShort.length ? monthList(eShort) : 'no month') + ' and on <strong>protein</strong> in ' + (pShort.length ? monthList(pShort) : 'no month') + ' (red dots under the chart).'
         : 'Pasture covers the herd’s energy and protein all year at these numbers.';
-      if(cShort.length) shortTxt += ' Calves can’t get all they need for the planned weaning weight from milk plus pasture in ' + monthList(cShort) + ' — expect lighter calves, or plan creep feed (not priced here).';
+      if(cShort.length) shortTxt += ' Nursing calves can’t get all they need for the planned weaning weight from milk plus pasture in ' + monthList(cShort) + ' — expect lighter calves, or plan creep feed (not priced here).';
     } else shortTxt = 'Hover a month to see how the need splits between cows, bulls and calves.';
     $('fc_short').innerHTML = shortTxt;
 
-    var t = res.totals, cows = h.cows;
+    var t = res.totals;
     $('fc_tiles').innerHTML = res.hasSupply ?
+      '<div class="stat-tile"><span class="label">Calves sold</span><span class="value small">' + fmt(ec.calvesSold) + '</span><span class="sub">' + fmt(ec.avgSaleLb) + ' lb at $' + fmt(ec.avgPrice) + '/cwt</span></div>' +
+      '<div class="stat-tile"><span class="label">Calf income</span><span class="value small">' + money(ec.income) + '</span><span class="sub">' + money(ec.income/h.cows) + ' per cow</span></div>' +
       '<div class="stat-tile"><span class="label">Hay to buy</span><span class="value small">' + (t.hay >= 100 ? fmt(t.hay/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.hay >= 100 ? money(t.hay/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'standing forage lasts all year') + '</span></div>' +
-      '<div class="stat-tile"><span class="label">Supplement</span><span class="value small">' + (t.sup >= 100 ? fmt(t.sup/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + money(t.sup/2000*h.supPrice) + ' · ' + h.supCp + '% CP' + (supM.length ? ' · ' + monthList(supM) : '') + '</span></div>' +
-      '<div class="stat-tile ' + (t.cost > 0 ? '' : 'good') + '"><span class="label">Purchased feed per year</span><span class="value small">' + money(t.cost) + '</span><span class="sub">' + money(t.cost/cows) + ' per cow</span></div>' +
-      '<div class="stat-tile"><span class="label">Months without hay</span><span class="value small">' + fmt(12 - hayM.length) + ' of 12</span><span class="sub">' + fmt(12 - Math.max(hayM.length, supM.length)) + ' with nothing to buy</span></div>'
+      '<div class="stat-tile"><span class="label">Protein supplement</span><span class="value small">' + (t.sup >= 100 ? fmt(t.sup/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.sup >= 100 ? money(t.sup/2000*h.supPrice) + ' · ' + monthList(supM) : 'not needed') + '</span></div>' +
+      '<div class="stat-tile"><span class="label">Feeding trips &amp; delivery</span><span class="value small">' + money(t.tripCost + t.dist) + '</span><span class="sub">' + fmt(t.trips) + ' trips' + (ec.nwsCare > 0 ? ' · screwworm care ' + money(ec.nwsCare) : '') + '</span></div>' +
+      '<div class="stat-tile ' + (ec.net >= 0 ? 'good' : 'critical') + '"><span class="label">Calf income minus feed</span><span class="value small">' + money(ec.net) + '</span><span class="sub">' + money(ec.net/h.cows) + ' per cow · not profit</span></div>'
       : '';
     $('fc_tiles').hidden = !res.hasSupply;
 
@@ -2238,58 +2681,217 @@
           '<td class="num">' + (x.cost > 0.5 ? money(x.cost) : '—') + '</td></tr>';
       }).join('') + '</tbody><tfoot><tr><td>Year</td><td></td><td></td><td></td><td class="num">' + fmt(t.hay/2000, 1) + ' t</td><td class="num">' + fmt(t.sup/2000, 1) + ' t</td><td class="num">' + money(t.cost) + '</td></tr></tfoot>'
       : '';
-    $('fc_table').parentNode.hidden = !res.hasSupply;
+    $('fc_tableWrap').hidden = !res.hasSupply;
 
-    $('fc_perhead').innerHTML = '<thead><tr><th>Month</th><th class="num">Cow TDN</th><th class="num">Cow CP</th><th class="num">Bull TDN</th><th class="num">Bull CP</th><th class="num">Calf TDN</th><th class="num">Calf CP</th><th class="num">Diet TDN / CP</th></tr></thead><tbody>' +
+    $('fc_perhead').innerHTML = '<thead><tr><th>Month</th><th class="num">Cow TDN</th><th class="num">Cow CP</th><th class="num">Bull TDN</th><th class="num">Bull CP</th><th class="num">Calf TDN</th><th class="num">Calf CP</th><th class="num">Weaned TDN</th><th class="num">Weaned CP</th><th class="num">Diet TDN / CP</th></tr></thead><tbody>' +
       ms.map(function(x){
+        var wn = x.req.weaned.n > 0.001;
         return '<tr><td>' + x.name + '</td><td class="num">' + fmt(x.req.cow.tdn, 1) + '</td><td class="num">' + fmt(x.req.cow.cp, 2) + '</td>' +
           '<td class="num">' + fmt(x.req.bull.tdn, 1) + '</td><td class="num">' + fmt(x.req.bull.cp, 2) + '</td>' +
           '<td class="num">' + fmt(x.req.calf.tdn, 1) + '</td><td class="num">' + fmt(x.req.calf.cp, 2) + '</td>' +
+          '<td class="num">' + (wn ? fmt(x.req.weaned.tdn, 1) : '—') + '</td><td class="num">' + (wn ? fmt(x.req.weaned.cp, 2) : '—') + '</td>' +
           '<td class="num">' + fmt(x.dietTdn) + '% / ' + fmt(x.dietCp, 1) + '%</td></tr>';
       }).join('') + '</tbody>';
+    scheduleDecisions();
   }
 
+  /* ------------------------------------------------------------------ decisions */
+  function scheduleDecisions(){ clearTimeout(decTimer); decTimer = setTimeout(renderDecisions, 250); }
+  function netOf(oOver, fOver, supMult, supTransform){
+    var sup = supplyNow(supMult);
+    if(supTransform) sup = supTransform(sup);
+    return FEED.balance(feedOptions(oOver), sup, feedsFor(fOver));
+  }
+  function renderDecisions(){
+    var h = state.herd, empty = $('dec_empty');
+    var ready = h.cows > 0 && feedLast && feedLast.hasSupply;
+    document.querySelectorAll('.dec-panel').forEach(function(p){ p.hidden = !ready || p.id !== 'dec_' + decTab; });
+    if(!ready){ empty.hidden = false; empty.innerHTML = 'Enter your cows and draw pastures with a forage estimate (or enter your own carrying capacity) to compare decisions.'; return; }
+    empty.hidden = true;
+    var key = decTab + '|' + feedKey + '|' + JSON.stringify(h.dr);
+    if(key === decKey) return;
+    decKey = key;
+    if(decTab === 'calving') renderCalvingDecision();
+    else if(decTab === 'drought') renderDroughtDecision();
+    else renderWhatIf();
+  }
+
+  function renderCalvingDecision(){
+    var h = state.herd, len = h.calving === 'us' ? 60 : h.len1;
+    $('dec_calvLen').textContent = len;
+    var base = feedOptions(), age = Math.round(base.refWeanAge);
+    var rows = [];
+    for(var s = 0; s < 12; s++){
+      var r = netOf({calving:'one', start1:FEED.MONTH_START[s] + 14, len1:len, weanMode:'age', weanAge:age, refWeanAge:age});
+      rows.push({m:s, e:r.econ});
+    }
+    var best = rows.reduce(function(a, r){ return r.e.net > a.e.net ? r : a; }, rows[0]);
+    var worst = rows.reduce(function(a, r){ return r.e.net < a.e.net ? r : a; }, rows[0]);
+    var curM = h.calving === 'us' ? -1 : FEED.monthOfDay(FEED.doy(h.start1));
+    // chart: one series, emphasis on best, current outlined
+    var el = $('dec_calvChart');
+    var W = Math.round(Math.max(320, Math.min(720, el.clientWidth || 720))), H = 220, ml = W < 500 ? 46 : 60, mr = 6, mt = 18, mb = 30, pw = W - ml - mr, ph = H - mt - mb;
+    var vals = rows.map(function(r){ return r.e.net/h.cows; });
+    var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
+    var pad = Math.max(5, (hi - lo)*0.2), y0v = lo - pad, y1v = hi + pad;
+    function y(v){ return mt + ph - (v - y0v)/(y1v - y0v)*ph; }
+    var band = pw/12;
+    var sv = '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><g class="grid">';
+    for(var i = 0; i <= 3; i++){ var gv = y0v + (y1v - y0v)*i/3; sv += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + y(gv) + '" y2="' + y(gv) + '"/>'; }
+    sv += '</g><g class="axis">';
+    for(i = 0; i <= 3; i++){ gv = y0v + (y1v - y0v)*i/3; sv += '<text x="' + (ml - 8) + '" y="' + (y(gv) + 4) + '" text-anchor="end">' + money(gv) + '</text>'; }
+    sv += '</g>';
+    sv += '<polyline class="dec-line" points="' + vals.map(function(v, m){ return (ml + band*m + band/2).toFixed(1) + ',' + y(v).toFixed(1); }).join(' ') + '"/>';
+    rows.forEach(function(r, m){
+      var cx = ml + band*m + band/2, cy = y(vals[m]), isBest = r === best, isCur = m === curM;
+      sv += '<circle cx="' + cx + '" cy="' + cy + '" r="' + (isBest ? 7 : 5) + '" class="dec-dot' + (isBest ? ' best' : '') + (isCur ? ' cur' : '') + '"/>';
+      if(isBest) sv += '<text x="' + cx + '" y="' + (cy - 12) + '" text-anchor="middle" class="dec-lbl">Best</text>';
+      sv += '<g class="axis"><text x="' + cx + '" y="' + (mt + ph + 16) + '" text-anchor="middle">' + FEED.MONTHS[m] + '</text></g>';
+      sv += '<rect class="hit" data-m="' + m + '" tabindex="0" x="' + (ml + band*m) + '" y="' + mt + '" width="' + band + '" height="' + (ph + mb) + '"/>';
+    });
+    sv += '</svg>';
+    el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span style="color:var(--ink-muted);">Calf income minus feed, per cow · calving season starting mid-month</span>' + (curM >= 0 ? '<span><i class="sw" style="background:var(--dec-muted);border-radius:50%;box-shadow:0 0 0 2px var(--ink);"></i>Your season</span>' : '') + '<span><i class="sw" style="background:var(--accent);border-radius:50%;"></i>Best</span></div>' + sv;
+    var tip = feedTip();
+    el.querySelectorAll('.hit').forEach(function(hh){
+      function show(){
+        var r = rows[+hh.getAttribute('data-m')], e = r.e, b = hh.getBoundingClientRect();
+        tip.innerHTML = '<div class="tt-val">Calving from ' + FEED.MONTHS[r.m] + ' 15</div><div>' + money(e.net/h.cows) + ' per cow</div>' +
+          '<div class="tt-lbl">' + fmt(e.calvesSold) + ' calves × ' + fmt(e.avgSaleLb) + ' lb · feed ' + money(e.costs) + '</div>';
+        tip.style.left = (b.left + b.width/2) + 'px'; tip.style.top = (b.top + 10) + 'px'; tip.classList.add('show');
+      }
+      hh.addEventListener('mouseenter', show); hh.addEventListener('focus', show);
+      hh.addEventListener('mouseleave', function(){ tip.classList.remove('show'); }); hh.addEventListener('blur', function(){ tip.classList.remove('show'); });
+    });
+    var cur = curM >= 0 ? rows[curM] : null;
+    $('dec_calvText').innerHTML = 'Starting calving around <strong>' + FEED.MONTHS[best.m] + ' 15</strong> leaves the most: <strong>' + money(best.e.net) + '</strong> a year (' + money(best.e.net/h.cows) + ' per cow), ' +
+      money(best.e.net - worst.e.net) + ' more than the weakest month (' + FEED.MONTHS[worst.m] + ').' +
+      (cur && cur !== best ? ' Your current season (from ' + FEED.MONTHS[curM] + ') leaves ' + money(cur.e.net) + ' — ' + money(best.e.net - cur.e.net) + ' less.' : cur ? ' That’s already your season.' : '') +
+      ' The difference comes from when the cows nurse compared with when your pastures grow, plus weather and fly losses. Seasonal calf prices aren’t included (fall prices in the Southern Plains average about 4% below the yearly average), and neither is labor at calving.';
+    $('dec_calvTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Calves × lb sold</th><th class="num">Deaths (cold · screwworm)</th><th class="num">Feed cost</th><th class="num">Income − feed</th></tr></thead><tbody>' +
+      rows.map(function(r){ var e = r.e; return '<tr' + (r === best ? ' class="best"' : '') + '><td>' + (r === best ? '★ ' : '') + FEED.MONTHS[r.m] + ' 15' + (r.m === curM ? ' (yours)' : '') + '</td><td class="num">' + fmt(e.calvesSold, 1) + ' × ' + fmt(e.avgSaleLb) + ' lb</td><td class="num">' + fmt(e.deadWeather, 1) + ' · ' + fmt(e.deadNws, 1) + '</td><td class="num">' + money(e.costs) + '</td><td class="num"><strong>' + money(e.net) + '</strong></td></tr>'; }).join('') + '</tbody>';
+  }
+
+  function renderDroughtDecision(){
+    var h = state.herd, dr = h.dr;
+    var cut = function(sup){ return FEED.adjustSupply(sup, dr.cut, +dr.from, dr.months, dr.which); };
+    var base = feedOptions(), normalAge = Math.round(base.refWeanAge);
+    var A = netOf({}, {}, 1, cut);
+    var B = netOf({weanMode:'age', weanAge:dr.earlyAge, weanPeriod:0, refWeanAge:normalAge}, {}, 1, cut);
+    var C = netOf({weanMode:'age', weanAge:dr.earlyAge, weanPeriod:Math.max(0, normalAge - dr.earlyAge) + (h.weanPeriod || 0), postAdg:dr.feedAdg, refWeanAge:normalAge}, {}, 1, cut);
+    var N = feedLast;
+    var opts = [
+      {key:'A', title:'Keep calves on the cows, buy feed', r:A, sub:'Wean as planned; cows keep nursing through the dry spell.'},
+      {key:'B', title:'Wean early at ' + dr.earlyAge + ' days and sell', r:B, sub:'Lighter calves, but dry cows need about a third less feed.'},
+      {key:'C', title:'Wean early and feed the calves', r:C, sub:'Calves on feed gaining ' + dr.feedAdg + ' lb/day until your normal weaning age' + (h.weanPeriod ? ' plus the weaning period' : '') + ', then sold.'}
+    ];
+    var best = opts.reduce(function(a, o){ return o.r.econ.net > a.r.econ.net ? o : a; }, opts[0]);
+    var rowsDef = [
+      ['Calves sold', function(o){ return fmt(o.r.econ.calvesSold) + ' × ' + fmt(o.r.econ.avgSaleLb) + ' lb'; }],
+      ['Price', function(o){ return '$' + fmt(o.r.econ.avgPrice) + '/cwt'; }],
+      ['Calf income', function(o){ return money(o.r.econ.income); }],
+      ['Hay bought', function(o){ return fmt(o.r.totals.hay/2000, 1) + ' t'; }],
+      ['Supplement bought', function(o){ return fmt(o.r.totals.sup/2000, 1) + ' t'; }],
+      ['Feed &amp; feeding cost', function(o){ return money(o.r.econ.costs); }]
+    ];
+    $('dec_drOptions').innerHTML = '<div class="table-scroll"><table class="plan dec-drtable"><thead><tr><th></th>' + opts.map(function(o){
+        return '<th class="' + (o === best ? 'best' : '') + '">' + (o === best ? '<span class="verdict-pill good"><span class="dot"></span>Leaves the most</span>' : '') + '<div class="opt-title">' + esc(o.title) + '</div><div class="opt-sub">' + esc(o.sub) + '</div></th>'; }).join('') + '</tr></thead><tbody>' +
+      rowsDef.map(function(rd){ return '<tr><td>' + rd[0] + '</td>' + opts.map(function(o){ return '<td class="num' + (o === best ? ' best' : '') + '">' + rd[1](o) + '</td>'; }).join('') + '</tr>'; }).join('') +
+      '</tbody><tfoot><tr><td>Income − feed</td>' + opts.map(function(o){ return '<td class="num' + (o === best ? ' best' : '') + '">' + money(o.r.econ.net) + '</td>'; }).join('') + '</tr></tfoot></table></div>';
+    var second = opts.filter(function(o){ return o !== best; }).reduce(function(a, o){ return o.r.econ.net > a.r.econ.net ? o : a; });
+    $('dec_drText').innerHTML = 'With ' + dr.cut + '% less forage from ' + FEED.MONTHS[+dr.from] + ' for ' + dr.months + ' month' + (dr.months > 1 ? 's' : '') + ', the drought costs about <strong>' + money(N.econ.net - A.econ.net) + '</strong> if you just buy feed. ' +
+      '<strong>' + esc(best.title) + '</strong> leaves ' + money(best.r.econ.net - second.r.econ.net) + ' more than the next option. ' +
+      'Lighter calves bring more per hundredweight (price slide), which is why early weaning loses less than the weight alone suggests. Prices and feed costs are today’s — check them against your own quotes.';
+  }
+
+  function renderWhatIf(){
+    var h = state.herd, base = feedLast.econ.net;
+    var tests = [
+      {label:'Pasture forage', lo:'−25%', hi:'+25%', a:function(){ return netOf({}, {}, 0.75); }, b:function(){ return netOf({}, {}, 1.25); }},
+      {label:'Calf prices', lo:'−10%', hi:'+10%', a:function(){ return netOf({priceMult:0.9}); }, b:function(){ return netOf({priceMult:1.1}); }},
+      {label:'Weaning weight', lo:'−10%', hi:'+10%', a:function(){ return netOf({weanLb:h.weanLb*0.9}); }, b:function(){ return netOf({weanLb:h.weanLb*1.1}); }},
+      {label:'Hay price', lo:'+25%', hi:'−25%', a:function(){ return netOf({}, {hayPrice:h.hayPrice*1.25}); }, b:function(){ return netOf({}, {hayPrice:h.hayPrice*0.75}); }},
+      {label:'Supplement price', lo:'+25%', hi:'−25%', a:function(){ return netOf({}, {supPrice:h.supPrice*1.25}); }, b:function(){ return netOf({}, {supPrice:h.supPrice*0.75}); }},
+      {label:'Calf death loss', lo:'+3 pts', hi:'−3 pts', a:function(){ return netOf({calfLoss:h.calfLoss + 3}); }, b:function(){ return netOf({calfLoss:Math.max(0, h.calfLoss - 3)}); }},
+      {label:'Calving rate', lo:'−5 pts', hi:'+5 pts', a:function(){ return netOf({calvingRate:Math.max(30, h.calvingRate - 5)}); }, b:function(){ return netOf({calvingRate:Math.min(100, h.calvingRate + 5)}); }},
+      {label:'Cow size', lo:'+100 lb', hi:'−100 lb', a:function(){ return netOf({cowLb:h.cowLb + 100}); }, b:function(){ return netOf({cowLb:h.cowLb - 100}); }}
+    ];
+    if(h.calving !== 'us') tests.push({label:'Calving 30 days', lo:'later', hi:'earlier',
+      a:function(){ var o = feedOptions(); return netOf({start1:(o.start1 + 30) % 365, start2:(o.start2 + 30) % 365, weanMode:'age', weanAge:Math.round(o.refWeanAge)}); },
+      b:function(){ var o = feedOptions(); return netOf({start1:(o.start1 + 335) % 365, start2:(o.start2 + 335) % 365, weanMode:'age', weanAge:Math.round(o.refWeanAge)}); }});
+    var rows = tests.map(function(t){ var a = t.a().econ.net - base, b = t.b().econ.net - base; return {t:t, a:a, b:b, span:Math.abs(b - a)}; });
+    rows.sort(function(x, y){ return y.span - x.span; });
+    var max = Math.max.apply(null, rows.map(function(r){ return Math.max(Math.abs(r.a), Math.abs(r.b)); })) || 1;
+    $('dec_whatifChart').innerHTML = '<div class="wi-head"><span></span><span>Worse</span><span>Better</span></div>' + rows.map(function(r){
+      function bar(v, lab){
+        var w = Math.abs(v)/max*100, neg = v < 0;
+        return '<div class="wi-bar ' + (neg ? 'neg' : 'pos') + '" style="width:' + w.toFixed(1) + '%"></div><span class="wi-val">' + (v >= 0 ? '+' : '−') + money(Math.abs(v)).replace('$', '$') + ' <em>' + esc(lab) + '</em></span>';
+      }
+      var worse = r.a < r.b ? {v:r.a, l:r.t.lo} : {v:r.b, l:r.t.hi}, better = r.a < r.b ? {v:r.b, l:r.t.hi} : {v:r.a, l:r.t.lo};
+      return '<div class="wi-row"><span class="wi-lbl">' + esc(r.t.label) + '</span><div class="wi-side left">' + bar(Math.min(0, worse.v), worse.l) + '</div><div class="wi-side right">' + bar(Math.max(0, better.v), better.l) + '</div></div>';
+    }).join('') + '<p class="card-note" style="margin:12px 0 0;">Change in calf income minus feed costs per year, whole herd, from today’s ' + money(base) + '.</p>';
+  }
+
+  /* ---- bindings */
   function bindFeed(){
-    var sel = $('fc_breed');
-    sel.innerHTML = Object.keys(FEED.BREEDS).map(function(k){ return '<option value="' + k + '">' + esc(FEED.BREEDS[k].label) + '</option>'; }).join('');
+    $('fc_breed').innerHTML = Object.keys(FEED.BREEDS).map(function(k){ return '<option value="' + k + '">' + esc(FEED.BREEDS[k].label) + '</option>'; }).join('');
+    $('fc_source').innerHTML = Object.keys(FEED.SOURCES).map(function(k){ var s = FEED.SOURCES[k]; return '<option value="' + k + '">' + esc(s.label) + (s.cp != null ? ' (' + s.cp + '% CP)' : '') + '</option>'; }).join('');
+    $('dr_from').innerHTML = FEED.MONTHS.map(function(m, i){ return '<option value="' + i + '">' + m + '</option>'; }).join('');
     bindFeedValues();
     function rerender(){ save(); renderFeed(); }
-    $('fc_calving').addEventListener('change', function(){ state.herd.calving = this.value; syncCalvingFields(); rerender(); });
+    document.querySelectorAll('[data-h]').forEach(function(el){
+      var k = el.getAttribute('data-h'), mn = +el.min, mx = +el.max;
+      el.addEventListener('input', function(){ var v = num(this.value); if(v != null && v >= mn && v <= mx){ state.herd[k] = v; rerender(); } });
+      el.addEventListener('blur', function(){ this.value = state.herd[k]; });
+    });
+    document.querySelectorAll('[data-hs]').forEach(function(el){
+      var k = el.getAttribute('data-hs');
+      el.addEventListener('change', function(){ state.herd[k] = el.hasAttribute('data-num') ? +this.value : this.value; syncFields(); rerender(); });
+    });
+    document.querySelectorAll('[data-hd]').forEach(function(el){
+      var k = el.getAttribute('data-hd');
+      el.addEventListener('change', function(){ var v = dateToMmdd(this.value); if(v){ state.herd[k] = v; rerender(); } });
+    });
+    document.querySelectorAll('[data-dr]').forEach(function(el){
+      var k = el.getAttribute('data-dr'), mn = +el.min, mx = +el.max;
+      el.addEventListener('input', function(){ var v = num(this.value); if(v != null && v >= mn && v <= mx){ state.herd.dr[k] = v; save(); scheduleDecisions(); } });
+      el.addEventListener('blur', function(){ this.value = state.herd.dr[k]; });
+    });
+    document.querySelectorAll('[data-drs]').forEach(function(el){
+      var k = el.getAttribute('data-drs');
+      el.addEventListener('change', function(){ state.herd.dr[k] = el.hasAttribute('data-num') ? +this.value : this.value; save(); scheduleDecisions(); });
+    });
     $('fc_region').addEventListener('change', function(){ state.herd.region = this.value; rerender(); });
-    [['fc_start1','start1'],['fc_start2','start2']].forEach(function(f){
-      $(f[0]).addEventListener('change', function(){ var v = dateToMmdd(this.value); if(v){ state.herd[f[1]] = v; rerender(); } });
-    });
-    [['fc_breed','breed'],['fc_milk','milk'],['fc_activity','activity']].forEach(function(f){
-      $(f[0]).addEventListener('change', function(){ state.herd[f[1]] = this.value; rerender(); });
-    });
-    $('fc_bcs').addEventListener('change', function(){ state.herd.bcs = +this.value; rerender(); });
-    var nums = [['fc_len1','len1',10,180],['fc_len2','len2',10,180],['fc_share2','share2',1,99],['fc_weanAge','weanAge',90,300],['fc_weanLb','weanLb',250,900],
-      ['fc_calfCrop','calfCrop',10,100],['fc_hayTdn','hayTdn',30,80],['fc_hayCp','hayCp',2,25],['fc_hayPrice','hayPrice',0,5000],
-      ['fc_supCp','supCp',5,60],['fc_supTdn','supTdn',40,95],['fc_supPrice','supPrice',0,5000]];
-    nums.forEach(function(f){
-      $(f[0]).addEventListener('input', function(){ var v = num(this.value); if(v != null && v >= f[2] && v <= f[3]){ state.herd[f[1]] = v; rerender(); } });
-      $(f[0]).addEventListener('blur', function(){ this.value = state.herd[f[1]]; });
-    });
-    document.querySelectorAll('[data-sup]').forEach(function(b){
-      b.addEventListener('click', function(){
-        var p = b.getAttribute('data-sup');
-        if(p === '20'){ state.herd.supCp = 20; state.herd.supTdn = 70; } else { state.herd.supCp = 38; state.herd.supTdn = 75; }
-        bindFeedValues(); rerender();
-      });
+    $('fc_source').addEventListener('change', function(){
+      var s = FEED.SOURCES[this.value]; state.herd.source = this.value;
+      if(s && s.cp != null){ state.herd.supCp = s.cp; state.herd.supTdn = s.tdn; }
+      bindFeedValues(); rerender();
     });
     $('fc_reset').addEventListener('click', function(){
-      ['breed','milk','bcs','activity','weanAge','weanLb','calfCrop','hayTdn','hayCp','hayPrice','supCp','supTdn','supPrice'].forEach(function(k){ state.herd[k] = DEFAULT_HERD[k]; });
+      var keep = {calving:1, start1:1, len1:1, start2:1, len2:1, share2:1, wean1:1, wean2:1, weanAge:1, region:1, dr:1, cows:1, cowLb:1, bulls:1, bullLb:1};
+      Object.keys(DEFAULT_HERD).forEach(function(k){ if(!keep[k]) state.herd[k] = DEFAULT_HERD[k]; });
       bindFeedValues(); rerender();
     });
     document.querySelectorAll('.seg-btn[data-nutrient]').forEach(function(b){
       b.addEventListener('click', function(){
         feedNutrient = b.getAttribute('data-nutrient');
         document.querySelectorAll('.seg-btn[data-nutrient]').forEach(function(x){ var on = x === b; x.classList.toggle('active', on); x.setAttribute('aria-selected', on ? 'true' : 'false'); });
-        if(feedLast) renderFeedChart(feedLast);
+        if(feedLast) renderFeedChart(feedLast, feedNutrient, $('fc_chart'), true);
+      });
+    });
+    document.querySelectorAll('.seg-btn[data-dec]').forEach(function(b){
+      b.addEventListener('click', function(){
+        decTab = b.getAttribute('data-dec');
+        document.querySelectorAll('.seg-btn[data-dec]').forEach(function(x){ var on = x === b; x.classList.toggle('active', on); x.setAttribute('aria-selected', on ? 'true' : 'false'); });
+        decKey = ''; renderDecisions();
       });
     });
     window.addEventListener('scroll', function(){ var t = $('fcTooltip'); if(t) t.classList.remove('show'); }, {passive:true});
-    var rsz = null; window.addEventListener('resize', function(){ clearTimeout(rsz); rsz = setTimeout(function(){ if(feedLast && !$('fc_main').hidden) renderFeedChart(feedLast); }, 150); });
+    var rsz = null; window.addEventListener('resize', function(){ clearTimeout(rsz); rsz = setTimeout(function(){ if(feedLast && !$('fc_main').hidden){ renderFeedChart(feedLast, feedNutrient, $('fc_chart'), true); decKey = ''; renderDecisions(); } }, 150); });
+    window.addEventListener('beforeprint', function(){
+      if(!feedLast) return;
+      renderFeedChart(feedLast, 'tdn', $('fc_chart_p_tdn'), false); renderFeedChart(feedLast, 'cp', $('fc_chart_p_cp'), false);
+      if(feedLast.hasSupply){ try{ renderCalvingDecision(); renderDroughtDecision(); renderWhatIf(); decKey = ''; }catch(e){} }
+    });
   }
 
   /* ------------------------------------------------------------------ Jim */
@@ -2309,7 +2911,9 @@
       fb.months.forEach(function(x){
         lines.push('- ' + x.name + ': herd needs ' + fmt(x.herdReq.tdn) + ' lb TDN & ' + fmt(x.herdReq.cp) + ' lb CP/day; pasture supplies ' + fmt(x.pasture.tdn) + ' TDN & ' + fmt(x.pasture.cp) + ' CP; pasture covers ' + fmt(x.pastureShare*100) + '% of intake; buy ' + fmt(x.cow.hay, 1) + ' lb hay + ' + fmt(x.cow.sup, 1) + ' lb supplement per cow/day');
       });
-      lines.push('Yearly purchased feed: ' + fmt(fb.totals.hay/2000, 1) + ' tons hay ($' + h.hayPrice + '/ton, ' + h.hayTdn + '% TDN, ' + h.hayCp + '% CP) + ' + fmt(fb.totals.sup/2000, 1) + ' tons supplement ($' + h.supPrice + '/ton, ' + h.supCp + '% CP) = ' + money(fb.totals.cost) + ' (' + money(fb.totals.cost/h.cows) + ' per cow).');
+      var ec = fb.econ;
+      lines.push('Calves: ' + fmt(ec.calvesSold, 1) + ' sold at ~' + fmt(ec.avgSaleLb) + ' lb, $' + fmt(ec.avgPrice) + '/cwt (market price slide) = ' + money(ec.income) + '; losses: ' + fmt(ec.deadWeather, 1) + ' weather, ' + fmt(ec.deadOther, 1) + ' other' + (h.nws === 'yes' ? ', ' + fmt(ec.deadNws, 1) + ' screwworm' : '') + '. Weaning period ' + h.weanPeriod + ' days at ' + h.postAdg + ' lb/day. Calf income minus feed & feeding costs: ' + money(ec.net) + ' (not profit).');
+      lines.push('Yearly purchased feed: ' + fmt(fb.totals.hay/2000, 1) + ' tons hay ($' + h.hayPrice + '/ton, ' + h.hayTdn + '% TDN, ' + h.hayCp + '% CP) + ' + fmt(fb.totals.sup/2000, 1) + ' tons supplement ($' + h.supPrice + '/ton, ' + h.supCp + '% CP) + feeding trips & delivery = ' + money(fb.totals.cost) + ' (' + money(fb.totals.cost/h.cows) + ' per cow).');
     }
     var d = state.drought;
     if(d && d.status === 'ok') lines.push('U.S. Drought Monitor at the ranch: ' + (d.dm < 0 ? 'no drought mapped' : DM_LABELS[Math.min(d.dm,4)].code + ' ' + DM_LABELS[Math.min(d.dm,4)].name) + (d.date ? ' (week of ' + new Date(d.date).toISOString().slice(0,10) + ')' : '') + '.');
@@ -2317,7 +2921,8 @@
     lines.push('Pasture list:');
     state.pastures.forEach(function(p){
       var lb = forageLb(p), cap = capacityAU(p), w = nearestWaterMiles(p);
-      lines.push('- ' + p.name + ': ' + TYPES[p.type].label + ', ' + fmt(p.acres, 1) + ' ac' +
+      var zz = zoneAcres(p), zt = [zz.water > 0.05 ? fmt(zz.water, 1) + ' ac pond' : '', zz.brush > 0.05 ? fmt(zz.brush, 1) + ' ac brush' : '', zz.bottom > 0.05 ? fmt(zz.bottom, 1) + ' ac bottomland' : ''].filter(Boolean).join(', ');
+      lines.push('- ' + p.name + ': ' + TYPES[p.type].label + (p.mode === 'soil' && isGrazed(p) ? ' (' + CONDITIONS[p.condition || 'fair'].toLowerCase() + ' condition)' : '') + ', ' + fmt(p.acres, 1) + ' ac' + (zt ? ' incl. ' + zt : '') +
         (isGrazed(p) ? ', forage ' + (lb != null ? fmt(lb) + ' lb/ac/yr (' + (p.mode === 'soil' ? 'soil survey, normal year' : 'producer estimate') + ')' : 'unknown') + (cap != null ? ', capacity ' + fmt(cap, 1) + ' AU' : '') : '') +
         (w != null ? ', ' + fmt(w, 1) + ' mi from water' : ''));
     });
@@ -2380,7 +2985,7 @@
   }
   function propName(pr){ pr = pr || {}; return pr.name || pr.Name || pr.NAME || pr.title || pr.PASTURE || pr.pasture || pr.label || ''; }
   function importObject(obj){
-    var feats = featuresOf(obj), nP = 0, nPt = 0, skipped = 0;
+    var feats = featuresOf(obj), nP = 0, nPt = 0, nZ = 0, skipped = 0;
     feats.forEach(function(f){
       var g = f && f.geometry; if(!g){ skipped++; return; }
       var pr = f.properties || {}, nm = propName(pr);
@@ -2388,6 +2993,11 @@
       var props = {name:nm, type:pType || undefined, mode:(pr.forage_source === 'manual' || pr.forage_source === 'soil') ? pr.forage_source : undefined,
                    manual: (pr.forage_source === 'manual' && isFinite(+pr.forage_lb_ac) && +pr.forage_lb_ac > 0) ? +pr.forage_lb_ac : undefined};
       var polys = g.type === 'Polygon' ? [g.coordinates] : g.type === 'MultiPolygon' ? g.coordinates : null;
+      props.condition = CONDITIONS[pr.condition] ? pr.condition : undefined;
+      if(polys && ZONE_TYPES[pr.zone_type]){
+        polys.forEach(function(c){ var cc = cleanPolygon(c); if(cc.length){ state.zones.push({id:uid(), type:pr.zone_type, geometry:{type:'Polygon', coordinates:cc}}); nZ++; } });
+        return;
+      }
       if(polys){
         polys.forEach(function(c, i){
           var pp = Object.assign({}, props); if(polys.length > 1 && nm) pp.name = nm + ' ' + (i + 1);
@@ -2402,7 +3012,8 @@
       }
       skipped++;
     });
-    return {pastures:nP, points:nPt, skipped:skipped};
+    zoneCache = {};
+    return {pastures:nP, points:nPt, zones:nZ, skipped:skipped};
   }
   function addPastureSilently(geom, props){
     var coords = cleanPolygon(geom.coordinates || []);
@@ -2425,8 +3036,9 @@
     parseFile(file).then(function(obj){
       var before = state.pastures.length;
       var r = importObject(obj);
-      if(!r.pastures && !r.points){ showNotice('No pasture shapes or points were found in ' + file.name + '.', 'bad'); return; }
+      if(!r.pastures && !r.points && !r.zones){ showNotice('No pasture shapes or points were found in ' + file.name + '.', 'bad'); return; }
       state.pastures.slice(before).forEach(function(p){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0); });
+      state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); });
       state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); });
       recolorLayers();
       renderAll(true);
@@ -2443,9 +3055,11 @@
       return {type:'Feature', geometry:p.geometry, properties:{
         name:p.name, land_use:p.type, acres:+p.acres.toFixed(2),
         forage_source:p.mode, forage_lb_ac: forageLb(p) != null ? Math.round(forageLb(p)) : null,
-        capacity_au: cap != null ? +cap.toFixed(1) : null
+        capacity_au: cap != null ? +cap.toFixed(1) : null, condition:p.condition || 'fair'
       }};
-    }).concat(state.points.map(function(pt){
+    }).concat(state.zones.map(function(z){
+      return {type:'Feature', geometry:z.geometry, properties:{name:ZONE_TYPES[z.type].label, zone_type:z.type, acres:+polygonAcres(z.geometry).toFixed(2)}};
+    })).concat(state.points.map(function(pt){
       return {type:'Feature', geometry:{type:'Point', coordinates:[pt.lng, pt.lat]}, properties:{name:pt.name || POINT_TYPES[pt.type].label, point_type:pt.type}};
     }));
     return {type:'FeatureCollection', name:state.name || 'My Ranch', features:feats};
@@ -2462,10 +3076,14 @@
         '<Style><LineStyle><color>ffffffff</color><width>2</width></LineStyle><PolyStyle><color>5543c3f6</color></PolyStyle></Style>' +
         '<Polygon><outerBoundaryIs><LinearRing><coordinates>' + ring(p.geometry.coordinates[0]) + '</coordinates></LinearRing></outerBoundaryIs>' + inner + '</Polygon></Placemark>';
     }).join('\n');
+    var zs = state.zones.map(function(z){
+      return '<Placemark><name>' + xml(ZONE_TYPES[z.type].label) + '</name><ExtendedData><Data name="zone_type"><value>' + xml(z.type) + '</value></Data></ExtendedData>' +
+        '<Polygon><outerBoundaryIs><LinearRing><coordinates>' + ring(z.geometry.coordinates[0]) + '</coordinates></LinearRing></outerBoundaryIs></Polygon></Placemark>';
+    }).join('\n');
     var pts = state.points.map(function(pt){
       return '<Placemark><name>' + xml(pt.name || POINT_TYPES[pt.type].label) + '</name><ExtendedData><Data name="point_type"><value>' + xml(pt.type) + '</value></Data></ExtendedData><Point><coordinates>' + pt.lng.toFixed(7) + ',' + pt.lat.toFixed(7) + ',0</coordinates></Point></Placemark>';
     }).join('\n');
-    return '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xml(state.name || 'My Ranch') + '</name>\n' + pm + '\n' + pts + '\n</Document></kml>';
+    return '<?xml version="1.0" encoding="UTF-8"?>\n<kml xmlns="http://www.opengis.net/kml/2.2"><Document><name>' + xml(state.name || 'My Ranch') + '</name>\n' + pm + '\n' + zs + '\n' + pts + '\n</Document></kml>';
   }
   function download(text, filename, type){
     var blob = new Blob([text], {type:type});
@@ -2541,6 +3159,8 @@
     $('ranchName').value = state.name || '';
     $('harvestEff').value = state.settings.harvestEff;
     $('intakeLb').value = state.settings.intakeLb;
+    $('manualCap').value = state.settings.manualCap > 0 ? state.settings.manualCap : '';
+    $('manualCap').addEventListener('input', function(){ var v = num(this.value); state.settings.manualCap = v != null && v > 0 ? v : null; renderAll(false); });
     bindHerdValues();
     $('ranchName').addEventListener('input', function(){ state.name = this.value.slice(0, 80); save(); });
     $('hd_cows').addEventListener('input', function(){ var v = num(this.value); state.herd.cows = v != null && v > 0 ? Math.round(v) : 0; renderHerdNote(); renderAll(false); });
@@ -2583,6 +3203,9 @@
         if(p.mode === 'soil' && (!p.soil || p.soil.status === 'error')) scheduleSoil(p.id, 0);
         renderAll(true);
         if(p.mode === 'manual'){ var inp = document.querySelector('.pasture-row[data-id="' + p.id + '"] .p-manual'); if(inp) inp.focus(); }
+      } else if(e.target.classList.contains('p-condition')){
+        p.condition = e.target.value;
+        renderAll(true);
       }
     });
     list.addEventListener('click', function(e){
@@ -2604,6 +3227,8 @@
     document.addEventListener('click', function(e){
       var b = e.target.closest('[data-del-point]');
       if(b){ removePoint(b.getAttribute('data-del-point')); if(map) map.closePopup(); }
+      var bz = e.target.closest('[data-del-zone]');
+      if(bz) removeZone(bz.getAttribute('data-del-zone'));
       if(!e.target.closest('.search-box')) $('searchResults').hidden = true;
     });
   }
@@ -2613,6 +3238,19 @@
     $('drawRectBtn').addEventListener('click', function(){ setDrawMode(drawMode === 'rect' ? null : 'rect'); });
     document.querySelectorAll('[data-point]').forEach(function(b){
       b.addEventListener('click', function(){ var m = 'point:' + b.getAttribute('data-point'); setDrawMode(drawMode === m ? null : m); });
+    });
+    document.querySelectorAll('[data-zone]').forEach(function(b){
+      b.addEventListener('click', function(){ var m = 'zone:' + b.getAttribute('data-zone'); setDrawMode(drawMode === m ? null : m); });
+    });
+    $('zoneList').addEventListener('change', function(e){
+      if(!e.target.classList.contains('zone-type')) return;
+      var z = state.zones.filter(function(x){ return x.id === e.target.getAttribute('data-id'); })[0];
+      if(z && ZONE_TYPES[e.target.value]){ z.type = e.target.value; zoneCache = {}; drawZoneLayer(z); renderAll(true); }
+    });
+    [['la_poor','cond','poor',5,100],['la_fair','cond','fair',5,100],['la_excellent','cond','excellent',5,100],['la_brush','zoneF','brush',0,100],['la_bottom','zoneF','bottom',50,400]].forEach(function(f){
+      var el = $(f[0]); el.value = state.settings[f[1]][f[2]];
+      el.addEventListener('input', function(){ var v = num(this.value); if(v != null && v >= f[3] && v <= f[4]){ state.settings[f[1]][f[2]] = v; zoneCache = {}; renderAll(true); } });
+      el.addEventListener('blur', function(){ this.value = state.settings[f[1]][f[2]]; });
     });
     $('editBtn').addEventListener('click', function(){ toggleEdit(); });
     $('cancelDrawBtn').addEventListener('click', function(){ setDrawMode(null); });
@@ -2646,7 +3284,8 @@
       if(!confirm('Delete every pasture, point and setting for this ranch from this device? Download a file first if you want to keep it.')) return;
       Object.keys(pastureLayers).forEach(function(k){ map && map.removeLayer(pastureLayers[k]); });
       Object.keys(pointLayers).forEach(function(k){ map && map.removeLayer(pointLayers[k]); });
-      pastureLayers = {}; pointLayers = {}; selectedId = null;
+      Object.keys(zoneLayers).forEach(function(k){ map && map.removeLayer(zoneLayers[k]); });
+      pastureLayers = {}; pointLayers = {}; zoneLayers = {}; selectedId = null; zoneCache = {};
       var view = state.view;
       state = blankState(); state.view = view;
       bindSettingsValues();
@@ -2656,6 +3295,9 @@
   }
   function bindSettingsValues(){
     $('ranchName').value = state.name || ''; bindHerdValues();
+    $('manualCap').value = state.settings.manualCap > 0 ? state.settings.manualCap : '';
+    ['la_poor','la_fair','la_excellent'].forEach(function(id){ $(id).value = state.settings.cond[id.slice(3)]; });
+    $('la_brush').value = state.settings.zoneF.brush; $('la_bottom').value = state.settings.zoneF.bottom;
     $('harvestEff').value = state.settings.harvestEff; $('intakeLb').value = state.settings.intakeLb;
   }
 
@@ -2675,7 +3317,7 @@
 
   /* test hooks (read-only helpers; harmless in production) */
   window.MyRanch = {FEED:FEED, feed:function(){ return feedLast; }, herd:function(){ return state.herd; }, fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, state:function(){ return state; },
-                    addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); renderAll(true); return r; }};
+                    addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }};
 
   init();
 })();
