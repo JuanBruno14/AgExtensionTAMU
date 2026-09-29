@@ -1,5 +1,6 @@
 
 
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -346,6 +347,19 @@
 </section>
 
 <main>
+  <section class="shared-tool" id="my-ranch-link" style="margin-bottom:28px;">
+    <p class="section-label">Your ranch</p>
+    <a class="cat-card live" href="my-ranch/index.html" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+      <span class="cat-num" aria-hidden="true" style="width:44px;height:44px;font-size:22px;">🗺️</span>
+      <div style="flex:1;min-width:220px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;"><h3 style="margin:0;">My Ranch &mdash; map your pastures</h3><span class="status-pill live">New</span></div>
+        <p>Draw your pastures on a satellite map to get acres, forage from the USDA soil survey, how many cattle the place can carry, and the current drought status.</p>
+        <p id="myRanchPreview" style="margin-top:6px;font-weight:700;color:var(--ink-secondary);" hidden></p>
+      </div>
+      <span class="go" style="margin-top:0;">Open the map &rarr;</span>
+    </a>
+  </section>
+
   <section class="shared-tool" id="bcu-calculator">
     <p class="section-label">Shared calculator</p>
     <div class="bcu-card">
@@ -846,6 +860,19 @@
     return '<div class="cat-card disabled">'+body+'</div>';
   }).join('');
   grid.innerHTML = html;
+})();
+
+(function initMyRanchPreview(){
+  var el = document.getElementById('myRanchPreview'); if(!el) return;
+  try{
+    var st = JSON.parse(localStorage.getItem('tamuDecisionAidsMyRanch.v1') || 'null');
+    var sm = st && st.summary;
+    if(sm && sm.pastures > 0){
+      el.textContent = (st.name ? st.name + ': ' : 'Saved on this device: ') + sm.pastures + ' pasture' + (sm.pastures === 1 ? '' : 's') + ' \u00b7 ' +
+        Math.round(sm.acres).toLocaleString('en-US') + ' acres' + (sm.capacityAU > 0 ? ' \u00b7 about ' + Math.round(sm.capacityAU).toLocaleString('en-US') + ' AU capacity' : '');
+      el.hidden = false;
+    }
+  }catch(e){}
 })();
 </script>
 
