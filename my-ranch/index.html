@@ -620,6 +620,9 @@
   .notice.caution{background:var(--wheat-100);color:var(--ink);}
   .zone-offer{margin:10px 16px 14px;font-size:13px;}
   .zone-offer .tool-btn{margin:8px 6px 0 0;}
+  .meter.log{position:relative;padding-top:15px;}
+  .meter-cap{position:absolute;top:0;transform:translateX(-50%);font-size:10.5px;font-weight:700;color:var(--ink);white-space:nowrap;}
+  .meter-scale span:last-child{transform:translateX(-100%);}
 </style>
 </head>
 <body>
@@ -2478,19 +2481,21 @@
       '</div>';
     if(herd > 0 && t.cap > 0){
       var use = herd / t.cap, over = use > 1, warn = !over && use > 0.85;
-      /* fixed log scale, 25% to 1,600% of capacity, so every change moves the bar */
-      var LO = Math.log(0.25), HI = Math.log(16), pos = function(u){ return Math.max(0, Math.min(100, (Math.log(u) - LO)/(HI - LO)*100)); };
-      var ticks = [[0.5,'½×'],[1,'capacity'],[2,'2×'],[4,'4×'],[8,'8×']];
+      /* fixed scale in animal units, 5 to 1,000 AU (log), the same for every ranch, so any change in herd or capacity moves the bar */
+      var LO = Math.log(5), HI = Math.log(1000), pos = function(au){ return Math.max(0, Math.min(100, (Math.log(Math.max(au, 0.01)) - LO)/(HI - LO)*100)); };
+      var ticks = [10, 25, 50, 100, 250, 500, 1000];
       var ap = herdAUParts(), perCalf = ap.calves/Math.max(1, state.herd.cows || 1);
       var fitCows = state.herd.bulls != null ? Math.max(0, (t.cap - ap.bulls)/(ap.cowAue + perCalf)) : t.cap/(ap.cowAue + perCalf + ap.bullAue/cowsPerBull());
       html += '<div style="margin-top:16px;"><div class="verdict-pill ' + (over ? 'critical' : warn ? 'caution' : 'good') + '"><span class="dot"></span>' +
         (over ? 'Planned herd is ' + fmt((use - 1) * 100) + '% over estimated capacity' : 'Planned herd uses ' + fmt(use * 100) + '% of estimated capacity') + '</div>' +
-        '<div class="meter log" role="img" aria-label="Planned herd ' + fmt(use*100) + '% of capacity">' +
-          '<div class="meter-track"><div class="meter-band ok" style="width:' + pos(0.85) + '%"></div><div class="meter-band warn" style="left:' + pos(0.85) + '%;width:' + (pos(1) - pos(0.85)) + '%"></div><div class="meter-band bad" style="left:' + pos(1) + '%;right:0"></div>' +
-          '<div class="meter-fill' + (over ? ' over' : warn ? ' warn' : '') + '" style="width:' + pos(use) + '%"></div>' +
-          ticks.map(function(k){ return '<div class="meter-tick' + (k[0] === 1 ? ' cap' : '') + '" style="left:' + pos(k[0]) + '%"></div>'; }).join('') +
-          (use > 16 ? '<span class="meter-more">›</span>' : '') + '</div>' +
-          '<div class="meter-scale">' + ticks.map(function(k){ return '<span style="left:' + pos(k[0]) + '%">' + k[1] + '</span>'; }).join('') + '</div>' +
+        '<div class="meter log" role="img" aria-label="Planned herd ' + fmt(herd) + ' AU, capacity ' + fmt(t.cap) + ' AU">' +
+          '<div class="meter-cap" style="left:' + pos(t.cap) + '%">capacity</div>' +
+          '<div class="meter-track"><div class="meter-band ok" style="width:' + pos(0.85*t.cap) + '%"></div><div class="meter-band warn" style="left:' + pos(0.85*t.cap) + '%;width:' + (pos(t.cap) - pos(0.85*t.cap)) + '%"></div><div class="meter-band bad" style="left:' + pos(t.cap) + '%;right:0"></div>' +
+          '<div class="meter-fill' + (over ? ' over' : warn ? ' warn' : '') + '" style="width:' + pos(herd) + '%"></div>' +
+          ticks.map(function(k){ return '<div class="meter-tick" style="left:' + pos(k) + '%"></div>'; }).join('') +
+          '<div class="meter-tick cap" style="left:' + pos(t.cap) + '%"></div>' +
+          (herd > 1000 ? '<span class="meter-more">›</span>' : '') + '</div>' +
+          '<div class="meter-scale">' + ticks.map(function(k){ return '<span style="left:' + pos(k) + '%">' + fmt(k) + '</span>'; }).join('') + '</div>' +
         '<div class="meter-labels"><span>' + fmt(herd, herd < 10 ? 1 : 0) + ' AU planned</span><span>capacity ' + fmt(t.cap, t.cap < 10 ? 1 : 0) + ' AU</span></div>' +
         '<p class="meter-note">' + (over || warn ? 'At this capacity the ranch carries about <strong>' + fmt(fitCows) + ' cows</strong> with their bulls and calves.' : 'Room for about <strong>' + fmt(Math.max(0, fitCows - (state.herd.cows || 0))) + ' more cows</strong> at this capacity.') + '</p></div>' +
         (t.lowCap != null && herd > t.lowCap && !over ? '<p class="narrative" style="margin:10px 0 0;font-size:12.5px;">In an unfavorable year the soil survey’s lower forage numbers put capacity near <strong>' + fmt(t.lowCap) + ' AU</strong> — have a destocking or feeding plan ready.</p>' : '') +
