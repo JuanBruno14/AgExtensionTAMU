@@ -1142,23 +1142,6 @@
       <div class="card-body" id="budgetBody"></div>
     </div>
 
-    <!-- Jim -->
-    <div class="card" id="jimCard">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a8 8 0 0 1-11.6 7.1L3 21l1.9-6.4A8 8 0 1 1 21 12Z"/></svg>
-        <h2>Ask Jim about this ranch</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Jim gets your pasture list, acres and capacity estimate along with the question, so he can answer for this ranch instead of in general.</p>
-        <div class="jim-prompts" id="jimPrompts">
-          <button type="button" data-q="Is my planned stocking rate reasonable for this ranch? What should I watch?">Is my stocking rate OK?</button>
-          <button type="button" data-q="Using the 2026 D03 cow-calf budget, what gross margin could this ranch make at its carrying capacity? Show the math and remind me what gross margin leaves out.">What could this ranch make?</button>
-          <button type="button" data-q="How would you rotate my herd through these pastures, and what should I plan for if we go into drought?">How should I rotate my pastures?</button>
-        </div>
-        <p class="notice bad" id="jimMissing" hidden>Jim isn't available on this page right now. Reload the page and try again.</p>
-      </div>
-    </div>
-
     <!-- File -->
     <div class="card" id="fileCard">
       <div class="card-head">
@@ -3475,11 +3458,7 @@
     });
     return lines.join('\n');
   }
-  function askJim(q){
-    if(!window.Jim || typeof window.Jim.ask !== 'function'){ $('jimMissing').hidden = false; return; }
-    $('jimMissing').hidden = true;
-    window.Jim.ask(q, {context:ranchContext()});
-  }
+
 
   /* ------------------------------------------------------------------ import / export */
   function loadLib(globalName){
@@ -3854,7 +3833,6 @@
       bindSettingsValues();
       renderAll(true);
     });
-    $('jimPrompts').addEventListener('click', function(e){ var b = e.target.closest('button[data-q]'); if(b) askJim(b.getAttribute('data-q')); });
   }
   function bindSettingsValues(){
     $('ranchName').value = state.name || ''; bindHerdValues();
@@ -3885,6 +3863,5 @@
   init();
 })();
 </script>
-<script src="../jim/jim.js" defer></script>
 </body>
 </html>
