@@ -317,6 +317,9 @@
   button.btn.secondary{background:transparent;color:var(--accent);}
   button.btn:hover{filter:brightness(1.08);}
   button.btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .bcu-ranch{margin:0 0 16px;padding:12px 14px;border-radius:10px;background:var(--wheat-100);font-size:13px;line-height:1.5;color:var(--ink);}
+  .bcu-ranch[hidden]{display:none;}
+  .bcu-ranch-toggle{display:flex;align-items:center;gap:8px;margin-top:8px;font-weight:700;cursor:pointer;}
 </style>
 </head>
 <body>
@@ -393,6 +396,11 @@
 
       <div class="bcu-fields" id="bcuFields" hidden>
         <p class="card-note">This is saved in your browser only (not sent anywhere, not shared across devices) &mdash; if you switch browsers or devices, or clear site data, you'll need to re-enter it.</p>
+
+        <div class="bcu-ranch" id="bcuRanch" hidden>
+          <div id="bcuRanchText"></div>
+          <label class="bcu-ranch-toggle"><input type="checkbox" id="bcu_useRanchFeed"> Use My Ranch feed instead of the hay rolls and protein below</label>
+        </div>
 
         <fieldset style="margin-bottom:18px;">
           <legend>Direct costs</legend>
@@ -616,6 +624,17 @@
     function $(id){ return document.getElementById(id); }
     function num(id){ var el = $(id); var v = el ? parseFloat(el.value) : NaN; return isFinite(v)?v:0; }
     function round(v,d){ var m=Math.pow(10,d||0); return Math.round(v*m)/m; }
+    var RANCH_FEED_KEY = 'tamuDecisionAidsRanchFeed';
+    function readRanchFeed(){
+      try { var r = JSON.parse(window.localStorage.getItem(RANCH_FEED_KEY) || 'null'); return (r && isFinite(r.total)) ? r : null; } catch(e){ return null; }
+    }
+    function showRanchFeed(r, on){
+      var box = $('bcuRanch'); if(!box) return;
+      box.hidden = !r;
+      if(!r) return;
+      $('bcuRanchText').innerHTML = '<strong>My Ranch feed plan'+(r.ranch ? ' ('+String(r.ranch).replace(/[<>&]/g,'')+')' : '')+':</strong> $'+fmtMoney2.format(r.total)+' per cow a year &mdash; hay $'+fmtMoney2.format(r.hay)+', supplement $'+fmtMoney2.format(r.supplement)+', feeding trips &amp; delivery $'+fmtMoney2.format(r.feeding)+'.';
+      ['bcu_hayRolls','bcu_hayPrice'].forEach(function(id){ var el=$(id); if(el){ el.disabled = on; el.closest('.field').style.opacity = on ? 0.5 : ''; } });
+    }
 
     var BCU_DEFAULTS = {
       bcu_landLeaseRate:15, bcu_landLeaseMonths:11, bcu_hayRolls:1.5, bcu_hayPrice:105,
@@ -686,6 +705,10 @@
       var hayCost = num('bcu_hayRolls')*num('bcu_hayPrice');
       var proteinQty = num('bcu_hayRolls')*1000*0.2/100;
       var proteinCost = proteinQty*20; // protein price fixed at $20/cwt per original sheet
+      // Optional: purchased feed per cow from the My Ranch feed calendar replaces the hay-roll rule of thumb
+      var ranch = readRanchFeed(), useRanch = !!(ranch && $('bcu_useRanchFeed') && $('bcu_useRanchFeed').checked);
+      showRanchFeed(ranch, useRanch);
+      if(useRanch){ hayCost = ranch.hay + ranch.feeding; proteinCost = ranch.supplement; }
       var saltCost = num('bcu_saltLbs')*num('bcu_saltPrice');
       var subtotalFeed = landLease+hayCost+proteinCost+saltCost;
 
@@ -702,14 +725,14 @@
       $('bcu_opCostBreak').textContent = 'Direct $'+fmtMoney0.format(totalDirect)+' + Indirect $'+fmtMoney0.format(totalIndirect)+' (incl. bull depreciation $'+fmtMoney2.format(bullDeprPerBCU)+'/BCU)';
 
       buildStackBar('bcu_opCostStackbar','bcu_opCostLegend','bcu_opCostBarTotal', [
-        {label:'Feed & land', value:subtotalFeed, color:'var(--s1)'},
+        {label:useRanch ? 'Feed (My Ranch) & land' : 'Feed & land', value:subtotalFeed, color:'var(--s1)'},
         {label:'Labor & management', value:num('bcu_laborMgmt'), color:'var(--s2)'},
         {label:'Vet & health', value:num('bcu_vetMed'), color:'var(--s3)'},
         {label:'Bull depreciation', value:bullDeprPerBCU, color:'var(--s4)'},
         {label:'Equipment & other indirect', value:totalIndirect, color:'var(--s5)'}
       ], total, ' / BCU');
 
-      var payload = { total: round(total,3), savedAt: new Date().toISOString() };
+      var payload = { total: round(total,3), savedAt: new Date().toISOString(), useRanchFeed: useRanch };
       Object.keys(BCU_DEFAULTS).forEach(function(id){ payload[id] = num(id); });
       try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }
       catch(e){ /* private mode / blocked storage -- this session's value just won't persist or be shared with other pages */ }
@@ -732,6 +755,7 @@
         Object.keys(BCU_DEFAULTS).forEach(function(id){
           if(isFinite(data[id])){ var el = $(id); if(el) el.value = data[id]; }
         });
+        if($('bcu_useRanchFeed')) $('bcu_useRanchFeed').checked = !!data.useRanchFeed;
         return true;
       } catch(e){ return false; }
     }
@@ -747,6 +771,7 @@
     });
     $('bcu_resetBtn').addEventListener('click', function(){
       Object.keys(BCU_DEFAULTS).forEach(function(id){ var el=$(id); if(el) el.value = BCU_DEFAULTS[id]; });
+      if($('bcu_useRanchFeed')) $('bcu_useRanchFeed').checked = false;
       customized = false;
       calcAndPersist();
     });
@@ -754,6 +779,8 @@
     // Bull economics now live in the "Market prices & factors" card above --
     // re-read and refresh whenever it changes (same page, and cross-tab via storage).
     window.addEventListener('tamuMarketPricesChanged', calcAndPersist);
+    if($('bcu_useRanchFeed')) $('bcu_useRanchFeed').addEventListener('change', function(){ customized = true; calcAndPersist(); });
+    window.addEventListener('storage', function(e){ if(e.key === RANCH_FEED_KEY) calcAndPersist(); });
     window.addEventListener('storage', function(e){
       if(e.key === 'tamuDecisionAidsMarketPrices') calcAndPersist();
     });

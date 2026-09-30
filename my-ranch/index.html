@@ -871,7 +871,8 @@
           <p class="fc-short" id="fc_short"></p>
 
           <div class="stat-tiles fc-tiles" id="fc_tiles"></div>
-          <div class="btn-row" style="padding:12px 0 0;"><button type="button" class="tool-btn" id="fc_planBtn">🗒 Print a one-page year plan for this herd</button></div>
+          <div class="btn-row" style="padding:12px 0 0;gap:8px;flex-wrap:wrap;"><button type="button" class="tool-btn" id="fc_planBtn">🗒 Print a one-page year plan for this herd</button><button type="button" class="tool-btn" id="fc_bcuBtn">➜ Use this feed cost in Cow operating cost</button></div>
+          <p class="card-note" id="fc_bcuNote" style="margin:8px 0 0;"></p>
 
           <div class="table-scroll" id="fc_tableWrap" style="margin-top:16px;">
             <table class="plan fc-table" id="fc_table"></table>
@@ -917,7 +918,7 @@
                   <div class="field"><label for="fc_replRate">Cows replaced each year</label><div class="input-wrap has-suffix"><input type="number" id="fc_replRate" data-h="replRate" min="0" max="40" step="1"><span class="suffix">%</span></div><span class="hint">Culls + deaths; 0 = you buy replacements</span></div>
                   <div class="field"><label for="fc_heiferPreg">Heifers that settle</label><div class="input-wrap has-suffix"><input type="number" id="fc_heiferPreg" data-h="heiferPreg" min="40" max="100" step="1"><span class="suffix">%</span></div><span class="hint">Open heifers sold at preg check</span></div>
                   <div class="field"><label for="fc_seasonal">Seasonal prices</label>
-                    <select id="fc_seasonal" data-hs="seasonal"><option value="on">On (Texas pattern)</option><option value="off">Off (today's price)</option></select></div>
+                    <select id="fc_seasonal" data-hs="seasonal"><option value="off">Off (today's price)</option><option value="on">On (Texas pattern)</option></select></div>
                 </div>
                 <p class="card-note" id="fc_replNote" style="margin:10px 0 0;"></p>
               </fieldset>
@@ -1003,7 +1004,7 @@
               <p><strong>Pasture</strong> is each pasture's forage (soil survey × range condition, or your estimate; ponds, brush and bottomland adjusted) times your harvest efficiency, spread over the year with NRCS ecological-site growth curves for native range. Forage not eaten carries into the next month. Quality uses typical diet values by month, not a forage test.</p>
               <p><strong>Intake</strong> follows Mississippi State Extension's guide (1.8–2.7% of body weight depending on forage quality). When pasture runs out, hay fills the rest of the intake; the supplement covers whatever protein or energy is still missing.</p>
               <p><strong>Losses:</strong> calf death loss is split into weather-related (about 10% of all losses in USDA's NAHMS study, adjusted by how cold the nights are in the birth month for your region) and everything else. Screwworm risk rises with temperature (little fly activity below 59°F, most at 77–86°F, per AgriLife); there is no published loss rate yet, so you set it. Horn flies cut calf weaning weights 4–15% (UNL); the tool applies it to the share of nursing days in June–September.</p>
-              <p><strong>Money:</strong> calves are sold at your market price slide (half steers, half heifers), cull cows at the cull-cow price, both from the site's shared market prices. Those prices are this month's; the tool moves them to the month you actually sell with Texas A&amp;M's seasonal price pattern (Texas 500–600 lb steers and San Angelo cull cows: spring runs about 4% above the year's average, fall about 5–6% below). The result is cattle sales minus the feed you buy and the cost of feeding it — not profit: land, labor, vet, bull and other costs aren't in it.</p>
+              <p><strong>Money:</strong> calves are sold at your market price slide (half steers, half heifers), cull cows at the cull-cow price, both from the site's shared market prices. By default it uses those prices as they are, like the other tools on this site. Turn on <em>Seasonal prices</em> to move them to the month you actually sell with Texas A&amp;M's seasonal pattern (Texas 500–600 lb steers and San Angelo cull cows: spring runs about 4% above the year's average, fall about 5–6% below). The result is cattle sales minus the feed you buy and the cost of feeding it — not profit: land, labor, vet, bull and other costs aren't in it.</p>
               <p><strong>Replacement heifers</strong> follow the BCNRM 2016 targets: 60% of mature weight when they settle at 15 months (65% for Brahman), 80% at first calving at 2 years, with growth and pregnancy needs from the same model. Enough heifer calves are kept to replace culls and dead cows after open heifers are sold at pregnancy check; culls are sold at weaning.</p>
               <p><strong>Body condition:</strong> if cows come off the calf thinner than your target, the energy to put it back (NRC 2016: a 1,100-lb cow needs about 207 Mcal to go from 4 to 5) is spread from weaning to a month before the next calving — the cheapest time to do it.</p>
               <p><strong>Not included:</strong> cold stress on calves, first-calf heifers, heifers you buy instead of raise.</p>
@@ -1227,7 +1228,7 @@
   var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'rolling',
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535,
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto',
-    nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'on',
+    nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off',
     hayTdn:55, hayCp:10, hayPrice:200, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
     dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0}};
@@ -1824,6 +1825,11 @@
     return r;
   }
   function herdAU(){ return herdAUParts().total; }
+  /* cows (with their share of bulls, calves and replacement heifers) that a capacity in AU carries */
+  function cowsAtCapacity(cap){
+    var ap = herdAUParts(), perCalf = (ap.calves + ap.heifers)/Math.max(1, state.herd.cows || 1);
+    return state.herd.bulls != null ? Math.max(0, (cap - ap.bulls)/(ap.cowAue + perCalf)) : cap/(ap.cowAue + perCalf + ap.bullAue/cowsPerBull());
+  }
 
   /* Geodesic area — same algorithm as turf.js @turf/area (spherical excess, mean earth radius). */
   function ringArea(c){
@@ -2664,8 +2670,7 @@
       /* fixed scale in animal units, 5 to 1,000 AU (log), the same for every ranch, so any change in herd or capacity moves the bar */
       var LO = Math.log(5), HI = Math.log(1000), pos = function(au){ return Math.max(0, Math.min(100, (Math.log(Math.max(au, 0.01)) - LO)/(HI - LO)*100)); };
       var ticks = [10, 25, 50, 100, 250, 500, 1000];
-      var ap = herdAUParts(), perCalf = (ap.calves + ap.heifers)/Math.max(1, state.herd.cows || 1);
-      var fitCows = state.herd.bulls != null ? Math.max(0, (t.cap - ap.bulls)/(ap.cowAue + perCalf)) : t.cap/(ap.cowAue + perCalf + ap.bullAue/cowsPerBull());
+      var fitCows = cowsAtCapacity(t.cap);
       html += '<div style="margin-top:16px;"><div class="verdict-pill ' + (over ? 'critical' : warn ? 'caution' : 'good') + '"><span class="dot"></span>' +
         (over ? 'Planned herd is ' + fmt((use - 1) * 100) + '% over estimated capacity' : 'Planned herd uses ' + fmt(use * 100) + '% of estimated capacity') + '</div>' +
         '<div class="meter log" role="img" aria-label="Planned herd ' + fmt(herd) + ' AU, capacity ' + fmt(t.cap) + ' AU">' +
@@ -2727,16 +2732,19 @@
       el.innerHTML = '<p class="narrative" style="margin:0;">Once your pastures have a forage estimate, this card compares your ranch with AgriLife’s 2026 cow-calf budget.</p>' + note;
       return;
     }
-    var au = herd > 0 ? Math.min(herd, t.cap) : t.cap;
-    var basis = herd > 0 ? (herd > t.cap ? 'your estimated capacity (' + fmt(t.cap) + ' AU — your planned herd is larger)' : 'your planned herd (' + fmt(herd) + ' AU)') : 'your estimated capacity (' + fmt(t.cap) + ' AU)';
-    var ratio = t.acresPerAU / D03.acresPerAU;
-    var cmp = ratio > 1.15 ? 'Your land needs <strong>more acres per cow</strong> (' + fmt(t.acresPerAU, 1) + ' vs. 11.25) than the budget assumes, so land cost per cow will run higher than the budget’s.'
-            : ratio < 0.87 ? 'Your land carries a cow on <strong>fewer acres</strong> (' + fmt(t.acresPerAU, 1) + ' vs. 11.25) than the budget assumes.'
-            : 'Your acres per AU (' + fmt(t.acresPerAU, 1) + ') are close to the budget’s 11.25.';
+    /* The D03 budget is per cow unit (one cow with her calf = 1 AU), so compare by cows, not metabolic AU */
+    var capCows = cowsAtCapacity(t.cap), cows = state.herd.cows || 0;
+    var au = cows > 0 ? Math.min(cows, capCows) : capCows;
+    var basis = cows > 0 ? (cows > capCows ? 'the ' + fmt(capCows) + ' cows your estimated capacity carries (you plan ' + fmt(cows) + ')' : 'your ' + fmt(cows) + ' cows') : 'the ' + fmt(capCows) + ' cows your estimated capacity carries';
+    var acPerCow = capCows > 0 && t.estAcres > 0 ? t.estAcres/capCows : null;
+    var ratio = acPerCow / D03.acresPerAU;
+    var cmp = ratio > 1.15 ? 'Your land needs <strong>more acres per cow</strong> (' + fmt(acPerCow, 1) + ' vs. 11.25) than the budget assumes, so land cost per cow will run higher than the budget’s.'
+            : ratio < 0.87 ? 'Your land carries a cow on <strong>fewer acres</strong> (' + fmt(acPerCow, 1) + ' vs. 11.25) than the budget assumes.'
+            : 'Your acres per cow (' + fmt(acPerCow, 1) + ') are close to the budget’s 11.25.';
     el.innerHTML = '<div class="stat-tiles">' +
-      '<div class="stat-tile wide"><span class="label">Budget gross margin at ' + fmt(au, au < 10 ? 1 : 0) + ' AU</span><span class="value">' + money(au * D03.grossMargin) + '</span><span class="sub">per year, based on ' + basis + '</span></div>' +
+      '<div class="stat-tile wide"><span class="label">Budget gross margin for ' + fmt(au) + ' cows</span><span class="value">' + money(au * D03.grossMargin) + '</span><span class="sub">per year, based on ' + basis + '</span></div>' +
       '<div class="stat-tile"><span class="label">Net return (budget)</span><span class="value small">' + money(au * D03.netReturn) + '</span><span class="sub">after the budget’s fixed costs</span></div>' +
-      '<div class="stat-tile"><span class="label">Acres per AU</span><span class="value small">' + fmt(t.acresPerAU, 1) + '</span><span class="sub">yours · budget 11.25</span></div>' +
+      '<div class="stat-tile"><span class="label">Acres per cow</span><span class="value small">' + fmt(acPerCow, 1) + '</span><span class="sub">yours, with bulls &amp; calves · budget 11.25</span></div>' +
       '</div><p class="narrative" style="margin:14px 0 0;font-size:13px;">' + cmp + ' Your own prices, weaning weights and costs will differ — run your numbers in the <a href="../cow-calf/index.html" style="color:var(--accent);font-weight:700;">Cow-Calf Bid Price and Budgets</a> tools.</p>' + note;
   }
 
@@ -2951,6 +2959,17 @@
         '<li>Check forage in the pastures each season (clip-and-weigh or a grazing stick) and update the map — the numbers here are typical, not measured.</li>' +
         (h.nws === 'yes' ? '<li>Screwworm: check newborn calves daily during warm months and report suspected cases to TAHC.</li>' : '') +
       '</ul><div class="ps-foot">Estimates from USDA-NRCS soil survey forage, NRC 2016 nutrient requirements and your inputs. Not a guarantee of results. Talk to your county Extension agent before making big changes.</div>';
+  }
+  /* Share this herd's purchased-feed cost per cow with the Cow operating cost (BCU) calculator on the home page */
+  var RANCH_FEED_KEY = 'tamuDecisionAidsRanchFeed';
+  function sendFeedToBcu(){
+    var h = state.herd; if(!(h.cows > 0)) return;
+    var res = runFeed(), t = res.totals, per = function(v){ return Math.round(v/h.cows*100)/100; };
+    var payload = {hay:per(t.hay/2000*h.hayPrice), supplement:per(t.sup/2000*h.supPrice), feeding:per(t.tripCost + t.dist),
+                   hayTons:Math.round(t.hay/2000*10)/10, supTons:Math.round(t.sup/2000*10)/10, cows:h.cows, ranch:state.name || '', savedAt:new Date().toISOString()};
+    payload.total = Math.round((payload.hay + payload.supplement + payload.feeding)*100)/100;
+    var ok = true; try{ localStorage.setItem(RANCH_FEED_KEY, JSON.stringify(payload)); }catch(e){ ok = false; }
+    $('fc_bcuNote').innerHTML = ok ? 'Sent: ' + money(payload.total) + ' per cow (hay ' + money(payload.hay) + ', supplement ' + money(payload.supplement) + ', feeding ' + money(payload.feeding) + '). Open <a href="../index.html#bcu-calculator">Cow operating cost</a> on the home page and choose “Use My Ranch feed”.' : 'This browser is blocking storage, so the cost can’t be shared.';
   }
   var planBusy = false;
   function printPlan(){
@@ -3811,6 +3830,7 @@
       download(toKml(), fileBase() + '.kml', 'application/vnd.google-earth.kml+xml');
     });
     $('fc_planBtn').addEventListener('click', function(){ printPlan(); });
+    $('fc_bcuBtn').addEventListener('click', function(){ sendFeedToBcu(); });
     $('planBtn').addEventListener('click', function(){
       if(!(state.herd.cows > 0)){ showNotice('Enter your number of cows first — the plan is built from the herd and the feed calendar.', 'bad'); return; }
       printPlan();
