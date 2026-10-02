@@ -407,6 +407,8 @@
     font-weight:700;font-size:12px;padding:3px 8px;border-radius:6px;white-space:nowrap;
   }
   .leaflet-tooltip.pasture-label::before{display:none;}
+  .leaflet-tooltip.pasture-label .lbl-sub{display:block;font-weight:500;font-size:11px;opacity:0.9;text-align:center;}
+  .leaflet-tooltip.pasture-label{text-align:center;}
   .pt-icon-wrap{background:transparent;border:0;}
   .pt-icon{
     display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;
@@ -672,6 +674,25 @@
   #planSheet .ps-list{margin:2px 0 0 16px;padding:0;}
   #planSheet .ps-list li{margin:2px 0;}
   #planSheet .ps-table th.num{text-align:right;}
+
+  /* grass today on the map */
+  .seg.map-color{display:inline-flex;border-radius:8px;overflow:hidden;background:#fff;}
+  .leaflet-control .seg.map-color, .seg.map-color{}
+  .seg.map-color button{border:0;background:#fff;color:#222;font:inherit;font-size:13px;font-weight:600;padding:7px 12px;cursor:pointer;}
+  .seg.map-color button+button{border-left:1px solid #ccc;}
+  .seg.map-color button.on{background:var(--accent, #500000);color:#fff;}
+  .grass-legend{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;padding:8px 16px;font-size:12.5px;border-top:1px solid var(--border);background:var(--surface-sunken);}
+  .grass-legend[hidden]{display:none;}
+  .grass-legend span{display:inline-flex;align-items:center;gap:6px;}
+  .grass-legend i{width:12px;height:12px;border-radius:3px;display:inline-block;}
+  .grass-legend .lg-note{color:var(--ink-muted);}
+  .pt-icon.herd-icon{width:34px;height:34px;font-size:19px;border-color:#8B0215;border-width:3px;}
+  .herd-now-form{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;font-size:13.5px;}
+  .herd-now-form label{display:inline-flex;align-items:center;gap:8px;font-weight:600;white-space:nowrap;font-size:13.5px;margin:0;text-transform:none;letter-spacing:0;}
+  .herd-now-form select{width:auto;min-width:180px;max-width:100%;}
+  .herd-now-form select,.herd-now-form input{padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font:inherit;font-weight:400;}
+  .herd-now-form label[hidden]{display:none;}
+  @media (max-width:640px){ .seg.map-color button{padding:6px 9px;font-size:12px;} }
 </style>
 </head>
 <body>
@@ -742,6 +763,7 @@
         <button type="button" class="tool-btn" id="editBtn" title="Drag corners to adjust pasture lines, or move water points and pens">↔ Edit shapes</button>
       </div>
       <div id="map" role="application" aria-label="Satellite map of your ranch"></div>
+      <div class="grass-legend" id="grassLegend" hidden></div>
       <div class="map-hint" id="mapHint">
         <span id="mapHintText"><strong>Start here:</strong> search for your ranch or use <strong>My location</strong>, zoom in until you can see your fences, then press <strong>Draw pasture</strong>.</span>
         <span class="hint-actions" id="hintActions" hidden>
@@ -1218,7 +1240,7 @@
   ];
   /* AgriLife Extension 2026 D03 Budgets, sheet 'CowCalf' (Rolling Plains cow-calf), all per animal unit. */
   var D03 = {revenue:2189.26, variable:438.35, grossMargin:1750.91, fixed:500.34, netReturn:1250.58, acresPerAU:11.25, rentPerAcre:15};
-  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, cond:{poor:50, fair:75, excellent:90}, zoneF:{brush:25, bottom:200}};
+  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:90}, zoneF:{brush:25, bottom:200}};
   var CONDITIONS = {poor:'Poor', fair:'Fair', excellent:'Excellent'};
   var ZONE_TYPES = {
     water:  {label:'Pond / lake', icon:'💧', style:{color:'#bfe3ff', weight:1.5, fillColor:'#2b7fd6', fillOpacity:0.6}},
@@ -1868,7 +1890,7 @@
   }
 
   /* ------------------------------------------------------------------ state */
-  function blankState(){ return {v:1, name:'', pastures:[], points:[], zones:[], settings:Object.assign({}, DEFAULT_SETTINGS), herd:Object.assign({}, DEFAULT_HERD), drought:null, view:null, summary:null}; }
+  function blankState(){ return {v:1, name:'', pastures:[], points:[], zones:[], settings:Object.assign({}, DEFAULT_SETTINGS), herd:Object.assign({}, DEFAULT_HERD), drought:null, view:null, summary:null, herdNow:null}; }
   function loadState(){
     try{
       var s = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
@@ -2042,6 +2064,15 @@
     imagery.addTo(map); refs.addTo(map);
     L.control.layers({'Satellite':imagery, 'Street map':streets}, {'Roads & place names':refs}, {position:'topright'}).addTo(map);
     L.control.scale({imperial:true, metric:false}).addTo(map);
+    var ColorCtl = L.Control.extend({options:{position:'bottomright'}, onAdd:function(){
+      var d = L.DomUtil.create('div', 'seg map-color leaflet-bar');
+      d.setAttribute('role', 'group'); d.setAttribute('aria-label', 'Color pastures by');
+      d.innerHTML = '<button type="button" data-mapcolor="name" aria-pressed="true">Pastures</button><button type="button" data-mapcolor="grass" aria-pressed="false" title="Where the herd is and how many days of grass each pasture has today">🌱 Grass today</button>';
+      L.DomEvent.disableClickPropagation(d);
+      d.querySelectorAll('button').forEach(function(b){ b.addEventListener('click', function(){ state.settings.mapColor = b.getAttribute('data-mapcolor'); updateMapGrass(); save(); }); });
+      return d;
+    }});
+    new ColorCtl().addTo(map);
 
     map.pm.setGlobalOptions({
       snappable:true, snapDistance:14, allowSelfIntersection:false, continueDrawing:false,
@@ -2094,14 +2125,55 @@
   }
 
   function colorFor(p){ return COLORS[pastureIndex(p.id) % COLORS.length]; }
-
-  function labelText(p){ return esc(p.name) + ' · ' + fmt(p.acres, p.acres < 10 ? 1 : 0) + ' ac'; }
+  var grassMap = null;   // pasture id -> {cls, label} when the map shows "Grass today"
+  function fillFor(p){
+    if(state.settings.mapColor !== 'grass') return colorFor(p);
+    var g = grassMap && grassMap[p.id];
+    return GRASS_COLORS[g ? g.cls : 'none'];
+  }
+  function labelText(p){
+    if(state.settings.mapColor === 'grass'){
+      var g = grassMap && grassMap[p.id];
+      return g ? g.label : esc(p.name) + (isGrazed(p) ? ' · no forage estimate' : ' · not grazed');
+    }
+    return esc(p.name) + ' · ' + fmt(p.acres, p.acres < 10 ? 1 : 0) + ' ac';
+  }
+  var herdMarker = null;
+  function updateMapGrass(){
+    grassMap = null;
+    var t = null;
+    if(state.settings.mapColor === 'grass'){ try{ t = grassToday(); }catch(e){ t = null; } }
+    if(t){
+      grassMap = {};
+      t.list.forEach(function(r){
+        var h = t.herd, lbl;
+        if(r.herdHere) lbl = '🐄 ' + esc(r.x.p.name) + '<span class="lbl-sub">day ' + fmt(h.daysIn + 1) + (h.fed ? ' · feeding hay' : h.left > 0 ? ' · move ~' + shortDate(h.moveBy) : ' · move now') + '</span>';
+        else lbl = esc(r.x.p.name) + '<span class="lbl-sub">' + fmt(r.days) + ' d grass' + (r.rest != null ? ' · rested ' + fmt(r.rest) + ' d' : '') + '</span>';
+        grassMap[r.x.p.id] = {cls:grassClass(r), label:lbl};
+      });
+    }
+    state.pastures.forEach(function(p){ var l = pastureLayers[p.id]; if(l){ l.setStyle({fillColor:fillFor(p)}); l.setTooltipContent(labelText(p)); } });
+    if(map){
+      if(herdMarker){ map.removeLayer(herdMarker); herdMarker = null; }
+      if(t && t.herd){
+        var c = centroid(t.herd.p.geometry);
+        herdMarker = L.marker([c.lat, c.lng], {icon:L.divIcon({className:'pt-icon-wrap', html:'<span class="pt-icon herd-icon">🐄</span>', iconSize:[34,34], iconAnchor:[17,40]}), interactive:false, keyboard:false}).addTo(map);
+      }
+    }
+    var lg = $('grassLegend');
+    if(lg){
+      lg.hidden = state.settings.mapColor !== 'grass';
+      lg.innerHTML = t ? '<span><i style="background:' + GRASS_COLORS.herd + '"></i>Herd here</span><span><i style="background:' + GRASS_COLORS.good + '"></i>3+ weeks of grass</span><span><i style="background:' + GRASS_COLORS.mid + '"></i>1–3 weeks</span><span><i style="background:' + GRASS_COLORS.low + '"></i>Under a week</span><span class="lg-note">for the whole herd, today · <a href="#herdNow">details</a></span>'
+                       : '<span class="lg-note">Draw grazed pastures with a forage estimate and enter your number of cows to see grass today.</span>';
+    }
+    document.querySelectorAll('[data-mapcolor]').forEach(function(b){ var on = b.getAttribute('data-mapcolor') === (state.settings.mapColor || 'name'); b.classList.toggle('on', on); b.setAttribute('aria-pressed', on ? 'true' : 'false'); });
+  }
 
   function drawPastureLayer(p){
     if(!map) return;
     if(pastureLayers[p.id]){ map.removeLayer(pastureLayers[p.id]); }
     var latlngs = p.geometry.coordinates.map(function(r){ return r.slice(0, -1).map(function(c){ return [c[1], c[0]]; }); });
-    var layer = L.polygon(latlngs, {color:'#ffffff', weight:2, fillColor:colorFor(p), fillOpacity:0.35});
+    var layer = L.polygon(latlngs, {color:'#ffffff', weight:2, fillColor:fillFor(p), fillOpacity:0.35});
     layer._ranchId = p.id;
     layer.bindTooltip(labelText(p), {permanent:true, direction:'center', className:'pasture-label', interactive:false});
     layer.on('click', function(){ if(!drawMode) selectPasture(p.id, true); });
@@ -2112,7 +2184,7 @@
     styleSelection();
   }
   function recolorLayers(){
-    state.pastures.forEach(function(p){ var l = pastureLayers[p.id]; if(l) l.setStyle({fillColor:colorFor(p)}); });
+    state.pastures.forEach(function(p){ var l = pastureLayers[p.id]; if(l) l.setStyle({fillColor:fillFor(p)}); });
   }
   function styleSelection(){
     Object.keys(pastureLayers).forEach(function(id){
@@ -2517,6 +2589,7 @@
     renderRotation();
     renderBudget();
     renderFeed();
+    try{ updateMapGrass(); }catch(e){}
     try{ renderHerdNote(); }catch(e){}
     if(!drawMode) setDefaultHint();
     save();
@@ -2718,10 +2791,19 @@
       '<tfoot><tr><td></td><td>Total</td><td></td><td class="num">' + fmt(total) + ' days</td></tr></tfoot></table></div>' +
       '<p class="narrative" style="margin:12px 0 0;font-size:13px;">Your grazed pastures together provide ' + shortTxt + (anyMissing ? ' (Pastures still missing a forage estimate aren’t counted.)' : '') + '</p>' +
       '<p class="card-note" style="margin:8px 0 0;">These are forage-supply days, not a rest schedule: rotation lets plants recover, but it doesn’t create extra forage.</p>' +
-      '<div id="grazingPlan">' + grazingPlanHtml() + '</div>';
+      '<div id="grazingPlan">' + grazingPlanHtml() + '</div>' +
+      '<div id="herdNow">' + herdNowHtml() + '</div>';
+    var hp = $('hn_pid'), hs = $('hn_since');
+    if(hp) hp.addEventListener('change', function(){
+      if(!this.value){ state.herdNow = null; }
+      else { var prev = state.herdNow || {}; state.herdNow = {pid:this.value, since:prev.since || isoDate(todayDate())}; }
+      renderRotation(); updateMapGrass(); save();
+    });
+    if(hs) hs.addEventListener('change', function(){ if(state.herdNow && /^\d{4}-\d{2}-\d{2}$/.test(this.value)){ state.herdNow.since = this.value; renderRotation(); updateMapGrass(); save(); } });
     var gm = $('gp_max');
-    if(gm) gm.addEventListener('change', function(){ var v = num(this.value); if(v >= 3 && v <= 120){ state.settings.maxGraze = v; renderRotation(); save(); } });
+    if(gm) gm.addEventListener('change', function(){ var v = num(this.value); if(v >= 3 && v <= 120){ state.settings.maxGraze = v; renderRotation(); updateMapGrass(); save(); } });
   }
+  function isoDate(dt){ return dt.getFullYear() + '-' + String(dt.getMonth() + 1).padStart(2, '0') + '-' + String(dt.getDate()).padStart(2, '0'); }
 
   function renderBudget(){
     var el = $('budgetBody');
@@ -2995,14 +3077,17 @@
     var P = list.map(function(p){
       return {p:p, g:FEED.pastureGrowth({annualLb:annualLb(p), type:p.type}, he, reg).map(function(x){ return x*k; }),
               meas:p.measured && p.measured.lbAc > 0 ? {m:p.measured.month, lb:p.measured.lbAc*forageAcres(p)*he} : null,
-              stock:0, day:[], visits:0, grazed:0, fed:0};
+              stock:0, day:[], sd:[], visits:0, grazed:0, fed:0};
     });
-    var maxStay = Math.max(3, +state.settings.maxGraze || 30), cur = 0, stay = 0, hayDays = 0, feeding = false;
+    // ungrazed grass doesn't pile up forever: it weathers and is trampled, so standing forage never exceeds one year's usable growth
+    P.forEach(function(x){ x.cap = Math.max(x.g.reduce(function(a, b){ return a + b; }, 0), x.meas ? x.meas.lb : 0); });
+    var maxStay = Math.max(3, +state.settings.maxGraze || 30), cur = 0, stay = 0, hayDays = 0, feeding = false, demDay = [];
     for(var yr = 0; yr < 2; yr++){
       for(var d = 0; d < 365; d++){
         var m = FEED.monthOfDay(d), first = d === FEED.MONTH_START[m];
         var dem = res.months[m].forageDemandLb/FEED.MONTH_DAYS[m];
-        P.forEach(function(x){ if(first && x.meas && x.meas.m === m) x.stock = x.meas.lb; x.stock += x.g[m]/FEED.MONTH_DAYS[m]; });
+        P.forEach(function(x){ if(first && x.meas && x.meas.m === m) x.stock = x.meas.lb; x.stock = Math.min(x.stock + x.g[m]/FEED.MONTH_DAYS[m], x.cap); if(yr === 1) x.sd[d] = x.stock; });
+        if(yr === 1) demDay[d] = dem;
         // move when this pasture can't feed today, or after the longest stay, to the next pasture (in your order) with at least
         // a week of feed (two weeks if the herd is being fed hay). If none has, the herd stays put and is fed there.
         if(P[cur].stock < dem || stay >= maxStay){
@@ -3025,7 +3110,93 @@
       x.rest = rests.length && x.grazed + x.fed > 0 ? rests.reduce(function(a, b){ return a + b; }, 0)/rests.length : null;
       if(!x.visits && x.grazed + x.fed > 0) x.visits = 1;
     });
-    return {P:P, hayDays:hayDays, maxStay:maxStay};
+    return {P:P, hayDays:hayDays, maxStay:maxStay, dem:demDay};
+  }
+
+  /* ---- where the herd is today and how much grass each pasture has standing (estimates from the grazing calendar) */
+  function todayDate(){ var t = window.MR_TODAY ? new Date(window.MR_TODAY + 'T12:00:00') : new Date(); t.setHours(12, 0, 0, 0); return t; }
+  function dayOfYear(dt){ var m = dt.getMonth(); return Math.min(364, FEED.MONTH_START[m] + dt.getDate() - 1); }
+  function addDays(dt, n){ var r = new Date(dt.getTime()); r.setDate(r.getDate() + n); return r; }
+  function shortDate(dt){ return FEED.MONTHS[dt.getMonth()] + ' ' + dt.getDate(); }
+  function grassToday(){
+    var g = grazingPlan(); if(!g) return null;
+    var today = todayDate(), td = dayOfYear(today), herd = herdAU();
+    var W = function(d){ return ((d % 365) + 365) % 365; };
+    var out = {g:g, today:today, list:[], herd:null, herdAU:herd};
+    var hn = state.herdNow || {}, actual = null;
+    if(hn.pid && hn.since){
+      var x0 = null; g.P.forEach(function(x){ if(x.p.id === hn.pid) x0 = x; });
+      var since = new Date(hn.since + 'T12:00:00');
+      var din = Math.round((today - since)/864e5);
+      if(x0 && !isNaN(din) && din >= 0 && din < 365){
+        // the herd went in on `since`: start from the grass the calendar has standing that day, then graze it down
+        var sd = W(td - din), stock = x0.sd[sd], stay = 0, d = sd, now = null;
+        for(var k = 0; k < 400; k++){
+          var dd = W(d), m = FEED.monthOfDay(dd);
+          if(k > 0) stock = Math.min(stock + x0.g[m]/FEED.MONTH_DAYS[m], x0.cap);
+          if(k === din) now = stock;
+          if(stock < g.dem[dd] || stay >= g.maxStay) break;
+          stock -= g.dem[dd]; stay++; d++;
+        }
+        if(now == null) now = stock;
+        actual = {x:x0, since:since, daysIn:din, stay:stay, now:now};
+      } else if(x0 && din < 0) out.future = true;
+    }
+    g.P.forEach(function(x, i){
+      var st = x.day[td], rest = null, standing = x.sd[td];
+      if(st === 'rest'){ rest = 0; for(var b = 1; b < 365 && x.day[W(td - b)] === 'rest'; b++) rest = b; if(rest >= 364) rest = null; else rest++; }
+      out.list.push({x:x, i:i, planHere:st !== 'rest', rest:rest, standing:standing, days:standing/g.dem[td]});
+    });
+    if(actual){
+      out.list.forEach(function(r){ if(r.x === actual.x){ r.standing = actual.now; r.days = actual.now/g.dem[td]; } });
+      out.herd = {p:actual.x.p, since:actual.since, daysIn:actual.daysIn, stay:actual.stay, left:Math.max(0, actual.stay - actual.daysIn), moveBy:addDays(actual.since, actual.stay), source:'you'};
+    } else {
+      var here = null; out.list.forEach(function(r){ if(r.planHere) here = r; });
+      if(here){
+        var a = 0; while(a < 364 && here.x.day[W(td - a - 1)] !== 'rest') a++;
+        var f = 0; while(f < 364 && here.x.day[W(td + f + 1)] !== 'rest') f++;
+        out.herd = {p:here.x.p, since:addDays(today, -a), daysIn:a, stay:a + f + 1, left:f + 1, moveBy:addDays(today, f + 1), source:'plan', fed:here.x.day[td] === 'feed'};
+      }
+    }
+    if(out.herd){
+      var hp = out.herd.p, ga = grazeableAcres(hp);
+      out.herd.acPerAU = herd > 0 ? ga/herd : null;
+      // next pasture in your order with at least a week of grass when the herd moves
+      var idx = -1; g.P.forEach(function(x, i){ if(x.p === hp) idx = i; });
+      var md = W(td + out.herd.left);
+      for(var j = 1; j < g.P.length; j++){ var c = g.P[(idx + j) % g.P.length]; if(c.sd[md] >= g.dem[md]*7){ out.herd.next = {p:c.p, days:c.sd[md]/g.dem[md]}; break; } }
+      out.list.forEach(function(r){ r.herdHere = r.x.p === hp; if(r.herdHere) r.rest = null; });
+    }
+    return out;
+  }
+  function grassClass(r){ return r.herdHere ? 'herd' : r.days >= 21 ? 'good' : r.days >= 7 ? 'mid' : 'low'; }
+  var GRASS_COLORS = {herd:'#8B0215', good:'#1f9e5a', mid:'#e0a526', low:'#c2410c', none:'#8a8a8a'};
+  function herdNowHtml(){
+    var t = grassToday(); if(!t) return '';
+    var opts = '<option value="">Follow the grazing calendar</option>' + t.g.P.map(function(x){ return '<option value="' + x.p.id + '"' + ((state.herdNow || {}).pid === x.p.id ? ' selected' : '') + '>' + esc(x.p.name) + '</option>'; }).join('');
+    var hn = state.herdNow || {}, h = t.herd, msg = '';
+    if(t.future) msg = '<span class="tag warn">Date is in the future</span> Pick the day the herd went in.';
+    else if(h){
+      var days = function(n){ return fmt(n) + (Math.round(n) === 1 ? ' day' : ' days'); };
+      msg = (h.source === 'plan' ? 'By the grazing calendar, the herd is in ' : 'The herd is in ') + '<strong>' + esc(h.p.name) + '</strong> ' + (h.daysIn > 0 ? 'since ' + shortDate(h.since) + ' (' + days(h.daysIn) + ')' : 'from today') +
+        (h.acPerAU != null ? ', at ' + fmt(h.acPerAU, h.acPerAU < 10 ? 1 : 0) + ' ac per AU while it’s there' : '') + '. ' +
+        (h.fed ? 'No pasture has enough grass right now, so the herd is fed hay here. ' :
+         h.left > 0 ? 'Its grass should last until about <strong>' + shortDate(h.moveBy) + '</strong> (' + days(h.left) + ' more). ' : '<strong>Time to move:</strong> by this estimate its grass is used up. ') +
+        (h.next ? 'Next: <strong>' + esc(h.next.p.name) + '</strong>, with about ' + days(h.next.days) + ' of grass for the herd when you move.' : 'No other pasture has a week of grass for the herd then — plan hay or supplement.');
+    }
+    var rows = t.list.slice().sort(function(a, b){ return (b.herdHere - a.herdHere) || (b.days - a.days); }).map(function(r){
+      var c = grassClass(r);
+      return '<tr><td><span class="p-swatch" style="display:inline-block;vertical-align:-2px;margin-right:6px;background:' + GRASS_COLORS[c] + ';"></span>' + esc(r.x.p.name) + '</td>' +
+        '<td>' + (r.herdHere ? '🐄 Herd here' : r.rest != null ? 'Rested ' + fmt(r.rest) + ' d' : r.planHere ? 'Resting' : 'Not used this year') + '</td>' +
+        '<td class="num">' + fmt(r.standing/Math.max(forageAcres(r.x.p), 0.01)/(state.settings.harvestEff/100)) + ' lb/ac</td>' +
+        '<td class="num">' + fmt(r.days) + ' d</td></tr>';
+    }).join('');
+    return '<h3 class="gp-title">Where is the herd today?</h3>' +
+      '<div class="herd-now-form"><label>Herd is in <select id="hn_pid" aria-label="Pasture the herd is in now">' + opts + '</select></label>' +
+      '<label' + (hn.pid ? '' : ' hidden') + '>since <input type="date" id="hn_since" max="' + isoDate(t.today) + '" value="' + (hn.since || '') + '" aria-label="Day the herd went in"></label></div>' +
+      '<p class="narrative" id="hn_msg" style="margin:10px 0 0;font-size:13px;">' + msg + '</p>' +
+      '<div class="table-scroll" style="margin-top:10px;"><table class="plan" id="hn_table"><thead><tr><th>Pasture</th><th>Today</th><th class="num">Standing grass</th><th class="num">Days for the herd</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<p class="card-note" style="margin:8px 0 0;">Estimates from the grazing calendar: growth by month for your region, minus what the herd ate where the calendar put it. Measure a pasture under <em>Pastures → Measured forage</em> to correct it. Same colors as <em>Grass today</em> on the map: green 3+ weeks, yellow 1–3 weeks, orange under a week.</p>';
   }
   function grazingPlanHtml(){
     var g = grazingPlan(); if(!g) return '';
@@ -3877,7 +4048,7 @@
 
   /* test hooks (read-only helpers; harmless in production) */
   window.MyRanch = {FEED:FEED, feed:function(){ return feedLast; }, herd:function(){ return state.herd; }, fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, state:function(){ return state; },
-                    addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, herdAU:herdAU, herdAUParts:herdAUParts, addPastureDrawn:function(g){ return addPasture(g, null, true); }, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }};
+                    addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, grassToday:grassToday, herdAU:herdAU, herdAUParts:herdAUParts, addPastureDrawn:function(g){ return addPasture(g, null, true); }, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }};
 
   init();
 })();
