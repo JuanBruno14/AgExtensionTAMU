@@ -4,7 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Understanding IRR</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap">
 <style>
   :root{
     --maroon-900:#3a0000;
@@ -51,11 +53,11 @@
     margin:0;
     background:var(--bg);
     color:var(--ink);
-    font-family:"Public Sans", ui-sans-serif, system-ui, sans-serif;
+    font-family:"Open Sans", ui-sans-serif, system-ui, sans-serif;
     font-variant-numeric:tabular-nums;
     -webkit-font-smoothing:antialiased;
   }
-  h1,h2,h3{font-family:"Fraunces", Georgia, serif; text-wrap:balance; letter-spacing:-0.01em;}
+  h1,h2,h3{font-family:"Work Sans", "Open Sans", Arial, sans-serif; text-wrap:balance; letter-spacing:-0.01em;}
   code{font-family:"SFMono-Regular", Consolas, Menlo, monospace; font-size:0.92em;}
 
   .topbar{
@@ -69,11 +71,11 @@
     width:44px;height:44px;border-radius:9px;
     background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.55);
     display:flex;align-items:center;justify-content:center;
-    font-family:"Fraunces",serif;font-weight:700;font-size:20px; flex:none;
+    font-family:"Work Sans",sans-serif;font-weight:700;font-size:20px; flex:none;
   }
   .wordmark .text{line-height:1.15;}
   .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
-  .wordmark .text .main{font-family:"Fraunces",serif;font-size:19px;font-weight:600;}
+  .wordmark .text .main{font-family:"Work Sans",sans-serif;font-size:19px;font-weight:600;}
   .eyebrow-chip{
     font-size:12px;font-weight:700;letter-spacing:0.04em;
     background:rgba(255,255,255,0.14); border:1px solid rgba(255,255,255,0.4);
@@ -107,7 +109,7 @@
     font-size:15px;
     color:var(--ink);
   }
-  .formula-box .formula{font-family:"Fraunces",serif;font-size:19px;font-weight:500;margin:0 0 6px;}
+  .formula-box .formula{font-family:"Work Sans",sans-serif;font-size:19px;font-weight:500;margin:0 0 6px;}
   .formula-box .caption{font-size:12.5px;color:var(--ink-muted);margin:0;}
 
   /* rule-of-thumb comparison */
@@ -117,7 +119,7 @@
     border-radius:12px;padding:16px 18px;border:1px solid var(--border);background:var(--surface-sunken);
   }
   .compare .tile .k{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);}
-  .compare .tile .v{font-family:"Fraunces",serif;font-size:26px;font-weight:600;margin-top:2px;}
+  .compare .tile .v{font-family:"Work Sans",sans-serif;font-size:26px;font-weight:600;margin-top:2px;}
   .compare .vs{font-size:12px;font-weight:800;color:var(--ink-muted);letter-spacing:0.05em;}
   .tile.good{background:var(--good-100);border-color:color-mix(in srgb, var(--good-700) 30%, var(--good-100));}
   .tile.good .v{color:var(--good-700);}
@@ -185,14 +187,14 @@
     border-top:1px solid var(--border);padding-top:24px;
   }
 </style>
+<link rel="stylesheet" href="brand/tamu-brand.css">
 </head>
 <body>
 <header class="topbar">
   <div class="wordmark">
-    <div class="mark">A</div>
+    <span class="brand-logo"><img class="logo-horizontal" src="brand/agrilife-extension-agecon-horizontal-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="381" height="46"><img class="logo-stacked" src="brand/agrilife-extension-agecon-stacked-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="120" height="52"></span>
     <div class="text">
-      <div class="top">Texas A&amp;M AgriLife Extension</div>
-      <div class="main">Decision Aids · Reference Note</div>
+    <div class="main">Decision Aids · Reference Note</div>
     </div>
   </div>
   <a href="index.html" class="eyebrow-chip" style="text-decoration:none;">&larr; Back to A1 · Cow Bid Price</a>
@@ -291,8 +293,10 @@
   </section>
 
   <footer>
+  <a class="footer-brand" href="https://agrilifeextension.tamu.edu/" aria-label="Texas A&amp;M AgriLife Extension"><img src="brand/agrilife-extension-agecon-horizontal-color.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="331" height="40"></a>
     Companion reference for the <strong>A1 — Cow Bid Price</strong> decision-aid tool (Texas A&amp;M AgriLife Extension, Phase 1 pilot). Share this alongside the calculator for anyone who wants the "why" behind the IRR number.
-  </footer>
+    <p class="eeo-statement">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the County Commissioners Courts of Texas Cooperating.</p>
+</footer>
 </main>
 </body>
 </html>
