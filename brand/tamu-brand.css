@@ -1,0 +1,166 @@
+/* ==========================================================================
+   Texas A&M AgriLife Extension — brand layer for the Decision Aids site
+   Loaded AFTER each page's own <style>, so these tokens win the cascade.
+
+   Colors: AgriLife Marketing & Communications brand palette
+     Primary   — Aggie Maroon #500000 · White #FFFFFF · Dark Blue #02233B
+     Secondary — Sage #97BFB4 · Crimson #8B0215 · Gold #CF8A40 · Tan #D6D3C4
+     Accent    — Dark Maroon #3C0000 · Light Maroon #732F2F · Magenta #900049
+                 Jade #115740 · Teal #007B89 · Light Blue #27A9E1
+     Neutrals  — True Black #000000 · Black #202020 · Dark Gray #3E3E3E
+                 Charcoal #333333 · Gray #707070 · Steel #666666
+                 Light Gray #D1D1D1 · Off-White #F6F6F6
+   Type: Texas A&M brand fonts — Work Sans (headlines), Oswald (all-caps
+         labels only, never body), Open Sans (body copy).
+   ========================================================================== */
+
+:root{
+  /* brand primitives */
+  --tamu-maroon:#500000;
+  --tamu-dark-maroon:#3C0000;
+  --tamu-light-maroon:#732F2F;
+  --tamu-dark-blue:#02233B;
+  --tamu-sage:#97BFB4;
+  --tamu-crimson:#8B0215;
+  --tamu-gold:#CF8A40;
+  --tamu-tan:#D6D3C4;
+  --tamu-jade:#115740;
+  --tamu-teal:#007B89;
+  --tamu-light-blue:#27A9E1;
+  --tamu-magenta:#900049;
+  --tamu-black:#202020;
+  --tamu-charcoal:#333333;
+  --tamu-dark-gray:#3E3E3E;
+  --tamu-gray:#707070;
+  --tamu-light-gray:#D1D1D1;
+  --tamu-off-white:#F6F6F6;
+
+  --font-head:"Work Sans", "Open Sans", Arial, sans-serif;
+  --font-label:"Oswald", "Work Sans", Arial, sans-serif;
+  --font-body:"Open Sans", Arial, sans-serif;
+
+  /* site tokens mapped onto the brand palette */
+  --maroon-900:var(--tamu-dark-maroon);
+  --maroon-800:var(--tamu-maroon);
+  --maroon-700:var(--tamu-light-maroon);
+  --maroon-100:#F3E9E9;            /* light tint of Aggie Maroon */
+  --wheat-500:var(--tamu-gold);
+  --wheat-100:#EFEDE6;             /* light tint of Tan */
+  --good-700:var(--tamu-jade);
+  --good-100:#E5EFEC;              /* light tint of Sage */
+  --critical-700:var(--tamu-crimson);
+  --critical-100:#F6E5E7;          /* light tint of Crimson */
+  --accent:var(--tamu-maroon);
+  --on-accent:#FFFFFF;
+  --bg:var(--tamu-off-white);
+  --surface:#FFFFFF;
+  --surface-sunken:#F0F0F0;
+  --border:var(--tamu-light-gray);
+  --ink:var(--tamu-black);
+  --ink-secondary:var(--tamu-dark-gray);
+  --ink-muted:#6A6A6A;             /* Gray, nudged to pass 4.5:1 on Off-White */
+  --focus:var(--tamu-dark-blue);
+  --shadow-card:0 1px 2px rgba(80,0,0,0.05), 0 4px 16px rgba(2,35,59,0.07);
+  /* chart series drawn from the brand palette */
+  --s1:var(--tamu-dark-blue); --s2:var(--tamu-gold); --s3:var(--tamu-teal);
+  --s4:var(--tamu-crimson);   --s5:var(--tamu-light-blue);
+}
+
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:var(--tamu-black);
+    --surface:#2A2A2A;
+    --surface-sunken:var(--tamu-charcoal);
+    --border:var(--tamu-dark-gray);
+    --ink:var(--tamu-off-white);
+    --ink-secondary:var(--tamu-light-gray);
+    --ink-muted:#A9A9A9;
+    --maroon-100:#3A2424;
+    --good-100:#1E302B; --good-700:var(--tamu-sage);
+    --critical-100:#3A1E22; --critical-700:#E8909B;
+    --wheat-100:#3A3127; --wheat-500:var(--tamu-gold);
+    --accent:var(--tamu-sage);
+    --on-accent:var(--tamu-black);
+    --focus:var(--tamu-light-blue);
+    --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+    --s1:var(--tamu-light-blue); --s2:var(--tamu-gold); --s3:var(--tamu-sage);
+    --s4:#E8909B; --s5:var(--tamu-tan);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:var(--tamu-black);
+  --surface:#2A2A2A;
+  --surface-sunken:var(--tamu-charcoal);
+  --border:var(--tamu-dark-gray);
+  --ink:var(--tamu-off-white);
+  --ink-secondary:var(--tamu-light-gray);
+  --ink-muted:#A9A9A9;
+  --maroon-100:#3A2424;
+  --good-100:#1E302B; --good-700:var(--tamu-sage);
+  --critical-100:#3A1E22; --critical-700:#E8909B;
+  --wheat-100:#3A3127; --wheat-500:var(--tamu-gold);
+  --accent:var(--tamu-sage);
+  --on-accent:var(--tamu-black);
+  --focus:var(--tamu-light-blue);
+  --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+  --s1:var(--tamu-light-blue); --s2:var(--tamu-gold); --s3:var(--tamu-sage);
+  --s4:#E8909B; --s5:var(--tamu-tan);
+}
+
+/* ---------- Typography ---------- */
+body{font-family:var(--font-body);}
+h1,h2,h3,h4{font-family:var(--font-head);font-weight:600;letter-spacing:-0.005em;}
+.section-label,
+.wordmark .text .top{
+  font-family:var(--font-label);font-weight:500;letter-spacing:0.08em;text-transform:uppercase;
+}
+
+/* Text on an accent fill: white on maroon (light), black on sage (dark) */
+button.btn,
+.segmented button.active,
+.tool-btn.primary,
+.tool-btn.primary:hover{color:var(--on-accent);}
+button.btn.secondary{color:var(--accent);}
+
+/* In-progress pill: gold is a fill color, not a text color (fails contrast) */
+.status-pill.progress{color:var(--ink-secondary);box-shadow:inset 0 0 0 1px var(--tamu-gold);}
+
+/* ---------- Header: solid Aggie Maroon band with the official lockup ---------- */
+.topbar{
+  background:var(--tamu-maroon) !important;
+  border-bottom:4px solid var(--tamu-dark-maroon);
+}
+.wordmark{gap:20px;}
+.wordmark a{gap:20px !important;}
+.brand-logo{display:block;flex:none;line-height:0;}
+.brand-logo img{display:block;height:46px;width:auto;}
+.brand-logo .logo-stacked{display:none;height:52px;}
+.wordmark .text{
+  padding-left:20px;border-left:1px solid rgba(255,255,255,0.45);
+  font-family:var(--font-head);
+}
+.wordmark .text .main{font-family:var(--font-head);font-weight:600;font-size:18px;}
+@media (max-width:720px){
+  .brand-logo .logo-horizontal{display:none;}
+  .brand-logo .logo-stacked{display:block;}
+  .wordmark .text{padding-left:14px;}
+  .wordmark .text .main{font-size:15.5px;}
+}
+@media (max-width:420px){
+  .wordmark .text{display:none;}
+}
+
+/* Hero fence line in Gold */
+.fence-line{opacity:0.7;}
+
+/* ---------- Footer: logo + required nondiscrimination statement ---------- */
+footer .footer-brand{display:block;margin:0 0 14px;line-height:0;}
+footer .footer-brand img{height:40px;width:auto;}
+:root[data-theme="dark"] footer .footer-brand img{filter:brightness(0) invert(1);opacity:0.9;}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) footer .footer-brand img{filter:brightness(0) invert(1);opacity:0.9;}
+}
+footer .eeo-statement{
+  margin-top:14px;padding-top:14px;border-top:1px solid var(--border);
+  color:var(--ink-secondary);font-size:12.5px;line-height:1.6;max-width:110ch;
+}

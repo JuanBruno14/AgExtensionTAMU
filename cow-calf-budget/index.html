@@ -5,7 +5,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Texas A&amp;M AgriLife Extension - Decision Making</title>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Public+Sans:wght@400;500;600;700;800&display=swap">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap">
 <style>
   :root{
     --maroon-900:#3a0000;
@@ -56,12 +58,12 @@
     margin:0;
     background:var(--bg);
     color:var(--ink);
-    font-family:"Public Sans", ui-sans-serif, system-ui, sans-serif;
+    font-family:"Open Sans", ui-sans-serif, system-ui, sans-serif;
     font-variant-numeric:tabular-nums;
     -webkit-font-smoothing:antialiased;
   }
   h1,h2,h3,.display{
-    font-family:"Fraunces", Georgia, serif;
+    font-family:"Work Sans", "Open Sans", Arial, sans-serif;
     text-wrap:balance;
     letter-spacing:-0.01em;
   }
@@ -84,13 +86,13 @@
     background:rgba(255,255,255,0.12);
     border:1.5px solid rgba(255,255,255,0.55);
     display:flex;align-items:center;justify-content:center;
-    font-family:"Fraunces",serif;font-weight:700;font-size:20px;
+    font-family:"Work Sans",sans-serif;font-weight:700;font-size:20px;
     flex:none;
   }
   .wordmark .text{line-height:1.15;}
   .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
-  .wordmark .text .main{font-family:"Fraunces",serif;font-size:19px;font-weight:600;}
-  .tool-title{font-family:"Fraunces",serif;font-size:clamp(18px,2.4vw,26px);font-weight:600;margin:0;}
+  .wordmark .text .main{font-family:"Work Sans",sans-serif;font-size:19px;font-weight:600;}
+  .tool-title{font-family:"Work Sans",sans-serif;font-size:clamp(18px,2.4vw,26px);font-weight:600;margin:0;}
   .header-right{display:flex;align-items:center;gap:10px;}
   .phase-chip{
     font-size:12px;font-weight:700;letter-spacing:0.04em;
@@ -170,7 +172,7 @@
   }
   .live-summary .item{display:flex;flex-direction:column;gap:2px;min-width:0;}
   .live-summary .item .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);white-space:nowrap;}
-  .live-summary .item .value{font-family:"Fraunces",serif;font-size:19px;font-weight:600;line-height:1.15;color:var(--ink);}
+  .live-summary .item .value{font-family:"Work Sans",sans-serif;font-size:19px;font-weight:600;line-height:1.15;color:var(--ink);}
   @media (max-width:560px){ .live-summary{grid-template-columns:1fr;gap:8px;padding:12px 14px;} }
 
   /* ---------- Step wizard (C1) ---------- */
@@ -248,7 +250,7 @@
   .stat-tile{background:var(--surface-sunken);border:1px solid var(--border);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;}
   .stat-tile.wide{grid-column:1 / -1;}
   .stat-tile .label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);}
-  .stat-tile .value{font-family:"Fraunces",serif;font-size:26px;font-weight:600;line-height:1.1;}
+  .stat-tile .value{font-family:"Work Sans",sans-serif;font-size:26px;font-weight:600;line-height:1.1;}
   .stat-tile .sub{font-size:12px;color:var(--ink-muted);}
 
   .stackbar-total{font-size:12.5px;color:var(--ink-secondary);margin-bottom:8px;display:flex;justify-content:space-between;}
@@ -317,15 +319,15 @@
 
   .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
 </style>
+<link rel="stylesheet" href="../brand/tamu-brand.css">
 </head>
 <body>
 <header class="topbar">
   <div class="wordmark">
     <a href="../index.html" style="display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;">
-      <div class="mark">A</div>
+      <span class="brand-logo"><img class="logo-horizontal" src="../brand/agrilife-extension-agecon-horizontal-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="381" height="46"><img class="logo-stacked" src="../brand/agrilife-extension-agecon-stacked-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="120" height="52"></span>
       <div class="text">
-        <div class="top">Texas A&amp;M AgriLife Extension - Decision Making</div>
-        <div class="main">Decision Aids &middot; Cow-Calf Budgeting &amp; Herd Bull Investment</div>
+      <div class="main">Decision Aids &middot; Cow-Calf Budgeting &amp; Herd Bull Investment</div>
       </div>
     </a>
   </div>
@@ -1178,7 +1180,9 @@
 <div class="viz-tooltip" id="vizTooltip"></div>
 
 <footer>
+  <a class="footer-brand" href="https://agrilifeextension.tamu.edu/" aria-label="Texas A&amp;M AgriLife Extension"><img src="../brand/agrilife-extension-agecon-horizontal-color.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="331" height="40"></a>
   Part of Texas A&amp;M AgriLife Extension's <a href="../index.html">Beef Cattle Decision Aids</a>, rebuilt as an interactive web tool. Starting values reproduce the original spreadsheet's own assumptions, not real producer data &mdash; always verify results before using them to make a decision. Where a price was updated to a current market number, it's cited on <a href="../data-sources.html">the market data page</a>.
+  <p class="eeo-statement">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the County Commissioners Courts of Texas Cooperating.</p>
 </footer>
 
 <script>
