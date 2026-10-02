@@ -117,7 +117,7 @@ h1,h2,h3,h4{font-family:var(--font-head);font-weight:600;letter-spacing:-0.005em
 
 /* Text on an accent fill: white on maroon (light), black on sage (dark) */
 button.btn,
-.segmented button.active,
+.segmented button.active:not(.seg-btn),   /* accent-filled toggles only; .seg-btn tabs use a white pill */
 .tool-btn.primary,
 .tool-btn.primary:hover{color:var(--on-accent);}
 button.btn.secondary{color:var(--accent);}
