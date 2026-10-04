@@ -695,6 +695,16 @@
   .herd-now-form select,.herd-now-form input{padding:6px 8px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);font:inherit;font-weight:400;}
   .herd-now-form label[hidden]{display:none;}
   @media (max-width:640px){ .seg.map-color button{padding:6px 9px;font-size:12px;} }
+
+  /* animal-unit breakdown */
+  .au-box{margin-top:10px;background:var(--surface-sunken);border:1px solid var(--border);border-radius:10px;padding:10px 12px;}
+  .au-title{font-size:12px;font-weight:700;color:var(--ink);margin-bottom:6px;}
+  .au-table{width:100%;border-collapse:collapse;font-size:12.5px;font-variant-numeric:tabular-nums;}
+  .au-table td{padding:3px 0;border-bottom:1px solid var(--border);color:var(--ink-secondary);vertical-align:top;}
+  .au-table td.au-calc{color:var(--ink-muted);padding:3px 8px;white-space:nowrap;}
+  .au-table td.num{text-align:right;white-space:nowrap;color:var(--ink);}
+  .au-table tfoot td{border-bottom:0;font-weight:700;color:var(--ink);padding-top:5px;}
+  .au-foot{font-size:11.5px;color:var(--ink-muted);margin-top:6px;line-height:1.45;}
 </style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
 </head>
@@ -2866,13 +2876,18 @@
     $('hd_bullsHint').textContent = h.bulls != null ? 'Your number' : 'Auto: 1 per ' + cowsPerBull() + ' cows (' + b + ')';
     $('hd_bulls').placeholder = String(b);
     var a = herdAUParts();
+    var row = function(lbl, calc, v){ return '<tr><td>' + lbl + '</td><td class="au-calc">' + calc + '</td><td class="num">' + fmt(v, 1) + '</td></tr>'; };
+    var bc = bullCount();
     $('hd_auNote').innerHTML = h.cows > 0
-      ? '= <strong>' + fmt(a.total, 1) + ' animal units</strong>: ' + fmt(h.cows) + ' cows × ' + fmt(a.cowAue, 2) + ' (calf up to 6 months included)' +
-        (a.bulls > 0 ? ' + ' + bullCount() + ' bull' + (bullCount() > 1 ? 's' : '') + ' × ' + fmt(a.bullAue, 2) : '') +
-        (a.calves > 0.05 ? ' + ' + fmt(a.calves, 1) + ' AU of calves older than 6 months' : '') +
-        (a.heifers > 0.05 ? ' + ' + fmt(a.heifers, 1) + ' AU of replacement heifers' : '') + (a.calves + a.heifers > 0.05 ? ' (year averages)' : '') +
-        '. AU by metabolic weight: (weight ÷ 1,000 lb)<sup>0.75</sup>.'
-      : '1 animal unit (AU) = a 1,000 lb cow with a calf up to 6 months (26 lb of forage a day). Heavier animals count by metabolic weight: a 1,200 lb cow = 1.15 AU.';
+      ? '<div class="au-box"><div class="au-title">How your herd adds up in animal units (AU)</div>' +
+        '<table class="au-table"><tbody>' +
+        row('Cows with calves up to 6 months', fmt(h.cows) + ' × ' + fmt(a.cowAue, 3) + ' AU', a.cows) +
+        (a.bulls > 0 ? row('Bulls', bc + ' × ' + fmt(a.bullAue, 3) + ' AU', a.bulls) : '') +
+        (a.calves > 0.05 ? row('Calves older than 6 months', 'year average', a.calves) : '') +
+        (a.heifers > 0.05 ? row('Replacement heifers', 'year average', a.heifers) : '') +
+        '</tbody><tfoot><tr><td>Total</td><td></td><td class="num">' + fmt(a.total, 1) + ' AU</td></tr></tfoot></table>' +
+        '<div class="au-foot">1 AU = a 1,000 lb cow with her calf, eating 26 lb of forage a day. Other weights count by metabolic weight: AU = (weight ÷ 1,000 lb)<sup>0.75</sup> — a ' + fmt(h.cowLb) + ' lb cow = ' + fmt(a.cowAue, 2) + ' AU' + (a.bulls > 0 ? ', a ' + fmt(h.bullLb) + ' lb bull = ' + fmt(a.bullAue, 2) + ' AU' : '') + '. Calves and heifers count by their weight for the days they are on the ranch.</div></div>'
+      : '<div class="au-box"><div class="au-foot" style="margin:0;">1 animal unit (AU) = a 1,000 lb cow with a calf up to 6 months (26 lb of forage a day). Heavier animals count by metabolic weight: a 1,200 lb cow = 1.15 AU. Enter your cows to see your herd’s total.</div></div>';
   }
   function mmddToDate(s){ return '2026-' + (s || '02-15'); }
   function dateToMmdd(v){ var m = String(v || '').match(/^\d{4}-(\d{2})-(\d{2})$/); return m ? m[1] + '-' + m[2] : null; }
