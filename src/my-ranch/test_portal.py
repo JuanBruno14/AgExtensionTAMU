@@ -1,5 +1,5 @@
 import os
-HERE=os.path.dirname(os.path.abspath(__file__)); REPO=os.path.abspath(os.path.join(HERE,'..','..')); OUT=os.path.join(HERE,'.out'); os.makedirs(OUT, exist_ok=True)
+HERE=os.path.dirname(os.path.realpath(__file__)); REPO=os.path.abspath(os.path.join(HERE,'..','..')); OUT=os.path.join(HERE,'.out'); os.makedirs(OUT, exist_ok=True)
 exec(open(os.path.join(HERE,'test_ranch.py')).read().split("with sync_playwright() as pw:")[0])
 with sync_playwright() as pw:
     b=pw.chromium.launch(); ctx=b.new_context(viewport={'width':1280,'height':900}); ctx.route('**/*', route); pg=ctx.new_page()

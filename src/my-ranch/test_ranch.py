@@ -1,5 +1,5 @@
 import os
-HERE=os.path.dirname(os.path.abspath(__file__)); REPO=os.path.abspath(os.path.join(HERE,'..','..')); OUT=os.path.join(HERE,'.out'); os.makedirs(OUT, exist_ok=True)
+HERE=os.path.dirname(os.path.realpath(__file__)); REPO=os.path.abspath(os.path.join(HERE,'..','..')); OUT=os.path.join(HERE,'.out'); os.makedirs(OUT, exist_ok=True)
 import json, re, threading, http.server, socketserver, os, functools, time, sys
 from playwright.sync_api import sync_playwright
 

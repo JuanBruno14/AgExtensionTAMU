@@ -1205,7 +1205,7 @@
           <button type="button" class="tool-btn primary" id="planBtn">🗒 One-page year plan</button>
         </div>
         <input type="file" id="fileInput" accept=".geojson,.json,.kml,.kmz,.zip" hidden>
-        <p class="card-note" style="margin:10px 0 0;">Opens Google Earth files (KML/KMZ), GeoJSON, or a zipped shapefile from your agent or FSA office.</p>
+        <p class="card-note" style="margin:10px 0 0;">Opens Google Earth files (KML/KMZ), GeoJSON, or a zipped shapefile from your agent or FSA office. The GeoJSON download also keeps your herd, feed and decision settings, so opening it on another device brings back the whole ranch.</p>
         <p class="notice" id="fileNotice" hidden></p>
         <div class="btn-row" style="padding:14px 0 0;">
           <button type="button" class="tool-btn danger" id="clearBtn">Delete this ranch from this device</button>
@@ -3817,7 +3817,24 @@
       skipped++;
     });
     zoneCache = {};
-    return {pastures:nP, points:nPt, zones:nZ, skipped:skipped};
+    // herd, feed and decision settings saved by My Ranch itself (GeoJSON download)
+    var mr = obj && !Array.isArray(obj) && obj.my_ranch, herdLoaded = false;
+    if(mr && typeof mr === 'object'){
+      if(mr.herd && typeof mr.herd === 'object'){
+        state.herd = Object.assign({}, DEFAULT_HERD, mr.herd);
+        state.herd.dr = Object.assign({}, DEFAULT_HERD.dr, mr.herd.dr || {});
+        herdLoaded = true;
+      }
+      if(mr.settings && typeof mr.settings === 'object'){
+        ['harvestEff', 'intakeLb', 'manualCap', 'maxGraze'].forEach(function(k){ if(mr.settings[k] === null || isFinite(+mr.settings[k])) state.settings[k] = mr.settings[k] === null ? null : +mr.settings[k]; });
+        if(mr.settings.cond) state.settings.cond = Object.assign({}, DEFAULT_SETTINGS.cond, mr.settings.cond);
+        if(mr.settings.zoneF) state.settings.zoneF = Object.assign({}, DEFAULT_SETTINGS.zoneF, mr.settings.zoneF);
+      }
+      if(typeof mr.name === 'string' && mr.name && !state.name) state.name = mr.name.slice(0, 60);
+      if(mr.herdNow && mr.herdNow.since) state.herdNow = null;   // pasture ids change on import
+      if(herdLoaded){ try{ bindHerdValues(); $('ranchName').value = state.name || ''; }catch(e){} }
+    }
+    return {pastures:nP, points:nPt, zones:nZ, skipped:skipped, herd:herdLoaded};
   }
   function addPastureSilently(geom, props){
     var coords = cleanPolygon(geom.coordinates || []);
@@ -3848,7 +3865,7 @@
       renderAll(true);
       fitRanch();
       refreshDroughtIfMoved(true);
-      showNotice('Added ' + r.pastures + ' pasture' + (r.pastures === 1 ? '' : 's') + (r.points ? ' and ' + r.points + ' point' + (r.points === 1 ? '' : 's') : '') + ' from ' + file.name + '.' + (r.skipped ? ' Skipped ' + r.skipped + ' line or other shape' + (r.skipped === 1 ? '' : 's') + '.' : ''), 'good');
+      showNotice('Added ' + r.pastures + ' pasture' + (r.pastures === 1 ? '' : 's') + (r.points ? ' and ' + r.points + ' point' + (r.points === 1 ? '' : 's') : '') + (r.herd ? ', with the herd and feed settings' : '') + ' from ' + file.name + '.' + (r.skipped ? ' Skipped ' + r.skipped + ' line or other shape' + (r.skipped === 1 ? '' : 's') + '.' : ''), 'good');
     }).catch(function(err){
       showNotice((err && err.message) || 'That file couldn’t be opened.', 'bad');
     });
@@ -3867,7 +3884,10 @@
     })).concat(state.points.map(function(pt){
       return {type:'Feature', geometry:{type:'Point', coordinates:[pt.lng, pt.lat]}, properties:{name:pt.name || POINT_TYPES[pt.type].label, point_type:pt.type}};
     }));
-    return {type:'FeatureCollection', name:state.name || 'My Ranch', features:feats};
+    var st = state.settings;
+    return {type:'FeatureCollection', name:state.name || 'My Ranch', features:feats,
+            my_ranch:{version:1, name:state.name || '', herd:state.herd, herdNow:state.herdNow || null,
+                      settings:{harvestEff:st.harvestEff, intakeLb:st.intakeLb, manualCap:st.manualCap, maxGraze:st.maxGraze, cond:st.cond, zoneF:st.zoneF}}};
   }
   function xml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]; }); }
   function toKml(){

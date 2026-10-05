@@ -1,5 +1,5 @@
 import os
-HERE=os.path.dirname(os.path.abspath(__file__)); REPO=os.path.abspath(os.path.join(HERE,'..','..')); OUT=os.path.join(HERE,'.out'); os.makedirs(OUT, exist_ok=True)
+HERE=os.path.dirname(os.path.realpath(__file__)); REPO=os.path.abspath(os.path.join(HERE,'..','..')); OUT=os.path.join(HERE,'.out'); os.makedirs(OUT, exist_ok=True)
 exec(open(os.path.join(HERE,'test_ranch.py')).read().split('with sync_playwright() as pw:')[0].replace('PORT=8765','PORT=8767'))
 def sq(x0,y0,d=0.02): return {'type':'Polygon','coordinates':[[[x0,y0],[x0+d,y0],[x0+d,y0+d],[x0,y0+d],[x0,y0]]]}
 with sync_playwright() as pw:

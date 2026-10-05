@@ -1,5 +1,5 @@
 import os
-HERE=os.path.dirname(os.path.abspath(__file__)); REPO=os.path.abspath(os.path.join(HERE,'..','..'))
+HERE=os.path.dirname(os.path.realpath(__file__)); REPO=os.path.abspath(os.path.join(HERE,'..','..'))
 src=open(os.path.join(REPO,'replacement-heifer','index.html')).read()
 css=src[src.index('<style>')+7:src.index('</style>')]
 head='''<!doctype html>
