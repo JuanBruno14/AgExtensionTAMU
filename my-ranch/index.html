@@ -706,24 +706,10 @@
   .au-table tfoot td{border-bottom:0;font-weight:700;color:var(--ink);padding-top:5px;}
   .au-foot{font-size:11.5px;color:var(--ink-muted);margin-top:6px;line-height:1.45;}
 
-  /* need vs grass (calving decision) */
-  .dm-btns{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:4px 0 10px;}
-  .dm-lbl{font-size:12.5px;font-weight:600;color:var(--ink-secondary);margin-right:6px;}
-  .dm-btn{border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:6px;padding:4px 8px;font:inherit;font-size:12.5px;cursor:pointer;min-width:40px;}
-  .dm-btn.best{border-color:var(--accent);}
-  .dm-btn.on{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:700;}
-  .dm-offer{fill:color-mix(in srgb, var(--s3) 35%, transparent);stroke:var(--s3);stroke-width:1.5;}
-  .dm-gap{fill:color-mix(in srgb, var(--s2) 55%, transparent);}
-  .dm-need{fill:none;stroke:var(--accent);stroke-width:2.5;}
-  .dm-dot{fill:var(--accent);stroke:var(--surface);stroke-width:1.5;}
-  .dm-calv{fill:var(--ink);}
-  .sw.dm-sw-offer{background:color-mix(in srgb, var(--s3) 45%, transparent);border:1px solid var(--s3);}
-  .sw.dm-sw-gap{background:color-mix(in srgb, var(--s2) 60%, transparent);}
-  .sw.dm-sw-calv{background:var(--ink);}
-  .ln.dm-ln-need{background:var(--accent);}
-  .dm-cow{fill:none;stroke:var(--accent);stroke-width:1.8;stroke-dasharray:5 4;opacity:0.85;}
-  .dm-ln-cow{display:inline-block;width:18px;height:0;border-top:2px dashed var(--accent);}
-  .dm-avg{stroke:var(--ink-muted);stroke-dasharray:2 3;stroke-width:1;}
+  .pc-bar{fill:var(--dec-muted);}
+  .pc-bar.best{fill:var(--accent);}
+  .pc-bar.cur{stroke:var(--ink);stroke-width:2;}
+  .pc-val{font-size:10.5px;fill:var(--ink-secondary);font-weight:600;}
 </style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
 </head>
@@ -1084,11 +1070,8 @@
         <div class="dec-panel" id="dec_calving">
           <p class="card-note" style="margin-top:14px;">Tries a <span id="dec_calvLen">60</span>-day calving season starting in each month, with the same herd, pastures and weaning age. First the ranch’s production — calves, pounds weaned, losses and the feed you’d have to buy — then what that’s worth at market prices.</p>
           <h3 class="sub-h">1. Production</h3>
-          <p class="card-note" style="margin:0 0 8px;">Match the herd’s biggest need — cows nursing — with the months your grass grows. Pick a calving month to slide the need curve along the year.</p>
-          <div class="dm-btns" id="dec_matchBtns"></div>
-          <div class="fc-chart" id="dec_matchChart"></div>
-          <p class="fc-short" id="dec_matchText"></p>
-          <div class="fc-chart" id="dec_calvChart" style="margin-top:18px;"></div>
+          <p class="card-note" style="margin:0 0 8px;">After calving the cows nurse and need the most. The best month to calve is the one where your grass covers that need, so you buy the least feed when it matters.</p>
+          <div class="fc-chart" id="dec_calvChart"></div>
           <p class="fc-short" id="dec_calvText"></p>
           <div class="table-scroll"><table class="plan fc-table" id="dec_calvTable"></table></div>
           <h3 class="sub-h" style="margin-top:26px;">2. Economics</h3>
@@ -2876,7 +2859,7 @@
 
 
   /* ------------------------------------------------------------------ feed calendar UI */
-  var feedLast = null, feedKey = '', feedNutrient = 'tdn', decTab = 'calving', decTimer = null, decKey = '', decMatchM = null;
+  var feedLast = null, feedKey = '', feedNutrient = 'tdn', decTab = 'calving', decTimer = null, decKey = '';
 
   /* Market price slides (same data and anchors as the Cow-Calf tools), rescaled to the shared market store */
   var STEER_SLIDE_BASE = [{w:397.0,p:629.0},{w:463.8,p:565.3},{w:516.4,p:530.0},{w:654.7,p:441.5},{w:762.3,p:437.9},{w:835.5,p:420.8},{w:962.3,p:392.1},{w:1140.0,p:318.2}];
@@ -3525,69 +3508,57 @@
       var e = r.econ, weaned = e.calvesSold + e.heifersKept;
       var cs = r.calves.cohorts, mid = cs[Math.floor(cs.length/2)] || cs[0];
       var feedLb = r.totals.hay + r.totals.sup, shortM = r.months.filter(function(x){ return x.hayLb + x.supLb > 1; }).length;
-      rows.push({m:s, res:r, e:e, weaned:weaned, weanLb:e.avgWeanLb, lbPerCow:weaned*e.avgWeanLb/cows, deadCold:e.deadWeather, deadNws:e.deadNws,
+      var post = [1, 2, 3, 4].map(function(k){ return r.months[(s + k) % 12]; });
+      var cov = post.map(function(x){ var t = x.herdReq.tdn > 0 ? x.pasture.tdn/x.herdReq.tdn : 1, c = x.herdReq.cp > 0 ? x.pasture.cp/x.herdReq.cp : 1; return Math.min(1, t, c); });
+      var postFeed = post.reduce(function(a, x){ return a + x.hayLb + x.supLb; }, 0);
+      rows.push({m:s, res:r, e:e, weaned:weaned, postCov:cov.reduce(function(a, b){ return a + b; }, 0)/4, postFeed:postFeed/cows, postMonths:[1, 2, 3, 4].map(function(k){ return (s + k) % 12; }), weanLb:e.avgWeanLb, lbPerCow:weaned*e.avgWeanLb/cows, deadCold:e.deadWeather, deadNws:e.deadNws,
                  hayT:r.totals.hay/2000, supT:r.totals.sup/2000, feedPerCow:feedLb/cows, shortM:shortM, saleM:mid ? mid.saleMonth : 0});
     }
     function argBest(f, max){ return rows.reduce(function(a, r){ return (max ? f(r) > f(a) : f(r) < f(a)) ? r : a; }, rows[0]); }
     function moStr(m){ return FEED.MONTHS[m] + ' 15'; }
 
-    /* 1a. need vs. grass growing (the Mott curve): pick a calving month and see where the herd's need sits on the forage curve */
-    var sup = supplyNow(1);
-    var offer = FEED.MONTH_DAYS.map(function(d, m){ return sup.reduce(function(a, g){ return a + g.growth[m]*(g.quality ? g.quality[m][0] : 55)/100; }, 0)/d; });
-    var bestFeed0 = rows.reduce(function(a, r){ return r.feedPerCow < a.feedPerCow ? r : a; }, rows[0]);
-    if(decMatchM == null || decMatchM < 0 || decMatchM > 11) decMatchM = curM >= 0 ? curM : bestFeed0.m;
-    $('dec_matchBtns').innerHTML = '<span class="dm-lbl">Calving from</span>' + FEED.MONTHS.map(function(n, m){ return '<button type="button" class="dm-btn' + (m === decMatchM ? ' on' : '') + (m === bestFeed0.m ? ' best' : '') + '" data-mm="' + m + '" aria-pressed="' + (m === decMatchM) + '">' + n + '</button>'; }).join('');
-    $('dec_matchBtns').querySelectorAll('[data-mm]').forEach(function(b){ b.addEventListener('click', function(){ decMatchM = +b.getAttribute('data-mm'); drawMatch(); $('dec_matchBtns').querySelectorAll('[data-mm]').forEach(function(x){ var on = +x.getAttribute('data-mm') === decMatchM; x.classList.toggle('on', on); x.setAttribute('aria-pressed', on); }); }); });
-    function drawMatch(){
-      var r = rows[decMatchM], need = r.res.months.map(function(x){ return x.herdReq.tdn; }), cowNeed = r.res.months.map(function(x){ return x.herdReq.cowTdn; });
-      var avg = function(a){ return a.reduce(function(x, y){ return x + y; }, 0)/a.length || 1; };
-      var aN = avg(need), aO = avg(offer);
-      var iN = need.map(function(v){ return v/aN*100; }), iC = cowNeed.map(function(v){ return v/aN*100; }), iO = offer.map(function(v){ return v/aO*100; });
-      var el = $('dec_matchChart'), W = Math.round(Math.max(320, Math.min(720, el.clientWidth || 720))), H = 230, ml = W < 500 ? 40 : 50, mr = 8, mt = 14, mb = 34, pw = W - ml - mr, ph = H - mt - mb;
-      var max = Math.ceil(Math.max.apply(null, iN.concat(iO, [150]))/100)*100, band = pw/12;
-      function X(m){ return ml + band*m + band/2; } function Y(v){ return mt + ph - v/max*ph; }
-      var sv = '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><g class="grid">';
-      for(var i = 0; i <= 4; i++){ sv += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + Y(max*i/4) + '" y2="' + Y(max*i/4) + '"/>'; }
-      sv += '<line class="dm-avg" x1="' + ml + '" x2="' + (W - mr) + '" y1="' + Y(100) + '" y2="' + Y(100) + '"/></g><g class="axis">';
-      for(i = 0; i <= 4; i++){ sv += '<text x="' + (ml - 8) + '" y="' + (Y(max*i/4) + 4) + '" text-anchor="end">' + fmt(max*i/4) + '%</text>'; }
-      FEED.MONTHS.forEach(function(n, m){ sv += '<text x="' + X(m) + '" y="' + (mt + ph + 16) + '" text-anchor="middle">' + n + '</text>'; });
-      sv += '</g>';
-      sv += '<path class="dm-offer" d="M' + X(0) + ',' + Y(0) + iO.map(function(v, m){ return 'L' + X(m).toFixed(1) + ',' + Y(v).toFixed(1); }).join('') + 'L' + X(11) + ',' + Y(0) + 'Z"/>';
-      iN.forEach(function(v, m){ if(v > 100 && iO[m] < 100) sv += '<rect class="dm-gap" x="' + (X(m) - band*0.32).toFixed(1) + '" y="' + Y(v).toFixed(1) + '" width="' + (band*0.64).toFixed(1) + '" height="' + (Y(iO[m]) - Y(v)).toFixed(1) + '"/>'; });
-      sv += '<polyline class="dm-cow" points="' + iC.map(function(v, m){ return X(m).toFixed(1) + ',' + Y(v).toFixed(1); }).join(' ') + '"/>';
-      sv += '<polyline class="dm-need" points="' + iN.map(function(v, m){ return X(m).toFixed(1) + ',' + Y(v).toFixed(1); }).join(' ') + '"/>';
-      iN.forEach(function(v, m){ sv += '<circle class="dm-dot" cx="' + X(m).toFixed(1) + '" cy="' + Y(v).toFixed(1) + '" r="3.5"/>'; });
-      var c0 = decMatchM, nM = Math.max(1, Math.round(len/30)), cx0 = ml + band*c0 + band/2;
-      sv += '<rect class="dm-calv" x="' + cx0 + '" y="' + (mt + ph + 23) + '" width="' + Math.min(band*nM, W - mr - cx0) + '" height="5" rx="2"/>';
-      if(cx0 + band*nM > W - mr) sv += '<rect class="dm-calv" x="' + (ml + band/2) + '" y="' + (mt + ph + 23) + '" width="' + (cx0 + band*nM - (W - mr)) + '" height="5" rx="2"/>';
-      sv += '</svg>';
-      el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span><i class="sw dm-sw-offer"></i>Grass growing</span><span><i class="ln dm-ln-need"></i>What the whole herd needs</span><span><i class="dm-ln-cow"></i>Cows alone</span><span><i class="sw dm-sw-gap"></i>High need, little growth</span><span><i class="sw dm-sw-calv" style="height:5px;vertical-align:middle;"></i>Calving</span><span style="color:var(--ink-muted);">% of each one’s yearly average (energy, TDN)</span></div>' + sv;
-      var pk = cowNeed.indexOf(Math.max.apply(null, cowNeed)), og = offer.indexOf(Math.max.apply(null, offer)), hk = need.indexOf(Math.max.apply(null, need));
-      var gapM = iN.map(function(v, m){ return v > 100 && iO[m] < 100 ? m : -1; }).filter(function(m){ return m >= 0; });
-      var dist = Math.min(Math.abs(pk - og), 12 - Math.abs(pk - og));
-      $('dec_matchText').innerHTML = 'Calving from <strong>' + FEED.MONTHS[decMatchM] + ' 15</strong>, the cows need the most in <strong>' + FEED.MONTHS[pk] + '</strong> (peak milk, about 2 months after calving) and your grass grows the most in <strong>' + FEED.MONTHS[og] + '</strong>' +
-        (dist === 0 ? ' — the peaks line up.' : ' — ' + dist + ' month' + (dist > 1 ? 's' : '') + ' apart.') +
-        (hk !== pk ? ' The whole herd peaks in ' + FEED.MONTHS[hk] + ', when big calves near weaning eat the most grass.' : '') +
-        ' The herd’s need is above its average while grass is below its own in ' + (gapM.length ? gapM.length + ' months (' + monthList(gapM) + ')' : 'no month') + ' — those months lean on grass carried over from earlier, hay or supplement. ' +
-        'Result: ' + fmt(r.feedPerCow) + ' lb of feed bought per cow a year' + (decMatchM === bestFeed0.m ? ', the least of any month.' : ' (least: ' + fmt(bestFeed0.feedPerCow) + ' lb, calving from ' + FEED.MONTHS[bestFeed0.m] + ').');
-    }
-    drawMatch();
-
     /* 1. production */
     var bestFeed = argBest(function(r){ return r.feedPerCow; }, false), bestLb = argBest(function(r){ return r.lbPerCow; }, true);
     var worstFeed = argBest(function(r){ return r.feedPerCow; }, true);
-    decDotChart($('dec_calvChart'), rows.map(function(r){ return r.feedPerCow; }), {best:bestFeed.m, cur:curM, minPad:20,
-      legend:'Hay + supplement bought per cow, lb a year · calving season starting mid-month (lower is better)', fmt:function(v){ return fmt(Math.max(0, v)); },
-      tip:function(m){ var r = rows[m]; return '<div class="tt-val">Calving from ' + moStr(m) + '</div><div>' + fmt(r.feedPerCow) + ' lb of feed per cow</div><div class="tt-lbl">' + fmt(r.weaned, 1) + ' calves weaned × ' + fmt(r.weanLb) + ' lb = ' + fmt(r.lbPerCow) + ' lb per cow</div>'; }});
+    var bestCov = argBest(function(r){ return r.postCov + r.lbPerCow*1e-6 - r.postFeed*1e-9; }, true), worstCov = argBest(function(r){ return r.postCov; }, false);
+    (function(){
+      var el = $('dec_calvChart'), W = Math.round(Math.max(320, Math.min(720, el.clientWidth || 720))), H = 220, ml = W < 500 ? 40 : 48, mr = 6, mt = 18, mb = 30, pw = W - ml - mr, ph = H - mt - mb, band = pw/12, bw = Math.min(34, band*0.62);
+      function Y(v){ return mt + ph - v*ph; }
+      var sv = '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><g class="grid">';
+      for(var i = 0; i <= 4; i++) sv += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + Y(i/4) + '" y2="' + Y(i/4) + '"/>';
+      sv += '</g><g class="axis">';
+      for(i = 0; i <= 4; i++) sv += '<text x="' + (ml - 8) + '" y="' + (Y(i/4) + 4) + '" text-anchor="end">' + (i*25) + '%</text>';
+      sv += '</g>';
+      rows.forEach(function(r, m){
+        var x = ml + band*m + band/2 - bw/2, y = Y(r.postCov), isB = r === bestCov, isC = m === curM;
+        sv += '<rect class="pc-bar' + (isB ? ' best' : '') + (isC ? ' cur' : '') + '" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (Y(0) - y).toFixed(1) + '" rx="3"/>';
+        sv += '<text class="pc-val" x="' + (x + bw/2).toFixed(1) + '" y="' + (y - 5).toFixed(1) + '" text-anchor="middle">' + fmt(r.postCov*100) + '</text>';
+        sv += '<g class="axis"><text x="' + (x + bw/2).toFixed(1) + '" y="' + (mt + ph + 16) + '" text-anchor="middle">' + FEED.MONTHS[m] + '</text></g>';
+        sv += '<rect class="hit" data-m="' + m + '" tabindex="0" x="' + (ml + band*m) + '" y="' + mt + '" width="' + band + '" height="' + (ph + mb) + '"/>';
+      });
+      sv += '</svg>';
+      el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span style="color:var(--ink-muted);">% of the herd’s energy and protein that grass covers in the 4 months after calving starts · calving from the 15th</span>' + (curM >= 0 ? '<span><i class="sw" style="background:var(--dec-muted);box-shadow:0 0 0 2px var(--ink);"></i>Your season</span>' : '') + '<span><i class="sw" style="background:var(--accent);"></i>Best</span></div>' + sv;
+      var tip = feedTip();
+      el.querySelectorAll('.hit').forEach(function(hh){
+        function show(){ var r = rows[+hh.getAttribute('data-m')], b = hh.getBoundingClientRect();
+          tip.innerHTML = '<div class="tt-val">Calving from ' + moStr(r.m) + '</div><div>Grass covers ' + fmt(r.postCov*100) + '% in ' + FEED.MONTHS[r.postMonths[0]] + '–' + FEED.MONTHS[r.postMonths[3]] + '</div><div class="tt-lbl">' + fmt(r.postFeed) + ' lb hay + supplement per cow those months · ' + fmt(r.feedPerCow) + ' lb all year</div>';
+          tip.style.left = (b.left + b.width/2) + 'px'; tip.style.top = (b.top + 10) + 'px'; tip.classList.add('show'); }
+        hh.addEventListener('mouseenter', show); hh.addEventListener('focus', show);
+        hh.addEventListener('mouseleave', function(){ tip.classList.remove('show'); }); hh.addEventListener('blur', function(){ tip.classList.remove('show'); });
+      });
+    })();
     var cur = curM >= 0 ? rows[curM] : null;
-    $('dec_calvText').innerHTML = 'Calving from <strong>' + moStr(bestFeed.m) + '</strong> needs the least bought feed: <strong>' + fmt(bestFeed.feedPerCow) + ' lb per cow</strong> a year (' + fmt(bestFeed.hayT, 1) + ' t hay, ' + fmt(bestFeed.supT, 1) + ' t supplement), against ' + fmt(worstFeed.feedPerCow) + ' lb from ' + moStr(worstFeed.m) + '. ' +
-      'The most calf weaned per cow comes from <strong>' + moStr(bestLb.m) + '</strong>: ' + fmt(bestLb.lbPerCow) + ' lb' + (bestLb.lbPerCow - Math.min.apply(null, rows.map(function(r){ return r.lbPerCow; })) > 0.5 ? ', ' + fmt(bestLb.lbPerCow - Math.min.apply(null, rows.map(function(r){ return r.lbPerCow; }))) + ' lb more than the weakest month (fewer calves lost to cold' + (base.nwsPresent ? ' and screwworm' : '') + (base.hornFly ? ', less horn-fly weight loss' : '') + ')' : '') + '. ' +
-      (cur ? 'Your season (from ' + FEED.MONTHS[curM] + ') needs ' + fmt(cur.feedPerCow) + ' lb of feed per cow and weans ' + fmt(cur.lbPerCow) + ' lb per cow. ' : '') +
-      'The difference comes from when the cows nurse compared with when your pastures grow and how good the grass is then.';
-    $('dec_calvTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Calves weaned</th><th class="num">Weaning weight</th><th class="num">Lb weaned per cow</th><th class="num">Deaths (cold · screwworm)</th><th class="num">Hay · supplement</th><th class="num">Months feeding</th></tr></thead><tbody>' +
-      rows.map(function(r){ return '<tr' + (r === bestFeed ? ' class="best"' : '') + '><td>' + (r === bestFeed ? '★ ' : '') + moStr(r.m) + (r.m === curM ? ' (yours)' : '') + '</td>' +
-        '<td class="num">' + fmt(r.weaned, 1) + '</td><td class="num">' + fmt(r.weanLb) + ' lb</td><td class="num">' + fmt(r.lbPerCow) + '</td>' +
-        '<td class="num">' + fmt(r.deadCold, 1) + ' · ' + fmt(r.deadNws, 1) + '</td><td class="num">' + fmt(r.hayT, 1) + ' t · ' + fmt(r.supT, 1) + ' t</td><td class="num">' + r.shortM + '</td></tr>'; }).join('') + '</tbody>';
+    var goodM = rows.filter(function(r){ return r.postCov >= bestCov.postCov - 0.05; }).map(function(r){ return r.m; });
+    $('dec_calvText').innerHTML = 'Best time to calve on your pastures: from <strong>' + moStr(bestCov.m) + '</strong>. In the 4 months after calving starts (' + FEED.MONTHS[bestCov.postMonths[0]] + '–' + FEED.MONTHS[bestCov.postMonths[3]] + '), when cows are nursing and need the most, grass covers <strong>' + fmt(bestCov.postCov*100) + '%</strong> of the herd’s energy and protein' +
+      (bestCov.postFeed > 1 ? ' and you’d buy ' + fmt(bestCov.postFeed) + ' lb of feed per cow' : ' with nothing bought') + '. ' +
+      (goodM.length > 1 ? 'Calving from ' + monthList(goodM.slice().sort(function(a, b){ return a - b; })) + ' does almost as well (within 5 points). ' : '') +
+      'The weakest is ' + moStr(worstCov.m) + ': grass covers only ' + fmt(worstCov.postCov*100) + '% after calving. ' +
+      (cur ? 'Your season (from ' + FEED.MONTHS[curM] + '): ' + fmt(cur.postCov*100) + '%. ' : '') +
+      'Over the whole year, the least bought feed is calving from ' + moStr(bestFeed.m) + ' (' + fmt(bestFeed.feedPerCow) + ' lb per cow).';
+    $('dec_calvTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Grass covers after calving</th><th class="num">Calves weaned</th><th class="num">Weaning weight</th><th class="num">Lb weaned per cow</th><th class="num">Deaths (cold · screwworm)</th><th class="num">Hay · supplement</th><th class="num">Feed bought per cow (year)</th></tr></thead><tbody>' +
+      rows.map(function(r){ return '<tr' + (r === bestCov ? ' class="best"' : '') + '><td>' + (r === bestCov ? '★ ' : '') + moStr(r.m) + (r.m === curM ? ' (yours)' : '') + '</td>' +
+        '<td class="num">' + fmt(r.postCov*100) + '%</td><td class="num">' + fmt(r.weaned, 1) + '</td><td class="num">' + fmt(r.weanLb) + ' lb</td><td class="num">' + fmt(r.lbPerCow) + '</td>' +
+        '<td class="num">' + fmt(r.deadCold, 1) + ' · ' + fmt(r.deadNws, 1) + '</td><td class="num">' + fmt(r.hayT, 1) + ' t · ' + fmt(r.supT, 1) + ' t</td><td class="num">' + fmt(r.feedPerCow) + ' lb</td></tr>'; }).join('') + '</tbody>';
 
     /* 2. economics */
     var best = argBest(function(r){ return r.e.net; }, true), worst = argBest(function(r){ return r.e.net; }, false);
