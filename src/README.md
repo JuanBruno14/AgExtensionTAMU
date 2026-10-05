@@ -30,6 +30,7 @@ pip install playwright && playwright install chromium
 python3 src/my-ranch/test_ranch.py      # map, soil, capacity, feed calendar, decisions, print
 python3 src/my-ranch/test_grass.py      # Grass today / where is the herd
 python3 src/my-ranch/test_portal.py     # home-page "Your ranch" card and shared stores
+python3 src/my-ranch/test_import.py     # opening a downloaded ranch file (replace or add)
 python3 src/herd-tools/test_tools.py    # Herd Calculators
 cd src/my-ranch && node valbc.js        # nutrition vs. BCNRM
 ```

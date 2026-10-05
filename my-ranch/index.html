@@ -3830,7 +3830,7 @@
         if(mr.settings.cond) state.settings.cond = Object.assign({}, DEFAULT_SETTINGS.cond, mr.settings.cond);
         if(mr.settings.zoneF) state.settings.zoneF = Object.assign({}, DEFAULT_SETTINGS.zoneF, mr.settings.zoneF);
       }
-      if(typeof mr.name === 'string' && mr.name && !state.name) state.name = mr.name.slice(0, 60);
+      if(typeof mr.name === 'string' && mr.name) state.name = mr.name.slice(0, 60);
       if(mr.herdNow && mr.herdNow.since) state.herdNow = null;   // pasture ids change on import
       if(herdLoaded){ try{ bindHerdValues(); $('ranchName').value = state.name || ''; }catch(e){} }
     }
@@ -3855,8 +3855,14 @@
     if(!file) return;
     showNotice('Reading ' + file.name + '…', 'good');
     parseFile(file).then(function(obj){
+      var whole = !!(obj && !Array.isArray(obj) && obj.my_ranch && obj.my_ranch.herd), useHerd = whole;
+      if(whole && (state.pastures.length || state.points.length || state.zones.length || state.herd.cows > 0)){
+        useHerd = confirm('“' + file.name + '” is a complete My Ranch file' + (obj.my_ranch.name ? ' (' + obj.my_ranch.name + ')' : '') + '.\n\nOK: replace the ranch on this device with it (pastures, herd and settings).\nCancel: keep your ranch and only add its pastures.');
+      }
+      if(useHerd) wipeRanch();
       var before = state.pastures.length;
-      var r = importObject(obj);
+      var r = importObject(useHerd ? obj : Object.assign({}, obj, {my_ranch:null}));
+      if(useHerd) bindSettingsValues();
       if(!r.pastures && !r.points && !r.zones){ showNotice('No pasture shapes or points were found in ' + file.name + '.', 'bad'); return; }
       state.pastures.slice(before).forEach(function(p){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0); });
       state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); });
@@ -3865,7 +3871,7 @@
       renderAll(true);
       fitRanch();
       refreshDroughtIfMoved(true);
-      showNotice('Added ' + r.pastures + ' pasture' + (r.pastures === 1 ? '' : 's') + (r.points ? ' and ' + r.points + ' point' + (r.points === 1 ? '' : 's') : '') + (r.herd ? ', with the herd and feed settings' : '') + ' from ' + file.name + '.' + (r.skipped ? ' Skipped ' + r.skipped + ' line or other shape' + (r.skipped === 1 ? '' : 's') + '.' : ''), 'good');
+      showNotice((r.herd ? 'Loaded ' + (state.name ? '“' + state.name + '”' : 'the ranch') + ' — ' : 'Added ') + r.pastures + ' pasture' + (r.pastures === 1 ? '' : 's') + (r.points ? ' and ' + r.points + ' point' + (r.points === 1 ? '' : 's') : '') + (r.herd ? ', herd and feed settings' : '') + ' from ' + file.name + '.' + (r.skipped ? ' Skipped ' + r.skipped + ' line or other shape' + (r.skipped === 1 ? '' : 's') + '.' : ''), 'good');
     }).catch(function(err){
       showNotice((err && err.message) || 'That file couldn’t be opened.', 'bad');
     });
@@ -4122,15 +4128,18 @@
     });
     $('clearBtn').addEventListener('click', function(){
       if(!confirm('Delete every pasture, point and setting for this ranch from this device? Download a file first if you want to keep it.')) return;
-      Object.keys(pastureLayers).forEach(function(k){ map && map.removeLayer(pastureLayers[k]); });
-      Object.keys(pointLayers).forEach(function(k){ map && map.removeLayer(pointLayers[k]); });
-      Object.keys(zoneLayers).forEach(function(k){ map && map.removeLayer(zoneLayers[k]); });
-      pastureLayers = {}; pointLayers = {}; zoneLayers = {}; selectedId = null; zoneCache = {};
-      var view = state.view;
-      state = blankState(); state.view = view;
-      bindSettingsValues();
+      wipeRanch();
       renderAll(true);
     });
+  }
+  function wipeRanch(){
+    Object.keys(pastureLayers).forEach(function(k){ map && map.removeLayer(pastureLayers[k]); });
+    Object.keys(pointLayers).forEach(function(k){ map && map.removeLayer(pointLayers[k]); });
+    Object.keys(zoneLayers).forEach(function(k){ map && map.removeLayer(zoneLayers[k]); });
+    pastureLayers = {}; pointLayers = {}; zoneLayers = {}; selectedId = null; zoneCache = {};
+    var view = state.view;
+    state = blankState(); state.view = view;
+    bindSettingsValues();
   }
   function bindSettingsValues(){
     $('ranchName').value = state.name || ''; bindHerdValues();
