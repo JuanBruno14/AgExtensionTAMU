@@ -20,6 +20,19 @@ with sync_playwright() as pw:
     check('no hay needed at 3,200 lb/ac', pg.evaluate("MyRanch.feed().totals.hay") < 100)
     check('condition tile shown', 'cow condition' in pg.inner_text('#fc_tiles').lower())
     check('BCS column in monthly table', 'cow bcs' in pg.inner_text('#fc_table').lower())
+    # calf weight: varies with calving month, creep counted in costs
+    pg.evaluate("document.getElementById('decCard').scrollIntoView()"); pg.wait_for_timeout(900)
+    rows=[l.split('\t') for l in pg.inner_text('#dec_calvTable').split('\n')[1:] if l.count('\t')>=5]
+    nat=[float(r[3].replace(' lb','').replace(',','')) for r in rows]
+    check('natural weaning weight varies by calving month', max(nat)-min(nat) > 40, nat)
+    check('April natural weight within 15% of Vanzandt 426 lb', 360 < nat[3] < 440, nat[3])
+    check('summer calving weans lighter than spring', nat[7] < nat[2], (nat[2], nat[7]))
+    cf=pg.evaluate("MyRanch.feed().econ")
+    check('creep cost included in costs', cf['creep'] >= 0 and abs(cf['costs'] - (cf['feed']+cf['trips']+cf['dist']+cf['nwsCare']+cf['creep'])) < 1, cf)
+    pg.evaluate("MyRanch.state().herd.calfShort='lighter'"); pg.fill('#hd_cows','153'); pg.wait_for_timeout(200); pg.fill('#hd_cows','154'); pg.wait_for_timeout(900)
+    lf=pg.evaluate("MyRanch.feed().econ")
+    check('lighter option: no creep, lighter calves', lf['creep']==0 and lf['avgWeanLb'] <= cf['avgWeanLb'], (lf['avgWeanLb'], cf['avgWeanLb']))
+    pg.evaluate("MyRanch.state().herd.calfShort='creep'"); pg.fill('#hd_cows','153'); pg.wait_for_timeout(200); pg.fill('#hd_cows','154'); pg.wait_for_timeout(700)
     pg.evaluate("document.getElementById('fc_supMode').closest('details').open=true"); pg.select_option('#fc_supMode','full'); pg.wait_for_timeout(700)
     check('protein and energy: condition held', 'held at' in pg.inner_text('#fc_tiles').lower() and 'cow bcs' not in pg.inner_text('#fc_table').lower())
     check('feeding energy too never needs less supplement', pg.evaluate("MyRanch.feed().totals.sup")/154 >= sup - 0.5)

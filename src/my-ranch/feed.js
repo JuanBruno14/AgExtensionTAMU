@@ -256,6 +256,8 @@
       }
       return out;
     }
+    /* Forage a nursing calf can eat, % of body weight (assumption: a step below the cow values; milk fills the rest) */
+    function calfIntakePct(tdn){ return tdn < 52 ? 2.5 : tdn <= 59 ? 3.0 : 3.5; }
     /* Forage intake capacity, % of body weight (Mississippi State Extension, Table 1) */
     function intakePct(tdn, lactating){
       if(tdn < 52) return lactating ? 2.2 : 1.8;
@@ -317,7 +319,7 @@
         var surv = Math.max(0, 1 - lOther - lWeather - lNws);
         // horn flies: weight lost in proportion to nursing days inside the fly season
         var hfDays = 0; for(var k = 0; k < c.weanAge; k++) if(hornFlyWindow(c.day + k)) hfDays++;
-        var wWean = (o.birthLb + preAdg*c.weanAge)*(1 - (o.hornFly || 0)/100*hfDays/Math.max(1, c.weanAge));
+        var wWean = (o.birthLb + preAdg*c.weanAge)*(1 - (o.hornFly || 0)/100*hfDays/Math.max(1, c.weanAge)) - (o.weanPenaltyLb || 0)*c.weanAge/Math.max(1, avgAge);
         var wSale = wWean + (o.postAdg || 0)*(o.weanPeriod || 0);
         var saleM = monthOfDay(c.day + c.weanAge + (o.weanPeriod || 0));
         var sIdx = seasonIdx(o, SEASON_CALF, saleM);
@@ -385,7 +387,10 @@
             acc.lactFrac += w*nurseFrac;
             var bw = o.birthLb + co.preAdg*dsc;
             var k = calfDay(o, bw, co.preAdg, a.milkKg, forageTdnByMonth[m], env);
-            acc.calfTdn += w*nurseFrac*k.tdnLb; acc.calfCp += w*nurseFrac*k.cpLb; acc.calfDm += w*nurseFrac*k.dmLb;
+            // a nursing calf can only eat so much forage: little in the first month, rising to ~2% of body weight (less on poor grass)
+            var capDm = bw/100*calfIntakePct(forageTdnByMonth[m])*Math.max(0, Math.min(1, (dsc - 21)/60));
+            var dmEat = Math.min(k.dmLb, capDm);
+            acc.calfTdn += w*nurseFrac*k.tdnLb; acc.calfCp += w*nurseFrac*k.cpLb; acc.calfDm += w*nurseFrac*dmEat;
             acc.calvesNursing += w*nurseFrac;
           } else if(inPeriod){
             var bw2 = c.wWean + (o.postAdg || 0)*(dsc - c.weanAge);
@@ -519,6 +524,23 @@
           });
         }
       }
+      // Nursing calves short of energy/protein (grass too poor, too little, or more than they can eat):
+      // pounds of weaning weight lost, or creep feed needed to reach the planned weaning weight.
+      var shT = 0, shP = 0;
+      months.forEach(function(x){ shT += x.calfShortTdn*x.days; shP += x.calfShortCp*x.days; });
+      var perCalfT = co.weaned > 0 ? shT/co.weaned : 0, perCalfP = co.weaned > 0 ? shP/co.weaned : 0;
+      var midBw = (o.birthLb + o.weanLb)/2, ftAvg = 58;
+      var m0c = calfDay(o, midBw, co.preAdg, 0, ftAvg, null), m1c = calfDay(o, midBw, co.preAdg + 0.2, 0, ftAvg, null);
+      var mT = Math.max(0.5, (m1c.tdnLb - m0c.tdnLb)/0.2), mP = Math.max(0.05, (m1c.cpLb - m0c.cpLb)/0.2);
+      var lbLost = Math.min(o.weanLb*0.4, perCalfT/mT);   // energy-limited (calves on milk + forage rarely lack protein the way a forage CP balance suggests)
+      var creepPerCalf = lbLost*(o.creepConv || 8);   // lb of creep per lb of added gain: 5-10:1 when forage is short or poor (NDSU Extension)
+      var calfStrat = o.calfShort === 'lighter' ? 'lighter' : 'creep';
+      if(calfStrat === 'lighter' && lbLost > 0.5){
+        co = calfOutcome(Object.assign({}, o, {weanPenaltyLb:lbLost}), cs);
+      }
+      var calfInfo = {strategy:calfStrat, lbLostPerCalf:lbLost, creepLbPerCalf:creepPerCalf, shortTdnPerCalf:perCalfT, shortCpPerCalf:perCalfP,
+                      creepLb:calfStrat === 'creep' ? creepPerCalf*co.weaned*o.cows : 0};
+      calfInfo.creepCost = calfInfo.creepLb/2000*(o.creepPrice || 0);
       // cow body condition through the year, starting at the calving-season month with the condition you set at calving.
       // Energy short of need (TDN lb/day) is drawn from body reserves (NE from tissue at 0.8, NRC 2016); surplus is stored at the diet's NEg efficiency.
       var sbwC = o.cowLb/LB*0.96, perBcs = bodyEnergy(sbwC, 5, 5) - bodyEnergy(sbwC, 5, 4);
@@ -541,13 +563,14 @@
         calvesSold:o.cows*co.sold, heifersKept:o.cows*co.kept, opensSold:o.cows*co.opens, cullsSold:o.cows*co.culls,
         calfIncome:o.cows*co.calfIncome, openIncome:o.cows*co.openIncome, cullIncome:o.cows*co.cullIncome, avgSaleLb:co.avgSaleLb, avgWeanLb:co.avgWeanLb, avgPrice:co.avgPrice,
         income:o.cows*co.income, feed:tot.feed, trips:tot.tripCost, dist:tot.dist,
-        nwsCare:o.nwsPresent ? o.cows*co.nwsCalves*(o.nwsCost || 0) : 0,
+        nwsCare:o.nwsPresent ? o.cows*co.nwsCalves*(o.nwsCost || 0) : 0, creep:calfInfo.creepCost, creepLb:calfInfo.creepLb,
+        weanLbNoCreep:co.avgWeanLb - (calfStrat === 'creep' ? lbLost : 0), lbLostPerCalf:lbLost, creepLbPerCalf:creepPerCalf,
         deadWeather:o.cows*co.deadWeather, deadNws:o.cows*co.deadNws, deadOther:o.cows*co.deadOther,
         cowDeaths:o.cows*(o.cowLoss || 0)/100
       };
-      econ.costs = econ.feed + econ.trips + econ.dist + econ.nwsCare;
+      econ.costs = econ.feed + econ.trips + econ.dist + econ.nwsCare + econ.creep;
       econ.net = econ.income - econ.costs;
-      return {months:months, totals:tot, econ:econ, calves:co, forageTdn:ftdn, bcs:bcsInfo};
+      return {months:months, totals:tot, econ:econ, calves:co, forageTdn:ftdn, bcs:bcsInfo, calf:calfInfo};
     }
 
     function doy(mmdd){ var p = String(mmdd || '').split('-'); var mo = +p[0], da = +p[1]; if(!(mo >= 1 && mo <= 12 && da >= 1)) return 45; return MONTH_START[mo - 1] + Math.min(da, MONTH_DAYS[mo - 1]) - 1; }

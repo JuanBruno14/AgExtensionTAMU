@@ -129,7 +129,7 @@
       seasonal:h.seasonal !== 'off', nowMonth:new Date().getMonth(),
       weatherAdj:h.weatherAdj !== 'off', windMph:h.windMph, coat:+h.coat || 1, heat:+h.heat || 1,
       nwsPresent:h.nws === 'yes', nwsLoss:h.nwsLoss, nwsCost:h.nwsCost, hornFly:+h.hornFly,
-      supMode:h.supMode === 'full' ? 'full' : 'protein',
+      supMode:h.supMode === 'full' ? 'full' : 'protein', calfShort:h.calfShort === 'lighter' ? 'lighter' : 'creep', creepPrice:+h.creepPrice || 0, creepConv:+h.creepConv || 8,
       steerSlide:sl.steer, heiferSlide:sl.heifer};
     o.refWeanAge = FEED.cohorts(o).reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
     return Object.assign(o, over || {});
@@ -500,6 +500,11 @@
     return '<div class="stat-tile ' + cls + '"><span class="label">Cow condition (BCS)</span><span class="value small">' + f1(b.start) + ' → ' + f1(b.low) + ' → ' + f1(b.end) + '</span>' +
       '<span class="sub">' + (drop < 0.05 ? 'no condition lost' : 'lowest in ' + FEED.MONTHS[b.lowMonth]) + ' · ' + (back < -0.2 ? 'not back at calving' : 'back at calving') + '</span></div>';
   }
+  function calfTile(res){
+    var cf = res.calf; if(!cf || cf.lbLostPerCalf < 1) return '';
+    if(cf.strategy === 'creep') return '<div class="stat-tile"><span class="label">Creep feed for calves</span><span class="value small">' + fmt(cf.creepLb/2000, 1) + ' tons</span><span class="sub">' + fmt(cf.creepLbPerCalf) + ' lb per calf · ' + money(cf.creepCost) + ' · without it ' + fmt(cf.lbLostPerCalf) + ' lb lighter</span></div>';
+    return '<div class="stat-tile caution"><span class="label">Calves wean lighter</span><span class="value small">' + fmt(res.econ.avgWeanLb) + ' lb</span><span class="sub">' + fmt(cf.lbLostPerCalf) + ' lb under the planned weight · grass and milk fall short</span></div>';
+  }
   function bcsNote(b){
     if(!b || b.mode === 'full') return '';
     var back = b.end - b.start;
@@ -561,7 +566,12 @@
       shortTxt = (eShort.length || pShort.length)
         ? 'Pasture alone falls short on <strong>energy</strong> in ' + (eShort.length ? monthList(eShort) : 'no month') + ' and on <strong>protein</strong> in ' + (pShort.length ? monthList(pShort) : 'no month') + ' (red dots under the chart).'
         : 'Pasture covers the herd’s energy and protein all year at these numbers.';
-      if(cShort.length) shortTxt += ' Nursing calves can’t get all they need for the planned weaning weight from milk plus pasture in ' + monthList(cShort) + ' — expect lighter calves, or plan creep feed (not priced here).';
+      if(cShort.length){
+        var cf = res.calf;
+        shortTxt += ' Nursing calves can’t get all they need for a ' + fmt(h.weanLb) + ' lb weaning weight from milk plus pasture in ' + monthList(cShort) + ' — ' +
+          (cf.strategy === 'creep' ? 'creep feed to close it: about <strong>' + fmt(cf.creepLbPerCalf) + ' lb per calf</strong> (' + money(cf.creepCost) + ' a year, in the costs).'
+                                   : 'without creep they wean about <strong>' + fmt(cf.lbLostPerCalf) + ' lb lighter</strong> (' + fmt(res.econ.avgWeanLb) + ' lb), and sales count that.');
+      }
     } else shortTxt = 'Hover a month to see how the need splits between cows, bulls and calves.';
     $('fc_short').innerHTML = shortTxt + (res.hasSupply ? bcsNote(res.bcs) : '');
 
@@ -571,7 +581,7 @@
       '<div class="stat-tile"><span class="label">Cattle sales</span><span class="value small">' + money(ec.income) + '</span><span class="sub">' + (ec.cullIncome + ec.openIncome > 0.5 ? 'calves ' + money(ec.calfIncome) + ' · culls ' + money(ec.cullIncome + ec.openIncome) : money(ec.income/h.cows) + ' per cow') + '</span></div>' +
       '<div class="stat-tile"><span class="label">Hay to buy</span><span class="value small">' + (t.hay >= 100 ? fmt(t.hay/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.hay >= 100 ? money(t.hay/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'standing forage lasts all year') + '</span></div>' +
       '<div class="stat-tile"><span class="label">Protein supplement</span><span class="value small">' + (t.sup >= 100 ? fmt(t.sup/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.sup >= 100 ? money(t.sup/2000*h.supPrice) + ' · ' + monthList(supM) : 'not needed') + '</span></div>' +
-      bcsTile(res.bcs) +
+      bcsTile(res.bcs) + calfTile(res) +
       '<div class="stat-tile"><span class="label">Feeding trips &amp; delivery</span><span class="value small">' + money(t.tripCost + t.dist) + '</span><span class="sub">' + fmt(t.trips) + ' trips' + (ec.nwsCare > 0 ? ' · screwworm care ' + money(ec.nwsCare) : '') + '</span></div>' +
       '<div class="stat-tile ' + (ec.net >= 0 ? 'good' : 'critical') + '"><span class="label">Sales minus feed</span><span class="value small">' + money(ec.net) + '</span><span class="sub">' + money(ec.net/h.cows) + ' per cow · not profit</span></div>'
       : '';
@@ -670,11 +680,11 @@
       var r = netOf({calving:'one', start1:FEED.MONTH_START[s] + 14, len1:len, weanMode:'age', weanAge:age, refWeanAge:age, seasonal:seasonal});
       var e = r.econ, weaned = e.calvesSold + e.heifersKept;
       var cs = r.calves.cohorts, mid = cs[Math.floor(cs.length/2)] || cs[0];
-      var feedLb = r.totals.hay + r.totals.sup, shortM = r.months.filter(function(x){ return x.hayLb + x.supLb > 1; }).length;
+      var feedLb = r.totals.hay + r.totals.sup + (e.creepLb || 0), shortM = r.months.filter(function(x){ return x.hayLb + x.supLb > 1; }).length;
       var post = [1, 2, 3, 4].map(function(k){ return r.months[(s + k) % 12]; });
       var cov = post.map(function(x){ var t = x.herdReq.tdn > 0 ? x.pasture.tdn/x.herdReq.tdn : 1, c = x.herdReq.cp > 0 ? x.pasture.cp/x.herdReq.cp : 1; return Math.min(1, t, c); });
       var postFeed = post.reduce(function(a, x){ return a + x.hayLb + x.supLb; }, 0);
-      rows.push({m:s, res:r, e:e, weaned:weaned, postCov:cov.reduce(function(a, b){ return a + b; }, 0)/4, postFeed:postFeed/cows, postMonths:[1, 2, 3, 4].map(function(k){ return (s + k) % 12; }), weanLb:e.avgWeanLb, lbPerCow:weaned*e.avgWeanLb/cows, deadCold:e.deadWeather, deadNws:e.deadNws,
+      rows.push({m:s, res:r, e:e, weaned:weaned, natLb:e.weanLbNoCreep, creepCalf:e.creepLbPerCalf, postCov:cov.reduce(function(a, b){ return a + b; }, 0)/4, postFeed:postFeed/cows, postMonths:[1, 2, 3, 4].map(function(k){ return (s + k) % 12; }), weanLb:e.avgWeanLb, lbPerCow:weaned*e.weanLbNoCreep/cows, deadCold:e.deadWeather, deadNws:e.deadNws,
                  hayT:r.totals.hay/2000, supT:r.totals.sup/2000, feedPerCow:feedLb/cows, shortM:shortM, saleM:mid ? mid.saleMonth : 0});
     }
     function argBest(f, max){ return rows.reduce(function(a, r){ return (max ? f(r) > f(a) : f(r) < f(a)) ? r : a; }, rows[0]); }
@@ -712,15 +722,17 @@
     })();
     var cur = curM >= 0 ? rows[curM] : null;
     var goodM = rows.filter(function(r){ return r.postCov >= bestCov.postCov - 0.05; }).map(function(r){ return r.m; });
+    var heavy = argBest(function(r){ return r.natLb; }, true), light = argBest(function(r){ return r.natLb; }, false);
     $('dec_calvText').innerHTML = 'Best time to calve on your pastures: from <strong>' + moStr(bestCov.m) + '</strong>. In the 4 months after calving starts (' + FEED.MONTHS[bestCov.postMonths[0]] + '–' + FEED.MONTHS[bestCov.postMonths[3]] + '), when cows are nursing and need the most, grass covers <strong>' + fmt(bestCov.postCov*100) + '%</strong> of the herd’s energy and protein' +
       (bestCov.postFeed > 1 ? ' and you’d buy ' + fmt(bestCov.postFeed) + ' lb of feed per cow' : ' with nothing bought') + '. ' +
       (goodM.length > 1 ? 'Calving from ' + monthList(goodM.slice().sort(function(a, b){ return a - b; })) + ' does almost as well (within 5 points). ' : '') +
       'The weakest is ' + moStr(worstCov.m) + ': grass covers only ' + fmt(worstCov.postCov*100) + '% after calving. ' +
       (cur ? 'Your season (from ' + FEED.MONTHS[curM] + '): ' + fmt(cur.postCov*100) + '%. ' : '') +
-      'Over the whole year, the least bought feed is calving from ' + moStr(bestFeed.m) + ' (' + fmt(bestFeed.feedPerCow) + ' lb per cow).';
-    $('dec_calvTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Grass covers after calving</th><th class="num">Calves weaned</th><th class="num">Weaning weight</th><th class="num">Lb weaned per cow</th><th class="num">Deaths (cold · screwworm)</th><th class="num">Hay · supplement</th><th class="num">Feed bought per cow (year)</th></tr></thead><tbody>' +
+      'On milk and grass alone, calves wean at about ' + fmt(bestCov.natLb) + ' lb calving from ' + FEED.MONTHS[bestCov.m] + (heavy.natLb - light.natLb > 5 ? ' (heaviest ' + fmt(heavy.natLb) + ' lb from ' + FEED.MONTHS[heavy.m] + ', lightest ' + fmt(light.natLb) + ' lb from ' + FEED.MONTHS[light.m] + ')' : '') + '. ' +
+      'Over the whole year, the least bought feed (hay, supplement' + (state.herd.calfShort !== 'lighter' ? ' and creep to reach ' + fmt(state.herd.weanLb) + ' lb' : '') + ') is calving from ' + moStr(bestFeed.m) + ' (' + fmt(bestFeed.feedPerCow) + ' lb per cow).';
+    $('dec_calvTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Grass covers after calving</th><th class="num">Calves weaned</th><th class="num">Weaning weight on milk + grass</th><th class="num">Creep to reach ' + fmt(h.weanLb) + ' lb</th><th class="num">Lb weaned per cow (no creep)</th><th class="num">Deaths (cold · screwworm)</th><th class="num">Hay · supplement</th><th class="num">Feed bought per cow (year, incl. creep)</th></tr></thead><tbody>' +
       rows.map(function(r){ return '<tr' + (r === bestCov ? ' class="best"' : '') + '><td>' + (r === bestCov ? '★ ' : '') + moStr(r.m) + (r.m === curM ? ' (yours)' : '') + '</td>' +
-        '<td class="num">' + fmt(r.postCov*100) + '%</td><td class="num">' + fmt(r.weaned, 1) + '</td><td class="num">' + fmt(r.weanLb) + ' lb</td><td class="num">' + fmt(r.lbPerCow) + '</td>' +
+        '<td class="num">' + fmt(r.postCov*100) + '%</td><td class="num">' + fmt(r.weaned, 1) + '</td><td class="num">' + fmt(r.natLb) + ' lb</td><td class="num">' + (r.creepCalf >= 1 ? fmt(r.creepCalf) + ' lb/calf' : '—') + '</td><td class="num">' + fmt(r.lbPerCow) + '</td>' +
         '<td class="num">' + fmt(r.deadCold, 1) + ' · ' + fmt(r.deadNws, 1) + '</td><td class="num">' + fmt(r.hayT, 1) + ' t · ' + fmt(r.supT, 1) + ' t</td><td class="num">' + fmt(r.feedPerCow) + ' lb</td></tr>'; }).join('') + '</tbody>';
 
     /* 2. economics */
@@ -733,6 +745,7 @@
       (cur && cur !== best ? ' Your season leaves ' + money(cur.e.net) + ' — ' + money(best.e.net - cur.e.net) + ' less.' : cur ? ' That’s already your season.' : '') +
       (seasonal ? ' Calves and culls are priced in the month they’re sold, with Texas A&amp;M’s seasonal pattern (spring about 4% above the yearly average, fall about 5–6% below), starting from today’s market prices.'
                 : ' Every month uses today’s market prices; switch to seasonal prices to see the effect of the sale month.') +
+      (state.herd.calfShort !== 'lighter' ? ' Feed costs include the creep feed each month needs to wean calves at ' + fmt(state.herd.weanLb) + ' lb.' : ' Calves are sold at the weight milk and grass give them in each month, so lighter calves bring more per hundredweight but less per head.') +
       ' Labor at calving isn’t included.';
     $('dec_calvEconTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Calves sold</th><th class="num">Sold in</th><th class="num">Price</th><th class="num">Cattle sales</th><th class="num">Feed &amp; feeding</th><th class="num">Income − feed</th></tr></thead><tbody>' +
       rows.map(function(r){ var e = r.e; return '<tr' + (r === best ? ' class="best"' : '') + '><td>' + (r === best ? '★ ' : '') + moStr(r.m) + (r.m === curM ? ' (yours)' : '') + '</td>' +

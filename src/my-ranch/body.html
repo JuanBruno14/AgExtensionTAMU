@@ -230,6 +230,15 @@
                 <div class="field"><label for="fc_weanLb">Average weaning weight</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanLb" data-h="weanLb" min="250" max="900" step="5"><span class="suffix">lb</span></div><span class="hint" id="fc_weanLbHint"></span></div>
               </div>
               <fieldset style="margin-top:18px;">
+                <legend>When milk and grass can’t grow the calves to that weight</legend>
+                <div class="field-grid cols-3">
+                  <div class="field" style="grid-column:span 2;"><label for="fc_calfShort">What you do</label>
+                    <select id="fc_calfShort" data-hs="calfShort"><option value="creep">Creep-feed the calves to reach the weaning weight (cost counted)</option><option value="lighter">Nothing — calves wean lighter (sales counted at the lower weight)</option></select></div>
+                  <div class="field"><label for="fc_creepPrice">Creep feed price</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_creepPrice" data-h="creepPrice" min="0" max="2000" step="5"><span class="suffix">/ton</span></div></div>
+                  <div class="field"><label for="fc_creepConv">Creep per lb of extra gain</label><div class="input-wrap has-suffix"><input type="number" id="fc_creepConv" data-h="creepConv" min="2" max="30" step="0.5"><span class="suffix">lb</span></div><span class="hint">Grain creep: 5–10 lb when grass is short or poor (NDSU); limit-fed protein creep 2–3 lb</span></div>
+                </div>
+              </fieldset>
+              <fieldset style="margin-top:18px;">
                 <legend>Weaning period</legend>
                 <div class="field-grid cols-3">
                   <div class="field"><label for="fc_weanPeriod">Calves kept after weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanPeriod" data-h="weanPeriod" min="0" max="120" step="5"><span class="suffix">days</span></div><span class="hint">0 = sold off the cow; 45 = VAC-45 preconditioning</span></div>
