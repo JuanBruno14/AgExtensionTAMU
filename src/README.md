@@ -31,6 +31,7 @@ python3 src/my-ranch/test_ranch.py      # map, soil, capacity, feed calendar, de
 python3 src/my-ranch/test_grass.py      # Grass today / where is the herd
 python3 src/my-ranch/test_portal.py     # home-page "Your ranch" card and shared stores
 python3 src/my-ranch/test_import.py     # opening a downloaded ranch file (replace or add)
+python3 src/my-ranch/test_supplement.py # protein-only supplementation and cow condition (Vanzandt 2023 check)
 python3 src/herd-tools/test_tools.py    # Herd Calculators
 cd src/my-ranch && node valbc.js        # nutrition vs. BCNRM
 ```
