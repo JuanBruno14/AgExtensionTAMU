@@ -1,0 +1,508 @@
+<body>
+<header class="topbar">
+  <div class="wordmark">
+    <a href="../index.html" style="display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;">
+      <span class="brand-logo"><img class="logo-horizontal" src="../brand/agrilife-extension-agecon-horizontal-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="381" height="46"><img class="logo-stacked" src="../brand/agrilife-extension-agecon-stacked-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="120" height="52"></span>
+      <div class="text">
+        <div class="main">Decision Aids &middot; My Ranch</div>
+      </div>
+    </a>
+  </div>
+  <h1 class="tool-title">My Ranch</h1>
+  <div class="header-right">
+    <a href="../index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
+    <span class="phase-chip">Pilot &middot; Phase 1</span>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="intro-inner">
+    <div>
+      <h1>Map your ranch and see how many cattle it can carry.</h1>
+      <p>Find your place on the satellite map and draw each pasture. The tool measures the acres, looks up the USDA soil survey's forage estimate for each pasture, and turns it into a carrying capacity in animal units &mdash; then checks it against your planned herd, the current Drought Monitor, and the AgriLife 2026 cow-calf budget.</p>
+      <p class="print-only" id="printDate"></p>
+    </div>
+    <div class="intro-meta">
+      <div><strong>Private</strong>saved only on this device</div>
+      <div><strong>Soil data</strong>USDA-NRCS soil survey</div>
+      <div><strong>Works on</strong>phone, tablet, computer</div>
+    </div>
+  </div>
+  <div class="fence-line"></div>
+</section>
+
+<div class="layout ranch">
+  <div class="col-inputs">
+
+    <!-- Map -->
+    <div class="card map-card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4 3 6v14l6-2 6 2 6-2V4l-6 2-6-2Z"/><path d="M9 4v14M15 6v14"/></svg>
+        <h2>Your ranch on the map</h2>
+      </div>
+      <div class="map-toolbar">
+        <div class="search-box">
+          <input type="search" id="searchInput" placeholder="Search a town, county or address &mdash; or type lat, long" aria-label="Search for a place" autocomplete="off">
+          <button type="button" class="tool-btn" id="searchBtn">Search</button>
+          <div class="search-results" id="searchResults" hidden></div>
+        </div>
+        <button type="button" class="tool-btn" id="locateBtn" title="Center the map on where you are now">📍 My location</button>
+      </div>
+      <div class="draw-tools">
+        <button type="button" class="tool-btn primary" id="drawPastureBtn">✏️ Draw pasture</button>
+        <button type="button" class="tool-btn" id="drawRectBtn" title="Draw a square or rectangular pasture in one drag">▭ Rectangle</button>
+        <span class="sep" aria-hidden="true"></span>
+        <button type="button" class="tool-btn" data-zone="water" title="Draw a pond or lake inside a pasture; it's taken out of the grazing area">💧 Pond/lake</button>
+        <button type="button" class="tool-btn" data-zone="brush" title="Draw heavy brush or woods inside a pasture; it grows less grass">🌳 Brush</button>
+        <button type="button" class="tool-btn" data-zone="bottom" title="Draw bottomland inside a pasture; it usually grows more grass">〰 Bottomland</button>
+        <span class="sep" aria-hidden="true"></span>
+        <button type="button" class="tool-btn" data-point="water">🚰 Water point</button>
+        <button type="button" class="tool-btn" data-point="pen">🐄 Pens</button>
+        <button type="button" class="tool-btn" data-point="gate">🚪 Gate</button>
+        <button type="button" class="tool-btn" data-point="feeder">🌾 Feeder</button>
+        <span class="sep" aria-hidden="true"></span>
+        <button type="button" class="tool-btn" id="editBtn" title="Drag corners to adjust pasture lines, or move water points and pens">↔ Edit shapes</button>
+      </div>
+      <div id="map" role="application" aria-label="Satellite map of your ranch"></div>
+      <div class="grass-legend" id="grassLegend" hidden></div>
+      <div class="map-hint" id="mapHint">
+        <span id="mapHintText"><strong>Start here:</strong> search for your ranch or use <strong>My location</strong>, zoom in until you can see your fences, then press <strong>Draw pasture</strong>.</span>
+        <span class="hint-actions" id="hintActions" hidden>
+          <button type="button" class="tool-btn small" id="undoPointBtn">Undo last point</button>
+          <button type="button" class="tool-btn small primary" id="finishBtn">Finish</button>
+          <button type="button" class="tool-btn small" id="cancelDrawBtn">Cancel</button>
+        </span>
+      </div>
+      <div class="notice caution zone-offer" id="zoneOffer" hidden></div>
+    </div>
+
+    <!-- Pastures -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18M5 20V9l4-3 4 3v11M13 20v-7l4-3 4 3v7"/></svg>
+        <h2>Pastures</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">For rangeland, forage comes from the USDA-NRCS soil survey: its estimate of total plant growth per acre in a normal year, weighted by the soils inside each pasture. Improved pasture, wheat and hay meadows usually have no soil-survey number &mdash; enter your own estimate (your county agent can help).</p>
+        <div class="pasture-list" id="pastureList"></div>
+        <h3 class="sub-h">Ponds, brush &amp; bottomland</h3>
+        <div class="point-list" id="zoneList"></div>
+        <details class="advanced" style="margin-top:14px;">
+          <summary>Land adjustments</summary>
+          <div class="adv-body">
+            <p class="card-note">The soil survey's forage is for a site in top condition. Rate each rangeland pasture's condition in its row; this sets how much of that forage it grows today. Areas drawn inside a pasture replace that part of it: ponds count as no forage, brush and bottomland as a share of the pasture's forage.</p>
+            <div class="field-grid cols-3">
+              <div class="field"><label for="la_poor">Poor condition</label><div class="input-wrap has-suffix"><input type="number" id="la_poor" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+              <div class="field"><label for="la_fair">Fair condition</label><div class="input-wrap has-suffix"><input type="number" id="la_fair" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+              <div class="field"><label for="la_excellent">Excellent condition</label><div class="input-wrap has-suffix"><input type="number" id="la_excellent" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+              <div class="field"><label for="la_brush">Brush / woods</label><div class="input-wrap has-suffix"><input type="number" id="la_brush" min="0" max="100" step="5"><span class="suffix">%</span></div><span class="hint">NRCS: grass under heavy brush ≈ 25% of open prairie</span></div>
+              <div class="field"><label for="la_bottom">Bottomland</label><div class="input-wrap has-suffix"><input type="number" id="la_bottom" min="50" max="400" step="10"><span class="suffix">%</span></div><span class="hint">NRCS: bottomland ≈ 2.5× upland (5,000 vs. 2,040 lb/ac)</span></div>
+            </div>
+          </div>
+        </details>
+      </div>
+    </div>
+
+    <!-- Rotation -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
+        <h2>Grazing days &amp; calendar</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">How many days each pasture can carry your planned herd, using the same forage and harvest-efficiency numbers as the capacity estimate. Use the arrows to set the order you'd graze them in.</p>
+        <div id="rotationBody"></div>
+      </div>
+    </div>
+
+    <!-- Feed calendar -->
+    <div class="card" id="feedCard">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2"/></svg>
+        <h2>Feed calendar: what the herd needs vs. what the pastures give</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Month by month, the energy (TDN) and protein your cows, bulls and calves need, next to what your pastures can supply at their typical quality for that time of year. Where the pasture falls short, the tool works out the hay and supplement to buy, what it costs, and what's left from the calf check.</p>
+
+        <div class="field-grid cols-3">
+          <div class="field">
+            <label for="fc_calving">Calving season</label>
+            <select id="fc_calving" data-hs="calving">
+              <option value="us">Not sure (U.S. average)</option>
+              <option value="one">One season</option>
+              <option value="two">Two seasons</option>
+            </select>
+          </div>
+          <div class="field fc-season1">
+            <label for="fc_start1"><span id="fc_start1Label">Calving starts</span></label>
+            <div class="input-wrap"><input type="date" id="fc_start1" data-hd="start1"></div>
+          </div>
+          <div class="field fc-season1">
+            <label for="fc_len1">Calving season length</label>
+            <div class="input-wrap has-suffix"><input type="number" id="fc_len1" data-h="len1" min="10" max="180" step="5" inputmode="numeric"><span class="suffix">days</span></div>
+          </div>
+          <div class="field fc-season1">
+            <label for="fc_wean1"><span id="fc_wean1Label">Weaning date</span></label>
+            <div class="input-wrap"><input type="date" id="fc_wean1" data-hd="wean1"></div>
+          </div>
+          <div class="field fc-season2">
+            <label for="fc_start2">Fall calving starts</label>
+            <div class="input-wrap"><input type="date" id="fc_start2" data-hd="start2"></div>
+          </div>
+          <div class="field fc-season2">
+            <label for="fc_len2">Fall season length</label>
+            <div class="input-wrap has-suffix"><input type="number" id="fc_len2" data-h="len2" min="10" max="180" step="5" inputmode="numeric"><span class="suffix">days</span></div>
+          </div>
+          <div class="field fc-season2">
+            <label for="fc_share2">Cows calving in the fall</label>
+            <div class="input-wrap has-suffix"><input type="number" id="fc_share2" data-h="share2" min="1" max="99" step="1" inputmode="numeric"><span class="suffix">%</span></div>
+          </div>
+          <div class="field fc-season2">
+            <label for="fc_wean2">Fall calves weaned on</label>
+            <div class="input-wrap"><input type="date" id="fc_wean2" data-hd="wean2"></div>
+          </div>
+          <div class="field fc-usonly">
+            <label for="fc_weanAge">Calves weaned at</label>
+            <div class="input-wrap has-suffix"><input type="number" id="fc_weanAge" data-h="weanAge" min="90" max="300" step="5" inputmode="numeric"><span class="suffix">days</span></div>
+          </div>
+          <div class="field">
+            <label for="fc_region">Pasture growing season</label>
+            <select id="fc_region"></select>
+            <span class="hint" id="fc_regionHint"></span>
+          </div>
+        </div>
+        <p class="card-note fc-usnote" style="margin:10px 0 0;">U.S. average from USDA's NAHMS Beef 2017 survey: 55% of calves are born in February–April, with a smaller fall peak in September–November.</p>
+        <p class="card-note" id="fc_weanNote" style="margin:10px 0 0;"></p>
+
+        <div class="fc-empty" id="fc_empty" hidden></div>
+
+        <div id="fc_main">
+          <div class="fc-chart-head">
+            <div class="segmented" role="tablist" aria-label="Nutrient shown">
+              <button type="button" class="seg-btn active" data-nutrient="tdn" role="tab" aria-selected="true">Energy (TDN)</button>
+              <button type="button" class="seg-btn" data-nutrient="cp" role="tab" aria-selected="false">Protein (CP)</button>
+            </div>
+            <div class="fc-legend" id="fc_legend"></div>
+          </div>
+          <div class="fc-chart" id="fc_chart" role="img" aria-label="Monthly herd needs compared with pasture supply"></div>
+          <div class="print-only fc-print-charts">
+            <h3 class="sub-h">Energy (TDN), lb per day, whole herd</h3>
+            <div class="fc-chart" id="fc_chart_p_tdn"></div>
+            <h3 class="sub-h">Protein (CP), lb per day, whole herd</h3>
+            <div class="fc-chart" id="fc_chart_p_cp"></div>
+          </div>
+          <p class="fc-short" id="fc_short"></p>
+
+          <div class="stat-tiles fc-tiles" id="fc_tiles"></div>
+          <div class="btn-row" style="padding:12px 0 0;gap:8px;flex-wrap:wrap;"><button type="button" class="tool-btn" id="fc_planBtn">🗒 Print a one-page year plan for this herd</button><button type="button" class="tool-btn" id="fc_bcuBtn">➜ Use this feed cost in Cow operating cost</button></div>
+          <p class="card-note" id="fc_bcuNote" style="margin:8px 0 0;"></p>
+
+          <div class="table-scroll" id="fc_tableWrap" style="margin-top:16px;">
+            <table class="plan fc-table" id="fc_table"></table>
+            <p class="card-note" style="margin:8px 0 0;">Need / pasture: whole herd, lb per day. Hay and supplement: lb per cow per day (bulls and weaned calves get theirs too; it's in the cost). Cost includes feeding trips and delivery.</p>
+          </div>
+
+          <details class="advanced" style="margin-top:16px;">
+            <summary>Needs per animal, by month</summary>
+            <div class="adv-body">
+              <p class="card-note">Pounds per head per day. Cows are the herd average for that month (a mix of cows nursing, dry and pregnant). Nursing calves show only what they need <em>beyond their mother's milk</em>, averaged over every cow in the herd; weaned calves are per calf, during the weaning period.</p>
+              <div class="table-scroll"><table class="plan fc-table" id="fc_perhead"></table></div>
+              <p class="card-note" id="fc_wxNote" style="margin:10px 0 0;"></p>
+            </div>
+          </details>
+
+          <details class="advanced" style="margin-top:12px;" id="fc_herdDetails">
+            <summary>Herd, calves &amp; losses</summary>
+            <div class="adv-body">
+              <div class="field-grid cols-3">
+                <div class="field"><label for="fc_breed">Breed type</label><select id="fc_breed" data-hs="breed"></select></div>
+                <div class="field"><label for="fc_milk">Milk production</label>
+                  <select id="fc_milk" data-hs="milk"><option value="low">Low (11 lb at peak)</option><option value="moderate">Moderate (18 lb at peak)</option><option value="high">High (25 lb at peak)</option></select></div>
+                <div class="field"><label for="fc_bcs">Body condition at calving</label>
+                  <select id="fc_bcs" data-hs="bcs" data-num="1"><option value="4">4 — thin</option><option value="5">5 — moderate</option><option value="6">6 — good</option></select></div>
+                <div class="field"><label for="fc_bcsWean">Condition at weaning</label>
+                  <select id="fc_bcsWean" data-hs="bcsWean" data-num="1"><option value="0">Same as at calving</option><option value="3">3 — very thin</option><option value="4">4 — thin</option><option value="5">5 — moderate</option></select>
+                  <span class="hint" id="fc_bcsHint">Cows lose condition while nursing</span></div>
+                <div class="field"><label for="fc_activity">Terrain &amp; walking</label>
+                  <select id="fc_activity" data-hs="activity"><option value="none">No adjustment (NRC tables)</option><option value="flat">Flat, plenty of grass (+10%)</option><option value="rolling">Rolling or moderate grass (+20%)</option><option value="rough">Rough or sparse range (+35%)</option><option value="extensive">Big range, long walks to water (+50%)</option></select></div>
+                <div class="field"><label for="fc_calvingRate">Calving rate</label><div class="input-wrap has-suffix"><input type="number" id="fc_calvingRate" data-h="calvingRate" min="30" max="100" step="1"><span class="suffix">%</span></div></div>
+                <div class="field"><label for="fc_weanLb">Average weaning weight</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanLb" data-h="weanLb" min="250" max="900" step="5"><span class="suffix">lb</span></div><span class="hint" id="fc_weanLbHint"></span></div>
+              </div>
+              <fieldset style="margin-top:18px;">
+                <legend>Weaning period</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_weanPeriod">Calves kept after weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanPeriod" data-h="weanPeriod" min="0" max="120" step="5"><span class="suffix">days</span></div><span class="hint">0 = sold off the cow; 45 = VAC-45 preconditioning</span></div>
+                  <div class="field"><label for="fc_postAdg">Gain while weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_postAdg" data-h="postAdg" min="0" max="4" step="0.1"><span class="suffix">lb/day</span></div></div>
+                </div>
+              </fieldset>
+              <fieldset style="margin-top:18px;">
+                <legend>Replacements &amp; culls</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_replRate">Cows replaced each year</label><div class="input-wrap has-suffix"><input type="number" id="fc_replRate" data-h="replRate" min="0" max="40" step="1"><span class="suffix">%</span></div><span class="hint">Culls + deaths; 0 = you buy replacements</span></div>
+                  <div class="field"><label for="fc_heiferPreg">Heifers that settle</label><div class="input-wrap has-suffix"><input type="number" id="fc_heiferPreg" data-h="heiferPreg" min="40" max="100" step="1"><span class="suffix">%</span></div><span class="hint">Open heifers sold at preg check</span></div>
+                  <div class="field"><label for="fc_seasonal">Seasonal prices</label>
+                    <select id="fc_seasonal" data-hs="seasonal"><option value="off">Off (today's price)</option><option value="on">On (Texas pattern)</option></select></div>
+                </div>
+                <p class="card-note" id="fc_replNote" style="margin:10px 0 0;"></p>
+              </fieldset>
+              <fieldset style="margin-top:18px;">
+                <legend>Weather</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_weatherAdj">Cold &amp; heat adjustments</label>
+                    <select id="fc_weatherAdj" data-hs="weatherAdj"><option value="on">On (NRC 2016)</option><option value="off">Off (mild weather)</option></select>
+                    <span class="hint">Uses your region's monthly normals</span></div>
+                  <div class="field"><label for="fc_windMph">Typical wind</label><div class="input-wrap has-suffix"><input type="number" id="fc_windMph" data-h="windMph" min="0" max="30" step="1"><span class="suffix">mph</span></div><span class="hint">Lower it if cattle have windbreaks or brush</span></div>
+                  <div class="field"><label for="fc_coat">Hair coat in cold months</label>
+                    <select id="fc_coat" data-hs="coat" data-num="1"><option value="1">Clean and dry</option><option value="2">Some mud</option><option value="3">Wet or muddy lower body</option><option value="4">Soaked or caked with mud</option></select></div>
+                  <div class="field"><label for="fc_heat">Panting in hot months</label>
+                    <select id="fc_heat" data-hs="heat" data-num="1"><option value="1">None</option><option value="2">Rapid, shallow (+7%)</option><option value="3">Open-mouth (+18%)</option></select>
+                    <span class="hint">Months averaging 80°F or more</span></div>
+                </div>
+              </fieldset>
+              <fieldset style="margin-top:18px;">
+                <legend>Death loss</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_calfLoss">Calves lost, birth to weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_calfLoss" data-h="calfLoss" min="0" max="50" step="0.1"><span class="suffix">%</span></div><span class="hint">USDA NAHMS average: 6.4% (incl. born dead)</span></div>
+                  <div class="field"><label for="fc_cowLoss">Cows lost per year</label><div class="input-wrap has-suffix"><input type="number" id="fc_cowLoss" data-h="cowLoss" min="0" max="20" step="0.1"><span class="suffix">%</span></div><span class="hint">USDA NAHMS average: 1.5%</span></div>
+                </div>
+                <p class="card-note" id="fc_lossNote" style="margin:10px 0 0;"></p>
+              </fieldset>
+              <fieldset style="margin-top:18px;">
+                <legend>Flies</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_nws">New World screwworm</label>
+                    <select id="fc_nws" data-hs="nws"><option value="no">Not in my area</option><option value="yes">In or near my area</option></select></div>
+                  <div class="field fc-nws"><label for="fc_nwsLoss">Extra calf loss at peak fly season</label><div class="input-wrap has-suffix"><input type="number" id="fc_nwsLoss" data-h="nwsLoss" min="0" max="50" step="0.5"><span class="suffix">%</span></div></div>
+                  <div class="field fc-nws"><label for="fc_nwsCost">Checks &amp; treatment per calf</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="fc_nwsCost" data-h="nwsCost" min="0" max="500" step="1"></div></div>
+                  <div class="field"><label for="fc_hornFly">Horn flies</label>
+                    <select id="fc_hornFly" data-hs="hornFly" data-num="1"><option value="0">Controlled — no weight lost</option><option value="4">Some — calves lose up to 4%</option><option value="15">Heavy — calves lose up to 15%</option></select></div>
+                </div>
+                <p class="card-note" id="fc_flyNote" style="margin:10px 0 0;"></p>
+              </fieldset>
+            </div>
+          </details>
+
+          <details class="advanced" style="margin-top:12px;">
+            <summary>Feed, protein source &amp; feeding costs</summary>
+            <div class="adv-body">
+              <fieldset>
+                <legend>Hay (fills in when pasture runs short)</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_hayTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayTdn" data-h="hayTdn" min="30" max="80" step="1"><span class="suffix">%</span></div></div>
+                  <div class="field"><label for="fc_hayCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayCp" data-h="hayCp" min="2" max="25" step="0.5"><span class="suffix">%</span></div></div>
+                  <div class="field"><label for="fc_hayPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_hayPrice" data-h="hayPrice" min="0" max="5000" step="5"><span class="suffix">/ton</span></div></div>
+                </div>
+              </fieldset>
+              <fieldset style="margin-top:18px;">
+                <legend>Protein source (covers what hay and pasture can't)</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_source">Source</label><select id="fc_source"></select></div>
+                  <div class="field"><label for="fc_supCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_supCp" data-h="supCp" min="5" max="60" step="1"><span class="suffix">%</span></div></div>
+                  <div class="field"><label for="fc_supTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="fc_supTdn" data-h="supTdn" min="40" max="100" step="1"><span class="suffix">%</span></div></div>
+                  <div class="field"><label for="fc_supPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_supPrice" data-h="supPrice" min="0" max="5000" step="5"><span class="suffix">/ton</span></div><span class="hint" id="fc_perLbCp"></span></div>
+                </div>
+              </fieldset>
+              <fieldset style="margin-top:18px;">
+                <legend>How often you feed</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_supTrips">Supplement trips</label>
+                    <select id="fc_supTrips" data-hs="supTrips" data-num="1"><option value="7">Every day</option><option value="3">3 times a week</option><option value="2">2 times a week</option><option value="1">Once a week</option><option value="0.25">Once a month (self-fed)</option></select></div>
+                  <div class="field"><label for="fc_hayTrips">Hay trips</label>
+                    <select id="fc_hayTrips" data-hs="hayTrips" data-num="1"><option value="7">Every day</option><option value="3">3 times a week</option><option value="2">2 times a week</option><option value="1">Once a week</option></select></div>
+                  <div class="field"><label for="fc_tripCost">Cost of one feeding trip</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="fc_tripCost" data-h="tripCost" min="0" max="1000" step="1"></div><span class="hint">Fuel + your time or labor</span></div>
+                  <div class="field"><label for="fc_distPerTon">Delivery &amp; handling</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_distPerTon" data-h="distPerTon" min="0" max="500" step="1"><span class="suffix">/ton</span></div></div>
+                </div>
+                <p class="card-note" id="fc_tripNote" style="margin:10px 0 0;"></p>
+              </fieldset>
+              <div class="btn-row" style="padding:14px 0 0;"><button type="button" class="tool-btn" id="fc_reset">Reset herd &amp; feed details</button></div>
+            </div>
+          </details>
+
+          <details class="advanced" style="margin-top:12px;">
+            <summary>How this is calculated</summary>
+            <div class="adv-body fc-method">
+              <p><strong>Needs</strong> use the equations of the official NRC <em>Nutrient Requirements of Beef Cattle</em> model (8th ed., 2016; BCNRM software v1.0.37): maintenance (raised 20% while nursing for most breeds, adjusted for breed, body condition and terrain), milk (peak at 8.5 weeks), pregnancy (breed calf birth weight; energy for the calf converted at the diet's own efficiency) and intake (higher in late pregnancy). TDN is shown the way extension tables show it: the diet TDN at which the predicted intake just covers the need. Checked against the BCNRM spreadsheet on 12 cow scenarios (nursing, pregnant, cold, wind, mud, heat): identical results.</p>
+              <p><strong>Weather</strong> (when on) follows the same model: cows adapt to the previous month's temperature (needing more after cold months, less after hot ones); below the lower critical temperature — which depends on wind, hair depth (winter vs. summer coat), hide, a wet or muddy coat and body condition — they burn extra energy to stay warm; panting in hot months adds 7–18%. Temperatures are the monthly normals for your region, so a single blue norther or ice storm is harder than the average shown.</p>
+              <p><strong>Calves</strong> grow at the rate that reaches your average weaning weight. Their mother's milk is counted first; only the rest comes from pasture. When you wean on a date, calves born earlier are older and heavier. During the weaning period they eat like growing calves and are sold at the end of it.</p>
+              <p><strong>Pasture</strong> is each pasture's forage (soil survey × range condition, or your estimate; ponds, brush and bottomland adjusted) times your harvest efficiency, spread over the year with NRCS ecological-site growth curves for native range. Forage not eaten carries into the next month. Quality uses typical diet values by month, not a forage test.</p>
+              <p><strong>Intake</strong> follows Mississippi State Extension's guide (1.8–2.7% of body weight depending on forage quality). When pasture runs out, hay fills the rest of the intake; the supplement covers whatever protein or energy is still missing.</p>
+              <p><strong>Losses:</strong> calf death loss is split into weather-related (about 10% of all losses in USDA's NAHMS study, adjusted by how cold the nights are in the birth month for your region) and everything else. Screwworm risk rises with temperature (little fly activity below 59°F, most at 77–86°F, per AgriLife); there is no published loss rate yet, so you set it. Horn flies cut calf weaning weights 4–15% (UNL); the tool applies it to the share of nursing days in June–September.</p>
+              <p><strong>Money:</strong> calves are sold at your market price slide (half steers, half heifers), cull cows at the cull-cow price, both from the site's shared market prices. By default it uses those prices as they are, like the other tools on this site. Turn on <em>Seasonal prices</em> to move them to the month you actually sell with Texas A&amp;M's seasonal pattern (Texas 500–600 lb steers and San Angelo cull cows: spring runs about 4% above the year's average, fall about 5–6% below). The result is cattle sales minus the feed you buy and the cost of feeding it — not profit: land, labor, vet, bull and other costs aren't in it.</p>
+              <p><strong>Replacement heifers</strong> follow the BCNRM 2016 targets: 60% of mature weight when they settle at 15 months (65% for Brahman), 80% at first calving at 2 years, with growth and pregnancy needs from the same model. Enough heifer calves are kept to replace culls and dead cows after open heifers are sold at pregnancy check; culls are sold at weaning.</p>
+              <p><strong>Body condition:</strong> if cows come off the calf thinner than your target, the energy to put it back (NRC 2016: a 1,100-lb cow needs about 207 Mcal to go from 4 to 5) is spread from weaning to a month before the next calving — the cheapest time to do it.</p>
+              <p><strong>Not included:</strong> cold stress on calves, first-calf heifers, heifers you buy instead of raise.</p>
+            </div>
+          </details>
+        </div>
+      </div>
+    </div>
+
+    <!-- Decisions -->
+    <div class="card" id="decCard">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v12M18 9v12M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM6 15c0-4 12-2 12-6"/></svg>
+        <h2>Decisions: calving season, drought, what if</h2>
+      </div>
+      <div class="card-body">
+        <div class="segmented dec-tabs" role="tablist" aria-label="Decision tools">
+          <button type="button" class="seg-btn active" data-dec="calving" role="tab" aria-selected="true">Best calving season</button>
+          <button type="button" class="seg-btn" data-dec="drought" role="tab" aria-selected="false">Drought: buy feed or wean early?</button>
+          <button type="button" class="seg-btn" data-dec="whatif" role="tab" aria-selected="false">What if…</button>
+        </div>
+        <div class="fc-empty" id="dec_empty" hidden></div>
+
+        <div class="dec-panel" id="dec_calving">
+          <p class="card-note" style="margin-top:14px;">Tries a <span id="dec_calvLen">60</span>-day calving season starting in each month, with the same herd, pastures and weaning age. First the ranch’s production — calves, pounds weaned, losses and the feed you’d have to buy — then what that’s worth at market prices.</p>
+          <h3 class="sub-h">1. Production</h3>
+          <p class="card-note" style="margin:0 0 8px;">After calving the cows nurse and need the most. The best month to calve is the one where your grass covers that need, so you buy the least feed when it matters.</p>
+          <div class="fc-chart" id="dec_calvChart"></div>
+          <p class="fc-short" id="dec_calvText"></p>
+          <div class="table-scroll"><table class="plan fc-table" id="dec_calvTable"></table></div>
+          <h3 class="sub-h" style="margin-top:26px;">2. Economics</h3>
+          <div class="field" style="max-width:340px;"><label for="dec_calvPrice">Calf and cull prices</label>
+            <select id="dec_calvPrice"><option value="season">By month sold (Texas seasonal pattern)</option><option value="flat">Today’s price all year</option></select></div>
+          <div class="fc-chart" id="dec_calvEconChart" style="margin-top:10px;"></div>
+          <p class="fc-short" id="dec_calvEconText"></p>
+          <div class="table-scroll"><table class="plan fc-table" id="dec_calvEconTable"></table></div>
+        </div>
+
+        <div class="dec-panel" id="dec_drought" hidden>
+          <p class="card-note" style="margin-top:14px;">A dry year or failed small grains cut the forage your pastures grow. Compare three ways through it: keep the calves on the cows and buy feed, wean early and sell, or wean early and feed the calves yourself until your normal weaning age.</p>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="dr_cut">Forage lost</label><div class="input-wrap has-suffix"><input type="number" id="dr_cut" data-dr="cut" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+            <div class="field"><label for="dr_from">Starting in</label><select id="dr_from" data-drs="from" data-num="1"></select></div>
+            <div class="field"><label for="dr_months">For</label><div class="input-wrap has-suffix"><input type="number" id="dr_months" data-dr="months" min="1" max="12" step="1"><span class="suffix">mo</span></div></div>
+            <div class="field"><label for="dr_which">Which pastures</label>
+              <select id="dr_which" data-drs="which"><option value="all">All pastures</option><option value="range">Native range only</option><option value="smallgrain">Small grains (wheat, oats) only</option><option value="improved">Improved pasture only</option></select></div>
+            <div class="field"><label for="dr_earlyAge">Early weaning at</label><div class="input-wrap has-suffix"><input type="number" id="dr_earlyAge" data-dr="earlyAge" min="60" max="250" step="5"><span class="suffix">days</span></div></div>
+            <div class="field"><label for="dr_feedAdg">Gain if you feed early-weaned calves</label><div class="input-wrap has-suffix"><input type="number" id="dr_feedAdg" data-dr="feedAdg" min="0.5" max="4" step="0.1"><span class="suffix">lb/day</span></div></div>
+          </div>
+          <div class="dec-options" id="dec_drOptions"></div>
+          <p class="fc-short" id="dec_drText"></p>
+        </div>
+
+        <div class="dec-panel" id="dec_whatif" hidden>
+          <p class="card-note" style="margin-top:14px;">How much cattle sales minus feed costs move when one thing changes and everything else stays the same. Longest bars matter most.</p>
+          <div id="dec_whatifChart"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Points -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.7s6 6.3 6 11a6 6 0 0 1-12 0c0-4.7 6-11 6-11Z"/></svg>
+        <h2>Water, pens &amp; gates</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Use the buttons above the map to drop a water point, pens, a gate or a feeder, then click where it goes. Water points let the pasture list show how far the middle of each pasture is from the nearest water.</p>
+        <div class="point-list" id="pointList"></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="col-results">
+
+    <!-- Summary -->
+    <div class="card" id="summaryCard">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/></svg>
+        <h2>Your ranch at a glance</h2>
+      </div>
+      <div class="card-body" id="summaryBody"></div>
+    </div>
+
+    <!-- Settings -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
+        <h2>Herd &amp; grazing assumptions</h2>
+      </div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div class="field" style="grid-column:1 / -1;">
+            <label for="ranchName">Ranch name</label>
+            <input type="text" id="ranchName" placeholder="e.g. North place" maxlength="80">
+          </div>
+          <div class="field">
+            <label for="hd_cows">Cows</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_cows" min="0" step="1" inputmode="numeric"><span class="suffix">head</span></div>
+          </div>
+          <div class="field">
+            <label for="hd_cowLb">Mature cow weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_cowLb" min="600" max="2000" step="25" inputmode="numeric"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="hd_bulls">Bulls</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_bulls" min="0" step="1" inputmode="numeric"><span class="suffix">head</span></div>
+            <span class="hint" id="hd_bullsHint">Auto: 1 per 25 cows</span>
+          </div>
+          <div class="field">
+            <label for="hd_bullLb">Bull weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_bullLb" min="1000" max="3000" step="50" inputmode="numeric"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field" style="grid-column:1 / -1;">
+            <div class="derived-note" id="hd_auNote"></div>
+          </div>
+          <div class="field" style="grid-column:1 / -1;">
+            <label for="manualCap">Carrying capacity — your own number <span style="font-weight:500;color:var(--ink-muted);">(optional)</span></label>
+            <div class="input-wrap has-suffix"><input type="number" id="manualCap" min="0" step="1" inputmode="decimal" placeholder="Leave blank to use the soil survey"><span class="suffix">AU</span></div>
+            <span class="hint">If you know how many animal units your place carries, enter it; the tool then uses it instead of the soil survey (and scales the feed calendar to match).</span>
+          </div>
+          <div class="field">
+            <label for="harvestEff">Harvest efficiency</label>
+            <div class="input-wrap has-suffix"><input type="number" id="harvestEff" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
+            <span class="hint">Share of forage cattle actually eat</span>
+          </div>
+          <div class="field">
+            <label for="intakeLb">Forage per AU per day</label>
+            <div class="input-wrap has-suffix"><input type="number" id="intakeLb" min="1" step="0.5" inputmode="decimal"><span class="suffix">lb</span></div>
+          </div>
+        </div>
+        <p class="card-note" style="margin:14px 0 0;">Defaults follow AgriLife Extension's <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering).</p>
+      </div>
+    </div>
+
+    <!-- Budget link -->
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <h2>What this ranch could earn</h2>
+      </div>
+      <div class="card-body" id="budgetBody"></div>
+    </div>
+
+    <!-- File -->
+    <div class="card" id="fileCard">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
+        <h2>Save, share &amp; print</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Your map is saved automatically in this browser only &mdash; nothing is sent to Texas A&amp;M. To move it to another device or give it to your agent, download a file and open it there.</p>
+        <div class="file-actions">
+          <button type="button" class="tool-btn" id="importBtn">⬆ Open a file</button>
+          <button type="button" class="tool-btn" id="exportGeoBtn">⬇ GeoJSON</button>
+          <button type="button" class="tool-btn" id="exportKmlBtn">⬇ Google Earth (KML)</button>
+          <button type="button" class="tool-btn" id="printBtn">🖨 Print a report</button>
+          <button type="button" class="tool-btn primary" id="planBtn">🗒 One-page year plan</button>
+        </div>
+        <input type="file" id="fileInput" accept=".geojson,.json,.kml,.kmz,.zip" hidden>
+        <p class="card-note" style="margin:10px 0 0;">Opens Google Earth files (KML/KMZ), GeoJSON, or a zipped shapefile from your agent or FSA office.</p>
+        <p class="notice" id="fileNotice" hidden></p>
+        <div class="btn-row" style="padding:14px 0 0;">
+          <button type="button" class="tool-btn danger" id="clearBtn">Delete this ranch from this device</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <a class="footer-brand" href="https://agrilifeextension.tamu.edu/" aria-label="Texas A&amp;M AgriLife Extension"><img class="logo-on-light" src="../brand/agrilife-extension-agecon-horizontal-color.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="331" height="40"><img class="logo-on-dark" src="../brand/agrilife-extension-agecon-horizontal-white.png" alt="" width="331" height="40"></a>
+  Forage estimates: USDA-NRCS Soil Survey (SSURGO) through Soil Data Access, &ldquo;range production, normal year&rdquo; weighted by soil area and component share. Drought status: U.S. Drought Monitor (National Drought Mitigation Center, USDA, NOAA), current week. Stocking rate method: AgriLife Extension, <em>Stocking Rate: The Key Grazing Management Decision</em>. Budget benchmark: AgriLife Extension 2026 District 3 (Rolling Plains) cow-calf enterprise budget. Satellite imagery &copy; Esri and its partners; search &copy; OpenStreetMap contributors. These are planning estimates, not a range inspection &mdash; walk your pastures and check with your county agent or NRCS office before setting a stocking rate.
+  <p class="eeo-statement" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the County Commissioners Courts of Texas Cooperating.</p>
+</footer>

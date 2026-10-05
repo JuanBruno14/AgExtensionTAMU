@@ -1,0 +1,13 @@
+{
+  "name": "my-ranch-tests",
+  "private": true,
+  "description": "Local copies of the CDN libraries My Ranch loads, used only by the automated browser tests (test_*.py serve them instead of jsDelivr).",
+  "devDependencies": {
+    "@geoman-io/leaflet-geoman-free": "2.17.0",
+    "@tmcw/togeojson": "5.8.1",
+    "jszip": "3.10.1",
+    "leaflet": "1.9.4",
+    "polygon-clipping": "0.15.7",
+    "shpjs": "4.0.4"
+  }
+}

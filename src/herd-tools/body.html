@@ -1,0 +1,277 @@
+<body>
+<header class="topbar">
+  <div class="wordmark">
+    <a href="../index.html" style="display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;">
+      <span class="brand-logo"><img class="logo-horizontal" src="../brand/agrilife-extension-agecon-horizontal-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="381" height="46"><img class="logo-stacked" src="../brand/agrilife-extension-agecon-stacked-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="120" height="52"></span>
+      <div class="text">
+        <div class="main">Decision Aids &middot; Herd Calculators</div>
+      </div>
+    </a>
+  </div>
+  <h1 class="tool-title">Herd Calculators</h1>
+  <div class="header-right">
+    <a href="../index.html" class="back-link">&larr; All categories</a>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
+    <span class="phase-chip">Pilot &middot; Phase 1</span>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="intro-inner">
+    <div>
+      <h1>Quick answers for everyday herd decisions.</h1>
+      <p>Five small calculators for the questions that come up every week: how much water the herd needs, how to mix hay and supplement, how much dewormer to buy and when cattle can be sold, how fast calves are gaining, and how the herd did this year. Every number comes from a public extension source or a product label, listed under each tool.</p>
+    </div>
+    <div class="intro-meta">
+      <div><strong>US units</strong>lb, gallons, &deg;F</div>
+      <div><strong>Private</strong>your numbers stay in this browser</div>
+      <div><strong>Works on</strong>phone, tablet, computer</div>
+    </div>
+  </div>
+  <div class="fence-line"></div>
+</section>
+
+<nav class="tool-tabs" aria-label="Calculators">
+  <div class="segmented" role="tablist">
+    <button type="button" class="seg-btn active" data-tool="water" role="tab" aria-selected="true">💧 Water</button>
+    <button type="button" class="seg-btn" data-tool="ration" role="tab" aria-selected="false">🌾 Ration mix</button>
+    <button type="button" class="seg-btn" data-tool="dewormer" role="tab" aria-selected="false">💉 Dewormer</button>
+    <button type="button" class="seg-btn" data-tool="gain" role="tab" aria-selected="false">⚖️ Weight gain</button>
+    <button type="button" class="seg-btn" data-tool="herd" role="tab" aria-selected="false">📋 Herd year</button>
+  </div>
+</nav>
+
+<!-- ============================================================ WATER -->
+<section class="tool-panel layout" id="tool-water">
+  <div class="col-inputs">
+    <div class="card">
+      <div class="card-head"><h2>Water: how much the herd drinks</h2></div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div class="field" style="grid-column:1/-1;"><label for="w_class">Type of cattle</label>
+            <select id="w_class" data-k="w_class">
+              <option value="lactating">Cows nursing calves</option>
+              <option value="pregnant">Dry pregnant cows</option>
+              <option value="growing">Growing calves, heifers, steers</option>
+              <option value="finishing">Finishing cattle</option>
+              <option value="bulls">Mature bulls</option>
+            </select></div>
+          <div class="field"><label for="w_lb">Average weight</label><div class="input-wrap has-suffix"><input type="number" id="w_lb" data-k="w_lb" min="200" max="2600" step="10"><span class="suffix">lb</span></div></div>
+          <div class="field"><label for="w_head">Head</label><div class="input-wrap has-suffix"><input type="number" id="w_head" data-k="w_head" min="1" max="100000" step="1"><span class="suffix">head</span></div></div>
+          <div class="field"><label for="w_temp">Hottest-day temperature</label><div class="input-wrap has-suffix"><input type="number" id="w_temp" data-k="w_temp" min="0" max="120" step="1"><span class="suffix">&deg;F</span></div><span class="hint">Size water for the hottest days, not the average</span></div>
+          <div class="field"><label for="w_tank">Water stored (tanks, troughs)</label><div class="input-wrap has-suffix"><input type="number" id="w_tank" data-k="w_tank" min="0" max="10000000" step="50"><span class="suffix">gal</span></div><span class="hint">0 if you don&rsquo;t want this</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-results">
+    <div class="card">
+      <div class="card-head"><h2>Result</h2></div>
+      <div class="card-body">
+        <div class="stat-tiles">
+          <div class="stat-tile"><span class="label">Per head</span><span class="value" id="w_perHead">&mdash;</span><span class="sub">gallons a day</span></div>
+          <div class="stat-tile"><span class="label">Whole herd</span><span class="value" id="w_herd">&mdash;</span><span class="sub">gallons a day</span></div>
+          <div class="stat-tile wide"><span class="label">Stored water lasts</span><span class="value small" id="w_days">&mdash;</span><span class="sub" id="w_daysSub">with no refill</span></div>
+        </div>
+        <p class="narrative" id="w_note"></p>
+        <table class="plan" id="w_table" aria-label="Gallons per head per day by temperature"></table>
+        <ul class="tips">
+          <li>Aim for water with total dissolved solids (TDS) of <strong>3,000 ppm or less</strong>; never use water over 10,000 ppm.</li>
+          <li>Keep water within about <strong>650&ndash;1,000 feet</strong> of every part of the pasture for even grazing.</li>
+        </ul>
+        <p class="sources"><strong>Source:</strong> Mississippi State University Extension, <a href="https://extension.msstate.edu/sites/default/files/publications/P2490_web.pdf" target="_blank" rel="noopener">Beef Cattle Water Requirements and Source Management</a> (P2490, Karisch, Parish &amp; Rhinehart), tables adapted from NRC <em>Nutrient Requirements of Beef Cattle</em> (2000). The calculator interpolates between the published temperatures and weights.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ RATION -->
+<section class="tool-panel layout" id="tool-ration" hidden>
+  <div class="col-inputs">
+    <div class="card">
+      <div class="card-head"><h2>Ration mix: two feeds to hit a target</h2></div>
+      <div class="card-body">
+        <p class="card-note">Enter nutrients on a <strong>dry-matter basis</strong> (from a forage test or the feed tag divided by its dry matter). The tool finds how much of each feed hits your target &mdash; the Pearson square.</p>
+        <div class="field-grid">
+          <div class="field"><label for="r_nut">Balance for</label>
+            <select id="r_nut" data-k="r_nut"><option value="cp">Crude protein (CP)</option><option value="tdn">Energy (TDN)</option></select></div>
+          <div class="field"><label for="r_target">Target in the ration</label><div class="input-wrap has-suffix"><input type="number" id="r_target" data-k="r_target" min="1" max="95" step="0.5"><span class="suffix">% DM</span></div></div>
+        </div>
+        <fieldset><legend>Feed 1</legend>
+          <div class="field-grid">
+            <div class="field" style="grid-column:1/-1;"><label for="r_aName">Name</label><input type="text" id="r_aName" data-k="r_aName" maxlength="40"></div>
+            <div class="field"><label for="r_aCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="r_aCp" data-k="r_aCp" min="0" max="60" step="0.5"><span class="suffix">% DM</span></div></div>
+            <div class="field"><label for="r_aTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="r_aTdn" data-k="r_aTdn" min="20" max="100" step="1"><span class="suffix">% DM</span></div></div>
+            <div class="field"><label for="r_aDm">Dry matter</label><div class="input-wrap has-suffix"><input type="number" id="r_aDm" data-k="r_aDm" min="10" max="100" step="1"><span class="suffix">%</span></div></div>
+            <div class="field"><label for="r_aPrice">Price</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="r_aPrice" data-k="r_aPrice" min="0" max="3000" step="5"><span class="suffix">/ton</span></div><span class="hint">as fed, delivered</span></div>
+          </div>
+        </fieldset>
+        <fieldset><legend>Feed 2</legend>
+          <div class="field-grid">
+            <div class="field" style="grid-column:1/-1;"><label for="r_bName">Name</label><input type="text" id="r_bName" data-k="r_bName" maxlength="40"></div>
+            <div class="field"><label for="r_bCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="r_bCp" data-k="r_bCp" min="0" max="60" step="0.5"><span class="suffix">% DM</span></div></div>
+            <div class="field"><label for="r_bTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="r_bTdn" data-k="r_bTdn" min="20" max="100" step="1"><span class="suffix">% DM</span></div></div>
+            <div class="field"><label for="r_bDm">Dry matter</label><div class="input-wrap has-suffix"><input type="number" id="r_bDm" data-k="r_bDm" min="10" max="100" step="1"><span class="suffix">%</span></div></div>
+            <div class="field"><label for="r_bPrice">Price</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="r_bPrice" data-k="r_bPrice" min="0" max="3000" step="5"><span class="suffix">/ton</span></div><span class="hint">as fed, delivered</span></div>
+          </div>
+        </fieldset>
+        <fieldset><legend>The cattle</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="r_dmi">Dry matter eaten</label><div class="input-wrap has-suffix"><input type="number" id="r_dmi" data-k="r_dmi" min="1" max="60" step="0.5"><span class="suffix">lb/day</span></div><span class="hint">about 2&ndash;2.5% of weight</span></div>
+            <div class="field"><label for="r_bw">Body weight</label><div class="input-wrap has-suffix"><input type="number" id="r_bw" data-k="r_bw" min="200" max="2600" step="10"><span class="suffix">lb</span></div></div>
+            <div class="field"><label for="r_head">Head</label><div class="input-wrap has-suffix"><input type="number" id="r_head" data-k="r_head" min="1" max="100000" step="1"><span class="suffix">head</span></div></div>
+            <div class="field"><label for="r_days">Days to feed</label><div class="input-wrap has-suffix"><input type="number" id="r_days" data-k="r_days" min="1" max="365" step="1"><span class="suffix">days</span></div></div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div class="col-results">
+    <div class="card">
+      <div class="card-head"><h2>Result</h2></div>
+      <div class="card-body">
+        <div class="verdict-pill" id="r_pill"><span class="dot"></span><span id="r_pillText">&mdash;</span></div>
+        <div id="r_out">
+          <div class="mixbar" id="r_bar" aria-hidden="true"></div>
+          <div class="table-scroll"><table class="plan" id="r_table"></table></div>
+          <div class="stat-tiles" style="margin-top:14px;">
+            <div class="stat-tile"><span class="label">Cost per head</span><span class="value small" id="r_costHead">&mdash;</span><span class="sub">per day</span></div>
+            <div class="stat-tile"><span class="label">Whole period</span><span class="value small" id="r_costAll">&mdash;</span><span class="sub" id="r_tons">&mdash;</span></div>
+          </div>
+          <p class="narrative" id="r_note"></p>
+        </div>
+        <p class="sources"><strong>Sources:</strong> University of Arkansas Extension, <a href="https://www.uaex.uada.edu/publications/pdf/FSA-3080.pdf" target="_blank" rel="noopener">Beef Cattle Nutrition Series Part 4: Formulating Rations</a> (FSA3080, Gadberry) for the Pearson square on a dry-matter basis; Texas A&amp;M AgriLife Extension, <a href="https://agrilifeextension.tamu.edu/wp-content/uploads/2026/03/Supplementation-Strategies-for-Beef-Cattle.pdf" target="_blank" rel="noopener">Supplementation Strategies for Beef Cattle</a> (B-6067, McCollum) for how supplements change forage intake.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ DEWORMER -->
+<section class="tool-panel layout" id="tool-dewormer" hidden>
+  <div class="col-inputs">
+    <div class="card">
+      <div class="card-head"><h2>Dewormer: dose, bottles and sale date</h2></div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div class="field" style="grid-column:1/-1;"><label for="d_prod">Product (by active ingredient)</label><select id="d_prod" data-k="d_prod"></select></div>
+          <div class="field custom-only"><label for="d_cDose">Label dose</label><div class="input-wrap has-suffix"><input type="number" id="d_cDose" data-k="d_cDose" min="0.1" max="100" step="0.1"><span class="suffix">mL</span></div></div>
+          <div class="field custom-only"><label for="d_cPer">for every</label><div class="input-wrap has-suffix"><input type="number" id="d_cPer" data-k="d_cPer" min="1" max="1000" step="1"><span class="suffix">lb</span></div></div>
+          <div class="field custom-only"><label for="d_cWd">Slaughter withdrawal</label><div class="input-wrap has-suffix"><input type="number" id="d_cWd" data-k="d_cWd" min="0" max="365" step="1"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="d_lb">Weight to dose by</label><div class="input-wrap has-suffix"><input type="number" id="d_lb" data-k="d_lb" min="50" max="3000" step="10"><span class="suffix">lb</span></div><span class="hint">Weigh, or use the heavy end of the group &mdash; underdosing breeds resistance</span></div>
+          <div class="field"><label for="d_head">Head to treat</label><div class="input-wrap has-suffix"><input type="number" id="d_head" data-k="d_head" min="1" max="100000" step="1"><span class="suffix">head</span></div></div>
+          <div class="field"><label for="d_bottle">Bottle / jug size</label><div class="input-wrap has-suffix"><input type="number" id="d_bottle" data-k="d_bottle" min="10" max="20000" step="10"><span class="suffix">mL</span></div></div>
+          <div class="field"><label for="d_date">Treatment date</label><input type="date" id="d_date" data-k="d_date"></div>
+          <div class="field"><label for="d_sale">Planned sale date</label><input type="date" id="d_sale" data-k="d_sale"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-results">
+    <div class="card">
+      <div class="card-head"><h2>Result</h2></div>
+      <div class="card-body">
+        <div class="verdict-pill" id="d_pill"><span class="dot"></span><span id="d_pillText">&mdash;</span></div>
+        <div class="stat-tiles">
+          <div class="stat-tile"><span class="label">Dose per head</span><span class="value" id="d_dose">&mdash;</span><span class="sub" id="d_doseSub">mL</span></div>
+          <div class="stat-tile"><span class="label">Bottles to buy</span><span class="value" id="d_bottles">&mdash;</span><span class="sub" id="d_total">&mdash;</span></div>
+          <div class="stat-tile"><span class="label">Withdrawal</span><span class="value small" id="d_wd">&mdash;</span><span class="sub">days before slaughter</span></div>
+          <div class="stat-tile"><span class="label">Earliest sale for slaughter</span><span class="value small" id="d_earliest">&mdash;</span><span class="sub" id="d_earliestSub"></span></div>
+        </div>
+        <p class="narrative" id="d_note"></p>
+        <p class="restrict" id="d_restrict"></p>
+        <p class="sources" id="d_source"></p>
+        <p class="card-note">Always read and follow the label on the product you buy &mdash; formulations and withdrawal times differ between brands and can change. Extra-label use needs a veterinarian.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ GAIN -->
+<section class="tool-panel layout" id="tool-gain" hidden>
+  <div class="col-inputs">
+    <div class="card">
+      <div class="card-head"><h2>Weight gain: are they on pace?</h2></div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div class="field"><label for="g_start">Starting weight</label><div class="input-wrap has-suffix"><input type="number" id="g_start" data-k="g_start" min="50" max="2000" step="5"><span class="suffix">lb</span></div></div>
+          <div class="field"><label for="g_now">Weight now</label><div class="input-wrap has-suffix"><input type="number" id="g_now" data-k="g_now" min="50" max="2000" step="5"><span class="suffix">lb</span></div></div>
+          <div class="field"><label for="g_days">Days between weighings</label><div class="input-wrap has-suffix"><input type="number" id="g_days" data-k="g_days" min="1" max="730" step="1"><span class="suffix">days</span></div></div>
+          <div class="field"><label for="g_target">Target gain</label><div class="input-wrap has-suffix"><input type="number" id="g_target" data-k="g_target" min="0.1" max="5" step="0.05"><span class="suffix">lb/day</span></div></div>
+          <div class="field"><label for="g_sale">Sale weight goal</label><div class="input-wrap has-suffix"><input type="number" id="g_sale" data-k="g_sale" min="100" max="2000" step="5"><span class="suffix">lb</span></div></div>
+          <div class="field"><label for="g_shrink">Shrink at sale</label><div class="input-wrap has-suffix"><input type="number" id="g_shrink" data-k="g_shrink" min="0" max="15" step="0.5"><span class="suffix">%</span></div><span class="hint">2&ndash;3% gathering, about 3% more for a short haul</span></div>
+          <div class="field"><label for="g_head">Head</label><div class="input-wrap has-suffix"><input type="number" id="g_head" data-k="g_head" min="1" max="100000" step="1"><span class="suffix">head</span></div></div>
+          <div class="field"><label for="g_price">Expected price</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="g_price" data-k="g_price" min="0" max="2000" step="1"><span class="suffix">/cwt</span></div><span class="hint">optional</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-results">
+    <div class="card">
+      <div class="card-head"><h2>Result</h2></div>
+      <div class="card-body">
+        <div class="verdict-pill" id="g_pill"><span class="dot"></span><span id="g_pillText">&mdash;</span></div>
+        <div class="stat-tiles">
+          <div class="stat-tile"><span class="label">Average daily gain</span><span class="value" id="g_adg">&mdash;</span><span class="sub" id="g_gap">lb/day</span></div>
+          <div class="stat-tile"><span class="label">Days to sale weight</span><span class="value" id="g_daysReal">&mdash;</span><span class="sub" id="g_daysTarget">&mdash;</span></div>
+          <div class="stat-tile"><span class="label">Pay weight after shrink</span><span class="value small" id="g_pay">&mdash;</span><span class="sub" id="g_payAll">&mdash;</span></div>
+          <div class="stat-tile"><span class="label">Value at sale</span><span class="value small" id="g_value">&mdash;</span><span class="sub" id="g_shrinkCost">&mdash;</span></div>
+        </div>
+        <p class="narrative" id="g_note"></p>
+        <p class="sources"><strong>Source (shrink):</strong> Oklahoma State University Extension, <a href="https://extension.okstate.edu/fact-sheets/managing-shrink-and-weighing-conditions-in-beef-cattle.html" target="_blank" rel="noopener">Managing Shrink and Weighing Conditions in Beef Cattle</a> (AFS-3257): 2&ndash;3% from gathering and sorting, about 3% from loading and a short haul, roughly 1% an hour for the first 3&ndash;4 hours on a truck.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================ HERD YEAR -->
+<section class="tool-panel layout" id="tool-herd" hidden>
+  <div class="col-inputs">
+    <div class="card">
+      <div class="card-head"><h2>Herd year: reproduction and head count</h2></div>
+      <div class="card-body">
+        <fieldset><legend>Reproduction (one breeding season)</legend>
+          <div class="field-grid">
+            <div class="field"><label for="h_exposed">Females exposed</label><div class="input-wrap has-suffix"><input type="number" id="h_exposed" data-k="h_exposed" min="1" max="100000" step="1"><span class="suffix">head</span></div><span class="hint">to bulls or AI, after adjusting for sales and purchases</span></div>
+            <div class="field"><label for="h_heifers">Of them, replacement heifers</label><div class="input-wrap has-suffix"><input type="number" id="h_heifers" data-k="h_heifers" min="0" max="100000" step="1"><span class="suffix">head</span></div></div>
+            <div class="field"><label for="h_tested">Pregnancy tested</label><div class="input-wrap has-suffix"><input type="number" id="h_tested" data-k="h_tested" min="0" max="100000" step="1"><span class="suffix">head</span></div></div>
+            <div class="field"><label for="h_preg">Diagnosed pregnant</label><div class="input-wrap has-suffix"><input type="number" id="h_preg" data-k="h_preg" min="0" max="100000" step="1"><span class="suffix">head</span></div></div>
+            <div class="field"><label for="h_weaned">Calves weaned</label><div class="input-wrap has-suffix"><input type="number" id="h_weaned" data-k="h_weaned" min="0" max="100000" step="1"><span class="suffix">head</span></div></div>
+            <div class="field"><label for="h_wwt">Average weaning weight</label><div class="input-wrap has-suffix"><input type="number" id="h_wwt" data-k="h_wwt" min="100" max="1200" step="5"><span class="suffix">lb</span></div></div>
+          </div>
+        </fieldset>
+        <fieldset><legend>Head count check (all cattle)</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="h_begin">Count at start of year</label><div class="input-wrap has-suffix"><input type="number" id="h_begin" data-k="h_begin" min="0" max="100000" step="1"><span class="suffix">head</span></div></div>
+            <div class="field"><label for="h_born">Calves born</label><div class="input-wrap has-suffix"><input type="number" id="h_born" data-k="h_born" min="0" max="100000" step="1"><span class="suffix">head</span></div></div>
+            <div class="field"><label for="h_bought">Bought / moved in</label><div class="input-wrap has-suffix"><input type="number" id="h_bought" data-k="h_bought" min="0" max="100000" step="1"><span class="suffix">head</span></div></div>
+            <div class="field"><label for="h_sold">Sold / moved out</label><div class="input-wrap has-suffix"><input type="number" id="h_sold" data-k="h_sold" min="0" max="100000" step="1"><span class="suffix">head</span></div></div>
+            <div class="field"><label for="h_died">Died</label><div class="input-wrap has-suffix"><input type="number" id="h_died" data-k="h_died" min="0" max="100000" step="1"><span class="suffix">head</span></div></div>
+            <div class="field"><label for="h_count">Counted now</label><div class="input-wrap has-suffix"><input type="number" id="h_count" data-k="h_count" min="0" max="100000" step="1"><span class="suffix">head</span></div></div>
+          </div>
+        </fieldset>
+      </div>
+    </div>
+  </div>
+  <div class="col-results">
+    <div class="card">
+      <div class="card-head"><h2>Result</h2></div>
+      <div class="card-body">
+        <div class="stat-tiles">
+          <div class="stat-tile"><span class="label">Pregnant, of exposed</span><span class="value" id="h_pregExp">&mdash;</span><span class="sub" id="h_pregTest">&mdash;</span></div>
+          <div class="stat-tile"><span class="label">Calf crop weaned</span><span class="value" id="h_weanPct">&mdash;</span><span class="sub">calves weaned per 100 exposed</span></div>
+          <div class="stat-tile"><span class="label">Pounds weaned per exposed female</span><span class="value" id="h_lbExp">&mdash;</span><span class="sub" id="h_lbAll">&mdash;</span></div>
+          <div class="stat-tile"><span class="label">Replacement rate</span><span class="value" id="h_repl">&mdash;</span><span class="sub">heifers among exposed females</span></div>
+        </div>
+        <div class="verdict-pill" id="h_pill" style="margin-top:16px;"><span class="dot"></span><span id="h_pillText">&mdash;</span></div>
+        <p class="narrative" id="h_note"></p>
+        <p class="sources"><strong>Source:</strong> Standardized Performance Analysis (SPA) definitions, as used in Texas A&amp;M AgriLife Extension&rsquo;s <a href="https://agecoext.tamu.edu/resources/decisionaids/beef/" target="_blank" rel="noopener">beef cattle decision aids</a> (SPA Reproduction: Critical Dates, Data and Calculations). Pregnancy and weaning percentages are based on <em>exposed</em> females, the SPA standard; pounds weaned per exposed female = weaning % &times; average weaning weight.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <a class="footer-brand" href="https://agrilifeextension.tamu.edu/" aria-label="Texas A&amp;M AgriLife Extension"><img class="logo-on-light" src="../brand/agrilife-extension-agecon-horizontal-color.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="331" height="40"><img class="logo-on-dark" src="../brand/agrilife-extension-agecon-horizontal-white.png" alt="" width="331" height="40"></a>
+  These calculators give planning estimates from published extension tables and product labels; they are not a veterinary or nutrition prescription. Check with your county Extension agent, nutritionist or veterinarian before changing a feeding or health program.
+  <p class="eeo-statement" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the County Commissioners Courts of Texas Cooperating.</p>
+</footer>
