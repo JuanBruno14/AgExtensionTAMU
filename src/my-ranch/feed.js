@@ -465,21 +465,30 @@
           var dTdn = 0, dCp = 0;
           if(availTot > 0){ supply.forEach(function(g, i){ dTdn += avail[i]/availTot*g.quality[m][0]; dCp += avail[i]/availTot*g.quality[m][1]; }); }
           else { dTdn = QUALITY.range[m][0]; dCp = QUALITY.range[m][1]; }
-          var cowCap = o.cowLb/100*(r.lactFrac*intakePct(dTdn, true) + (1 - r.lactFrac)*intakePct(dTdn, false));
-          var bullCap = o.bullLb/100*intakePct(dTdn, false);
+          // Low-protein forage (<7% CP) limits intake; once a protein supplement covers the gap, cattle eat more of it
+          // (AgriLife ANSC-PU-085, McCollum: 1.6% of body weight at 5% CP vs. 2.3% at 7-8% CP; supplements raised intake 36% on average).
+          var lowCp = dCp < 7;
+          var pctL = lowCp ? Math.max(intakePct(dTdn, true), 2.5) : intakePct(dTdn, true), pctD = lowCp ? Math.max(intakePct(dTdn, false), 2.3) : intakePct(dTdn, false);
+          var cowCap = o.cowLb/100*(r.lactFrac*pctL + (1 - r.lactFrac)*pctD);
+          var bullCap = o.bullLb/100*pctD;
           var demand = (cows*(cowCap + r.calfDm + r.wcCap + r.hCap) + bulls*bullCap)*n;
           var f = demand > 0 ? Math.min(1, availTot/demand) : 1;
           var eaten = demand*f;
           supply.forEach(function(g, i){ var take = availTot > 0 ? eaten*avail[i]/availTot : 0; stock[i] = Math.max(0, avail[i] - take); });
-          var feedFor = function(cap, rTdn, rCp){
+          // protOnly: supplement covers the protein gap only; the energy still missing comes from body reserves (mature cows and bulls)
+          var feedFor = function(cap, rTdn, rCp, protOnly){
             var forage = cap*f, hay = cap*(1 - f);
             var tdn = forage*dTdn/100 + hay*feeds.hayTdn/100, cp = forage*dCp/100 + hay*feeds.hayCp/100;
             var eDef = Math.max(0, rTdn - tdn), pDef = Math.max(0, rCp - cp);
-            var sup = Math.max(eDef/(feeds.supTdn/100), pDef/(feeds.supCp/100));
-            return {forage:forage, hay:hay, sup:sup, eDef:eDef, pDef:pDef, protDriven:pDef/(feeds.supCp/100) >= eDef/(feeds.supTdn/100)};
+            var supP = pDef/(feeds.supCp/100), supE = eDef/(feeds.supTdn/100);
+            var sup = protOnly ? supP : Math.max(supE, supP);
+            var tdnIn = tdn + sup*feeds.supTdn/100;
+            return {forage:forage, hay:hay, sup:sup, eDef:eDef, pDef:pDef, protDriven:supP >= supE,
+                    eLeft:Math.max(0, rTdn - tdnIn), eSur:Math.max(0, tdnIn - rTdn)};
           };
-          var cw = feedFor(cowCap, r.cowTdn, r.cowCp);
-          var bl = feedFor(bullCap, r.bullTdn, r.bullCp);
+          var protOnly = o.supMode === 'protein';
+          var cw = feedFor(cowCap, r.cowTdn, r.cowCp, protOnly);
+          var bl = feedFor(bullCap, r.bullTdn, r.bullCp, protOnly);
           var wcHead = r.wcN > 0 ? feedFor(r.wcCap/r.wcN, r.wcTdn/r.wcN, r.wcCp/r.wcN) : {forage:0, hay:0, sup:0};
           var hHead = r.hN > 0 ? feedFor(r.hCap/r.hN, r.hTdn/r.hN, r.hCp/r.hN) : {forage:0, hay:0, sup:0};
           var hHeads = cows*r.hN;
@@ -510,6 +519,22 @@
           });
         }
       }
+      // cow body condition through the year, starting at the calving-season month with the condition you set at calving.
+      // Energy short of need (TDN lb/day) is drawn from body reserves (NE from tissue at 0.8, NRC 2016); surplus is stored at the diet's NEg efficiency.
+      var sbwC = o.cowLb/LB*0.96, perBcs = bodyEnergy(sbwC, 5, 5) - bodyEnergy(sbwC, 5, 4);
+      var calvM = cs.reduce(function(a, c){ a[c.birthMonth] = (a[c.birthMonth] || 0) + c.share; return a; }, []);
+      var m0 = 0; calvM.forEach(function(v, m){ if(v > (calvM[m0] || 0)) m0 = m; });
+      var bcsStart = +o.bcs || 5, b = bcsStart, bcsByMonth = [], lowB = b, lowM = m0;
+      for(var k = 0; k < 12; k++){
+        var mm = (m0 + k) % 12, x = months[mm], me = x.dietTdn/100*4.409*0.82, km = nemaOf(x.dietTdn)/me, kg = Math.max(0.05, negaOf(x.dietTdn))/me;
+        var mcalDay = (x.cow.eSur*kg - x.cow.eLeft*km/0.8)*1.64;      // tissue energy, Mcal/day (1 lb TDN = 1.64 Mcal ME)
+        var d = mcalDay*x.days/perBcs;
+        d = Math.max(-1, Math.min(0.5, d));
+        b = Math.max(1, Math.min(Math.max(bcsStart, 5), b + d));   // cows regain on good grass, but not past calving condition (5 if thinner)
+        x.cowBcs = b; bcsByMonth[mm] = b;
+        if(b < lowB){ lowB = b; lowM = mm; }
+      }
+      var bcsInfo = {mode:protOnly ? 'protein' : 'full', start:bcsStart, startMonth:m0, low:lowB, lowMonth:lowM, end:b, byMonth:bcsByMonth, mcalPerScore:perBcs};
       var tot = months.reduce(function(a, x){ a.hay += x.hayLb; a.sup += x.supLb; a.feed += x.feedCost; a.trips += x.trips; a.tripCost += x.tripCost; a.dist += x.distCost; a.cost += x.cost; return a; },
         {hay:0, sup:0, feed:0, trips:0, tripCost:0, dist:0, cost:0});
       var econ = {
@@ -522,7 +547,7 @@
       };
       econ.costs = econ.feed + econ.trips + econ.dist + econ.nwsCare;
       econ.net = econ.income - econ.costs;
-      return {months:months, totals:tot, econ:econ, calves:co, forageTdn:ftdn};
+      return {months:months, totals:tot, econ:econ, calves:co, forageTdn:ftdn, bcs:bcsInfo};
     }
 
     function doy(mmdd){ var p = String(mmdd || '').split('-'); var mo = +p[0], da = +p[1]; if(!(mo >= 1 && mo <= 12 && da >= 1)) return 45; return MONTH_START[mo - 1] + Math.min(da, MONTH_DAYS[mo - 1]) - 1; }

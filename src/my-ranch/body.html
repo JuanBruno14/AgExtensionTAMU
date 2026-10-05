@@ -296,6 +296,9 @@
               </fieldset>
               <fieldset style="margin-top:18px;">
                 <legend>Protein source (covers what hay and pasture can't)</legend>
+                <div class="field" style="max-width:520px;margin-bottom:12px;"><label for="fc_supMode">How you supplement</label>
+                  <select id="fc_supMode" data-hs="supMode"><option value="protein">Protein only — cows use body reserves for the energy grass lacks (usual on dormant range)</option><option value="full">Protein and energy — feed enough that cows keep their condition</option></select>
+                  <span class="hint">Applies to cows and bulls. Growing heifers and weaned calves always get what they need to keep growing.</span></div>
                 <div class="field-grid cols-3">
                   <div class="field"><label for="fc_source">Source</label><select id="fc_source"></select></div>
                   <div class="field"><label for="fc_supCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_supCp" data-h="supCp" min="5" max="60" step="1"><span class="suffix">%</span></div></div>

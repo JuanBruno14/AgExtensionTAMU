@@ -129,6 +129,7 @@
       seasonal:h.seasonal !== 'off', nowMonth:new Date().getMonth(),
       weatherAdj:h.weatherAdj !== 'off', windMph:h.windMph, coat:+h.coat || 1, heat:+h.heat || 1,
       nwsPresent:h.nws === 'yes', nwsLoss:h.nwsLoss, nwsCost:h.nwsCost, hornFly:+h.hornFly,
+      supMode:h.supMode === 'full' ? 'full' : 'protein',
       steerSlide:sl.steer, heiferSlide:sl.heifer};
     o.refWeanAge = FEED.cohorts(o).reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
     return Object.assign(o, over || {});
@@ -489,6 +490,25 @@
     return t;
   }
 
+  /* cow body condition through the year (protein-only supplementation lets cows use body reserves for energy) */
+  function bcsTile(b){
+    if(!b) return '';
+    var f1 = function(v){ return fmt(v, 1); };
+    if(b.mode === 'full') return '<div class="stat-tile"><span class="label">Cow condition</span><span class="value small">Held at ' + f1(b.start) + '</span><span class="sub">supplement covers energy too, so cows don’t lose condition</span></div>';
+    var drop = b.start - b.low, back = b.end - b.start;
+    var cls = b.low < 4 || back < -0.5 ? 'critical' : (b.low < 4.5 || back < -0.2 ? 'caution' : 'good');
+    return '<div class="stat-tile ' + cls + '"><span class="label">Cow condition (BCS)</span><span class="value small">' + f1(b.start) + ' → ' + f1(b.low) + ' → ' + f1(b.end) + '</span>' +
+      '<span class="sub">' + (drop < 0.05 ? 'no condition lost' : 'lowest in ' + FEED.MONTHS[b.lowMonth]) + ' · ' + (back < -0.2 ? 'not back at calving' : 'back at calving') + '</span></div>';
+  }
+  function bcsNote(b){
+    if(!b || b.mode === 'full') return '';
+    var back = b.end - b.start;
+    if(b.low < 4 || back < -0.5) return ' <strong>Cows lose too much condition</strong> (down to ' + fmt(b.low, 1) + ' in ' + FEED.MONTHS[b.lowMonth] + (back < -0.2 ? ', ' + fmt(b.end, 1) + ' at calving' : '') + '): thin cows at calving and breeding rebreed later and less. Feed more energy, wean earlier or carry fewer cows.';
+    if(b.low < 4.5 || back < -0.2) return ' Cows drop to condition ' + fmt(b.low, 1) + ' in ' + FEED.MONTHS[b.lowMonth] + (back < -0.2 ? ' and calve at ' + fmt(b.end, 1) : '') + ' — watch them; below 5 at calving, rebreeding suffers.';
+    if(b.start - b.low < 0.1) return ' With protein alone the cows hold their condition all year.';
+    return ' Cows use body reserves for the energy grass lacks (lowest ' + fmt(b.low, 1) + ' in ' + FEED.MONTHS[b.lowMonth] + ') and regain it on green grass.';
+  }
+
   /* ---- main render */
   function renderFeed(){
     renderRegionSelect();
@@ -543,7 +563,7 @@
         : 'Pasture covers the herd’s energy and protein all year at these numbers.';
       if(cShort.length) shortTxt += ' Nursing calves can’t get all they need for the planned weaning weight from milk plus pasture in ' + monthList(cShort) + ' — expect lighter calves, or plan creep feed (not priced here).';
     } else shortTxt = 'Hover a month to see how the need splits between cows, bulls and calves.';
-    $('fc_short').innerHTML = shortTxt;
+    $('fc_short').innerHTML = shortTxt + (res.hasSupply ? bcsNote(res.bcs) : '');
 
     var t = res.totals;
     $('fc_tiles').innerHTML = res.hasSupply ?
@@ -551,6 +571,7 @@
       '<div class="stat-tile"><span class="label">Cattle sales</span><span class="value small">' + money(ec.income) + '</span><span class="sub">' + (ec.cullIncome + ec.openIncome > 0.5 ? 'calves ' + money(ec.calfIncome) + ' · culls ' + money(ec.cullIncome + ec.openIncome) : money(ec.income/h.cows) + ' per cow') + '</span></div>' +
       '<div class="stat-tile"><span class="label">Hay to buy</span><span class="value small">' + (t.hay >= 100 ? fmt(t.hay/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.hay >= 100 ? money(t.hay/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'standing forage lasts all year') + '</span></div>' +
       '<div class="stat-tile"><span class="label">Protein supplement</span><span class="value small">' + (t.sup >= 100 ? fmt(t.sup/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.sup >= 100 ? money(t.sup/2000*h.supPrice) + ' · ' + monthList(supM) : 'not needed') + '</span></div>' +
+      bcsTile(res.bcs) +
       '<div class="stat-tile"><span class="label">Feeding trips &amp; delivery</span><span class="value small">' + money(t.tripCost + t.dist) + '</span><span class="sub">' + fmt(t.trips) + ' trips' + (ec.nwsCare > 0 ? ' · screwworm care ' + money(ec.nwsCare) : '') + '</span></div>' +
       '<div class="stat-tile ' + (ec.net >= 0 ? 'good' : 'critical') + '"><span class="label">Sales minus feed</span><span class="value small">' + money(ec.net) + '</span><span class="sub">' + money(ec.net/h.cows) + ' per cow · not profit</span></div>'
       : '';
@@ -558,7 +579,7 @@
 
     var d1 = function(v){ return v > 0.05 ? fmt(v, 1) : '—'; };
     $('fc_table').innerHTML = res.hasSupply ?
-      '<thead><tr><th>Month</th><th class="num">Grazed</th><th class="num">TDN need / pasture</th><th class="num">CP need / pasture</th><th class="num">Hay</th><th class="num">Suppl.</th><th class="num">Cost</th></tr></thead><tbody>' +
+      '<thead><tr><th>Month</th><th class="num">Grazed</th><th class="num">TDN need / pasture</th><th class="num">CP need / pasture</th><th class="num">Hay</th><th class="num">Suppl.</th>' + (res.bcs && res.bcs.mode === 'protein' ? '<th class="num">Cow BCS</th>' : '') + '<th class="num">Cost</th></tr></thead><tbody>' +
       ms.map(function(x){
         var bad = x.hayLb > 1 || x.supLb > 1;
         return '<tr class="' + (bad ? 'short' : '') + '"><td><span class="' + (bad ? 'flag' : 'ok') + '"></span>' + x.name + '</td>' +
@@ -566,8 +587,9 @@
           '<td class="num">' + fmt(x.herdReq.tdn) + ' / ' + fmt(x.pasture.tdn) + '</td>' +
           '<td class="num">' + fmt(x.herdReq.cp) + ' / ' + fmt(x.pasture.cp) + '</td>' +
           '<td class="num">' + d1(x.cow.hay) + '</td><td class="num">' + d1(x.cow.sup) + '</td>' +
+          (res.bcs && res.bcs.mode === 'protein' ? '<td class="num">' + (x.cowBcs != null ? fmt(x.cowBcs, 1) : '—') + '</td>' : '') +
           '<td class="num">' + (x.cost > 0.5 ? money(x.cost) : '—') + '</td></tr>';
-      }).join('') + '</tbody><tfoot><tr><td>Year</td><td></td><td></td><td></td><td class="num">' + fmt(t.hay/2000, 1) + ' t</td><td class="num">' + fmt(t.sup/2000, 1) + ' t</td><td class="num">' + money(t.cost) + '</td></tr></tfoot>'
+      }).join('') + '</tbody><tfoot><tr><td>Year</td><td></td><td></td><td></td><td class="num">' + fmt(t.hay/2000, 1) + ' t</td><td class="num">' + fmt(t.sup/2000, 1) + ' t</td>' + (res.bcs && res.bcs.mode === 'protein' ? '<td></td>' : '') + '<td class="num">' + money(t.cost) + '</td></tr></tfoot>'
       : '';
     $('fc_tableWrap').hidden = !res.hasSupply;
 
