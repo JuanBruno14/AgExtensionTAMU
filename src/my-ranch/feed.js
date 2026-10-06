@@ -532,7 +532,11 @@
       var midBw = (o.birthLb + o.weanLb)/2, ftAvg = 58;
       var m0c = calfDay(o, midBw, co.preAdg, 0, ftAvg, null), m1c = calfDay(o, midBw, co.preAdg + 0.2, 0, ftAvg, null);
       var mT = Math.max(0.5, (m1c.tdnLb - m0c.tdnLb)/0.2), mP = Math.max(0.05, (m1c.cpLb - m0c.cpLb)/0.2);
-      var lbLost = Math.min(o.weanLb*0.4, perCalfT/mT);   // energy-limited (calves on milk + forage rarely lack protein the way a forage CP balance suggests)
+      // energy-limited (calves on milk + forage rarely lack protein the way a forage CP balance suggests); month by month a nursing
+      // calf still gains at least a quarter of its potential on milk, so weight lost in a month is capped at 75% of that month's gain
+      var lostPerCow = 0;
+      months.forEach(function(x){ lostPerCow += Math.min(x.calfShortTdn*x.days/mT, 0.75*co.preAdg*x.days*x.req.calf.nursing); });
+      var lbLost = Math.min(o.weanLb*0.6, co.weaned > 0 ? lostPerCow/co.weaned : 0);
       var creepPerCalf = lbLost*(o.creepConv || 8);   // lb of creep per lb of added gain: 5-10:1 when forage is short or poor (NDSU Extension)
       var calfStrat = o.calfShort === 'lighter' ? 'lighter' : 'creep';
       if(calfStrat === 'lighter' && lbLost > 0.5){

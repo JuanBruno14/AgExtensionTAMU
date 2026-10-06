@@ -365,15 +365,26 @@
         <div class="fc-empty" id="dec_empty" hidden></div>
 
         <div class="dec-panel" id="dec_calving">
-          <p class="card-note" style="margin-top:14px;">Tries a <span id="dec_calvLen">60</span>-day calving season starting in each month, with the same herd, pastures and weaning age. First the ranch’s production — calves, pounds weaned, losses and the feed you’d have to buy — then what that’s worth at market prices.</p>
+          <p class="card-note" style="margin-top:14px;">Tries a <span id="dec_calvLen">60</span>-day calving season starting in each month, with the same herd, pastures and weaning age. First the ranch’s production — calves, pounds weaned, losses and the feed you’d have to buy — then when to sell the calves and what each choice is worth at market prices.</p>
           <h3 class="sub-h">1. Production</h3>
           <p class="card-note" style="margin:0 0 8px;">After calving the cows nurse and need the most. The best month to calve is the one where your grass covers that need, so you buy the least feed when it matters.</p>
           <div class="fc-chart" id="dec_calvChart"></div>
           <p class="fc-short" id="dec_calvText"></p>
           <div class="table-scroll"><table class="plan fc-table" id="dec_calvTable"></table></div>
-          <h3 class="sub-h" style="margin-top:26px;">2. Economics</h3>
-          <div class="field" style="max-width:340px;"><label for="dec_calvPrice">Calf and cull prices</label>
-            <select id="dec_calvPrice"><option value="season">By month sold (Texas seasonal pattern)</option><option value="flat">Today’s price all year</option></select></div>
+          <h3 class="sub-h" style="margin-top:26px;">2. When to sell your calves</h3>
+          <p class="card-note" style="margin:0 0 8px;">With your calving season, try selling at weaning earlier or later, or weaning at your usual age and keeping the calves on grass before selling. Calves weigh what milk and grass give them (no creep), and they are priced by weight and by the month they’re sold.</p>
+          <div class="field-row dec-sell-fields">
+            <div class="field"><label for="dec_calvPrice">Calf and cull prices</label>
+              <select id="dec_calvPrice"><option value="season">By month sold (Texas seasonal pattern)</option><option value="flat">Today’s price all year</option></select></div>
+            <div class="field"><label for="dec_sellGain">Gain on grass after weaning</label><div class="input-wrap has-suffix"><input type="number" id="dec_sellGain" data-sl="gain" min="0" max="4" step="0.1"><span class="suffix">lb/day</span></div><div class="hint">Dormant range + protein: about 0.75–1. Wheat or oats: 2 or more.</div></div>
+            <div class="field"><label for="dec_sellRate">Interest on the calves’ value</label><div class="input-wrap has-suffix"><input type="number" id="dec_sellRate" data-sl="rate" min="0" max="30" step="0.5"><span class="suffix">%/yr</span></div></div>
+            <div class="field"><label for="dec_sellDeath">Death loss while kept</label><div class="input-wrap has-suffix"><input type="number" id="dec_sellDeath" data-sl="death" min="0" max="5" step="0.1"><span class="suffix">%/month</span></div></div>
+          </div>
+          <div class="fc-chart" id="dec_sellChart" style="margin-top:10px;"></div>
+          <p class="fc-short" id="dec_sellText"></p>
+          <div class="table-scroll"><table class="plan fc-table" id="dec_sellTable"></table></div>
+          <h3 class="sub-h" style="margin-top:26px;">3. Calving month and sale together</h3>
+          <p class="card-note" style="margin:0 0 8px;">Each calving month with its own best time to sell, so you can see which combination leaves the most.</p>
           <div class="fc-chart" id="dec_calvEconChart" style="margin-top:10px;"></div>
           <p class="fc-short" id="dec_calvEconText"></p>
           <div class="table-scroll"><table class="plan fc-table" id="dec_calvEconTable"></table></div>

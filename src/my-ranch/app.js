@@ -51,7 +51,8 @@
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
     hayTdn:55, hayCp:10, hayPrice:200, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
-    dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0}};
+    dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0},
+    sell:{gain:1, rate:8, death:0.5}};
 
 /*@@FEED@@*/
   /* ------------------------------------------------------------------ helpers */
@@ -136,7 +137,7 @@
   }
 
   /* ------------------------------------------------------------------ state */
-  function blankState(){ return {v:1, name:'', pastures:[], points:[], zones:[], settings:Object.assign({}, DEFAULT_SETTINGS), herd:Object.assign({}, DEFAULT_HERD), drought:null, view:null, summary:null, herdNow:null}; }
+  function blankState(){ return {v:1, name:'', pastures:[], points:[], zones:[], settings:Object.assign({}, DEFAULT_SETTINGS), herd:Object.assign({}, DEFAULT_HERD, {dr:Object.assign({}, DEFAULT_HERD.dr), sell:Object.assign({}, DEFAULT_HERD.sell)}), drought:null, view:null, summary:null, herdNow:null}; }
   function loadState(){
     try{
       var s = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
@@ -147,6 +148,7 @@
         s.settings.cond = Object.assign({}, DEFAULT_SETTINGS.cond, s.settings.cond || {});
         s.settings.zoneF = Object.assign({}, DEFAULT_SETTINGS.zoneF, s.settings.zoneF || {});
         s.herd.dr = Object.assign({}, DEFAULT_HERD.dr, s.herd.dr || {});
+        s.herd.sell = Object.assign({}, DEFAULT_HERD.sell, s.herd.sell || {});
         s.zones = (s.zones || []).filter(function(z){ return z && z.geometry && z.geometry.type === 'Polygon' && ZONE_TYPES[z.type]; });
         s.pastures.forEach(function(p){ if(!CONDITIONS[p.condition]) p.condition = 'fair'; });
         delete s.settings.herdAU;
@@ -1200,6 +1202,7 @@
       if(mr.herd && typeof mr.herd === 'object'){
         state.herd = Object.assign({}, DEFAULT_HERD, mr.herd);
         state.herd.dr = Object.assign({}, DEFAULT_HERD.dr, mr.herd.dr || {});
+        state.herd.sell = Object.assign({}, DEFAULT_HERD.sell, mr.herd.sell || {});
         herdLoaded = true;
       }
       if(mr.settings && typeof mr.settings === 'object'){
@@ -1541,7 +1544,7 @@
   }
 
   /* test hooks (read-only helpers; harmless in production) */
-  window.MyRanch = {FEED:FEED, feed:function(){ return feedLast; }, herd:function(){ return state.herd; }, fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, state:function(){ return state; },
+  window.MyRanch = {FEED:FEED, feed:function(){ return feedLast; }, netOf:function(a, b, c){ return netOf(a, b, c); }, herd:function(){ return state.herd; }, fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, state:function(){ return state; },
                     addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, grassToday:grassToday, herdAU:herdAU, herdAUParts:herdAUParts, addPastureDrawn:function(g){ return addPasture(g, null, true); }, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }};
 
   init();
