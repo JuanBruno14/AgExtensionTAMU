@@ -371,20 +371,24 @@
           <div class="fc-chart" id="dec_calvChart"></div>
           <p class="fc-short" id="dec_calvText"></p>
           <div class="table-scroll"><table class="plan fc-table" id="dec_calvTable"></table></div>
-          <h3 class="sub-h" style="margin-top:26px;">2. When to sell your calves</h3>
-          <p class="card-note" style="margin:0 0 8px;">With your calving season, try selling at weaning earlier or later, or weaning at your usual age and keeping the calves on grass before selling. Calves weigh what milk and grass give them (no creep), and they are priced by weight and by the month they’re sold.</p>
+          <h3 class="sub-h" style="margin-top:26px;">2. When to wean and sell</h3>
+          <p class="card-note" style="margin:0 0 8px;">Your calving season stays as it is. <strong>a.</strong> Wean and sell the calves earlier or later (5 to 8 months old). <strong>b.</strong> Or wean as you do now and keep the calves on grass for a while before selling. Calves weigh what milk and grass give them (no creep) and are priced by weight and by the month they’re sold.</p>
           <div class="field-row dec-sell-fields">
             <div class="field"><label for="dec_calvPrice">Calf and cull prices</label>
               <select id="dec_calvPrice"><option value="season">By month sold (Texas seasonal pattern)</option><option value="flat">Today’s price all year</option></select></div>
-            <div class="field"><label for="dec_sellGain">Gain on grass after weaning</label><div class="input-wrap has-suffix"><input type="number" id="dec_sellGain" data-sl="gain" min="0" max="4" step="0.1"><span class="suffix">lb/day</span></div><div class="hint">Dormant range + protein: about 0.75–1. Wheat or oats: 2 or more.</div></div>
             <div class="field"><label for="dec_sellRate">Interest on the calves’ value</label><div class="input-wrap has-suffix"><input type="number" id="dec_sellRate" data-sl="rate" min="0" max="30" step="0.5"><span class="suffix">%/yr</span></div></div>
-            <div class="field"><label for="dec_sellDeath">Death loss while kept</label><div class="input-wrap has-suffix"><input type="number" id="dec_sellDeath" data-sl="death" min="0" max="5" step="0.1"><span class="suffix">%/month</span></div></div>
+            <div class="field"><label for="dec_sellDeath">Death loss of calves kept after weaning</label><div class="input-wrap has-suffix"><input type="number" id="dec_sellDeath" data-sl="death" min="0" max="5" step="0.1"><span class="suffix">%/month</span></div></div>
           </div>
-          <div class="fc-chart" id="dec_sellChart" style="margin-top:10px;"></div>
+          <h4 class="dec-h4">a. When to wean</h4>
+          <div class="fc-chart" id="dec_sellChart" style="margin-top:6px;"></div>
           <p class="fc-short" id="dec_sellText"></p>
           <div class="table-scroll"><table class="plan fc-table" id="dec_sellTable"></table></div>
-          <h3 class="sub-h" style="margin-top:26px;">3. Calving month and sale together</h3>
-          <p class="card-note" style="margin:0 0 8px;">Each calving month with its own best time to sell, so you can see which combination leaves the most.</p>
+          <h4 class="dec-h4">b. Keep the calves on grass after weaning?</h4>
+          <div class="fc-chart" id="dec_keepChart" style="margin-top:6px;"></div>
+          <p class="fc-short" id="dec_keepText"></p>
+          <div class="table-scroll"><table class="plan fc-table" id="dec_keepTable"></table></div>
+          <h3 class="sub-h" style="margin-top:26px;">3. Calving month and weaning date together</h3>
+          <p class="card-note" style="margin:0 0 8px;">Each calving month weaned at its own best date, so you can see which combination leaves the most.</p>
           <div class="fc-chart" id="dec_calvEconChart" style="margin-top:10px;"></div>
           <p class="fc-short" id="dec_calvEconText"></p>
           <div class="table-scroll"><table class="plan fc-table" id="dec_calvEconTable"></table></div>

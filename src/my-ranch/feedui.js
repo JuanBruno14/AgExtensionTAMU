@@ -736,113 +736,139 @@
         '<td class="num">' + fmt(r.postCov*100) + '%</td><td class="num">' + fmt(r.weaned, 1) + '</td><td class="num">' + fmt(r.natLb) + ' lb</td><td class="num">' + (r.creepCalf >= 1 ? fmt(r.creepCalf) + ' lb/calf' : '—') + '</td><td class="num">' + fmt(r.lbPerCow) + '</td>' +
         '<td class="num">' + fmt(r.deadCold, 1) + ' · ' + fmt(r.deadNws, 1) + '</td><td class="num">' + fmt(r.hayT, 1) + ' t · ' + fmt(r.supT, 1) + ' t</td><td class="num">' + fmt(r.feedPerCow) + ' lb</td></tr>'; }).join('') + '</tbody>';
 
-    /* 2. when to sell, with your calving season */
-    var sell = Object.assign({gain:1, rate:8, death:0.5}, h.sell || {});
+    /* 2a. when to wean (and sell), with your calving season */
+    var sell = Object.assign({rate:8, death:0.5}, h.sell || {});
     var normA = age;
     function doyStr(d){ d = ((Math.round(d) % 365) + 365) % 365; var m = FEED.monthOfDay(d); return FEED.MONTHS[m] + ' ' + (d - FEED.MONTH_START[m] + 1); }
-    // one way to sell: wean at `a` days, keep `k` days on grass, then sell; override = calving dates to try
-    function sellOpt(over, a, k, A){
-      var r = netOf(Object.assign({weanMode:'age', weanAge:a, refWeanAge:A, calfShort:'lighter', weanPeriod:k, postAdg:sell.gain, seasonal:seasonal}, over || {}));
+    function weanOpt(over, a, A){
+      var r = netOf(Object.assign({weanMode:'age', weanAge:a, refWeanAge:A, calfShort:'lighter', weanPeriod:0, seasonal:seasonal}, over || {}));
       var e = r.econ, cs = r.calves.cohorts, mid = cs[Math.floor(cs.length/2)] || cs[0];
-      return {r:r, e:e, path:k > 0 ? 'grass' : 'cow', age:a, keep:k, saleDoy:mid ? mid.day + mid.weanAge + k : 0, saleM:mid ? mid.saleMonth : 0,
+      return {r:r, e:e, age:a, saleDoy:mid ? mid.day + mid.weanAge : 0, saleM:mid ? mid.saleMonth : 0,
               lb:e.avgSaleLb, price:e.avgPrice, perHead:e.avgSaleLb/100*e.avgPrice, sold:e.calvesSold, bcsLow:r.bcs ? r.bcs.low : null};
     }
-    // money tied up in the calves (interest) and calves lost while kept, counted from your usual weaning age:
-    // selling earlier earns interest on the money sooner, selling later costs it
-    function holdCost(o, ref){
-      var days = o.age + o.keep - ref.age, value = ref.sold*ref.perHead;
-      o.interest = value*sell.rate/100*days/365;
-      o.deathCost = days > 0 ? o.sold*o.perHead*Math.min(0.5, sell.death/100*days/30.4) : 0;
-      o.net = o.e.net - o.interest - o.deathCost;
-      return o;
-    }
-    function sellSet(over, A, ages, keeps){
-      var ref = sellOpt(over, A, 0, A), out = [];
-      ages.forEach(function(a){ out.push(a === A ? ref : sellOpt(over, a, 0, A)); });
-      keeps.forEach(function(k){ out.push(sellOpt(over, A, k, A)); });
-      out.forEach(function(o){ holdCost(o, ref); });
+    // selling earlier puts the money to work sooner, selling later costs interest on it (counted from your usual weaning)
+    function weanSet(over, A, ages){
+      var ref = weanOpt(over, A, A), out = ages.map(function(a){ return a === A ? ref : weanOpt(over, a, A); });
+      out.forEach(function(o){ o.interest = ref.sold*ref.perHead*sell.rate/100*(o.age - A)/365; o.net = o.e.net - o.interest; });
       return {ref:ref, opts:out, best:out.reduce(function(b, o){ return o.net > b.net ? o : b; }, out[0])};
     }
-    var cowAges = [], keepDays = [];
-    for(var a2 = Math.max(120, normA - 75); a2 <= Math.min(270, normA + 105); a2 += 15) cowAges.push(a2);
-    if(cowAges.indexOf(normA) < 0){ cowAges.push(normA); cowAges.sort(function(x, y){ return x - y; }); }
-    for(var k2 = 30; k2 <= 210; k2 += 30) keepDays.push(k2);
-    var S = sellSet(null, normA, cowAges, keepDays);
-    var sBest = S.best, sRef = S.ref;
+    var wAges = []; for(var a2 = 150; a2 <= 240; a2 += 15) wAges.push(a2);
+    if(wAges.indexOf(normA) < 0){ wAges.push(normA); wAges.sort(function(x, y){ return x - y; }); }
+    var W = weanSet(null, normA, wAges), wBest = W.best, wRef = W.ref;
     (function(){
-      var el = $('dec_sellChart'), W = Math.round(Math.max(320, Math.min(720, el.clientWidth || 720))), H = 230, ml = W < 500 ? 52 : 66, mr = 10, mt = 20, mb = 34, pw = W - ml - mr, ph = H - mt - mb;
-      var all = S.opts, vals = all.map(function(o){ return o.net/cows; });
-      var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), pad = Math.max(5, (hi - lo)*0.15);
-      var d0 = Math.min.apply(null, all.map(function(o){ return o.age + o.keep; })), d1 = Math.max.apply(null, all.map(function(o){ return o.age + o.keep; }));
-      function X(o){ return ml + (o.age + o.keep - d0)/Math.max(1, d1 - d0)*pw; }
+      var el = $('dec_sellChart'), Wd = Math.round(Math.max(320, Math.min(720, el.clientWidth || 720))), H = 210, ml = Wd < 500 ? 52 : 66, mr = 14, mt = 20, mb = 34, pw = Wd - ml - mr, ph = H - mt - mb;
+      var all = W.opts, vals = all.map(function(o){ return o.net/cows; });
+      var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals), pad = Math.max(5, (hi - lo)*0.18);
+      var a0 = all[0].age, a1 = all[all.length - 1].age;
+      function X(o){ return ml + (o.age - a0)/Math.max(1, a1 - a0)*pw; }
       function Y(v){ return mt + ph - (v - lo + pad)/(hi - lo + 2*pad)*ph; }
-      var sv = '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><g class="grid">';
-      for(var i = 0; i <= 3; i++){ var gv = lo - pad + (hi - lo + 2*pad)*i/3; sv += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + Y(gv) + '" y2="' + Y(gv) + '"/>'; }
+      var sv = '<svg viewBox="0 0 ' + Wd + ' ' + H + '" aria-hidden="true"><g class="grid">';
+      for(var i = 0; i <= 3; i++){ var gv = lo - pad + (hi - lo + 2*pad)*i/3; sv += '<line x1="' + ml + '" x2="' + (Wd - mr) + '" y1="' + Y(gv) + '" y2="' + Y(gv) + '"/>'; }
       sv += '</g><g class="axis">';
       for(i = 0; i <= 3; i++){ gv = lo - pad + (hi - lo + 2*pad)*i/3; sv += '<text x="' + (ml - 8) + '" y="' + (Y(gv) + 4) + '" text-anchor="end">' + money(gv) + '</text>'; }
-      // month ticks along the sale date
-      var midDay = sRef.saleDoy - sRef.age;
-      for(var d = d0; d <= d1; d++){ var doy = ((midDay + d) % 365 + 365) % 365; var mm = FEED.monthOfDay(doy);
-        if(doy === FEED.MONTH_START[mm]) sv += '<text x="' + (ml + (d - d0)/Math.max(1, d1 - d0)*pw).toFixed(1) + '" y="' + (mt + ph + 18) + '" text-anchor="middle">' + FEED.MONTHS[mm] + '</text>'; }
-      sv += '</g>';
-      var cowL = all.filter(function(o){ return o.keep === 0; }), grassL = [sRef].concat(all.filter(function(o){ return o.keep > 0; }));
-      sv += '<polyline class="dec-line" points="' + cowL.map(function(o){ return X(o).toFixed(1) + ',' + Y(o.net/cows).toFixed(1); }).join(' ') + '"/>';
-      sv += '<polyline class="dec-line alt" points="' + grassL.map(function(o){ return X(o).toFixed(1) + ',' + Y(o.net/cows).toFixed(1); }).join(' ') + '"/>';
+      all.forEach(function(o){ if((o.age - a0) % 30 === 0 || o === wRef) sv += '<text x="' + X(o).toFixed(1) + '" y="' + (mt + ph + 16) + '" text-anchor="middle">' + doyStr(o.saleDoy) + '</text>'; });
+      sv += '</g><polyline class="dec-line" points="' + all.map(function(o){ return X(o).toFixed(1) + ',' + Y(o.net/cows).toFixed(1); }).join(' ') + '"/>';
       all.forEach(function(o, j){
-        var isB = o === sBest, isR = o === sRef;
-        sv += '<circle cx="' + X(o).toFixed(1) + '" cy="' + Y(o.net/cows).toFixed(1) + '" r="' + (isB ? 7 : 5) + '" class="dec-dot sell-dot' + (o.keep > 0 ? ' alt' : '') + (isB ? ' best' : '') + (isR ? ' cur' : '') + '"/>';
+        var isB = o === wBest, isR = o === wRef;
+        sv += '<circle cx="' + X(o).toFixed(1) + '" cy="' + Y(o.net/cows).toFixed(1) + '" r="' + (isB ? 7 : 5) + '" class="dec-dot' + (isB ? ' best' : '') + (isR ? ' cur' : '') + '"/>';
         if(isB) sv += '<text x="' + X(o).toFixed(1) + '" y="' + (Y(o.net/cows) - 12).toFixed(1) + '" text-anchor="middle" class="dec-lbl">Best</text>';
-        sv += '<rect class="hit" data-j="' + j + '" tabindex="0" x="' + (X(o) - 7).toFixed(1) + '" y="' + mt + '" width="14" height="' + ph + '"/>';
+        sv += '<rect class="hit" data-j="' + j + '" tabindex="0" x="' + (X(o) - 8).toFixed(1) + '" y="' + mt + '" width="16" height="' + ph + '"/>';
       });
       sv += '</svg>';
-      el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span style="color:var(--ink-muted);">Income − feed − holding costs, per cow, by sale date</span>' +
-        '<span><i class="sw" style="background:var(--dec-muted);border-radius:50%;"></i>Sold at weaning</span><span><i class="sw" style="background:var(--surface);border:2px solid var(--ink-muted);border-radius:50%;"></i>Weaned at ' + normA + ' days, kept on grass</span>' +
+      el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span style="color:var(--ink-muted);">Income − feed − interest per cow, by weaning date (calves sold at weaning)</span>' +
         '<span><i class="sw" style="background:var(--dec-muted);border-radius:50%;box-shadow:0 0 0 2px var(--ink);"></i>Your weaning now</span><span><i class="sw" style="background:var(--accent);border-radius:50%;"></i>Best</span></div>' + sv;
       var tip = feedTip();
       el.querySelectorAll('.hit').forEach(function(hh){
         function show(){ var o = all[+hh.getAttribute('data-j')], b = hh.getBoundingClientRect();
-          tip.innerHTML = '<div class="tt-val">Sell ' + doyStr(o.saleDoy) + '</div><div>' + (o.keep > 0 ? 'Weaned at ' + o.age + ' days + ' + o.keep + ' days on grass' : 'Weaned at ' + o.age + ' days') + '</div><div class="tt-lbl">' + fmt(o.lb) + ' lb at $' + fmt(o.price) + '/cwt = ' + money(o.perHead) + ' a head · ' + money(o.net/cows) + ' per cow</div>';
+          tip.innerHTML = '<div class="tt-val">Wean ' + doyStr(o.saleDoy) + ' (' + o.age + ' days)</div><div>' + fmt(o.lb) + ' lb at $' + fmt(o.price) + '/cwt = ' + money(o.perHead) + ' a calf</div><div class="tt-lbl">' + money(o.net/cows) + ' per cow</div>';
           tip.style.left = (b.left + b.width/2) + 'px'; tip.style.top = (b.top + 10) + 'px'; tip.classList.add('show'); }
         hh.addEventListener('mouseenter', show); hh.addEventListener('focus', show);
         hh.addEventListener('mouseleave', function(){ tip.classList.remove('show'); }); hh.addEventListener('blur', function(){ tip.classList.remove('show'); });
       });
     })();
-    function howStr(o){ return o.keep > 0 ? 'Wean at ' + o.age + ' d, keep ' + o.keep + ' d on grass' : 'Wean and sell at ' + o.age + ' d'; }
-    var bestCowOnly = S.opts.filter(function(o){ return o.keep === 0; }).reduce(function(b, o){ return o.net > b.net ? o : b; });
-    var bestGrass = S.opts.filter(function(o){ return o.keep > 0; }).reduce(function(b, o){ return o.net > b.net ? o : b; });
-    $('dec_sellText').innerHTML = 'With your calving season, the best time to sell is <strong>' + doyStr(sBest.saleDoy) + '</strong> (' + howStr(sBest).toLowerCase() + '): about <strong>' + fmt(sBest.lb) + ' lb at $' + fmt(sBest.price) + '/cwt</strong>, ' + money(sBest.perHead) + ' a head. ' +
-      (sBest === sRef ? 'That’s when you wean now. ' : 'That leaves <strong>' + money(sBest.net - sRef.net) + '</strong> more a year than selling at your usual weaning (' + doyStr(sRef.saleDoy) + ', ' + fmt(sRef.lb) + ' lb at $' + fmt(sRef.price) + '/cwt). ') +
-      (sBest.keep > 0 ? 'If you’d rather sell straight off the cows, the best is ' + doyStr(bestCowOnly.saleDoy) + ' (' + money(bestCowOnly.net - sRef.net) + ' vs. now). '
-                      : 'Keeping the calves on grass after weaning doesn’t pay here: the best of those is ' + doyStr(bestGrass.saleDoy) + ', ' + money(bestGrass.net - sRef.net) + ' vs. now. ') +
-      'Heavier calves bring less per hundredweight, ' + (seasonal ? 'prices follow the Texas seasonal pattern (high in spring, low in the fall), ' : '') +
-      'calves kept on grass gain ' + fmt(sell.gain, 1) + ' lb/day and the feed they need is counted, and money tied up in calves costs ' + fmt(sell.rate, 1) + '% a year. ' +
-      (sBest.bcsLow != null && sRef.bcsLow != null && sBest.keep === 0 && sBest.age > normA && sBest.bcsLow < sRef.bcsLow - 0.2 ? 'Nursing longer drops the cows to condition ' + fmt(sBest.bcsLow, 1) + ' (vs. ' + fmt(sRef.bcsLow, 1) + '), which can cost pregnancies next year — not in these numbers. ' : '');
-    $('dec_sellTable').innerHTML = '<thead><tr><th>Sell on</th><th>How</th><th class="num">Weight</th><th class="num">Price</th><th class="num">Per head</th><th class="num">Feed &amp; feeding</th><th class="num">Interest · deaths</th><th class="num">Cow BCS (lowest)</th><th class="num">Income − costs</th><th class="num">vs. now</th></tr></thead><tbody>' +
-      S.opts.slice().sort(function(x, y){ return (x.age + x.keep) - (y.age + y.keep) || x.keep - y.keep; }).map(function(o){
-        return '<tr' + (o === sBest ? ' class="best"' : '') + '><td>' + (o === sBest ? '★ ' : '') + doyStr(o.saleDoy) + (o === sRef ? ' (now)' : '') + '</td><td>' + howStr(o) + '</td>' +
+    var bcsDrop = wBest.bcsLow != null && wRef.bcsLow != null && wBest.age > normA && wBest.bcsLow < wRef.bcsLow - 0.2;
+    $('dec_sellText').innerHTML = 'Weaning and selling <strong>' + doyStr(wBest.saleDoy) + '</strong> (' + wBest.age + ' days) leaves the most: about <strong>' + fmt(wBest.lb) + ' lb at $' + fmt(wBest.price) + '/cwt</strong>, ' + money(wBest.perHead) + ' a calf. ' +
+      (wBest === wRef ? 'That’s when you wean now. ' : 'That’s <strong>' + (wBest.net >= wRef.net ? '+' : '') + money(wBest.net - wRef.net) + '</strong> a year vs. weaning ' + doyStr(wRef.saleDoy) + ' as you do now (' + fmt(wRef.lb) + ' lb at $' + fmt(wRef.price) + '/cwt). ') +
+      'Weaning later adds pounds but heavier calves bring less per hundredweight' + (seasonal ? ' and the sale month moves along the Texas seasonal price pattern' : '') + '; the cows also keep nursing, which the feed bill and the cows’ condition show. ' +
+      (bcsDrop ? 'Nursing longer drops the cows to condition ' + fmt(wBest.bcsLow, 1) + ' (vs. ' + fmt(wRef.bcsLow, 1) + '), which can cost pregnancies next year — not in these numbers. ' : '');
+    $('dec_sellTable').innerHTML = '<thead><tr><th>Wean and sell</th><th class="num">Age</th><th class="num">Weight</th><th class="num">Price</th><th class="num">Per calf</th><th class="num">Feed &amp; feeding (herd)</th><th class="num">Cow BCS (lowest)</th><th class="num">Income − costs</th><th class="num">vs. now</th></tr></thead><tbody>' +
+      W.opts.map(function(o){
+        return '<tr' + (o === wBest ? ' class="best"' : '') + '><td>' + (o === wBest ? '★ ' : '') + doyStr(o.saleDoy) + (o === wRef ? ' (now)' : '') + '</td><td class="num">' + o.age + ' d</td>' +
           '<td class="num">' + fmt(o.lb) + ' lb</td><td class="num">$' + fmt(o.price) + '/cwt</td><td class="num">' + money(o.perHead) + '</td><td class="num">' + money(o.e.costs) + '</td>' +
-          '<td class="num">' + money(o.interest) + ' · ' + money(o.deathCost) + '</td><td class="num">' + (o.bcsLow != null ? fmt(o.bcsLow, 1) : '—') + '</td>' +
-          '<td class="num"><strong>' + money(o.net) + '</strong></td><td class="num">' + (o === sRef ? '—' : (o.net >= sRef.net ? '+' : '') + money(o.net - sRef.net)) + '</td></tr>'; }).join('') + '</tbody>';
+          '<td class="num">' + (o.bcsLow != null ? fmt(o.bcsLow, 1) : '—') + '</td><td class="num"><strong>' + money(o.net) + '</strong></td><td class="num">' + (o === wRef ? '—' : (o.net >= wRef.net ? '+' : '') + money(o.net - wRef.net)) + '</td></tr>'; }).join('') + '</tbody>';
 
-    /* 3. calving month and sale together (coarser grid, drawn a moment later so the page stays responsive) */
+    /* 2b. keep the weaned calves on grass (backgrounding) or sell at weaning? */
+    (function(){
+      var o = feedOptions(), months = wRef.r.months, sl = slides(), n = wRef.sold, nowM = new Date().getMonth();
+      function price(w, m){ return 0.5*(FEED.slideLookup(sl.steer, w) + FEED.slideLookup(sl.heifer, w))*(seasonal ? FEED.SEASON_CALF[m]/FEED.SEASON_CALF[nowM] : 1); }
+      var d0 = wRef.saleDoy, bw = wRef.lb, m0 = FEED.monthOfDay(d0), V0 = bw/100*price(bw, m0);
+      var cubes = 0, monthDm = {}, order = [], rowsB = [], g = null;
+      for(var d = 1; d <= 210; d++){
+        var m = FEED.monthOfDay(d0 + d), mo = months[m];
+        if(d === 1 || d % 5 === 0) g = FEED.weanedGain(o, bw, mo.dietTdn, mo.dietCp, h.supTdn, h.supCp);
+        bw += g.adg;
+        cubes += g.supLb;
+        if(!(m in monthDm)){ monthDm[m] = 0; order.push(m); }
+        monthDm[m] += g.forageDm;
+        if(d % 30 === 0){
+          // grass the calves eat beyond what's left over after the cows: replaced with hay for the herd
+          var used = 0, shortLb = 0, shortM = [];
+          order.forEach(function(mm){ var x = months[mm], spare = Math.max(0, x.forageAvailLb - x.forageDemandLb) - used, eat = n*monthDm[mm];
+            var s2 = Math.max(0, eat - Math.max(0, spare)); if(s2 > 1){ shortLb += s2; shortM.push(mm); } used += eat - s2; });
+          var sm = FEED.monthOfDay(d0 + d), V = bw/100*price(bw, sm), gain = bw - wRef.lb;
+          var supC = cubes*h.supPrice/2000, hayC = shortLb/0.9/n*h.hayPrice/2000, intC = V0*sell.rate/100*d/365, deathC = V*Math.min(0.5, sell.death/100*d/30.4);
+          var cost = supC + hayC + intC + deathC;
+          rowsB.push({days:d, doy:d0 + d, lb:bw, adg:gain/d, price:price(bw, sm), V:V, gain:gain, sup:supC, hay:hayC, interest:intC, death:deathC, cost:cost,
+                      vog:gain > 1 ? (V - V0)/gain : null, cog:gain > 1 ? cost/gain : null, net:V - V0 - cost, shortM:shortM.slice()});
+        }
+      }
+      var bB = rowsB.reduce(function(a, r){ return r.net > a.net ? r : a; }, rowsB[0]);
+      var el = $('dec_keepChart'), Wd = Math.round(Math.max(320, Math.min(720, el.clientWidth || 720))), H = 190, ml = Wd < 500 ? 46 : 58, mr = 6, mt = 18, mb = 30, pw = Wd - ml - mr, ph = H - mt - mb, band = pw/rowsB.length, bw2 = Math.min(40, band*0.6);
+      var vmax = Math.max(1, Math.max.apply(null, rowsB.map(function(r){ return r.net; }))), vmin = Math.min(0, Math.min.apply(null, rowsB.map(function(r){ return r.net; })));
+      if(vmin < 0) vmin = Math.min(vmin*1.15, -(vmax - vmin)*0.18);
+      function Y(v){ return mt + ph - (v - vmin)/(vmax - vmin)*ph; }
+      var sv = '<svg viewBox="0 0 ' + Wd + ' ' + H + '" aria-hidden="true"><g class="grid"><line x1="' + ml + '" x2="' + (Wd - mr) + '" y1="' + Y(0) + '" y2="' + Y(0) + '"/></g><g class="axis">' +
+        '<text x="' + (ml - 8) + '" y="' + (Y(vmax) + 4) + '" text-anchor="end">' + money(vmax) + '</text><text x="' + (ml - 8) + '" y="' + (Y(0) + 4) + '" text-anchor="end">$0</text>' + (vmin < 0 && Y(vmin) - Y(0) > 16 ? '<text x="' + (ml - 8) + '" y="' + (Y(vmin) + 4) + '" text-anchor="end">' + money(vmin) + '</text>' : '') + '</g>';
+      rowsB.forEach(function(r, j){
+        var x = ml + band*j + band/2 - bw2/2, y = Math.min(Y(r.net), Y(0)), hgt = Math.abs(Y(r.net) - Y(0));
+        sv += '<rect class="pc-bar' + (r === bB && r.net > 0 ? ' best' : '') + (r.net < 0 ? ' neg' : '') + '" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw2.toFixed(1) + '" height="' + Math.max(1, hgt).toFixed(1) + '" rx="3"/>';
+        sv += '<text class="pc-val" x="' + (x + bw2/2).toFixed(1) + '" y="' + (r.net >= 0 ? y - 5 : y + hgt + 12).toFixed(1) + '" text-anchor="middle">' + money(r.net) + '</text>';
+        sv += '<g class="axis"><text x="' + (x + bw2/2).toFixed(1) + '" y="' + (mt + ph + 16) + '" text-anchor="middle">' + doyStr(r.doy) + '</text></g>';
+      });
+      el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span style="color:var(--ink-muted);">Extra profit per calf from keeping it on grass after weaning ' + doyStr(d0) + ', by sale date</span></div>' + sv + '</svg>';
+      var pays = bB.net > 0;
+      function monthsStr(ms){ return ms.map(function(mm){ return FEED.MONTHS[mm]; }).join(', '); }
+      $('dec_keepText').innerHTML = (pays
+        ? 'Keeping the calves on grass pays: selling <strong>' + doyStr(bB.doy) + '</strong> (' + bB.days + ' days after weaning) adds <strong>' + money(bB.net) + ' a calf</strong>, ' + money(bB.net*n) + ' for ' + fmt(n) + ' calves. They’d gain about ' + fmt(bB.adg, 2) + ' lb/day on your grass to ' + fmt(bB.lb) + ' lb. Each extra pound sells for $' + fmt(bB.vog, 2) + ' and costs $' + fmt(bB.cog, 2) + ' to put on. '
+        : 'Keeping the calves on grass after weaning <strong>doesn’t pay</strong> here: every option loses money compared with selling at weaning (best: ' + money(bB.net) + ' a calf at ' + bB.days + ' days). ') +
+        'Gain comes from your grass month by month (NRC 2016 energy for growth), with protein supplement (up to 0.5% of body weight) when the grass is short of protein' + (bB.shortM.length ? '; by ' + doyStr(bB.doy) + ' the calves eat grass the cows need in ' + monthsStr(bB.shortM) + ', replaced with hay in these numbers' : '') + '. ' +
+        'Value of gain counts the lower price per hundredweight of a heavier calf' + (seasonal ? ' and the month it’s sold' : '') + '. Not included: vet, handling, freight and shrink.';
+      $('dec_keepTable').innerHTML = '<thead><tr><th>Sell on</th><th class="num">Days kept</th><th class="num">Gain on grass</th><th class="num">Weight</th><th class="num">Price</th><th class="num">Value of gain</th><th class="num">Cost of gain</th><th class="num">Supplement · hay</th><th class="num">Interest · deaths</th><th class="num">Extra profit per calf</th></tr></thead><tbody>' +
+        rowsB.map(function(r){ return '<tr' + (r === bB && pays ? ' class="best"' : '') + '><td>' + (r === bB && pays ? '★ ' : '') + doyStr(r.doy) + '</td><td class="num">' + r.days + '</td><td class="num">' + fmt(r.adg, 2) + ' lb/day</td>' +
+          '<td class="num">' + fmt(r.lb) + ' lb</td><td class="num">$' + fmt(r.price) + '/cwt</td><td class="num">' + (r.vog != null ? '$' + fmt(r.vog, 2) + '/lb' : '—') + '</td><td class="num">' + (r.cog != null ? '$' + fmt(r.cog, 2) + '/lb' : '—') + '</td>' +
+          '<td class="num">' + money(r.sup) + ' · ' + money(r.hay) + '</td><td class="num">' + money(r.interest) + ' · ' + money(r.death) + '</td><td class="num"><strong>' + money(r.net) + '</strong></td></tr>'; }).join('') + '</tbody>';
+    })();
+
+    /* 3. calving month and weaning date together (drawn a moment later so the page stays responsive) */
     clearTimeout(calvSellTimer);
-    $('dec_calvEconText').textContent = 'Working out the best sale for each calving month…';
+    $('dec_calvEconText').textContent = 'Working out the best weaning date for each calving month…';
     calvSellTimer = setTimeout(function(){
-      var ages3 = [normA - 30, normA, normA + 30, normA + 60].filter(function(x){ return x >= 120 && x <= 270; }), keeps3 = [60, 120, 180];
-      var R = rows.map(function(r){ var st = sellSet({calving:'one', start1:FEED.MONTH_START[r.m] + 14, len1:len}, normA, ages3, keeps3); return {m:r.m, S:st, b:st.best, ref:st.ref}; });
+      var ages3 = [normA - 30, normA, normA + 30, normA + 60].filter(function(x){ return x >= 150 && x <= 240; });
+      if(ages3.indexOf(normA) < 0) ages3.push(normA);
+      var R = rows.map(function(r){ var st = weanSet({calving:'one', start1:FEED.MONTH_START[r.m] + 14, len1:len}, normA, ages3); return {m:r.m, b:st.best, ref:st.ref}; });
       var best = R.reduce(function(a, x){ return x.b.net > a.b.net ? x : a; }), worst = R.reduce(function(a, x){ return x.b.net < a.b.net ? x : a; });
       var cur3 = curM >= 0 ? R[curM] : null;
       decDotChart($('dec_calvEconChart'), R.map(function(x){ return x.b.net/cows; }), {best:best.m, cur:curM, minPad:5,
-        legend:'Income − feed − holding costs per cow, selling each calving month at its best time' + (seasonal ? ' · calves priced in the month they’re sold' : ' · same price all year'), fmt:money,
-        tip:function(m){ var x = R[m]; return '<div class="tt-val">Calving from ' + moStr(m) + '</div><div>Sell ' + doyStr(x.b.saleDoy) + ': ' + howStr(x.b).toLowerCase() + '</div><div class="tt-lbl">' + fmt(x.b.lb) + ' lb at $' + fmt(x.b.price) + '/cwt · ' + money(x.b.net/cows) + ' per cow</div>'; }});
-      $('dec_calvEconText').innerHTML = 'Calving from <strong>' + moStr(best.m) + '</strong> and selling ' + doyStr(best.b.saleDoy) + ' (' + howStr(best.b).toLowerCase() + ') leaves the most: <strong>' + money(best.b.net) + '</strong> a year (' + money(best.b.net/cows) + ' per cow), ' +
+        legend:'Income − feed − interest per cow, each calving month weaned at its best date' + (seasonal ? ' · calves priced in the month they’re sold' : ' · same price all year'), fmt:money,
+        tip:function(m){ var x = R[m]; return '<div class="tt-val">Calving from ' + moStr(m) + '</div><div>Wean ' + doyStr(x.b.saleDoy) + ' (' + x.b.age + ' days)</div><div class="tt-lbl">' + fmt(x.b.lb) + ' lb at $' + fmt(x.b.price) + '/cwt · ' + money(x.b.net/cows) + ' per cow</div>'; }});
+      $('dec_calvEconText').innerHTML = 'Calving from <strong>' + moStr(best.m) + '</strong> and weaning ' + doyStr(best.b.saleDoy) + ' (' + best.b.age + ' days) leaves the most: <strong>' + money(best.b.net) + '</strong> a year (' + money(best.b.net/cows) + ' per cow), ' +
         money(best.b.net - worst.b.net) + ' more than calving from ' + FEED.MONTHS[worst.m] + '.' +
-        (cur3 && cur3 !== best ? ' Your season, sold at its best time, leaves ' + money(cur3.b.net) + ' — ' + money(best.b.net - cur3.b.net) + ' less.' : cur3 ? ' That’s already your season.' : '') +
+        (cur3 && cur3 !== best ? ' Your season, weaned at its best date, leaves ' + money(cur3.b.net) + ' — ' + money(best.b.net - cur3.b.net) + ' less.' : cur3 ? ' That’s already your season.' : '') +
         (seasonal ? ' Calves and culls are priced in the month they’re sold, with Texas A&amp;M’s seasonal pattern (spring about 4% above the yearly average, fall about 5–6% below), starting from today’s market prices.'
                   : ' Every month uses today’s market prices; switch to seasonal prices to see the effect of the sale month.') +
         ' Changing the calving season takes a year or two of later or open cows, and labor at calving isn’t included.';
-      $('dec_calvEconTable').innerHTML = '<thead><tr><th>Calving from</th><th>Best way to sell</th><th class="num">Sold</th><th class="num">Price</th><th class="num">Weight</th><th class="num">Income − costs</th><th class="num">Selling at ' + normA + ' days instead</th></tr></thead><tbody>' +
-        R.map(function(x){ return '<tr' + (x === best ? ' class="best"' : '') + '><td>' + (x === best ? '★ ' : '') + moStr(x.m) + (x.m === curM ? ' (yours)' : '') + '</td><td>' + howStr(x.b) + '</td>' +
+      $('dec_calvEconTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Best weaning</th><th class="num">Sold</th><th class="num">Price</th><th class="num">Weight</th><th class="num">Income − costs</th><th class="num">Weaning at ' + normA + ' days instead</th></tr></thead><tbody>' +
+        R.map(function(x){ return '<tr' + (x === best ? ' class="best"' : '') + '><td>' + (x === best ? '★ ' : '') + moStr(x.m) + (x.m === curM ? ' (yours)' : '') + '</td><td class="num">' + x.b.age + ' days</td>' +
           '<td class="num">' + doyStr(x.b.saleDoy) + '</td><td class="num">$' + fmt(x.b.price) + '/cwt</td><td class="num">' + fmt(x.b.lb) + ' lb</td>' +
           '<td class="num"><strong>' + money(x.b.net) + '</strong></td><td class="num">' + money(x.ref.net) + '</td></tr>'; }).join('') + '</tbody>';
     }, 30);
@@ -936,7 +962,7 @@
     });
     document.querySelectorAll('[data-sl]').forEach(function(el){
       var k = el.getAttribute('data-sl'), mn = +el.min, mx = +el.max;
-      el.addEventListener('input', function(){ var v = num(this.value); if(v != null && v >= mn && v <= mx){ state.herd.sell = Object.assign({gain:1, rate:8, death:0.5}, state.herd.sell || {}); state.herd.sell[k] = v; save(); scheduleDecisions(); } });
+      el.addEventListener('input', function(){ var v = num(this.value); if(v != null && v >= mn && v <= mx){ state.herd.sell = Object.assign({rate:8, death:0.5}, state.herd.sell || {}); state.herd.sell[k] = v; save(); scheduleDecisions(); } });
       el.addEventListener('blur', function(){ this.value = (state.herd.sell || {})[k]; });
     });
     document.querySelectorAll('[data-drs]').forEach(function(el){

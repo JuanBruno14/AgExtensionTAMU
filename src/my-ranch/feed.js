@@ -195,6 +195,30 @@
       var mpLeft = Math.max(0, mp - milkMP);
       return {tdnLb:dmKg*forTdn/100*LB, cpLb:mpLeft/0.67/1000*LB, dmLb:dmKg*LB};
     }
+    /* Weaned calf on pasture: the daily gain the forage allows (NRC 2016 NEm/NEg), eating its fill. When the grass is short of
+       protein the calf gets protein supplement (up to 0.5% of body weight), which also adds energy and lets it eat more of a
+       low-protein forage (2.5% of body weight below 7% CP, as for cows; McCollum, AgriLife ANSC-PU-085). */
+    function weanedGain(o, bwLb, forTdn, forCp, supTdn, supCp){
+      supTdn = supTdn || 75; supCp = Math.max(forCp + 1, supCp || 38);
+      var base = intakePct(forTdn, false) + 0.5;
+      function at(adg){
+        var k0 = calfDay(o, bwLb, Math.max(0.01, adg), 0, forTdn, null);
+        var capPct = base, sup = 0, cap, dTdn = forTdn;
+        for(var it = 0; it < 3; it++){
+          cap = bwLb/100*capPct;
+          sup = Math.min(bwLb*0.005, Math.max(0, (k0.cpLb - cap*forCp/100)/((supCp - forCp)/100)));
+          dTdn = ((cap - sup)*forTdn + sup*supTdn)/cap;
+          capPct = (sup > 0.05 && forCp < 7) ? Math.max(base, 2.5) : base;
+          k0 = calfDay(o, bwLb, Math.max(0.01, adg), 0, dTdn, null);
+        }
+        return {need:k0.dmLb, cap:cap, sup:sup, dTdn:dTdn, cpNeed:k0.cpLb};
+      }
+      var lo = 0, hi = 4, r0 = at(0.01);
+      if(r0.need > r0.cap) return {adg:0, dmLb:r0.cap, forageDm:r0.cap - r0.sup, supLb:r0.sup, dietTdn:r0.dTdn};
+      for(var i = 0; i < 22; i++){ var mid = (lo + hi)/2, rr = at(mid); if(rr.need <= rr.cap) lo = mid; else hi = mid; }
+      var r = at(lo);
+      return {adg:lo, dmLb:r.cap, forageDm:r.cap - r.sup, supLb:r.sup, dietTdn:r.dTdn};
+    }
     /* Replacement heifers (BCNRM 2016 targets): 60% of mature shrunk weight at conception (65% Bos indicus),
        80% at first calving; conception at 450 days, first calf at 730 days. */
     var H_BREED = 450, H_CALVE = 730, H_CHECK = 510;
@@ -598,7 +622,7 @@
     }
     return {pastureGrowth:pastureGrowth, heiferDay:heiferDay, heiferState:heiferState, heifersKeptPerCow:heifersKeptPerCow, heiferAges:heiferAges, bodyEnergy:bodyEnergy, SEASON_CALF:SEASON_CALF, SEASON_CULL:SEASON_CULL, nemaOf:nemaOf, needAt:needAt, cowParams:cowParams, envFor:envFor, birthLb:birthLb, BREEDS:BREEDS, MILK:MILK, REGIONS:REGIONS, QUALITY:QUALITY, ACTIVITY:ACTIVITY, MONTHS:MONTHS, MONTH_DAYS:MONTH_DAYS, MONTH_START:MONTH_START,
             NAHMS:NAHMS, SOURCES:SOURCES, LOSS_DEFAULT:LOSS_DEFAULT, WEATHER_SHARE:WEATHER_SHARE,
-            cowDay:cowDay, bullDay:bullDay, calfDay:calfDay, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
+            cowDay:cowDay, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
             intakePct:intakePct, doy:doy, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfOutcome:calfOutcome,
             weatherFactor:weatherFactor, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
   })();

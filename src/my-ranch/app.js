@@ -52,7 +52,7 @@
     hayTdn:55, hayCp:10, hayPrice:200, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
     dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0},
-    sell:{gain:1, rate:8, death:0.5}};
+    sell:{rate:8, death:0.5}};
 
 /*@@FEED@@*/
   /* ------------------------------------------------------------------ helpers */

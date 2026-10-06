@@ -375,4 +375,6 @@
   .pc-bar{fill:var(--dec-muted);}
   .pc-bar.best{fill:var(--accent);}
   .pc-bar.cur{stroke:var(--ink);stroke-width:2;}
+  .pc-bar.neg{fill:var(--dec-muted);opacity:.55;}
+  .dec-h4{margin:20px 0 4px;font-size:15px;font-weight:700;color:var(--ink);}
   .pc-val{font-size:10.5px;fill:var(--ink-secondary);font-weight:600;}
