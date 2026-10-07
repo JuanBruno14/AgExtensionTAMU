@@ -283,9 +283,10 @@
       return out;
     }
     /* Forage a nursing calf can eat, % of body weight (assumption: a step below the cow values; milk fills the rest) */
-    function calfIntakePct(tdn){ return tdn < 52 ? 2.5 : tdn <= 59 ? 3.0 : 3.5; }
+    function calfIntakePct(tdn){ tdn = Math.round(tdn*100)/100; return tdn < 52 ? 2.5 : tdn <= 59 ? 3.0 : 3.5; }
     /* Forage intake capacity, % of body weight (Mississippi State Extension, Table 1) */
     function intakePct(tdn, lactating){
+      tdn = Math.round(tdn*100)/100;   // a pasture-weighted 52% must not read as 51.999999%
       if(tdn < 52) return lactating ? 2.2 : 1.8;
       if(tdn <= 59) return lactating ? 2.5 : 2.2;
       return lactating ? 2.7 : 2.5;
