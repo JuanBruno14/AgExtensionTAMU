@@ -328,18 +328,29 @@
       return list;
     }
 
+    /* weather-related calf loss of a calving season (share-weighted, NAHMS national rate scaled by night cold) */
+    function weatherLoss(o, cs){
+      var t = 0, w = 0; cs.forEach(function(c){ t += c.share; w += c.share*Math.min(0.5, LOSS_DEFAULT/100*WEATHER_SHARE*weatherFactor(o.region, c.birthMonth)); });
+      return t > 0 ? w/t : 0;
+    }
+    /* Pregnancy rate by body condition during the breeding season (Sprott 1985, in Texas A&M AgriLife B-1526, Table 5:
+       BCS 4 or less 58%, 5 85%, 6 or more 95% pregnant after 150 days); straight lines between */
+    function pregByBcs(b){ return b <= 4 ? 58 : b <= 5 ? 58 + (b - 4)*27 : b <= 6 ? 85 + (b - 5)*10 : 95; }
     /* Everything that happens to the calves: survival, weights, sale income. */
     function calfOutcome(o, cs){
       var avgAge = cs.reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
       var refAge = o.refWeanAge || avgAge;
       var preAdg = Math.max(0.3, (o.weanLb - o.birthLb)/refAge);
       var base = o.calfLoss/100, ws = WEATHER_SHARE;
+      // weather deaths follow the birth month at the national (NAHMS) rate; the rest of your own loss rate stays as entered.
+      // o.ownWeather = the weather share of losses in your actual season, so trying other seasons keeps your other losses fixed.
+      var ownW = o.ownWeather != null ? o.ownWeather : weatherLoss(o, cs);
       var out = {preAdg:preAdg, avgAge:avgAge, born:0, weaned:0, kept:0, sold:0, opens:0, culls:0, deadWeather:0, deadNws:0, deadOther:0, stillLbs:0, soldLb:0, income:0, calfIncome:0, openIncome:0, cullIncome:0, nwsCalves:0, cohorts:[]};
       cs.forEach(function(c){
         var born = o.calvingRate/100*c.share;
         var wf = weatherFactor(o.region, c.birthMonth);
         var fly = flyActivity(o.region, c.birthMonth);
-        var lOther = base*(1 - ws), lWeather = Math.min(0.5, base*ws*wf), lNws = o.nwsPresent ? o.nwsLoss/100*fly : 0;
+        var lOther = Math.max(0, base - ownW), lWeather = Math.min(0.5, LOSS_DEFAULT/100*ws*wf), lNws = o.nwsPresent ? o.nwsLoss/100*fly : 0;
         var surv = Math.max(0, 1 - lOther - lWeather - lNws);
         // horn flies: weight lost in proportion to nursing days inside the fly season
         var hfDays = 0; for(var k = 0; k < c.weanAge; k++) if(hornFlyWindow(c.day + k)) hfDays++;
@@ -584,7 +595,15 @@
         x.cowBcs = b; bcsByMonth[mm] = b;
         if(b < lowB){ lowB = b; lowM = mm; }
       }
-      var bcsInfo = {mode:protOnly ? 'protein' : 'full', start:bcsStart, startMonth:m0, low:lowB, lowMonth:lowM, end:b, byMonth:bcsByMonth, mcalPerScore:perBcs};
+      // condition while the cows are being bred (about 82 days after each cohort calves, 365 - 283 days of gestation)
+      var brT = 0, brW = 0; cs.forEach(function(c){ brT += c.share; brW += c.share*bcsByMonth[monthOfDay(c.day + 82)]; });
+      var bcsBreed = brT > 0 ? brW/brT : bcsStart;
+      // condition not regained by the next calving has to be bought back: about 305 lb of shelled corn per score for an
+      // 1,100-lb cow (Texas A&M AgriLife B-1526, Table 1), priced as your supplement's energy (corn 88% TDN)
+      var bcsShort = Math.max(0, bcsStart - b);
+      var restoreLb = bcsShort*305*o.cowLb/1100*88/Math.max(40, feeds.supTdn || 75);
+      var bcsInfo = {mode:protOnly ? 'protein' : 'full', start:bcsStart, startMonth:m0, low:lowB, lowMonth:lowM, end:b, byMonth:bcsByMonth, mcalPerScore:perBcs,
+                     breed:bcsBreed, pregPct:pregByBcs(bcsBreed), short:bcsShort, restoreLbPerCow:restoreLb};
       var tot = months.reduce(function(a, x){ a.hay += x.hayLb; a.sup += x.supLb; a.feed += x.feedCost; a.trips += x.trips; a.tripCost += x.tripCost; a.dist += x.distCost; a.cost += x.cost; return a; },
         {hay:0, sup:0, feed:0, trips:0, tripCost:0, dist:0, cost:0});
       var econ = {
@@ -594,9 +613,9 @@
         nwsCare:o.nwsPresent ? o.cows*co.nwsCalves*(o.nwsCost || 0) : 0, creep:calfInfo.creepCost, creepLb:calfInfo.creepLb,
         weanLbNoCreep:co.avgWeanLb - (calfStrat === 'creep' ? lbLost : 0), lbLostPerCalf:lbLost, creepLbPerCalf:creepPerCalf,
         deadWeather:o.cows*co.deadWeather, deadNws:o.cows*co.deadNws, deadOther:o.cows*co.deadOther,
-        cowDeaths:o.cows*(o.cowLoss || 0)/100
+        cowDeaths:o.cows*(o.cowLoss || 0)/100, bcsRestore:o.cows*restoreLb/2000*(feeds.supPrice || 0)
       };
-      econ.costs = econ.feed + econ.trips + econ.dist + econ.nwsCare + econ.creep;
+      econ.costs = econ.feed + econ.trips + econ.dist + econ.nwsCare + econ.creep + econ.bcsRestore;
       econ.net = econ.income - econ.costs;
       return {months:months, totals:tot, econ:econ, calves:co, forageTdn:ftdn, bcs:bcsInfo, calf:calfInfo};
     }
@@ -624,5 +643,5 @@
             NAHMS:NAHMS, SOURCES:SOURCES, LOSS_DEFAULT:LOSS_DEFAULT, WEATHER_SHARE:WEATHER_SHARE,
             cowDay:cowDay, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
             intakePct:intakePct, doy:doy, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfOutcome:calfOutcome,
-            weatherFactor:weatherFactor, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
+            weatherFactor:weatherFactor, weatherLoss:weatherLoss, pregByBcs:pregByBcs, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
   })();

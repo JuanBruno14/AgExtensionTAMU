@@ -23,10 +23,17 @@ with sync_playwright() as pw:
     # calf weight: varies with calving month, creep counted in costs
     pg.evaluate("document.getElementById('decCard').scrollIntoView()"); pg.wait_for_timeout(900)
     rows=[l.split('\t') for l in pg.inner_text('#dec_calvTable').split('\n')[1:] if l.count('\t')>=5]
-    nat=[float(r[3].replace(' lb','').replace(',','')) for r in rows]
+    nat=[float(r[4].replace(' lb','').replace(',','')) for r in rows]
     check('natural weaning weight varies by calving month', max(nat)-min(nat) > 40, nat)
     check('April natural weight within 15% of Vanzandt 426 lb', 360 < nat[3] < 440, nat[3])
     check('summer calving weans lighter than spring', nat[7] < nat[2], (nat[2], nat[7]))
+    # calving season: thin cows at breeding -> fewer calves; winter calving -> more cold deaths
+    rows=pg.evaluate("""[...document.querySelectorAll('#dec_calvTable tbody tr')].map(r=>r.cells[2].textContent)""")
+    born=[float(x.split('·')[1].replace('%','')) for x in rows]; bcs=[float(x.split('·')[0]) for x in rows]
+    check('calving rate follows breeding condition', born[3]==87 and born[10] < 85 and bcs[10] < bcs[3], list(zip(bcs,born)))
+    e=pg.evaluate("MyRanch.netOf({calving:'one',start1:15,len1:63}).econ"); e4=pg.evaluate("MyRanch.netOf({calving:'one',start1:105,len1:63}).econ")
+    check('January calving loses more calves to cold than April', e['deadWeather'] > e4['deadWeather'] + 1, (e['deadWeather'], e4['deadWeather']))
+    check('own season keeps the loss rate entered', abs(pg.evaluate("(()=>{var e=MyRanch.feed().econ;return (e.deadWeather+e.deadOther)/(e.calvesSold+e.heifersKept+e.deadWeather+e.deadOther)})()") - 0.015) < 0.002)
     href=pg.get_attribute('#dec_keepLink','href')
     check('stocker budget link carries calves, weight, price, date', 'retained-ownership/index.html#stockers?heads=' in href and '&weight=' in href and '&start=' in href, href)
     pg.click('#dec_keepLink'); pg.wait_for_timeout(1200)
@@ -38,7 +45,7 @@ with sync_playwright() as pw:
     check('engine: weaned calf gain from forage', 0.2 < pg.evaluate("MyRanch.FEED.weanedGain({breed:'angus',cowLb:1100},400,48,4.5,75,38).adg") < 0.7 and pg.evaluate("MyRanch.FEED.weanedGain({breed:'angus',cowLb:1100},400,62,12,75,38).adg") > 1.2)
     check('calving + sale table', pg.locator('#dec_calvEconTable tbody tr').count()==12 and 'leaves the most' in pg.inner_text('#dec_calvEconText'))
     cf=pg.evaluate("MyRanch.feed().econ")
-    check('creep cost included in costs', cf['creep'] >= 0 and abs(cf['costs'] - (cf['feed']+cf['trips']+cf['dist']+cf['nwsCare']+cf['creep'])) < 1, cf)
+    check('creep cost included in costs', cf['creep'] >= 0 and abs(cf['costs'] - (cf['feed']+cf['trips']+cf['dist']+cf['nwsCare']+cf['creep']+cf['bcsRestore'])) < 1, cf)
     pg.evaluate("MyRanch.state().herd.calfShort='lighter'"); pg.fill('#hd_cows','153'); pg.wait_for_timeout(200); pg.fill('#hd_cows','154'); pg.wait_for_timeout(900)
     lf=pg.evaluate("MyRanch.feed().econ")
     check('lighter option: no creep, lighter calves', lf['creep']==0 and lf['avgWeanLb'] <= cf['avgWeanLb'], (lf['avgWeanLb'], cf['avgWeanLb']))

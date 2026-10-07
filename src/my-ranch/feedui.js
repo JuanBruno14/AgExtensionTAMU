@@ -132,7 +132,9 @@
       nwsPresent:h.nws === 'yes', nwsLoss:h.nwsLoss, nwsCost:h.nwsCost, hornFly:+h.hornFly,
       supMode:h.supMode === 'full' ? 'full' : 'protein', calfShort:h.calfShort === 'lighter' ? 'lighter' : 'creep', creepPrice:+h.creepPrice || 0, creepConv:+h.creepConv || 8,
       steerSlide:sl.steer, heiferSlide:sl.heifer};
-    o.refWeanAge = FEED.cohorts(o).reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
+    var ownCs = FEED.cohorts(o);
+    o.refWeanAge = ownCs.reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
+    o.ownWeather = FEED.weatherLoss(o, ownCs);   // weather share of your own loss rate, kept when other seasons are tried
     return Object.assign(o, over || {});
   }
   function feedsFor(over){
@@ -678,14 +680,19 @@
     var curM = h.calving === 'us' ? -1 : FEED.monthOfDay(FEED.doy(h.start1));
     var rows = [];
     for(var s = 0; s < 12; s++){
-      var r = netOf({calving:'one', start1:FEED.MONTH_START[s] + 14, len1:len, weanMode:'age', weanAge:age, refWeanAge:age, seasonal:seasonal});
+      var ov = {calving:'one', start1:FEED.MONTH_START[s] + 14, len1:len, weanMode:'age', weanAge:age, refWeanAge:age, seasonal:seasonal};
+      var r = netOf(ov);
+      // thinner cows at breeding get pregnant less (Sprott 1985): scale your calving rate by the pregnancy rate at this
+      // season's breeding condition vs. your own season's, and run it again
+      var pf = FEED.pregByBcs(r.bcs.breed)/FEED.pregByBcs(feedLast.bcs.breed), calvRate = Math.min(100, h.calvingRate*pf);
+      if(Math.abs(pf - 1) > 0.002) r = netOf(Object.assign({}, ov, {calvingRate:calvRate}));
       var e = r.econ, weaned = e.calvesSold + e.heifersKept;
       var cs = r.calves.cohorts, mid = cs[Math.floor(cs.length/2)] || cs[0];
       var feedLb = r.totals.hay + r.totals.sup + (e.creepLb || 0), shortM = r.months.filter(function(x){ return x.hayLb + x.supLb > 1; }).length;
       var post = [1, 2, 3, 4].map(function(k){ return r.months[(s + k) % 12]; });
       var cov = post.map(function(x){ var t = x.herdReq.tdn > 0 ? x.pasture.tdn/x.herdReq.tdn : 1, c = x.herdReq.cp > 0 ? x.pasture.cp/x.herdReq.cp : 1; return Math.min(1, t, c); });
       var postFeed = post.reduce(function(a, x){ return a + x.hayLb + x.supLb; }, 0);
-      rows.push({m:s, res:r, e:e, weaned:weaned, natLb:e.weanLbNoCreep, creepCalf:e.creepLbPerCalf, postCov:cov.reduce(function(a, b){ return a + b; }, 0)/4, postFeed:postFeed/cows, postMonths:[1, 2, 3, 4].map(function(k){ return (s + k) % 12; }), weanLb:e.avgWeanLb, lbPerCow:weaned*e.weanLbNoCreep/cows, deadCold:e.deadWeather, deadNws:e.deadNws,
+      rows.push({m:s, res:r, e:e, weaned:weaned, bcsBreed:r.bcs.breed, calvRate:calvRate, natLb:e.weanLbNoCreep, creepCalf:e.creepLbPerCalf, postCov:cov.reduce(function(a, b){ return a + b; }, 0)/4, postFeed:postFeed/cows, postMonths:[1, 2, 3, 4].map(function(k){ return (s + k) % 12; }), weanLb:e.avgWeanLb, lbPerCow:weaned*e.weanLbNoCreep/cows, deadCold:e.deadWeather, deadNws:e.deadNws,
                  hayT:r.totals.hay/2000, supT:r.totals.sup/2000, feedPerCow:feedLb/cows, shortM:shortM, saleM:mid ? mid.saleMonth : 0});
     }
     function argBest(f, max){ return rows.reduce(function(a, r){ return (max ? f(r) > f(a) : f(r) < f(a)) ? r : a; }, rows[0]); }
@@ -730,10 +737,11 @@
       'The weakest is ' + moStr(worstCov.m) + ': grass covers only ' + fmt(worstCov.postCov*100) + '% after calving. ' +
       (cur ? 'Your season (from ' + FEED.MONTHS[curM] + '): ' + fmt(cur.postCov*100) + '%. ' : '') +
       'On milk and grass alone, calves wean at about ' + fmt(bestCov.natLb) + ' lb calving from ' + FEED.MONTHS[bestCov.m] + (heavy.natLb - light.natLb > 5 ? ' (heaviest ' + fmt(heavy.natLb) + ' lb from ' + FEED.MONTHS[heavy.m] + ', lightest ' + fmt(light.natLb) + ' lb from ' + FEED.MONTHS[light.m] + ')' : '') + '. ' +
+      (function(){ var thin = rows.filter(function(r){ return r.bcsBreed < 4.75; }); return thin.length ? 'Cows calving from ' + monthList(thin.map(function(r){ return r.m; })) + ' are under condition 4.75 at breeding, so fewer get pregnant (58% at BCS 4, 85% at 5, 95% at 6; Sprott 1985) and fewer calves are born. ' : ''; })() +
       'Over the whole year, the least bought feed (hay, supplement' + (state.herd.calfShort !== 'lighter' ? ' and creep to reach ' + fmt(state.herd.weanLb) + ' lb' : '') + ') is calving from ' + moStr(bestFeed.m) + ' (' + fmt(bestFeed.feedPerCow) + ' lb per cow).';
-    $('dec_calvTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Grass covers after calving</th><th class="num">Calves weaned</th><th class="num">Weaning weight on milk + grass</th><th class="num">Creep to reach ' + fmt(h.weanLb) + ' lb</th><th class="num">Lb weaned per cow (no creep)</th><th class="num">Deaths (cold · screwworm)</th><th class="num">Hay · supplement</th><th class="num">Feed bought per cow (year, incl. creep)</th></tr></thead><tbody>' +
+    $('dec_calvTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Grass covers after calving</th><th class="num">Cow BCS at breeding · calves born</th><th class="num">Calves weaned</th><th class="num">Weaning weight on milk + grass</th><th class="num">Creep to reach ' + fmt(h.weanLb) + ' lb</th><th class="num">Lb weaned per cow (no creep)</th><th class="num">Deaths (cold · screwworm)</th><th class="num">Hay · supplement</th><th class="num">Feed bought per cow (year, incl. creep)</th></tr></thead><tbody>' +
       rows.map(function(r){ return '<tr' + (r === bestCov ? ' class="best"' : '') + '><td>' + (r === bestCov ? '★ ' : '') + moStr(r.m) + (r.m === curM ? ' (yours)' : '') + '</td>' +
-        '<td class="num">' + fmt(r.postCov*100) + '%</td><td class="num">' + fmt(r.weaned, 1) + '</td><td class="num">' + fmt(r.natLb) + ' lb</td><td class="num">' + (r.creepCalf >= 1 ? fmt(r.creepCalf) + ' lb/calf' : '—') + '</td><td class="num">' + fmt(r.lbPerCow) + '</td>' +
+        '<td class="num">' + fmt(r.postCov*100) + '%</td><td class="num">' + fmt(r.bcsBreed, 1) + ' · ' + fmt(r.calvRate) + '%</td><td class="num">' + fmt(r.weaned, 1) + '</td><td class="num">' + fmt(r.natLb) + ' lb</td><td class="num">' + (r.creepCalf >= 1 ? fmt(r.creepCalf) + ' lb/calf' : '—') + '</td><td class="num">' + fmt(r.lbPerCow) + '</td>' +
         '<td class="num">' + fmt(r.deadCold, 1) + ' · ' + fmt(r.deadNws, 1) + '</td><td class="num">' + fmt(r.hayT, 1) + ' t · ' + fmt(r.supT, 1) + ' t</td><td class="num">' + fmt(r.feedPerCow) + ' lb</td></tr>'; }).join('') + '</tbody>';
 
     /* 2. economics */
@@ -747,7 +755,7 @@
       (seasonal ? ' Calves and culls are priced in the month they’re sold, with Texas A&amp;M’s seasonal pattern (spring about 4% above the yearly average, fall about 5–6% below), starting from today’s market prices.'
                 : ' Every month uses today’s market prices; switch to seasonal prices to see the effect of the sale month.') +
       (state.herd.calfShort !== 'lighter' ? ' Feed costs include the creep feed each month needs to wean calves at ' + fmt(state.herd.weanLb) + ' lb.' : ' Calves are sold at the weight milk and grass give them in each month, so lighter calves bring more per hundredweight but less per head.') +
-      ' Labor at calving isn’t included.';
+      ' Fewer calves when cows are thin at breeding, cold-weather calf deaths by birth month (USDA NAHMS rate) and feed to put back condition the cows don’t regain by calving are all counted. Labor at calving isn’t included.';
     $('dec_calvEconTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Calves sold</th><th class="num">Sold in</th><th class="num">Price</th><th class="num">Cattle sales</th><th class="num">Feed &amp; feeding</th><th class="num">Income − feed</th></tr></thead><tbody>' +
       rows.map(function(r){ var e = r.e; return '<tr' + (r === best ? ' class="best"' : '') + '><td>' + (r === best ? '★ ' : '') + moStr(r.m) + (r.m === curM ? ' (yours)' : '') + '</td>' +
         '<td class="num">' + fmt(e.calvesSold, 1) + ' × ' + fmt(e.avgSaleLb) + ' lb</td><td class="num">' + FEED.MONTHS[r.saleM] + '</td><td class="num">$' + fmt(e.avgPrice) + '/cwt</td>' +
