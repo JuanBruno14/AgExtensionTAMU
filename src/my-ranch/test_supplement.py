@@ -18,8 +18,8 @@ with sync_playwright() as pw:
     sup=pg.evaluate("MyRanch.feed().totals.sup")/154
     check('wet-year Vanzandt: protein supplement near the 285 lb/cow they fed', 200 < sup < 360, round(sup))
     check('no hay needed at 3,200 lb/ac', pg.evaluate("MyRanch.feed().totals.hay") < 100)
-    check('condition tile shown', 'cow condition' in pg.inner_text('#fc_tiles').lower())
-    check('BCS column in monthly table', 'cow bcs' in pg.inner_text('#fc_table').lower())
+    check('condition tile shown', 'cow condition' in pg.text_content('#fc_tiles2').lower())
+    check('BCS column in monthly table', 'cow bcs' in pg.text_content('#fc_table').lower())
     # calf weight: varies with calving month, creep counted in costs
     pg.evaluate("document.getElementById('decCard').scrollIntoView()"); pg.wait_for_timeout(900)
     rows=[l.split('\t') for l in pg.inner_text('#dec_calvTable').split('\n')[1:] if l.count('\t')>=5]
@@ -51,7 +51,7 @@ with sync_playwright() as pw:
     check('lighter option: no creep, lighter calves', lf['creep']==0 and lf['avgWeanLb'] <= cf['avgWeanLb'], (lf['avgWeanLb'], cf['avgWeanLb']))
     pg.evaluate("MyRanch.state().herd.calfShort='creep'"); pg.fill('#hd_cows','153'); pg.wait_for_timeout(200); pg.fill('#hd_cows','154'); pg.wait_for_timeout(700)
     pg.evaluate("document.getElementById('fc_supMode').closest('details').open=true"); pg.select_option('#fc_supMode','full'); pg.wait_for_timeout(700)
-    check('protein and energy: condition held', 'held at' in pg.inner_text('#fc_tiles').lower() and 'cow bcs' not in pg.inner_text('#fc_table').lower())
+    check('protein and energy: condition held', 'held at' in pg.text_content('#fc_tiles2').lower() and 'cow bcs' not in pg.text_content('#fc_table').lower())
     check('feeding energy too never needs less supplement', pg.evaluate("MyRanch.feed().totals.sup")/154 >= sup - 0.5)
     pg2=page(); setup(pg2, 1300, 'protein')
     pg2.evaluate("(function(){var h=MyRanch.state().herd; h.weatherAdj='on';})()")

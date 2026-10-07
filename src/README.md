@@ -32,9 +32,12 @@ python3 src/my-ranch/test_grass.py      # Grass today / where is the herd
 python3 src/my-ranch/test_portal.py     # home-page "Your ranch" card and shared stores
 python3 src/my-ranch/test_import.py     # opening a downloaded ranch file (replace or add)
 python3 src/my-ranch/test_supplement.py # protein-only supplementation and cow condition (Vanzandt 2023 check)
+python3 src/my-ranch/test_steps.py      # the four steps, summary strip, save panel (desktop and phone)
 python3 src/herd-tools/test_tools.py    # Herd Calculators
 cd src/my-ranch && node valbc.js        # nutrition vs. BCNRM
 ```
+
+Automated browsers see all four steps at once so the other tests can reach every field; `test_steps.py` sets `window.__MR_STEPS` to test real step navigation.
 
 External services (soil survey, drought, map tiles, search) are mocked in the tests, so the tests run offline. Screenshots and the print PDF go to `src/*/.out/` (ignored by git).
 

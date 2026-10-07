@@ -517,6 +517,21 @@
     return ' Cows use body reserves for the energy grass lacks (lowest ' + fmt(b.low, 1) + ' in ' + FEED.MONTHS[b.lowMonth] + ') and regain it on green grass.';
   }
 
+  /* one sentence that says what the year looks like */
+  function planHeadline(res, hayM, supM){
+    var h = state.herd, t = res.totals, ec = res.econ, b = res.bcs, cf = res.calf, parts = [];
+    var grass = t.hay < 100 ? 'Your grass carries the herd all year, with no hay.' : 'Your grass runs short: buy about <strong>' + fmt(t.hay/2000, 1) + ' t of hay</strong> (' + monthList(hayM) + ').';
+    if(t.sup >= 100) parts.push('<strong>' + fmt(t.sup/2000, 1) + ' t of ' + (b && b.mode === 'full' ? 'supplement' : 'protein supplement') + '</strong> (' + monthList(supM) + ', about ' + money(t.sup/2000*h.supPrice) + ')');
+    if(cf && cf.strategy === 'creep' && (ec.creepLb || 0) >= 100) parts.push('<strong>' + fmt(ec.creepLb/2000, 1) + ' t of creep</strong> to wean at ' + fmt(h.weanLb) + ' lb');
+    var txt = grass + (parts.length ? ' You need ' + parts.join(' and ') + '.' : t.hay < 100 ? ' Nothing else to buy.' : '');
+    if(cf && cf.strategy !== 'creep' && cf.lbLostPerCalf >= 1) txt += ' Calves wean at about <strong>' + fmt(ec.avgWeanLb) + ' lb</strong> on milk and grass.';
+    if(b){
+      if(b.mode === 'full' || b.start - b.low < 0.1) txt += ' Cows hold <strong>condition ' + fmt(b.start, b.start % 1 ? 1 : 0) + '</strong> all year.';
+      else txt += ' Cows drop to <strong>condition ' + fmt(b.low, 1) + '</strong> in ' + FEED.MONTHS[b.lowMonth] + (b.end < b.start - 0.2 ? ' and aren’t back by calving.' : ' and regain it on green grass.');
+    }
+    return txt;
+  }
+
   /* ---- main render */
   function renderFeed(){
     renderRegionSelect();
@@ -524,8 +539,8 @@
     var h = state.herd, main = $('fc_main'), empty = $('fc_empty');
     if(!(h.cows > 0)){
       main.hidden = true; empty.hidden = false;
-      empty.innerHTML = 'Enter your <strong>number of cows</strong> under <em>Herd &amp; grazing assumptions</em> to build the feed calendar.';
-      feedLast = null; $('fc_weanNote').textContent = ''; renderDecisions(); return;
+      empty.innerHTML = 'Enter your <strong>number of cows</strong> in <button type="button" class="link-btn" data-go="herd">step 2 · Herd</button> to build your year plan.';
+      feedLast = null; $('fc_weanNote').textContent = ''; updateStrip(); renderDecisions(); return;
     }
     main.hidden = false;
     var res = runFeed(), co = res.calves, ec = res.econ;
@@ -579,15 +594,20 @@
     $('fc_short').innerHTML = shortTxt + (res.hasSupply ? bcsNote(res.bcs) : '');
 
     var t = res.totals;
+    var feedLbs = t.hay + t.sup + (ec.creepLb || 0);
     $('fc_tiles').innerHTML = res.hasSupply ?
       '<div class="stat-tile"><span class="label">Calves sold</span><span class="value small">' + fmt(ec.calvesSold) + '</span><span class="sub">' + fmt(ec.avgSaleLb) + ' lb at $' + fmt(ec.avgPrice) + '/cwt</span></div>' +
       '<div class="stat-tile"><span class="label">Cattle sales</span><span class="value small">' + money(ec.income) + '</span><span class="sub">' + (ec.cullIncome + ec.openIncome > 0.5 ? 'calves ' + money(ec.calfIncome) + ' · culls ' + money(ec.cullIncome + ec.openIncome) : money(ec.income/h.cows) + ' per cow') + '</span></div>' +
+      '<div class="stat-tile"><span class="label">Feed &amp; feeding</span><span class="value small">' + money(ec.costs) + '</span><span class="sub">' + (feedLbs >= 100 ? [t.hay >= 100 ? fmt(t.hay/2000, 1) + ' t hay' : '', t.sup >= 100 ? fmt(t.sup/2000, 1) + ' t supplement' : '', (ec.creepLb || 0) >= 100 ? fmt(ec.creepLb/2000, 1) + ' t creep' : ''].filter(Boolean).join(' · ') + ' + trips' : 'nothing to buy') + '</span></div>' +
+      '<div class="stat-tile ' + (ec.net >= 0 ? 'good' : 'critical') + '"><span class="label">Sales minus feed</span><span class="value small">' + money(ec.net) + '</span><span class="sub">' + money(ec.net/h.cows) + ' per cow · not profit</span></div>'
+      : '';
+    $('fc_tiles2').innerHTML = res.hasSupply ?
       '<div class="stat-tile"><span class="label">Hay to buy</span><span class="value small">' + (t.hay >= 100 ? fmt(t.hay/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.hay >= 100 ? money(t.hay/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'standing forage lasts all year') + '</span></div>' +
       '<div class="stat-tile"><span class="label">Protein supplement</span><span class="value small">' + (t.sup >= 100 ? fmt(t.sup/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.sup >= 100 ? money(t.sup/2000*h.supPrice) + ' · ' + monthList(supM) : 'not needed') + '</span></div>' +
       bcsTile(res.bcs) + calfTile(res) +
-      '<div class="stat-tile"><span class="label">Feeding trips &amp; delivery</span><span class="value small">' + money(t.tripCost + t.dist) + '</span><span class="sub">' + fmt(t.trips) + ' trips' + (ec.nwsCare > 0 ? ' · screwworm care ' + money(ec.nwsCare) : '') + '</span></div>' +
-      '<div class="stat-tile ' + (ec.net >= 0 ? 'good' : 'critical') + '"><span class="label">Sales minus feed</span><span class="value small">' + money(ec.net) + '</span><span class="sub">' + money(ec.net/h.cows) + ' per cow · not profit</span></div>'
+      '<div class="stat-tile"><span class="label">Feeding trips &amp; delivery</span><span class="value small">' + money(t.tripCost + t.dist) + '</span><span class="sub">' + fmt(t.trips) + ' trips' + (ec.nwsCare > 0 ? ' · screwworm care ' + money(ec.nwsCare) : '') + (ec.bcsRestore > 0.5 ? ' · condition feed ' + money(ec.bcsRestore) : '') + '</span></div>'
       : '';
+    $('fc_headline').innerHTML = res.hasSupply ? planHeadline(res, hayM, supM) : '';
     $('fc_tiles').hidden = !res.hasSupply;
 
     var d1 = function(v){ return v > 0.05 ? fmt(v, 1) : '—'; };
@@ -618,6 +638,7 @@
           '<td class="num">' + fmt(x.dietTdn) + '% / ' + fmt(x.dietCp, 1) + '%</td></tr>';
       }).join('') + '</tbody>';
     $('fc_wxNote').textContent = wxNote(ms);
+    updateStrip();
     scheduleDecisions();
   }
 

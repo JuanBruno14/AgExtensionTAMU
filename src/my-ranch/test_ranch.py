@@ -102,7 +102,7 @@ with sync_playwright() as pw:
     check('rotation days shown', 'days' in rot and 'short of a full year' in rot, rot[:120])
     days=page.evaluate("(()=>{const s=MyRanch.state(),p=s.pastures[0];const au=MyRanch.herdAU();return p.acres*p.soil.normal*0.75*0.25/(au*26)})()")
     check('grazing days math', str(round(days)) in rot.replace(',',''), round(days))
-    bud=page.inner_text('#budgetBody')
+    bud=page.text_content('#budgetBody')
     check('budget benchmark uses capacity when herd larger', 'budget gross margin' in bud.lower() and 'your estimated capacity carries (you plan' in bud, bud[:250])
 
     # manual estimate path
@@ -367,6 +367,7 @@ with sync_playwright() as pw:
     check('bad file rejected politely', 'Use a .kml' in page.inner_text('#fileNotice'))
 
     # export round-trip
+    if not page.is_visible('#exportGeoBtn'): page.click('#stripSaveBtn'); page.wait_for_timeout(200)
     with page.expect_download() as d: page.click('#exportGeoBtn')
     path=d.value.path(); exported=json.load(open(path))
     check('geojson export has pastures+points', sum(1 for f in exported['features'] if f['geometry']['type']=='Polygon')==len(st['pastures']) and any(f['geometry']['type']=='Point' for f in exported['features']))

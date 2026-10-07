@@ -32,6 +32,51 @@
   <div class="fence-line"></div>
 </section>
 
+<div class="mr-strip" id="mrStrip">
+  <div class="mr-strip-in">
+    <div class="mr-rn"><span id="st_name">Your ranch</span><small id="st_sub">Draw your pastures to start</small></div>
+    <div class="mr-k"><span>Stocking</span><b id="st_stock">—</b><div class="mr-meter"><i id="st_stockBar"></i></div></div>
+    <div class="mr-k"><span>Drought now</span><b id="st_drought">—</b></div>
+    <div class="mr-k"><span>Feed to buy (year)</span><b id="st_feed">—</b></div>
+    <div class="mr-k"><span>Sales − feed</span><b id="st_net">—</b></div>
+    <div class="mr-strip-btns"><button type="button" class="tool-btn" id="stripSaveBtn" aria-expanded="false" aria-controls="fileCard">💾 Save / share</button><button type="button" class="tool-btn primary" id="stripPlanBtn">🗒 Print year plan</button></div>
+  </div>
+</div>
+
+<nav class="mr-steps" id="mrSteps" aria-label="My Ranch steps">
+  <button type="button" class="mr-step-btn" data-go="ranch"><span class="n">1</span><span class="t"><b>Ranch</b><small>Map, pastures, water</small></span></button>
+  <button type="button" class="mr-step-btn" data-go="herd"><span class="n">2</span><span class="t"><b>Herd</b><small>Cows, calving, feed, prices</small></span></button>
+  <button type="button" class="mr-step-btn" data-go="plan"><span class="n">3</span><span class="t"><b>Year plan</b><small>Is there enough grass?</small></span></button>
+  <button type="button" class="mr-step-btn" data-go="decide"><span class="n">4</span><span class="t"><b>Decisions</b><small>Calving season, drought, what if</small></span></button>
+</nav>
+
+<div class="mr-wrap">
+<div class="mr-file" id="filePanel" hidden>
+    <!-- File -->
+    <div class="card" id="fileCard">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
+        <h2>Save, share &amp; print</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Your map is saved automatically in this browser only &mdash; nothing is sent to Texas A&amp;M. To move it to another device or give it to your agent, download a file and open it there.</p>
+        <div class="file-actions">
+          <button type="button" class="tool-btn" id="importBtn">⬆ Open a file</button>
+          <button type="button" class="tool-btn" id="exportGeoBtn">⬇ GeoJSON</button>
+          <button type="button" class="tool-btn" id="exportKmlBtn">⬇ Google Earth (KML)</button>
+          <button type="button" class="tool-btn" id="printBtn">🖨 Print a report</button>
+          <button type="button" class="tool-btn primary" id="planBtn">🗒 One-page year plan</button>
+        </div>
+        <input type="file" id="fileInput" accept=".geojson,.json,.kml,.kmz,.zip" hidden>
+        <p class="card-note" style="margin:10px 0 0;">Opens Google Earth files (KML/KMZ), GeoJSON, or a zipped shapefile from your agent or FSA office. The GeoJSON download also keeps your herd, feed and decision settings, so opening it on another device brings back the whole ranch.</p>
+        <p class="notice" id="fileNotice" hidden></p>
+        <div class="btn-row" style="padding:14px 0 0;">
+          <button type="button" class="tool-btn danger" id="clearBtn">Delete this ranch from this device</button>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="mr-step" data-step="ranch" id="step_ranch">
 <div class="layout ranch">
   <div class="col-inputs">
 
@@ -104,27 +149,97 @@
       </div>
     </div>
 
-    <!-- Rotation -->
+    <!-- Points -->
     <div class="card">
       <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
-        <h2>Grazing days &amp; calendar</h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.7s6 6.3 6 11a6 6 0 0 1-12 0c0-4.7 6-11 6-11Z"/></svg>
+        <h2>Water, pens &amp; gates</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">How many days each pasture can carry your planned herd, using the same forage and harvest-efficiency numbers as the capacity estimate. Use the arrows to set the order you'd graze them in.</p>
-        <div id="rotationBody"></div>
+        <p class="card-note">Use the buttons above the map to drop a water point, pens, a gate or a feeder, then click where it goes. Water points let the pasture list show how far the middle of each pasture is from the nearest water.</p>
+        <div class="point-list" id="pointList"></div>
       </div>
     </div>
 
-    <!-- Feed calendar -->
-    <div class="card" id="feedCard">
+  </div>
+  <div class="col-results">
+
+    <!-- Summary -->
+    <div class="card" id="summaryCard">
       <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2"/></svg>
-        <h2>Feed calendar: what the herd needs vs. what the pastures give</h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/></svg>
+        <h2>Your ranch at a glance</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Month by month, the energy (TDN) and protein your cows, bulls and calves need, next to what your pastures can supply at their typical quality for that time of year. Where the pasture falls short, the tool works out the hay and supplement to buy, what it costs, and what's left from the calf check.</p>
+        <div class="field" style="margin-bottom:14px;">
+          <label for="ranchName">Ranch name</label>
+          <input type="text" id="ranchName" placeholder="e.g. North place" maxlength="80">
+        </div>
+        <div id="summaryBody"></div>
+      </div>
+    </div>
 
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18M6 20V10M12 20V4M18 20v-7"/></svg>
+        <h2>Forage &amp; capacity settings</h2>
+      </div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div class="field" style="grid-column:1 / -1;">
+            <label for="manualCap">Carrying capacity — your own number <span style="font-weight:500;color:var(--ink-muted);">(optional)</span></label>
+            <div class="input-wrap has-suffix"><input type="number" id="manualCap" min="0" step="1" inputmode="decimal" placeholder="Leave blank to use the soil survey"><span class="suffix">AU</span></div>
+            <span class="hint">If you know how many animal units your place carries, enter it; the tool then uses it instead of the soil survey (and scales the feed calendar to match).</span>
+          </div>
+          <div class="field">
+            <label for="harvestEff">Harvest efficiency</label>
+            <div class="input-wrap has-suffix"><input type="number" id="harvestEff" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
+            <span class="hint">Share of forage cattle actually eat</span>
+          </div>
+          <div class="field">
+            <label for="intakeLb">Forage per AU per day</label>
+            <div class="input-wrap has-suffix"><input type="number" id="intakeLb" min="1" step="0.5" inputmode="decimal"><span class="suffix">lb</span></div>
+          </div>
+        </div>
+        <p class="card-note" style="margin:14px 0 0;">Defaults follow AgriLife Extension's <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering).</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+  <div class="mr-next"><span></span><button type="button" class="tool-btn primary" data-go="herd">2 · Herd →</button></div>
+</div>
+
+<div class="mr-step mr-narrow" data-step="herd" id="step_herd" hidden>
+  <div class="card" id="herdCard">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11c0-3 2-5 5-5h6c3 0 5 2 5 5v2a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-2Z"/><path d="M7 16v4M17 16v4M2 9l2 2M22 9l-2 2"/></svg>
+      <h2>Your herd</h2>
+    </div>
+    <div class="card-body">
+      <div class="field-grid cols-4">
+          <div class="field">
+            <label for="hd_cows">Cows</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_cows" min="0" step="1" inputmode="numeric"><span class="suffix">head</span></div>
+          </div>
+          <div class="field">
+            <label for="hd_cowLb">Mature cow weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_cowLb" min="600" max="2000" step="25" inputmode="numeric"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="hd_bulls">Bulls</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_bulls" min="0" step="1" inputmode="numeric"><span class="suffix">head</span></div>
+            <span class="hint" id="hd_bullsHint">Auto: 1 per 25 cows</span>
+          </div>
+          <div class="field">
+            <label for="hd_bullLb">Bull weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_bullLb" min="1000" max="3000" step="50" inputmode="numeric"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field" style="grid-column:1 / -1;">
+            <div class="derived-note" id="hd_auNote"></div>
+          </div>
+      </div>
+      <h3 class="sub-h" style="margin-top:22px;">Calving &amp; weaning</h3>
         <div class="field-grid cols-3">
           <div class="field">
             <label for="fc_calving">Calving season</label>
@@ -174,44 +289,6 @@
         </div>
         <p class="card-note fc-usnote" style="margin:10px 0 0;">U.S. average from USDA's NAHMS Beef 2017 survey: 55% of calves are born in February–April, with a smaller fall peak in September–November.</p>
         <p class="card-note" id="fc_weanNote" style="margin:10px 0 0;"></p>
-
-        <div class="fc-empty" id="fc_empty" hidden></div>
-
-        <div id="fc_main">
-          <div class="fc-chart-head">
-            <div class="segmented" role="tablist" aria-label="Nutrient shown">
-              <button type="button" class="seg-btn active" data-nutrient="tdn" role="tab" aria-selected="true">Energy (TDN)</button>
-              <button type="button" class="seg-btn" data-nutrient="cp" role="tab" aria-selected="false">Protein (CP)</button>
-            </div>
-            <div class="fc-legend" id="fc_legend"></div>
-          </div>
-          <div class="fc-chart" id="fc_chart" role="img" aria-label="Monthly herd needs compared with pasture supply"></div>
-          <div class="print-only fc-print-charts">
-            <h3 class="sub-h">Energy (TDN), lb per day, whole herd</h3>
-            <div class="fc-chart" id="fc_chart_p_tdn"></div>
-            <h3 class="sub-h">Protein (CP), lb per day, whole herd</h3>
-            <div class="fc-chart" id="fc_chart_p_cp"></div>
-          </div>
-          <p class="fc-short" id="fc_short"></p>
-
-          <div class="stat-tiles fc-tiles" id="fc_tiles"></div>
-          <div class="btn-row" style="padding:12px 0 0;gap:8px;flex-wrap:wrap;"><button type="button" class="tool-btn" id="fc_planBtn">🗒 Print a one-page year plan for this herd</button><button type="button" class="tool-btn" id="fc_bcuBtn">➜ Use this feed cost in Cow operating cost</button></div>
-          <p class="card-note" id="fc_bcuNote" style="margin:8px 0 0;"></p>
-
-          <div class="table-scroll" id="fc_tableWrap" style="margin-top:16px;">
-            <table class="plan fc-table" id="fc_table"></table>
-            <p class="card-note" style="margin:8px 0 0;">Need / pasture: whole herd, lb per day. Hay and supplement: lb per cow per day (bulls and weaned calves get theirs too; it's in the cost). Cost includes feeding trips and delivery.</p>
-          </div>
-
-          <details class="advanced" style="margin-top:16px;">
-            <summary>Needs per animal, by month</summary>
-            <div class="adv-body">
-              <p class="card-note">Pounds per head per day. Cows are the herd average for that month (a mix of cows nursing, dry and pregnant). Nursing calves show only what they need <em>beyond their mother's milk</em>, averaged over every cow in the herd; weaned calves are per calf, during the weaning period.</p>
-              <div class="table-scroll"><table class="plan fc-table" id="fc_perhead"></table></div>
-              <p class="card-note" id="fc_wxNote" style="margin:10px 0 0;"></p>
-            </div>
-          </details>
-
           <details class="advanced" style="margin-top:12px;" id="fc_herdDetails">
             <summary>Herd, calves &amp; losses</summary>
             <div class="adv-body">
@@ -251,7 +328,7 @@
                   <div class="field"><label for="fc_replRate">Cows replaced each year</label><div class="input-wrap has-suffix"><input type="number" id="fc_replRate" data-h="replRate" min="0" max="40" step="1"><span class="suffix">%</span></div><span class="hint">Culls + deaths; 0 = you buy replacements</span></div>
                   <div class="field"><label for="fc_heiferPreg">Heifers that settle</label><div class="input-wrap has-suffix"><input type="number" id="fc_heiferPreg" data-h="heiferPreg" min="40" max="100" step="1"><span class="suffix">%</span></div><span class="hint">Open heifers sold at preg check</span></div>
                   <div class="field"><label for="fc_seasonal">Seasonal prices</label>
-                    <select id="fc_seasonal" data-hs="seasonal"><option value="off">Off (today's price)</option><option value="on">On (Texas pattern)</option></select></div>
+                    <select id="fc_seasonal" data-hs="seasonal"><option value="off">Off (today's price)</option><option value="on">On (seasonal pattern)</option></select></div>
                 </div>
                 <p class="card-note" id="fc_replNote" style="margin:10px 0 0;"></p>
               </fieldset>
@@ -291,7 +368,6 @@
               </fieldset>
             </div>
           </details>
-
           <details class="advanced" style="margin-top:12px;">
             <summary>Feed, protein source &amp; feeding costs</summary>
             <div class="adv-body">
@@ -330,7 +406,74 @@
               <div class="btn-row" style="padding:14px 0 0;"><button type="button" class="tool-btn" id="fc_reset">Reset herd &amp; feed details</button></div>
             </div>
           </details>
+    </div>
+  </div>
+  <div class="mr-next"><button type="button" class="tool-btn" data-go="ranch">← 1 · Ranch</button><button type="button" class="tool-btn primary" data-go="plan">3 · Year plan →</button></div>
+</div>
 
+<div class="mr-step" data-step="plan" id="step_plan" hidden>
+  <div class="card" id="feedCard">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2"/></svg>
+      <h2>Your year plan</h2>
+    </div>
+    <div class="card-body">
+                <div class="fc-empty" id="fc_empty" hidden></div>
+        <div id="fc_main">
+          <p class="fc-headline" id="fc_headline"></p>
+          <div class="stat-tiles fc-tiles" id="fc_tiles"></div>
+          <div class="btn-row" style="padding:12px 0 0;gap:8px;flex-wrap:wrap;"><button type="button" class="tool-btn" id="fc_planBtn">🗒 Print a one-page year plan for this herd</button><button type="button" class="tool-btn" id="fc_bcuBtn">➜ Use this feed cost in Cow operating cost</button></div>
+          <p class="card-note" id="fc_bcuNote" style="margin:8px 0 0;"></p>
+          <div class="plan-grid">
+            <div class="plan-col">
+              <h3 class="sub-h" style="margin-top:0;">What the herd needs vs. what the grass gives</h3>
+          <div class="fc-chart-head">
+            <div class="segmented" role="tablist" aria-label="Nutrient shown">
+              <button type="button" class="seg-btn active" data-nutrient="tdn" role="tab" aria-selected="true">Energy (TDN)</button>
+              <button type="button" class="seg-btn" data-nutrient="cp" role="tab" aria-selected="false">Protein (CP)</button>
+            </div>
+            <div class="fc-legend" id="fc_legend"></div>
+          </div>
+          <div class="fc-chart" id="fc_chart" role="img" aria-label="Monthly herd needs compared with pasture supply"></div>
+          <div class="print-only fc-print-charts">
+            <h3 class="sub-h">Energy (TDN), lb per day, whole herd</h3>
+            <div class="fc-chart" id="fc_chart_p_tdn"></div>
+            <h3 class="sub-h">Protein (CP), lb per day, whole herd</h3>
+            <div class="fc-chart" id="fc_chart_p_cp"></div>
+          </div>
+          <p class="fc-short" id="fc_short"></p>
+            </div>
+            <div class="plan-col">
+              <h3 class="sub-h" style="margin-top:0;">Grazing days &amp; calendar</h3>
+              <p class="card-note" style="margin:0 0 8px;">How many days each pasture carries your herd, in the order you graze them (use the arrows).</p>
+                      <div id="rotationBody"></div>
+            </div>
+          </div>
+          <details class="advanced" style="margin-top:18px;">
+            <summary>Month by month: needs, pasture, hay, supplement, cost</summary>
+            <div class="adv-body">
+          <div class="table-scroll" id="fc_tableWrap" style="margin-top:16px;">
+            <table class="plan fc-table" id="fc_table"></table>
+            <p class="card-note" style="margin:8px 0 0;">Need / pasture: whole herd, lb per day. Hay and supplement: lb per cow per day (bulls and weaned calves get theirs too; it's in the cost). Cost includes feeding trips and delivery.</p>
+          </div>
+            </div>
+          </details>
+          <details class="advanced" style="margin-top:12px;">
+            <summary>Feed, calves &amp; cow condition</summary>
+            <div class="adv-body"><div class="stat-tiles fc-tiles" id="fc_tiles2"></div></div>
+          </details>
+          <details class="advanced" style="margin-top:16px;">
+            <summary>Needs per animal, by month</summary>
+            <div class="adv-body">
+              <p class="card-note">Pounds per head per day. Cows are the herd average for that month (a mix of cows nursing, dry and pregnant). Nursing calves show only what they need <em>beyond their mother's milk</em>, averaged over every cow in the herd; weaned calves are per calf, during the weaning period.</p>
+              <div class="table-scroll"><table class="plan fc-table" id="fc_perhead"></table></div>
+              <p class="card-note" id="fc_wxNote" style="margin:10px 0 0;"></p>
+            </div>
+          </details>
+          <details class="advanced" style="margin-top:12px;" id="budgetDetails">
+            <summary>Compare with the AgriLife 2026 cow-calf budget</summary>
+            <div class="adv-body">      <div class="card-body" id="budgetBody"></div></div>
+          </details>
           <details class="advanced" style="margin-top:12px;">
             <summary>How this is calculated</summary>
             <div class="adv-body fc-method">
@@ -347,9 +490,12 @@
             </div>
           </details>
         </div>
-      </div>
     </div>
+  </div>
+  <div class="mr-next"><button type="button" class="tool-btn" data-go="herd">← 2 · Herd</button><button type="button" class="tool-btn primary" data-go="decide">4 · Decisions →</button></div>
+</div>
 
+<div class="mr-step mr-narrow" data-step="decide" id="step_decide" hidden>
     <!-- Decisions -->
     <div class="card" id="decCard">
       <div class="card-head">
@@ -401,117 +547,9 @@
         </div>
       </div>
     </div>
+  <div class="mr-next"><button type="button" class="tool-btn" data-go="plan">← 3 · Year plan</button><span></span></div>
+</div>
 
-    <!-- Points -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.7s6 6.3 6 11a6 6 0 0 1-12 0c0-4.7 6-11 6-11Z"/></svg>
-        <h2>Water, pens &amp; gates</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Use the buttons above the map to drop a water point, pens, a gate or a feeder, then click where it goes. Water points let the pasture list show how far the middle of each pasture is from the nearest water.</p>
-        <div class="point-list" id="pointList"></div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="col-results">
-
-    <!-- Summary -->
-    <div class="card" id="summaryCard">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/></svg>
-        <h2>Your ranch at a glance</h2>
-      </div>
-      <div class="card-body" id="summaryBody"></div>
-    </div>
-
-    <!-- Settings -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
-        <h2>Herd &amp; grazing assumptions</h2>
-      </div>
-      <div class="card-body">
-        <div class="field-grid">
-          <div class="field" style="grid-column:1 / -1;">
-            <label for="ranchName">Ranch name</label>
-            <input type="text" id="ranchName" placeholder="e.g. North place" maxlength="80">
-          </div>
-          <div class="field">
-            <label for="hd_cows">Cows</label>
-            <div class="input-wrap has-suffix"><input type="number" id="hd_cows" min="0" step="1" inputmode="numeric"><span class="suffix">head</span></div>
-          </div>
-          <div class="field">
-            <label for="hd_cowLb">Mature cow weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="hd_cowLb" min="600" max="2000" step="25" inputmode="numeric"><span class="suffix">lb</span></div>
-          </div>
-          <div class="field">
-            <label for="hd_bulls">Bulls</label>
-            <div class="input-wrap has-suffix"><input type="number" id="hd_bulls" min="0" step="1" inputmode="numeric"><span class="suffix">head</span></div>
-            <span class="hint" id="hd_bullsHint">Auto: 1 per 25 cows</span>
-          </div>
-          <div class="field">
-            <label for="hd_bullLb">Bull weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="hd_bullLb" min="1000" max="3000" step="50" inputmode="numeric"><span class="suffix">lb</span></div>
-          </div>
-          <div class="field" style="grid-column:1 / -1;">
-            <div class="derived-note" id="hd_auNote"></div>
-          </div>
-          <div class="field" style="grid-column:1 / -1;">
-            <label for="manualCap">Carrying capacity — your own number <span style="font-weight:500;color:var(--ink-muted);">(optional)</span></label>
-            <div class="input-wrap has-suffix"><input type="number" id="manualCap" min="0" step="1" inputmode="decimal" placeholder="Leave blank to use the soil survey"><span class="suffix">AU</span></div>
-            <span class="hint">If you know how many animal units your place carries, enter it; the tool then uses it instead of the soil survey (and scales the feed calendar to match).</span>
-          </div>
-          <div class="field">
-            <label for="harvestEff">Harvest efficiency</label>
-            <div class="input-wrap has-suffix"><input type="number" id="harvestEff" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
-            <span class="hint">Share of forage cattle actually eat</span>
-          </div>
-          <div class="field">
-            <label for="intakeLb">Forage per AU per day</label>
-            <div class="input-wrap has-suffix"><input type="number" id="intakeLb" min="1" step="0.5" inputmode="decimal"><span class="suffix">lb</span></div>
-          </div>
-        </div>
-        <p class="card-note" style="margin:14px 0 0;">Defaults follow AgriLife Extension's <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering).</p>
-      </div>
-    </div>
-
-    <!-- Budget link -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        <h2>What this ranch could earn</h2>
-      </div>
-      <div class="card-body" id="budgetBody"></div>
-    </div>
-
-    <!-- File -->
-    <div class="card" id="fileCard">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
-        <h2>Save, share &amp; print</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Your map is saved automatically in this browser only &mdash; nothing is sent to Texas A&amp;M. To move it to another device or give it to your agent, download a file and open it there.</p>
-        <div class="file-actions">
-          <button type="button" class="tool-btn" id="importBtn">⬆ Open a file</button>
-          <button type="button" class="tool-btn" id="exportGeoBtn">⬇ GeoJSON</button>
-          <button type="button" class="tool-btn" id="exportKmlBtn">⬇ Google Earth (KML)</button>
-          <button type="button" class="tool-btn" id="printBtn">🖨 Print a report</button>
-          <button type="button" class="tool-btn primary" id="planBtn">🗒 One-page year plan</button>
-        </div>
-        <input type="file" id="fileInput" accept=".geojson,.json,.kml,.kmz,.zip" hidden>
-        <p class="card-note" style="margin:10px 0 0;">Opens Google Earth files (KML/KMZ), GeoJSON, or a zipped shapefile from your agent or FSA office. The GeoJSON download also keeps your herd, feed and decision settings, so opening it on another device brings back the whole ranch.</p>
-        <p class="notice" id="fileNotice" hidden></p>
-        <div class="btn-row" style="padding:14px 0 0;">
-          <button type="button" class="tool-btn danger" id="clearBtn">Delete this ranch from this device</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <footer>

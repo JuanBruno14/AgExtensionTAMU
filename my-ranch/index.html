@@ -720,6 +720,66 @@
   .dec-keep-link .btn-link:hover{filter:brightness(1.1);}
   .dec-h4{margin:20px 0 4px;font-size:15px;font-weight:700;color:var(--ink);}
   .pc-val{font-size:10.5px;fill:var(--ink-secondary);font-weight:600;}
+
+  /* ---- summary strip + steps (Ranch · Herd · Year plan · Decisions) */
+  .mr-strip{position:sticky;top:0;z-index:1100;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.05);}
+  .mr-strip-in{max-width:1180px;margin:0 auto;padding:10px clamp(16px,4vw,40px);display:flex;align-items:center;gap:10px 28px;flex-wrap:wrap;}
+  .mr-rn{font-family:"Work Sans",system-ui,sans-serif;font-weight:700;font-size:16.5px;line-height:1.2;color:var(--ink);min-width:0;}
+  .mr-rn small{display:block;font-family:"Open Sans",system-ui,sans-serif;font-weight:400;font-size:12px;color:var(--ink-muted);margin-top:2px;}
+  .mr-k{display:flex;flex-direction:column;min-width:0;}
+  .mr-k > span{font-family:Oswald,"Open Sans",sans-serif;text-transform:uppercase;font-size:11px;letter-spacing:.06em;color:var(--ink-muted);}
+  .mr-k b{font-family:"Work Sans",system-ui,sans-serif;font-size:18px;font-weight:700;color:var(--ink);white-space:nowrap;}
+  .mr-k b small{font-family:"Open Sans",sans-serif;font-size:12px;font-weight:400;color:var(--ink-muted);}
+  .mr-k b.ok{color:var(--good-700);} .mr-k b.warn{color:#9a4a0b;} .mr-k b.bad{color:var(--critical-700);}
+  .mr-meter{width:96px;height:6px;border-radius:3px;background:var(--surface-sunken);margin-top:4px;overflow:hidden;}
+  .mr-meter i{display:block;height:100%;width:0;border-radius:3px;background:var(--good-700);transition:width .3s;}
+  .mr-meter i.warn{background:#c77a22;} .mr-meter i.bad{background:var(--critical-700);}
+  .mr-strip-btns{margin-left:auto;display:flex;gap:8px;}
+  .mr-steps{max-width:1180px;margin:18px auto 0;padding:0 clamp(16px,4vw,40px);display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+  .mr-step-btn{display:flex;align-items:center;gap:10px;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;cursor:pointer;font:inherit;color:var(--ink);}
+  .mr-step-btn:hover{border-color:var(--accent);}
+  .mr-step-btn .n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--surface-sunken);display:grid;place-items:center;font-weight:700;font-size:13px;}
+  .mr-step-btn b{display:block;font-family:"Work Sans",system-ui,sans-serif;font-size:15px;}
+  .mr-step-btn small{display:block;color:var(--ink-muted);font-size:12px;}
+  .mr-step-btn.done .n{background:var(--good-700);color:#fff;font-size:0;}
+  .mr-step-btn.done .n::after{content:"✓";font-size:13px;}
+  .mr-step-btn.on{border:2px solid var(--accent);padding:9px 13px;}
+  .mr-step-btn.on .n{background:var(--accent);color:#fff;}
+  .mr-wrap{min-height:40vh;}
+  .mr-file{max-width:1180px;margin:16px auto 0;padding:0 clamp(16px,4vw,40px);}
+  .mr-step{max-width:1180px;margin:0 auto;padding:18px clamp(16px,4vw,40px) 48px;}
+  .mr-step[hidden]{display:none;}
+  .mr-step[data-step="ranch"]{max-width:none;padding:0 0 40px;}
+  .mr-step[data-step="ranch"] .layout{padding-top:18px;padding-bottom:18px;}
+  .mr-step[data-step="ranch"] .mr-next{max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px);}
+  .mr-step.mr-narrow{max-width:1000px;}
+  .mr-step > .card + .card{margin-top:18px;}
+  .mr-next{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-top:18px;}
+  .fc-headline{font-size:16.5px;line-height:1.55;margin:0 0 14px;color:var(--ink);}
+  .fc-headline strong{color:var(--accent);}
+  .plan-grid{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:26px;margin-top:22px;align-items:start;}
+  .plan-col{min-width:0;}
+  .link-btn{background:none;border:0;padding:0;font:inherit;color:var(--accent);text-decoration:underline;cursor:pointer;}
+  @media (max-width:920px){
+    .plan-grid{grid-template-columns:1fr;}
+  }
+  @media (max-width:700px){
+    .mr-strip-in{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;padding:8px 16px;}
+    .mr-rn{grid-column:1/-1;}
+    .mr-strip{position:static;}
+    .mr-k b{font-size:15.5px;white-space:normal;}
+    .mr-strip-btns{grid-column:1/-1;margin:2px 0 0;}
+    .mr-strip-btns .tool-btn{flex:1;}
+    .mr-steps{display:flex;overflow-x:auto;padding:0 16px;scrollbar-width:none;}
+    .mr-step-btn{flex:0 0 auto;padding:8px 10px;}
+    .mr-step-btn.on{padding:7px 9px;}
+    .mr-step-btn small{display:none;}
+  }
+  @media print{
+    .mr-strip,.mr-steps,.mr-next,.mr-file{display:none !important;}
+    .mr-step[hidden]{display:block !important;}
+    .mr-step{padding:0;max-width:none;}
+  }
 </style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
 </head>
@@ -757,6 +817,51 @@
   <div class="fence-line"></div>
 </section>
 
+<div class="mr-strip" id="mrStrip">
+  <div class="mr-strip-in">
+    <div class="mr-rn"><span id="st_name">Your ranch</span><small id="st_sub">Draw your pastures to start</small></div>
+    <div class="mr-k"><span>Stocking</span><b id="st_stock">—</b><div class="mr-meter"><i id="st_stockBar"></i></div></div>
+    <div class="mr-k"><span>Drought now</span><b id="st_drought">—</b></div>
+    <div class="mr-k"><span>Feed to buy (year)</span><b id="st_feed">—</b></div>
+    <div class="mr-k"><span>Sales − feed</span><b id="st_net">—</b></div>
+    <div class="mr-strip-btns"><button type="button" class="tool-btn" id="stripSaveBtn" aria-expanded="false" aria-controls="fileCard">💾 Save / share</button><button type="button" class="tool-btn primary" id="stripPlanBtn">🗒 Print year plan</button></div>
+  </div>
+</div>
+
+<nav class="mr-steps" id="mrSteps" aria-label="My Ranch steps">
+  <button type="button" class="mr-step-btn" data-go="ranch"><span class="n">1</span><span class="t"><b>Ranch</b><small>Map, pastures, water</small></span></button>
+  <button type="button" class="mr-step-btn" data-go="herd"><span class="n">2</span><span class="t"><b>Herd</b><small>Cows, calving, feed, prices</small></span></button>
+  <button type="button" class="mr-step-btn" data-go="plan"><span class="n">3</span><span class="t"><b>Year plan</b><small>Is there enough grass?</small></span></button>
+  <button type="button" class="mr-step-btn" data-go="decide"><span class="n">4</span><span class="t"><b>Decisions</b><small>Calving season, drought, what if</small></span></button>
+</nav>
+
+<div class="mr-wrap">
+<div class="mr-file" id="filePanel" hidden>
+    <!-- File -->
+    <div class="card" id="fileCard">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
+        <h2>Save, share &amp; print</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note">Your map is saved automatically in this browser only &mdash; nothing is sent to Texas A&amp;M. To move it to another device or give it to your agent, download a file and open it there.</p>
+        <div class="file-actions">
+          <button type="button" class="tool-btn" id="importBtn">⬆ Open a file</button>
+          <button type="button" class="tool-btn" id="exportGeoBtn">⬇ GeoJSON</button>
+          <button type="button" class="tool-btn" id="exportKmlBtn">⬇ Google Earth (KML)</button>
+          <button type="button" class="tool-btn" id="printBtn">🖨 Print a report</button>
+          <button type="button" class="tool-btn primary" id="planBtn">🗒 One-page year plan</button>
+        </div>
+        <input type="file" id="fileInput" accept=".geojson,.json,.kml,.kmz,.zip" hidden>
+        <p class="card-note" style="margin:10px 0 0;">Opens Google Earth files (KML/KMZ), GeoJSON, or a zipped shapefile from your agent or FSA office. The GeoJSON download also keeps your herd, feed and decision settings, so opening it on another device brings back the whole ranch.</p>
+        <p class="notice" id="fileNotice" hidden></p>
+        <div class="btn-row" style="padding:14px 0 0;">
+          <button type="button" class="tool-btn danger" id="clearBtn">Delete this ranch from this device</button>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="mr-step" data-step="ranch" id="step_ranch">
 <div class="layout ranch">
   <div class="col-inputs">
 
@@ -829,27 +934,97 @@
       </div>
     </div>
 
-    <!-- Rotation -->
+    <!-- Points -->
     <div class="card">
       <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>
-        <h2>Grazing days &amp; calendar</h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.7s6 6.3 6 11a6 6 0 0 1-12 0c0-4.7 6-11 6-11Z"/></svg>
+        <h2>Water, pens &amp; gates</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">How many days each pasture can carry your planned herd, using the same forage and harvest-efficiency numbers as the capacity estimate. Use the arrows to set the order you'd graze them in.</p>
-        <div id="rotationBody"></div>
+        <p class="card-note">Use the buttons above the map to drop a water point, pens, a gate or a feeder, then click where it goes. Water points let the pasture list show how far the middle of each pasture is from the nearest water.</p>
+        <div class="point-list" id="pointList"></div>
       </div>
     </div>
 
-    <!-- Feed calendar -->
-    <div class="card" id="feedCard">
+  </div>
+  <div class="col-results">
+
+    <!-- Summary -->
+    <div class="card" id="summaryCard">
       <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2"/></svg>
-        <h2>Feed calendar: what the herd needs vs. what the pastures give</h2>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/></svg>
+        <h2>Your ranch at a glance</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Month by month, the energy (TDN) and protein your cows, bulls and calves need, next to what your pastures can supply at their typical quality for that time of year. Where the pasture falls short, the tool works out the hay and supplement to buy, what it costs, and what's left from the calf check.</p>
+        <div class="field" style="margin-bottom:14px;">
+          <label for="ranchName">Ranch name</label>
+          <input type="text" id="ranchName" placeholder="e.g. North place" maxlength="80">
+        </div>
+        <div id="summaryBody"></div>
+      </div>
+    </div>
 
+    <div class="card">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 20h18M6 20V10M12 20V4M18 20v-7"/></svg>
+        <h2>Forage &amp; capacity settings</h2>
+      </div>
+      <div class="card-body">
+        <div class="field-grid">
+          <div class="field" style="grid-column:1 / -1;">
+            <label for="manualCap">Carrying capacity — your own number <span style="font-weight:500;color:var(--ink-muted);">(optional)</span></label>
+            <div class="input-wrap has-suffix"><input type="number" id="manualCap" min="0" step="1" inputmode="decimal" placeholder="Leave blank to use the soil survey"><span class="suffix">AU</span></div>
+            <span class="hint">If you know how many animal units your place carries, enter it; the tool then uses it instead of the soil survey (and scales the feed calendar to match).</span>
+          </div>
+          <div class="field">
+            <label for="harvestEff">Harvest efficiency</label>
+            <div class="input-wrap has-suffix"><input type="number" id="harvestEff" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
+            <span class="hint">Share of forage cattle actually eat</span>
+          </div>
+          <div class="field">
+            <label for="intakeLb">Forage per AU per day</label>
+            <div class="input-wrap has-suffix"><input type="number" id="intakeLb" min="1" step="0.5" inputmode="decimal"><span class="suffix">lb</span></div>
+          </div>
+        </div>
+        <p class="card-note" style="margin:14px 0 0;">Defaults follow AgriLife Extension's <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering).</p>
+      </div>
+    </div>
+
+  </div>
+</div>
+  <div class="mr-next"><span></span><button type="button" class="tool-btn primary" data-go="herd">2 · Herd →</button></div>
+</div>
+
+<div class="mr-step mr-narrow" data-step="herd" id="step_herd" hidden>
+  <div class="card" id="herdCard">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 11c0-3 2-5 5-5h6c3 0 5 2 5 5v2a3 3 0 0 1-3 3H7a3 3 0 0 1-3-3v-2Z"/><path d="M7 16v4M17 16v4M2 9l2 2M22 9l-2 2"/></svg>
+      <h2>Your herd</h2>
+    </div>
+    <div class="card-body">
+      <div class="field-grid cols-4">
+          <div class="field">
+            <label for="hd_cows">Cows</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_cows" min="0" step="1" inputmode="numeric"><span class="suffix">head</span></div>
+          </div>
+          <div class="field">
+            <label for="hd_cowLb">Mature cow weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_cowLb" min="600" max="2000" step="25" inputmode="numeric"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field">
+            <label for="hd_bulls">Bulls</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_bulls" min="0" step="1" inputmode="numeric"><span class="suffix">head</span></div>
+            <span class="hint" id="hd_bullsHint">Auto: 1 per 25 cows</span>
+          </div>
+          <div class="field">
+            <label for="hd_bullLb">Bull weight</label>
+            <div class="input-wrap has-suffix"><input type="number" id="hd_bullLb" min="1000" max="3000" step="50" inputmode="numeric"><span class="suffix">lb</span></div>
+          </div>
+          <div class="field" style="grid-column:1 / -1;">
+            <div class="derived-note" id="hd_auNote"></div>
+          </div>
+      </div>
+      <h3 class="sub-h" style="margin-top:22px;">Calving &amp; weaning</h3>
         <div class="field-grid cols-3">
           <div class="field">
             <label for="fc_calving">Calving season</label>
@@ -899,44 +1074,6 @@
         </div>
         <p class="card-note fc-usnote" style="margin:10px 0 0;">U.S. average from USDA's NAHMS Beef 2017 survey: 55% of calves are born in February–April, with a smaller fall peak in September–November.</p>
         <p class="card-note" id="fc_weanNote" style="margin:10px 0 0;"></p>
-
-        <div class="fc-empty" id="fc_empty" hidden></div>
-
-        <div id="fc_main">
-          <div class="fc-chart-head">
-            <div class="segmented" role="tablist" aria-label="Nutrient shown">
-              <button type="button" class="seg-btn active" data-nutrient="tdn" role="tab" aria-selected="true">Energy (TDN)</button>
-              <button type="button" class="seg-btn" data-nutrient="cp" role="tab" aria-selected="false">Protein (CP)</button>
-            </div>
-            <div class="fc-legend" id="fc_legend"></div>
-          </div>
-          <div class="fc-chart" id="fc_chart" role="img" aria-label="Monthly herd needs compared with pasture supply"></div>
-          <div class="print-only fc-print-charts">
-            <h3 class="sub-h">Energy (TDN), lb per day, whole herd</h3>
-            <div class="fc-chart" id="fc_chart_p_tdn"></div>
-            <h3 class="sub-h">Protein (CP), lb per day, whole herd</h3>
-            <div class="fc-chart" id="fc_chart_p_cp"></div>
-          </div>
-          <p class="fc-short" id="fc_short"></p>
-
-          <div class="stat-tiles fc-tiles" id="fc_tiles"></div>
-          <div class="btn-row" style="padding:12px 0 0;gap:8px;flex-wrap:wrap;"><button type="button" class="tool-btn" id="fc_planBtn">🗒 Print a one-page year plan for this herd</button><button type="button" class="tool-btn" id="fc_bcuBtn">➜ Use this feed cost in Cow operating cost</button></div>
-          <p class="card-note" id="fc_bcuNote" style="margin:8px 0 0;"></p>
-
-          <div class="table-scroll" id="fc_tableWrap" style="margin-top:16px;">
-            <table class="plan fc-table" id="fc_table"></table>
-            <p class="card-note" style="margin:8px 0 0;">Need / pasture: whole herd, lb per day. Hay and supplement: lb per cow per day (bulls and weaned calves get theirs too; it's in the cost). Cost includes feeding trips and delivery.</p>
-          </div>
-
-          <details class="advanced" style="margin-top:16px;">
-            <summary>Needs per animal, by month</summary>
-            <div class="adv-body">
-              <p class="card-note">Pounds per head per day. Cows are the herd average for that month (a mix of cows nursing, dry and pregnant). Nursing calves show only what they need <em>beyond their mother's milk</em>, averaged over every cow in the herd; weaned calves are per calf, during the weaning period.</p>
-              <div class="table-scroll"><table class="plan fc-table" id="fc_perhead"></table></div>
-              <p class="card-note" id="fc_wxNote" style="margin:10px 0 0;"></p>
-            </div>
-          </details>
-
           <details class="advanced" style="margin-top:12px;" id="fc_herdDetails">
             <summary>Herd, calves &amp; losses</summary>
             <div class="adv-body">
@@ -976,7 +1113,7 @@
                   <div class="field"><label for="fc_replRate">Cows replaced each year</label><div class="input-wrap has-suffix"><input type="number" id="fc_replRate" data-h="replRate" min="0" max="40" step="1"><span class="suffix">%</span></div><span class="hint">Culls + deaths; 0 = you buy replacements</span></div>
                   <div class="field"><label for="fc_heiferPreg">Heifers that settle</label><div class="input-wrap has-suffix"><input type="number" id="fc_heiferPreg" data-h="heiferPreg" min="40" max="100" step="1"><span class="suffix">%</span></div><span class="hint">Open heifers sold at preg check</span></div>
                   <div class="field"><label for="fc_seasonal">Seasonal prices</label>
-                    <select id="fc_seasonal" data-hs="seasonal"><option value="off">Off (today's price)</option><option value="on">On (Texas pattern)</option></select></div>
+                    <select id="fc_seasonal" data-hs="seasonal"><option value="off">Off (today's price)</option><option value="on">On (seasonal pattern)</option></select></div>
                 </div>
                 <p class="card-note" id="fc_replNote" style="margin:10px 0 0;"></p>
               </fieldset>
@@ -1016,7 +1153,6 @@
               </fieldset>
             </div>
           </details>
-
           <details class="advanced" style="margin-top:12px;">
             <summary>Feed, protein source &amp; feeding costs</summary>
             <div class="adv-body">
@@ -1055,7 +1191,74 @@
               <div class="btn-row" style="padding:14px 0 0;"><button type="button" class="tool-btn" id="fc_reset">Reset herd &amp; feed details</button></div>
             </div>
           </details>
+    </div>
+  </div>
+  <div class="mr-next"><button type="button" class="tool-btn" data-go="ranch">← 1 · Ranch</button><button type="button" class="tool-btn primary" data-go="plan">3 · Year plan →</button></div>
+</div>
 
+<div class="mr-step" data-step="plan" id="step_plan" hidden>
+  <div class="card" id="feedCard">
+    <div class="card-head">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4M7 14h2M11 14h2M15 14h2M7 17h2M11 17h2"/></svg>
+      <h2>Your year plan</h2>
+    </div>
+    <div class="card-body">
+                <div class="fc-empty" id="fc_empty" hidden></div>
+        <div id="fc_main">
+          <p class="fc-headline" id="fc_headline"></p>
+          <div class="stat-tiles fc-tiles" id="fc_tiles"></div>
+          <div class="btn-row" style="padding:12px 0 0;gap:8px;flex-wrap:wrap;"><button type="button" class="tool-btn" id="fc_planBtn">🗒 Print a one-page year plan for this herd</button><button type="button" class="tool-btn" id="fc_bcuBtn">➜ Use this feed cost in Cow operating cost</button></div>
+          <p class="card-note" id="fc_bcuNote" style="margin:8px 0 0;"></p>
+          <div class="plan-grid">
+            <div class="plan-col">
+              <h3 class="sub-h" style="margin-top:0;">What the herd needs vs. what the grass gives</h3>
+          <div class="fc-chart-head">
+            <div class="segmented" role="tablist" aria-label="Nutrient shown">
+              <button type="button" class="seg-btn active" data-nutrient="tdn" role="tab" aria-selected="true">Energy (TDN)</button>
+              <button type="button" class="seg-btn" data-nutrient="cp" role="tab" aria-selected="false">Protein (CP)</button>
+            </div>
+            <div class="fc-legend" id="fc_legend"></div>
+          </div>
+          <div class="fc-chart" id="fc_chart" role="img" aria-label="Monthly herd needs compared with pasture supply"></div>
+          <div class="print-only fc-print-charts">
+            <h3 class="sub-h">Energy (TDN), lb per day, whole herd</h3>
+            <div class="fc-chart" id="fc_chart_p_tdn"></div>
+            <h3 class="sub-h">Protein (CP), lb per day, whole herd</h3>
+            <div class="fc-chart" id="fc_chart_p_cp"></div>
+          </div>
+          <p class="fc-short" id="fc_short"></p>
+            </div>
+            <div class="plan-col">
+              <h3 class="sub-h" style="margin-top:0;">Grazing days &amp; calendar</h3>
+              <p class="card-note" style="margin:0 0 8px;">How many days each pasture carries your herd, in the order you graze them (use the arrows).</p>
+                      <div id="rotationBody"></div>
+            </div>
+          </div>
+          <details class="advanced" style="margin-top:18px;">
+            <summary>Month by month: needs, pasture, hay, supplement, cost</summary>
+            <div class="adv-body">
+          <div class="table-scroll" id="fc_tableWrap" style="margin-top:16px;">
+            <table class="plan fc-table" id="fc_table"></table>
+            <p class="card-note" style="margin:8px 0 0;">Need / pasture: whole herd, lb per day. Hay and supplement: lb per cow per day (bulls and weaned calves get theirs too; it's in the cost). Cost includes feeding trips and delivery.</p>
+          </div>
+            </div>
+          </details>
+          <details class="advanced" style="margin-top:12px;">
+            <summary>Feed, calves &amp; cow condition</summary>
+            <div class="adv-body"><div class="stat-tiles fc-tiles" id="fc_tiles2"></div></div>
+          </details>
+          <details class="advanced" style="margin-top:16px;">
+            <summary>Needs per animal, by month</summary>
+            <div class="adv-body">
+              <p class="card-note">Pounds per head per day. Cows are the herd average for that month (a mix of cows nursing, dry and pregnant). Nursing calves show only what they need <em>beyond their mother's milk</em>, averaged over every cow in the herd; weaned calves are per calf, during the weaning period.</p>
+              <div class="table-scroll"><table class="plan fc-table" id="fc_perhead"></table></div>
+              <p class="card-note" id="fc_wxNote" style="margin:10px 0 0;"></p>
+            </div>
+          </details>
+          <details class="advanced" style="margin-top:12px;" id="budgetDetails">
+            <summary>Compare with the AgriLife 2026 cow-calf budget</summary>
+            <div class="adv-body">      <div class="card-body" id="budgetBody"></div></div>
+          </details>
           <details class="advanced" style="margin-top:12px;">
             <summary>How this is calculated</summary>
             <div class="adv-body fc-method">
@@ -1072,9 +1275,12 @@
             </div>
           </details>
         </div>
-      </div>
     </div>
+  </div>
+  <div class="mr-next"><button type="button" class="tool-btn" data-go="herd">← 2 · Herd</button><button type="button" class="tool-btn primary" data-go="decide">4 · Decisions →</button></div>
+</div>
 
+<div class="mr-step mr-narrow" data-step="decide" id="step_decide" hidden>
     <!-- Decisions -->
     <div class="card" id="decCard">
       <div class="card-head">
@@ -1126,117 +1332,9 @@
         </div>
       </div>
     </div>
+  <div class="mr-next"><button type="button" class="tool-btn" data-go="plan">← 3 · Year plan</button><span></span></div>
+</div>
 
-    <!-- Points -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2.7s6 6.3 6 11a6 6 0 0 1-12 0c0-4.7 6-11 6-11Z"/></svg>
-        <h2>Water, pens &amp; gates</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Use the buttons above the map to drop a water point, pens, a gate or a feeder, then click where it goes. Water points let the pasture list show how far the middle of each pasture is from the nearest water.</p>
-        <div class="point-list" id="pointList"></div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="col-results">
-
-    <!-- Summary -->
-    <div class="card" id="summaryCard">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19V5M4 19h16M8 15l3-4 3 2 5-6"/></svg>
-        <h2>Your ranch at a glance</h2>
-      </div>
-      <div class="card-body" id="summaryBody"></div>
-    </div>
-
-    <!-- Settings -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></svg>
-        <h2>Herd &amp; grazing assumptions</h2>
-      </div>
-      <div class="card-body">
-        <div class="field-grid">
-          <div class="field" style="grid-column:1 / -1;">
-            <label for="ranchName">Ranch name</label>
-            <input type="text" id="ranchName" placeholder="e.g. North place" maxlength="80">
-          </div>
-          <div class="field">
-            <label for="hd_cows">Cows</label>
-            <div class="input-wrap has-suffix"><input type="number" id="hd_cows" min="0" step="1" inputmode="numeric"><span class="suffix">head</span></div>
-          </div>
-          <div class="field">
-            <label for="hd_cowLb">Mature cow weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="hd_cowLb" min="600" max="2000" step="25" inputmode="numeric"><span class="suffix">lb</span></div>
-          </div>
-          <div class="field">
-            <label for="hd_bulls">Bulls</label>
-            <div class="input-wrap has-suffix"><input type="number" id="hd_bulls" min="0" step="1" inputmode="numeric"><span class="suffix">head</span></div>
-            <span class="hint" id="hd_bullsHint">Auto: 1 per 25 cows</span>
-          </div>
-          <div class="field">
-            <label for="hd_bullLb">Bull weight</label>
-            <div class="input-wrap has-suffix"><input type="number" id="hd_bullLb" min="1000" max="3000" step="50" inputmode="numeric"><span class="suffix">lb</span></div>
-          </div>
-          <div class="field" style="grid-column:1 / -1;">
-            <div class="derived-note" id="hd_auNote"></div>
-          </div>
-          <div class="field" style="grid-column:1 / -1;">
-            <label for="manualCap">Carrying capacity — your own number <span style="font-weight:500;color:var(--ink-muted);">(optional)</span></label>
-            <div class="input-wrap has-suffix"><input type="number" id="manualCap" min="0" step="1" inputmode="decimal" placeholder="Leave blank to use the soil survey"><span class="suffix">AU</span></div>
-            <span class="hint">If you know how many animal units your place carries, enter it; the tool then uses it instead of the soil survey (and scales the feed calendar to match).</span>
-          </div>
-          <div class="field">
-            <label for="harvestEff">Harvest efficiency</label>
-            <div class="input-wrap has-suffix"><input type="number" id="harvestEff" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
-            <span class="hint">Share of forage cattle actually eat</span>
-          </div>
-          <div class="field">
-            <label for="intakeLb">Forage per AU per day</label>
-            <div class="input-wrap has-suffix"><input type="number" id="intakeLb" min="1" step="0.5" inputmode="decimal"><span class="suffix">lb</span></div>
-          </div>
-        </div>
-        <p class="card-note" style="margin:14px 0 0;">Defaults follow AgriLife Extension's <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering).</p>
-      </div>
-    </div>
-
-    <!-- Budget link -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        <h2>What this ranch could earn</h2>
-      </div>
-      <div class="card-body" id="budgetBody"></div>
-    </div>
-
-    <!-- File -->
-    <div class="card" id="fileCard">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
-        <h2>Save, share &amp; print</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">Your map is saved automatically in this browser only &mdash; nothing is sent to Texas A&amp;M. To move it to another device or give it to your agent, download a file and open it there.</p>
-        <div class="file-actions">
-          <button type="button" class="tool-btn" id="importBtn">⬆ Open a file</button>
-          <button type="button" class="tool-btn" id="exportGeoBtn">⬇ GeoJSON</button>
-          <button type="button" class="tool-btn" id="exportKmlBtn">⬇ Google Earth (KML)</button>
-          <button type="button" class="tool-btn" id="printBtn">🖨 Print a report</button>
-          <button type="button" class="tool-btn primary" id="planBtn">🗒 One-page year plan</button>
-        </div>
-        <input type="file" id="fileInput" accept=".geojson,.json,.kml,.kmz,.zip" hidden>
-        <p class="card-note" style="margin:10px 0 0;">Opens Google Earth files (KML/KMZ), GeoJSON, or a zipped shapefile from your agent or FSA office. The GeoJSON download also keeps your herd, feed and decision settings, so opening it on another device brings back the whole ranch.</p>
-        <p class="notice" id="fileNotice" hidden></p>
-        <div class="btn-row" style="padding:14px 0 0;">
-          <button type="button" class="tool-btn danger" id="clearBtn">Delete this ranch from this device</button>
-        </div>
-      </div>
-    </div>
-
-  </div>
 </div>
 
 <footer>
@@ -2711,7 +2809,7 @@
     }).catch(function(){
       state.drought = {status:'error', lat:c.lat, lng:c.lng, at:Date.now()};
     }).then(function(){
-      droughtBusy = false; renderSummary(); renderBudget(); save();
+      droughtBusy = false; renderSummary(); renderBudget(); updateStrip(); save();
     });
   }
   function droughtHtml(){
@@ -2739,6 +2837,7 @@
     renderFeed();
     try{ updateMapGrass(); }catch(e){}
     try{ renderHerdNote(); }catch(e){}
+    updateStrip();
     if(!drawMode) setDefaultHint();
     save();
   }
@@ -3498,6 +3597,21 @@
     return ' Cows use body reserves for the energy grass lacks (lowest ' + fmt(b.low, 1) + ' in ' + FEED.MONTHS[b.lowMonth] + ') and regain it on green grass.';
   }
 
+  /* one sentence that says what the year looks like */
+  function planHeadline(res, hayM, supM){
+    var h = state.herd, t = res.totals, ec = res.econ, b = res.bcs, cf = res.calf, parts = [];
+    var grass = t.hay < 100 ? 'Your grass carries the herd all year, with no hay.' : 'Your grass runs short: buy about <strong>' + fmt(t.hay/2000, 1) + ' t of hay</strong> (' + monthList(hayM) + ').';
+    if(t.sup >= 100) parts.push('<strong>' + fmt(t.sup/2000, 1) + ' t of ' + (b && b.mode === 'full' ? 'supplement' : 'protein supplement') + '</strong> (' + monthList(supM) + ', about ' + money(t.sup/2000*h.supPrice) + ')');
+    if(cf && cf.strategy === 'creep' && (ec.creepLb || 0) >= 100) parts.push('<strong>' + fmt(ec.creepLb/2000, 1) + ' t of creep</strong> to wean at ' + fmt(h.weanLb) + ' lb');
+    var txt = grass + (parts.length ? ' You need ' + parts.join(' and ') + '.' : t.hay < 100 ? ' Nothing else to buy.' : '');
+    if(cf && cf.strategy !== 'creep' && cf.lbLostPerCalf >= 1) txt += ' Calves wean at about <strong>' + fmt(ec.avgWeanLb) + ' lb</strong> on milk and grass.';
+    if(b){
+      if(b.mode === 'full' || b.start - b.low < 0.1) txt += ' Cows hold <strong>condition ' + fmt(b.start, b.start % 1 ? 1 : 0) + '</strong> all year.';
+      else txt += ' Cows drop to <strong>condition ' + fmt(b.low, 1) + '</strong> in ' + FEED.MONTHS[b.lowMonth] + (b.end < b.start - 0.2 ? ' and aren’t back by calving.' : ' and regain it on green grass.');
+    }
+    return txt;
+  }
+
   /* ---- main render */
   function renderFeed(){
     renderRegionSelect();
@@ -3505,8 +3619,8 @@
     var h = state.herd, main = $('fc_main'), empty = $('fc_empty');
     if(!(h.cows > 0)){
       main.hidden = true; empty.hidden = false;
-      empty.innerHTML = 'Enter your <strong>number of cows</strong> under <em>Herd &amp; grazing assumptions</em> to build the feed calendar.';
-      feedLast = null; $('fc_weanNote').textContent = ''; renderDecisions(); return;
+      empty.innerHTML = 'Enter your <strong>number of cows</strong> in <button type="button" class="link-btn" data-go="herd">step 2 · Herd</button> to build your year plan.';
+      feedLast = null; $('fc_weanNote').textContent = ''; updateStrip(); renderDecisions(); return;
     }
     main.hidden = false;
     var res = runFeed(), co = res.calves, ec = res.econ;
@@ -3560,15 +3674,20 @@
     $('fc_short').innerHTML = shortTxt + (res.hasSupply ? bcsNote(res.bcs) : '');
 
     var t = res.totals;
+    var feedLbs = t.hay + t.sup + (ec.creepLb || 0);
     $('fc_tiles').innerHTML = res.hasSupply ?
       '<div class="stat-tile"><span class="label">Calves sold</span><span class="value small">' + fmt(ec.calvesSold) + '</span><span class="sub">' + fmt(ec.avgSaleLb) + ' lb at $' + fmt(ec.avgPrice) + '/cwt</span></div>' +
       '<div class="stat-tile"><span class="label">Cattle sales</span><span class="value small">' + money(ec.income) + '</span><span class="sub">' + (ec.cullIncome + ec.openIncome > 0.5 ? 'calves ' + money(ec.calfIncome) + ' · culls ' + money(ec.cullIncome + ec.openIncome) : money(ec.income/h.cows) + ' per cow') + '</span></div>' +
+      '<div class="stat-tile"><span class="label">Feed &amp; feeding</span><span class="value small">' + money(ec.costs) + '</span><span class="sub">' + (feedLbs >= 100 ? [t.hay >= 100 ? fmt(t.hay/2000, 1) + ' t hay' : '', t.sup >= 100 ? fmt(t.sup/2000, 1) + ' t supplement' : '', (ec.creepLb || 0) >= 100 ? fmt(ec.creepLb/2000, 1) + ' t creep' : ''].filter(Boolean).join(' · ') + ' + trips' : 'nothing to buy') + '</span></div>' +
+      '<div class="stat-tile ' + (ec.net >= 0 ? 'good' : 'critical') + '"><span class="label">Sales minus feed</span><span class="value small">' + money(ec.net) + '</span><span class="sub">' + money(ec.net/h.cows) + ' per cow · not profit</span></div>'
+      : '';
+    $('fc_tiles2').innerHTML = res.hasSupply ?
       '<div class="stat-tile"><span class="label">Hay to buy</span><span class="value small">' + (t.hay >= 100 ? fmt(t.hay/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.hay >= 100 ? money(t.hay/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'standing forage lasts all year') + '</span></div>' +
       '<div class="stat-tile"><span class="label">Protein supplement</span><span class="value small">' + (t.sup >= 100 ? fmt(t.sup/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.sup >= 100 ? money(t.sup/2000*h.supPrice) + ' · ' + monthList(supM) : 'not needed') + '</span></div>' +
       bcsTile(res.bcs) + calfTile(res) +
-      '<div class="stat-tile"><span class="label">Feeding trips &amp; delivery</span><span class="value small">' + money(t.tripCost + t.dist) + '</span><span class="sub">' + fmt(t.trips) + ' trips' + (ec.nwsCare > 0 ? ' · screwworm care ' + money(ec.nwsCare) : '') + '</span></div>' +
-      '<div class="stat-tile ' + (ec.net >= 0 ? 'good' : 'critical') + '"><span class="label">Sales minus feed</span><span class="value small">' + money(ec.net) + '</span><span class="sub">' + money(ec.net/h.cows) + ' per cow · not profit</span></div>'
+      '<div class="stat-tile"><span class="label">Feeding trips &amp; delivery</span><span class="value small">' + money(t.tripCost + t.dist) + '</span><span class="sub">' + fmt(t.trips) + ' trips' + (ec.nwsCare > 0 ? ' · screwworm care ' + money(ec.nwsCare) : '') + (ec.bcsRestore > 0.5 ? ' · condition feed ' + money(ec.bcsRestore) : '') + '</span></div>'
       : '';
+    $('fc_headline').innerHTML = res.hasSupply ? planHeadline(res, hayM, supM) : '';
     $('fc_tiles').hidden = !res.hasSupply;
 
     var d1 = function(v){ return v > 0.05 ? fmt(v, 1) : '—'; };
@@ -3599,6 +3718,7 @@
           '<td class="num">' + fmt(x.dietTdn) + '% / ' + fmt(x.dietCp, 1) + '%</td></tr>';
       }).join('') + '</tbody>';
     $('fc_wxNote').textContent = wxNote(ms);
+    updateStrip();
     scheduleDecisions();
   }
 
@@ -4329,6 +4449,81 @@
     $('harvestEff').value = state.settings.harvestEff; $('intakeLb').value = state.settings.intakeLb;
   }
 
+
+  /* ---- steps (Ranch · Herd · Year plan · Decisions) and the summary strip */
+  var STEPS = ['ranch', 'herd', 'plan', 'decide'], curStep = null, STEP_KEY = 'tamuMyRanchStep';
+  function stepDone(s){
+    if(s === 'ranch') return state.pastures.length > 0;
+    if(s === 'herd') return state.herd.cows > 0;
+    if(s === 'plan') return !!(feedLast && feedLast.hasSupply);
+    return false;
+  }
+  function markSteps(){
+    document.querySelectorAll('.mr-step-btn').forEach(function(b){
+      var s = b.getAttribute('data-go');
+      b.classList.toggle('on', s === curStep); b.classList.toggle('done', s !== curStep && stepDone(s));
+      if(s === curStep) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+    });
+  }
+  function showStep(s, noScroll){
+    if(STEPS.indexOf(s) < 0) s = 'ranch';
+    var changed = s !== curStep; curStep = s;
+    // automated browser tests see every step at once, unless a test asks for real steps (window.__MR_STEPS)
+    var all = navigator.webdriver && !window.__MR_STEPS;
+    document.querySelectorAll('.mr-step').forEach(function(el){ el.hidden = !all && el.getAttribute('data-step') !== s; });
+    markSteps();
+    try{ localStorage.setItem(STEP_KEY, s); }catch(e){}
+    if(s === 'ranch' && map) setTimeout(function(){ map.invalidateSize(); }, 30);
+    if((s === 'plan' || s === 'decide') && changed){
+      // charts drawn while their step was hidden had no width: draw them again now
+      if(feedLast && s === 'plan') renderFeedChart(feedLast, feedNutrient, $('fc_chart'), true);
+      decKey = ''; renderDecisions();
+    }
+    if(!noScroll && changed){ var nav = $('mrSteps'); if(nav && nav.getBoundingClientRect().top < 0) window.scrollTo({top:window.scrollY + nav.getBoundingClientRect().top - 70, behavior:'smooth'}); }
+  }
+  function firstStep(){
+    var saved = null; try{ saved = localStorage.getItem(STEP_KEY); }catch(e){}
+    if(saved && STEPS.indexOf(saved) >= 0 && (saved === 'ranch' || state.pastures.length)) return saved;
+    if(!state.pastures.length) return 'ranch';
+    if(!(state.herd.cows > 0)) return 'herd';
+    return 'plan';
+  }
+  function updateStrip(){
+    if(!$('mrStrip')) return;
+    var t = totals(), herd = herdAU(), h = state.herd;
+    $('st_name').textContent = state.name || 'Your ranch';
+    $('st_sub').textContent = t.pastures ? fmt(t.acres) + ' ac' + (h.cows > 0 ? ' · ' + fmt(h.cows) + ' cows' : ' · enter your herd') : 'Draw your pastures to start';
+    var st = $('st_stock'), bar = $('st_stockBar');
+    if(herd > 0 && t.cap > 0){
+      var use = herd/t.cap;
+      st.innerHTML = fmt(use*100) + '% <small>of capacity</small>'; st.className = use > 1 ? 'bad' : use > 0.85 ? 'warn' : 'ok';
+      bar.style.width = Math.min(100, use*100) + '%'; bar.className = st.className;
+    } else { st.textContent = '—'; st.className = ''; bar.style.width = '0'; }
+    var d = state.drought, dr = $('st_drought');
+    if(d && d.status === 'ok'){ if(d.dm < 0){ dr.textContent = 'None'; dr.className = 'ok'; } else { var L = DM_LABELS[Math.min(d.dm, 4)]; dr.textContent = L.code + ' ' + L.name.split(' ')[0]; dr.className = d.dm >= 2 ? 'bad' : 'warn'; } }
+    else { dr.textContent = '—'; dr.className = ''; }
+    var f = feedLast && feedLast.hasSupply ? feedLast : null;
+    if(f){
+      var hay = f.totals.hay/2000, sup = f.totals.sup/2000, parts = [];
+      if(hay >= 0.05) parts.push(fmt(hay, hay < 10 ? 1 : 0) + ' t hay');
+      if(sup >= 0.05) parts.push(fmt(sup, sup < 10 ? 1 : 0) + ' t ' + (f.bcs && f.bcs.mode === 'full' ? 'suppl.' : 'protein'));
+      $('st_feed').textContent = parts.length ? parts.join(' + ') : 'None';
+      $('st_net').textContent = money(f.econ.net); $('st_net').className = f.econ.net >= 0 ? '' : 'bad';
+    } else { $('st_feed').textContent = '—'; $('st_net').textContent = '—'; $('st_net').className = ''; }
+    markSteps();
+  }
+  function bindSteps(){
+    document.addEventListener('click', function(e){
+      var g = e.target.closest && e.target.closest('[data-go]');
+      if(g){ e.preventDefault(); showStep(g.getAttribute('data-go')); }
+    });
+    $('stripSaveBtn').addEventListener('click', function(){
+      var p = $('filePanel'), open = p.hidden; p.hidden = !open; this.setAttribute('aria-expanded', String(open));
+      if(open) p.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+    $('stripPlanBtn').addEventListener('click', function(){ $('planBtn').click(); });
+  }
+
   function init(){
     initThemeToggle();
     bindSettings();
@@ -4337,7 +4532,9 @@
     var ok = initMap();
     bindTools();
     if(!ok) document.querySelectorAll('.draw-tools .tool-btn, #locateBtn, #searchBtn').forEach(function(b){ b.disabled = true; });
+    bindSteps();
     renderAll(true);
+    showStep(firstStep(), true);
     state.pastures.forEach(function(p){ if(p.mode === 'soil' && isGrazed(p) && (!p.soil || p.soil.status === 'error')) scheduleSoil(p.id, 0); });
     if(state.pastures.length) refreshDroughtIfMoved(false);
     window.addEventListener('beforeprint', function(){ if(map) map.invalidateSize(); });
@@ -4345,7 +4542,7 @@
 
   /* test hooks (read-only helpers; harmless in production) */
   window.MyRanch = {FEED:FEED, feed:function(){ return feedLast; }, netOf:function(a, b, c){ return netOf(a, b, c); }, herd:function(){ return state.herd; }, fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, state:function(){ return state; },
-                    addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, grassToday:grassToday, herdAU:herdAU, herdAUParts:herdAUParts, addPastureDrawn:function(g){ return addPasture(g, null, true); }, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }};
+                    addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, grassToday:grassToday, herdAU:herdAU, herdAUParts:herdAUParts, addPastureDrawn:function(g){ return addPasture(g, null, true); }, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }, go:function(s){ showStep(s, true); }, step:function(){ return curStep; }};
 
   init();
 })();

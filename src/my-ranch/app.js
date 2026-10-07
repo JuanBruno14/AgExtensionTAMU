@@ -811,7 +811,7 @@
     }).catch(function(){
       state.drought = {status:'error', lat:c.lat, lng:c.lng, at:Date.now()};
     }).then(function(){
-      droughtBusy = false; renderSummary(); renderBudget(); save();
+      droughtBusy = false; renderSummary(); renderBudget(); updateStrip(); save();
     });
   }
   function droughtHtml(){
@@ -839,6 +839,7 @@
     renderFeed();
     try{ updateMapGrass(); }catch(e){}
     try{ renderHerdNote(); }catch(e){}
+    updateStrip();
     if(!drawMode) setDefaultHint();
     save();
   }
@@ -1529,6 +1530,81 @@
     $('harvestEff').value = state.settings.harvestEff; $('intakeLb').value = state.settings.intakeLb;
   }
 
+
+  /* ---- steps (Ranch · Herd · Year plan · Decisions) and the summary strip */
+  var STEPS = ['ranch', 'herd', 'plan', 'decide'], curStep = null, STEP_KEY = 'tamuMyRanchStep';
+  function stepDone(s){
+    if(s === 'ranch') return state.pastures.length > 0;
+    if(s === 'herd') return state.herd.cows > 0;
+    if(s === 'plan') return !!(feedLast && feedLast.hasSupply);
+    return false;
+  }
+  function markSteps(){
+    document.querySelectorAll('.mr-step-btn').forEach(function(b){
+      var s = b.getAttribute('data-go');
+      b.classList.toggle('on', s === curStep); b.classList.toggle('done', s !== curStep && stepDone(s));
+      if(s === curStep) b.setAttribute('aria-current', 'step'); else b.removeAttribute('aria-current');
+    });
+  }
+  function showStep(s, noScroll){
+    if(STEPS.indexOf(s) < 0) s = 'ranch';
+    var changed = s !== curStep; curStep = s;
+    // automated browser tests see every step at once, unless a test asks for real steps (window.__MR_STEPS)
+    var all = navigator.webdriver && !window.__MR_STEPS;
+    document.querySelectorAll('.mr-step').forEach(function(el){ el.hidden = !all && el.getAttribute('data-step') !== s; });
+    markSteps();
+    try{ localStorage.setItem(STEP_KEY, s); }catch(e){}
+    if(s === 'ranch' && map) setTimeout(function(){ map.invalidateSize(); }, 30);
+    if((s === 'plan' || s === 'decide') && changed){
+      // charts drawn while their step was hidden had no width: draw them again now
+      if(feedLast && s === 'plan') renderFeedChart(feedLast, feedNutrient, $('fc_chart'), true);
+      decKey = ''; renderDecisions();
+    }
+    if(!noScroll && changed){ var nav = $('mrSteps'); if(nav && nav.getBoundingClientRect().top < 0) window.scrollTo({top:window.scrollY + nav.getBoundingClientRect().top - 70, behavior:'smooth'}); }
+  }
+  function firstStep(){
+    var saved = null; try{ saved = localStorage.getItem(STEP_KEY); }catch(e){}
+    if(saved && STEPS.indexOf(saved) >= 0 && (saved === 'ranch' || state.pastures.length)) return saved;
+    if(!state.pastures.length) return 'ranch';
+    if(!(state.herd.cows > 0)) return 'herd';
+    return 'plan';
+  }
+  function updateStrip(){
+    if(!$('mrStrip')) return;
+    var t = totals(), herd = herdAU(), h = state.herd;
+    $('st_name').textContent = state.name || 'Your ranch';
+    $('st_sub').textContent = t.pastures ? fmt(t.acres) + ' ac' + (h.cows > 0 ? ' · ' + fmt(h.cows) + ' cows' : ' · enter your herd') : 'Draw your pastures to start';
+    var st = $('st_stock'), bar = $('st_stockBar');
+    if(herd > 0 && t.cap > 0){
+      var use = herd/t.cap;
+      st.innerHTML = fmt(use*100) + '% <small>of capacity</small>'; st.className = use > 1 ? 'bad' : use > 0.85 ? 'warn' : 'ok';
+      bar.style.width = Math.min(100, use*100) + '%'; bar.className = st.className;
+    } else { st.textContent = '—'; st.className = ''; bar.style.width = '0'; }
+    var d = state.drought, dr = $('st_drought');
+    if(d && d.status === 'ok'){ if(d.dm < 0){ dr.textContent = 'None'; dr.className = 'ok'; } else { var L = DM_LABELS[Math.min(d.dm, 4)]; dr.textContent = L.code + ' ' + L.name.split(' ')[0]; dr.className = d.dm >= 2 ? 'bad' : 'warn'; } }
+    else { dr.textContent = '—'; dr.className = ''; }
+    var f = feedLast && feedLast.hasSupply ? feedLast : null;
+    if(f){
+      var hay = f.totals.hay/2000, sup = f.totals.sup/2000, parts = [];
+      if(hay >= 0.05) parts.push(fmt(hay, hay < 10 ? 1 : 0) + ' t hay');
+      if(sup >= 0.05) parts.push(fmt(sup, sup < 10 ? 1 : 0) + ' t ' + (f.bcs && f.bcs.mode === 'full' ? 'suppl.' : 'protein'));
+      $('st_feed').textContent = parts.length ? parts.join(' + ') : 'None';
+      $('st_net').textContent = money(f.econ.net); $('st_net').className = f.econ.net >= 0 ? '' : 'bad';
+    } else { $('st_feed').textContent = '—'; $('st_net').textContent = '—'; $('st_net').className = ''; }
+    markSteps();
+  }
+  function bindSteps(){
+    document.addEventListener('click', function(e){
+      var g = e.target.closest && e.target.closest('[data-go]');
+      if(g){ e.preventDefault(); showStep(g.getAttribute('data-go')); }
+    });
+    $('stripSaveBtn').addEventListener('click', function(){
+      var p = $('filePanel'), open = p.hidden; p.hidden = !open; this.setAttribute('aria-expanded', String(open));
+      if(open) p.scrollIntoView({behavior:'smooth', block:'nearest'});
+    });
+    $('stripPlanBtn').addEventListener('click', function(){ $('planBtn').click(); });
+  }
+
   function init(){
     initThemeToggle();
     bindSettings();
@@ -1537,7 +1613,9 @@
     var ok = initMap();
     bindTools();
     if(!ok) document.querySelectorAll('.draw-tools .tool-btn, #locateBtn, #searchBtn').forEach(function(b){ b.disabled = true; });
+    bindSteps();
     renderAll(true);
+    showStep(firstStep(), true);
     state.pastures.forEach(function(p){ if(p.mode === 'soil' && isGrazed(p) && (!p.soil || p.soil.status === 'error')) scheduleSoil(p.id, 0); });
     if(state.pastures.length) refreshDroughtIfMoved(false);
     window.addEventListener('beforeprint', function(){ if(map) map.invalidateSize(); });
@@ -1545,7 +1623,7 @@
 
   /* test hooks (read-only helpers; harmless in production) */
   window.MyRanch = {FEED:FEED, feed:function(){ return feedLast; }, netOf:function(a, b, c){ return netOf(a, b, c); }, herd:function(){ return state.herd; }, fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, state:function(){ return state; },
-                    addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, grassToday:grassToday, herdAU:herdAU, herdAUParts:herdAUParts, addPastureDrawn:function(g){ return addPasture(g, null, true); }, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }};
+                    addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, grassToday:grassToday, herdAU:herdAU, herdAUParts:herdAUParts, addPastureDrawn:function(g){ return addPasture(g, null, true); }, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }, go:function(s){ showStep(s, true); }, step:function(){ return curStep; }};
 
   init();
 })();
