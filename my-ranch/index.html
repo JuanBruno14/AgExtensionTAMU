@@ -1065,7 +1065,7 @@
               <p><strong>Pasture</strong> is each pasture's forage (soil survey × range condition, or your estimate; ponds, brush and bottomland adjusted) times your harvest efficiency, spread over the year with NRCS ecological-site growth curves for native range. Forage not eaten carries into the next month. Quality uses typical diet values by month, not a forage test.</p>
               <p><strong>Intake</strong> follows Mississippi State Extension's guide (1.8–2.7% of body weight depending on forage quality). When pasture runs out, hay fills the rest of the intake; the supplement covers whatever protein or energy is still missing.</p>
               <p><strong>Losses:</strong> calf death loss is split into weather-related (about 10% of all losses in USDA's NAHMS study, adjusted by how cold the nights are in the birth month for your region) and everything else. Screwworm risk rises with temperature (little fly activity below 59°F, most at 77–86°F, per AgriLife); there is no published loss rate yet, so you set it. Horn flies cut calf weaning weights 4–15% (UNL); the tool applies it to the share of nursing days in June–September.</p>
-              <p><strong>Money:</strong> calves are sold at your market price slide (half steers, half heifers), cull cows at the cull-cow price, both from the site's shared market prices. By default it uses those prices as they are, like the other tools on this site. Turn on <em>Seasonal prices</em> to move them to the month you actually sell with Texas A&amp;M's seasonal pattern (Texas 500–600 lb steers and San Angelo cull cows: spring runs about 4% above the year's average, fall about 5–6% below). The result is cattle sales minus the feed you buy and the cost of feeding it — not profit: land, labor, vet, bull and other costs aren't in it.</p>
+              <p><strong>Money:</strong> calves are sold at your market price slide (half steers, half heifers), cull cows at the cull-cow price, both from the site's shared market prices. By default it uses those prices as they are, like the other tools on this site. Turn on <em>Seasonal prices</em> to move them to the month you actually sell with a seasonal price pattern (calves: Oklahoma City 500–650 lb steers and 450–500 lb heifers, USDA 2016–2025, Feb–Apr about 3–4% above the year's average, October about 6% below; cull cows: Texas A&amp;M's San Angelo pattern, 1989–98). The result is cattle sales minus the feed you buy and the cost of feeding it — not profit: land, labor, vet, bull and other costs aren't in it.</p>
               <p><strong>Replacement heifers</strong> follow the BCNRM 2016 targets: 60% of mature weight when they settle at 15 months (65% for Brahman), 80% at first calving at 2 years, with growth and pregnancy needs from the same model. Enough heifer calves are kept to replace culls and dead cows after open heifers are sold at pregnancy check; culls are sold at weaning.</p>
               <p><strong>Body condition:</strong> if cows come off the calf thinner than your target, the energy to put it back (NRC 2016: a 1,100-lb cow needs about 207 Mcal to go from 4 to 5) is spread from weaning to a month before the next calving — the cheapest time to do it.</p>
               <p><strong>Not included:</strong> cold stress on calves, first-calf heifers, heifers you buy instead of raise.</p>
@@ -1098,7 +1098,7 @@
           <div class="table-scroll"><table class="plan fc-table" id="dec_calvTable"></table></div>
           <h3 class="sub-h" style="margin-top:26px;">2. Economics</h3>
           <div class="field" style="max-width:340px;"><label for="dec_calvPrice">Calf and cull prices</label>
-            <select id="dec_calvPrice"><option value="season">By month sold (Texas seasonal pattern)</option><option value="flat">Today’s price all year</option></select></div>
+            <select id="dec_calvPrice"><option value="season">By month sold (seasonal pattern, 2016–2025)</option><option value="flat">Today’s price all year</option></select></div>
           <div class="fc-chart" id="dec_calvEconChart" style="margin-top:10px;"></div>
           <p class="fc-short" id="dec_calvEconText"></p>
           <div class="table-scroll"><table class="plan fc-table" id="dec_calvEconTable"></table></div>
@@ -1341,9 +1341,11 @@
     var NAHMS = [5.7,12.3,22.4,20.9,8.9,3.1,2.0,3.0,6.2,6.0,5.4,4.0];
     /* USDA APHIS NAHMS Beef 2007-08 mortality: 2.9% born dead + 3.5% died before weaning; weather caused
        22.6% of deaths under 3 weeks and 10.0% at 3 weeks or older; about 1/3 of live-born deaths happen at each age band. */
-    /* Texas seasonal price indexes, % of the annual average (Davis, Sartwelle & Mintert, Texas A&M Extension RM2-7, 1999;
-       Texas 500-600 lb feeder steers and San Angelo cutter cows, 1989-1998) */
-    var SEASON_CALF = [100.54,102.79,104.35,104.82,103.23,102.03,101.59,99.49,96.09,94.93,94.14,96.01];
+    /* Seasonal price indexes, % of the annual average (ratio to a centered 12-month moving average).
+       Calves: USDA ERS Livestock Prices (from USDA AMS), Oklahoma City medium & large #1 steers 500-550 and 600-650 lb and
+       heifers 450-500 lb, monthly 2016-2025, averaged (src/my-ranch/data/seasonal_index.py).
+       Cull cows: Davis, Sartwelle & Mintert, Texas A&M Extension RM2-7 (San Angelo cutter cows, 1989-1998); ERS has no cow series. */
+    var SEASON_CALF = [99.93,103.24,103.71,103.41,102.36,100.61,101.27,100.82,96.66,94.05,96.41,97.51];
     var SEASON_CULL = [100.69,105.71,108.32,104.58,101.74,100.98,100.57,101.43,98.91,93.03,90.47,93.56];
     /* body energy (Mcal) at a condition score, NRC 2016 / BCNRM "current committee" method: EBW changes 7.11% per score */
     function bodyEnergy(sbwKg, bcsNow, bcs){
@@ -3731,7 +3733,7 @@
     $('dec_calvEconText').innerHTML = 'Adding prices, calving from <strong>' + moStr(best.m) + '</strong> leaves the most: <strong>' + money(best.e.net) + '</strong> a year (' + money(best.e.net/cows) + ' per cow), ' +
       money(best.e.net - worst.e.net) + ' more than ' + FEED.MONTHS[worst.m] + '.' +
       (cur && cur !== best ? ' Your season leaves ' + money(cur.e.net) + ' — ' + money(best.e.net - cur.e.net) + ' less.' : cur ? ' That’s already your season.' : '') +
-      (seasonal ? ' Calves and culls are priced in the month they’re sold, with Texas A&amp;M’s seasonal pattern (spring about 4% above the yearly average, fall about 5–6% below), starting from today’s market prices.'
+      (seasonal ? ' Calves and culls are priced in the month they’re sold, with the seasonal pattern of 2016–2025 Oklahoma City calf prices (USDA; Feb–Apr about 3–4% above the yearly average, October about 6% below), starting from today’s market prices.'
                 : ' Every month uses today’s market prices; switch to seasonal prices to see the effect of the sale month.') +
       (state.herd.calfShort !== 'lighter' ? ' Feed costs include the creep feed each month needs to wean calves at ' + fmt(state.herd.weanLb) + ' lb.' : ' Calves are sold at the weight milk and grass give them in each month, so lighter calves bring more per hundredweight but less per head.') +
       ' Fewer calves when cows are thin at breeding, cold-weather calf deaths by birth month (USDA NAHMS rate) and feed to put back condition the cows don’t regain by calving are all counted. Labor at calving isn’t included.';
@@ -3896,7 +3898,7 @@
         lines.push('- ' + x.name + ': herd needs ' + fmt(x.herdReq.tdn) + ' lb TDN & ' + fmt(x.herdReq.cp) + ' lb CP/day; pasture supplies ' + fmt(x.pasture.tdn) + ' TDN & ' + fmt(x.pasture.cp) + ' CP; pasture covers ' + fmt(x.pastureShare*100) + '% of intake; buy ' + fmt(x.cow.hay, 1) + ' lb hay + ' + fmt(x.cow.sup, 1) + ' lb supplement per cow/day');
       });
       var ec = fb.econ;
-      lines.push('Calves: ' + fmt(ec.calvesSold, 1) + ' sold at ~' + fmt(ec.avgSaleLb) + ' lb, $' + fmt(ec.avgPrice) + '/cwt (market price slide) = ' + money(ec.calfIncome) + (ec.heifersKept > 0.05 ? '; keeps ' + fmt(ec.heifersKept, 1) + ' replacement heifers, sells ' + fmt(ec.cullsSold, 1) + ' cull cows and ' + fmt(ec.opensSold, 1) + ' open heifers (' + money(ec.cullIncome + ec.openIncome) + ')' : '') + '; prices adjusted to the sale month with the Texas seasonal pattern; losses: ' + fmt(ec.deadWeather, 1) + ' weather, ' + fmt(ec.deadOther, 1) + ' other' + (h.nws === 'yes' ? ', ' + fmt(ec.deadNws, 1) + ' screwworm' : '') + '. Weaning period ' + h.weanPeriod + ' days at ' + h.postAdg + ' lb/day. Cattle sales minus feed & feeding costs: ' + money(ec.net) + ' (not profit).' + (+h.bcsWean > 0 && +h.bcsWean < +h.bcs ? ' Cows wean at BCS ' + h.bcsWean + ' and are fed back to ' + h.bcs + ' before calving.' : ''));
+      lines.push('Calves: ' + fmt(ec.calvesSold, 1) + ' sold at ~' + fmt(ec.avgSaleLb) + ' lb, $' + fmt(ec.avgPrice) + '/cwt (market price slide) = ' + money(ec.calfIncome) + (ec.heifersKept > 0.05 ? '; keeps ' + fmt(ec.heifersKept, 1) + ' replacement heifers, sells ' + fmt(ec.cullsSold, 1) + ' cull cows and ' + fmt(ec.opensSold, 1) + ' open heifers (' + money(ec.cullIncome + ec.openIncome) + ')' : '') + '; prices adjusted to the sale month with the seasonal pattern (calves: USDA Oklahoma City 2016–2025); losses: ' + fmt(ec.deadWeather, 1) + ' weather, ' + fmt(ec.deadOther, 1) + ' other' + (h.nws === 'yes' ? ', ' + fmt(ec.deadNws, 1) + ' screwworm' : '') + '. Weaning period ' + h.weanPeriod + ' days at ' + h.postAdg + ' lb/day. Cattle sales minus feed & feeding costs: ' + money(ec.net) + ' (not profit).' + (+h.bcsWean > 0 && +h.bcsWean < +h.bcs ? ' Cows wean at BCS ' + h.bcsWean + ' and are fed back to ' + h.bcs + ' before calving.' : ''));
       lines.push('Yearly purchased feed: ' + fmt(fb.totals.hay/2000, 1) + ' tons hay ($' + h.hayPrice + '/ton, ' + h.hayTdn + '% TDN, ' + h.hayCp + '% CP) + ' + fmt(fb.totals.sup/2000, 1) + ' tons supplement ($' + h.supPrice + '/ton, ' + h.supCp + '% CP) + feeding trips & delivery = ' + money(fb.totals.cost) + ' (' + money(fb.totals.cost/h.cows) + ' per cow).');
     }
     var d = state.drought;

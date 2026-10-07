@@ -752,7 +752,7 @@
     $('dec_calvEconText').innerHTML = 'Adding prices, calving from <strong>' + moStr(best.m) + '</strong> leaves the most: <strong>' + money(best.e.net) + '</strong> a year (' + money(best.e.net/cows) + ' per cow), ' +
       money(best.e.net - worst.e.net) + ' more than ' + FEED.MONTHS[worst.m] + '.' +
       (cur && cur !== best ? ' Your season leaves ' + money(cur.e.net) + ' — ' + money(best.e.net - cur.e.net) + ' less.' : cur ? ' That’s already your season.' : '') +
-      (seasonal ? ' Calves and culls are priced in the month they’re sold, with Texas A&amp;M’s seasonal pattern (spring about 4% above the yearly average, fall about 5–6% below), starting from today’s market prices.'
+      (seasonal ? ' Calves and culls are priced in the month they’re sold, with the seasonal pattern of 2016–2025 Oklahoma City calf prices (USDA; Feb–Apr about 3–4% above the yearly average, October about 6% below), starting from today’s market prices.'
                 : ' Every month uses today’s market prices; switch to seasonal prices to see the effect of the sale month.') +
       (state.herd.calfShort !== 'lighter' ? ' Feed costs include the creep feed each month needs to wean calves at ' + fmt(state.herd.weanLb) + ' lb.' : ' Calves are sold at the weight milk and grass give them in each month, so lighter calves bring more per hundredweight but less per head.') +
       ' Fewer calves when cows are thin at breeding, cold-weather calf deaths by birth month (USDA NAHMS rate) and feed to put back condition the cows don’t regain by calving are all counted. Labor at calving isn’t included.';

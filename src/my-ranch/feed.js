@@ -34,9 +34,11 @@
     var NAHMS = [5.7,12.3,22.4,20.9,8.9,3.1,2.0,3.0,6.2,6.0,5.4,4.0];
     /* USDA APHIS NAHMS Beef 2007-08 mortality: 2.9% born dead + 3.5% died before weaning; weather caused
        22.6% of deaths under 3 weeks and 10.0% at 3 weeks or older; about 1/3 of live-born deaths happen at each age band. */
-    /* Texas seasonal price indexes, % of the annual average (Davis, Sartwelle & Mintert, Texas A&M Extension RM2-7, 1999;
-       Texas 500-600 lb feeder steers and San Angelo cutter cows, 1989-1998) */
-    var SEASON_CALF = [100.54,102.79,104.35,104.82,103.23,102.03,101.59,99.49,96.09,94.93,94.14,96.01];
+    /* Seasonal price indexes, % of the annual average (ratio to a centered 12-month moving average).
+       Calves: USDA ERS Livestock Prices (from USDA AMS), Oklahoma City medium & large #1 steers 500-550 and 600-650 lb and
+       heifers 450-500 lb, monthly 2016-2025, averaged (src/my-ranch/data/seasonal_index.py).
+       Cull cows: Davis, Sartwelle & Mintert, Texas A&M Extension RM2-7 (San Angelo cutter cows, 1989-1998); ERS has no cow series. */
+    var SEASON_CALF = [99.93,103.24,103.71,103.41,102.36,100.61,101.27,100.82,96.66,94.05,96.41,97.51];
     var SEASON_CULL = [100.69,105.71,108.32,104.58,101.74,100.98,100.57,101.43,98.91,93.03,90.47,93.56];
     /* body energy (Mcal) at a condition score, NRC 2016 / BCNRM "current committee" method: EBW changes 7.11% per score */
     function bodyEnergy(sbwKg, bcsNow, bcs){
