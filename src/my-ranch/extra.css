@@ -376,5 +376,8 @@
   .pc-bar.best{fill:var(--accent);}
   .pc-bar.cur{stroke:var(--ink);stroke-width:2;}
   .pc-bar.neg{fill:var(--dec-muted);opacity:.55;}
+  .dec-keep-link{margin:14px 0 0;font-size:14.5px;}
+  .dec-keep-link .btn-link{display:inline-block;margin-left:6px;padding:7px 14px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font-weight:700;}
+  .dec-keep-link .btn-link:hover{filter:brightness(1.1);}
   .dec-h4{margin:20px 0 4px;font-size:15px;font-weight:700;color:var(--ink);}
   .pc-val{font-size:10.5px;fill:var(--ink-secondary);font-weight:600;}

@@ -338,6 +338,7 @@
   /* ---------- Panels ---------- */
   .tool-panel[hidden]{display:none;}
   .subtool-panel[hidden]{display:none;}
+  .from-ranch-note{margin-top:10px;padding:10px 12px;border-left:3px solid var(--accent);background:var(--surface-2, rgba(0,0,0,.03));font-size:14px;}
   .path-nav{
     max-width:1180px;margin:22px auto 0;padding:0 clamp(16px,4vw,40px);
     display:flex;flex-wrap:wrap;
@@ -1962,12 +1963,36 @@
   });
 
 
+  /* ---------------- Opened from My Ranch: #stockers?heads=&weight=&price=&start=YYYY-MM-DD ---------------- */
+  function fromMyRanch(){
+    var h = window.location.hash || '';
+    if(h.indexOf('#stockers') !== 0) return;
+    var btn = document.querySelector('.tab-btn[data-tab="stockers"]'); if(btn) btn.click();
+    var q = {}; (h.split('?')[1] || '').split('&').forEach(function(kv){ var p = kv.split('='); if(p[0]) q[p[0]] = decodeURIComponent(p[1] || ''); });
+    function setNum(id, v){ var el = $(id); if(el && v !== undefined && v !== '' && isFinite(+v)) el.value = v; }
+    setNum('sk_heads', q.heads); setNum('sk_calfWeight', q.weight); setNum('sk_calfPrice', q.price);
+    if(q.start && /^\d{4}-\d{2}-\d{2}$/.test(q.start)){
+      var s0 = $('sk_earlyStart'), old = new Date(s0.value + 'T00:00:00'), nw = new Date(q.start + 'T00:00:00'), shift = nw - old;
+      if(isFinite(shift)){
+        s0.value = q.start;
+        ['sk_pullOff700', 'sk_pullOff800'].forEach(function(id){ var el = $(id); if(el && el.value){ var d = new Date(new Date(el.value + 'T00:00:00').getTime() + shift); el.value = d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2); } });
+      }
+    }
+    var intro = document.querySelector('#panel-stockers .intro');
+    if(intro && (q.heads || q.weight)){
+      var n = document.createElement('p'); n.className = 'from-ranch-note';
+      n.textContent = 'Loaded from My Ranch: ' + (q.heads ? q.heads + ' calves' : '') + (q.weight ? ' at ' + q.weight + ' lb' : '') + (q.price ? ', worth $' + q.price + '/cwt at weaning' : '') + (q.start ? ', weaned ' + q.start : '') + '. Gains and costs are the starting values; enter what your calves really do on your grass.';
+      intro.appendChild(n);
+    }
+  }
+
   function init(){
     initThemeToggle();
     attachD1Inputs();
     attachStockersInputs();
     initTabs();
     initSubTabs();
+    fromMyRanch();
     recalcD1();
     recalcStockers();
     if(window.matchMedia){
