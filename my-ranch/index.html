@@ -3772,7 +3772,10 @@
     (function(){
       var o = feedOptions(), months = wRef.r.months, sl = slides(), n = wRef.sold, nowM = new Date().getMonth();
       function price(w, m){ return 0.5*(FEED.slideLookup(sl.steer, w) + FEED.slideLookup(sl.heifer, w))*(seasonal ? FEED.SEASON_CALF[m]/FEED.SEASON_CALF[nowM] : 1); }
-      var d0 = wRef.saleDoy, bw = wRef.lb, m0 = FEED.monthOfDay(d0), V0 = bw/100*price(bw, m0);
+      var d0 = wRef.saleDoy, bw = wRef.lb, m0 = FEED.monthOfDay(d0);
+      // match the weaning price in 2a (calves weaned over the whole season), then follow the slide and the season from there
+      var adj = wRef.price/Math.max(1, price(bw, m0)), V0 = wRef.perHead;
+      var price0 = price; price = function(w, m){ return price0(w, m)*adj; };
       var cubes = 0, monthDm = {}, order = [], rowsB = [], g = null;
       for(var d = 1; d <= 210; d++){
         var m = FEED.monthOfDay(d0 + d), mo = months[m];
@@ -3809,15 +3812,19 @@
       el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span style="color:var(--ink-muted);">Extra profit per calf from keeping it on grass after weaning ' + doyStr(d0) + ', by sale date</span></div>' + sv + '</svg>';
       var pays = bB.net > 0;
       function monthsStr(ms){ return ms.map(function(mm){ return FEED.MONTHS[mm]; }).join(', '); }
-      $('dec_keepText').innerHTML = (pays
+      var sellNow = 'Selling at weaning (' + doyStr(d0) + '): ' + fmt(wRef.lb) + ' lb × $' + fmt(V0/wRef.lb*100) + '/cwt = <strong>' + money(V0) + ' a calf</strong>, ' + money(V0*n) + ' for ' + fmt(n) + ' calves. ' +
+        'Keeping them until ' + doyStr(bB.doy) + ': ' + fmt(bB.lb) + ' lb × $' + fmt(bB.price) + '/cwt = ' + money(bB.V) + ', minus ' + money(bB.cost) + ' of supplement, hay, interest and deaths = <strong>' + money(bB.V - bB.cost) + ' a calf</strong>, ' + money((bB.V - bB.cost)*n) + ' for the calves. ';
+      $('dec_keepText').innerHTML = sellNow + (pays
         ? 'Keeping the calves on grass pays: selling <strong>' + doyStr(bB.doy) + '</strong> (' + bB.days + ' days after weaning) adds <strong>' + money(bB.net) + ' a calf</strong>, ' + money(bB.net*n) + ' for ' + fmt(n) + ' calves. They’d gain about ' + fmt(bB.adg, 2) + ' lb/day on your grass to ' + fmt(bB.lb) + ' lb. Each extra pound sells for $' + fmt(bB.vog, 2) + ' and costs $' + fmt(bB.cog, 2) + ' to put on. '
         : 'Keeping the calves on grass after weaning <strong>doesn’t pay</strong> here: every option loses money compared with selling at weaning (best: ' + money(bB.net) + ' a calf at ' + bB.days + ' days). ') +
         'Gain comes from your grass month by month (NRC 2016 energy for growth), with protein supplement (up to 0.5% of body weight) when the grass is short of protein' + (bB.shortM.length ? '; by ' + doyStr(bB.doy) + ' the calves eat grass the cows need in ' + monthsStr(bB.shortM) + ', replaced with hay in these numbers' : '') + '. ' +
         'Value of gain counts the lower price per hundredweight of a heavier calf' + (seasonal ? ' and the month it’s sold' : '') + '. Not included: vet, handling, freight and shrink.';
-      $('dec_keepTable').innerHTML = '<thead><tr><th>Sell on</th><th class="num">Days kept</th><th class="num">Gain on grass</th><th class="num">Weight</th><th class="num">Price</th><th class="num">Value of gain</th><th class="num">Cost of gain</th><th class="num">Supplement · hay</th><th class="num">Interest · deaths</th><th class="num">Extra profit per calf</th></tr></thead><tbody>' +
+      $('dec_keepTable').innerHTML = '<thead><tr><th>Sell on</th><th class="num">Days kept</th><th class="num">Gain on grass</th><th class="num">Weight</th><th class="num">Price</th><th class="num">Sale value</th><th class="num">Supplement · hay</th><th class="num">Interest · deaths</th><th class="num">Left per calf</th><th class="num">vs. selling at weaning</th><th class="num">Value · cost of gain</th></tr></thead><tbody>' +
+        '<tr class="ref"><td>' + doyStr(d0) + ' (sell at weaning)</td><td class="num">0</td><td class="num">—</td><td class="num">' + fmt(wRef.lb) + ' lb</td><td class="num">$' + fmt(V0/wRef.lb*100) + '/cwt</td><td class="num">' + money(V0) + '</td><td class="num">—</td><td class="num">—</td><td class="num"><strong>' + money(V0) + '</strong></td><td class="num">—</td><td class="num">—</td></tr>' +
         rowsB.map(function(r){ return '<tr' + (r === bB && pays ? ' class="best"' : '') + '><td>' + (r === bB && pays ? '★ ' : '') + doyStr(r.doy) + '</td><td class="num">' + r.days + '</td><td class="num">' + fmt(r.adg, 2) + ' lb/day</td>' +
-          '<td class="num">' + fmt(r.lb) + ' lb</td><td class="num">$' + fmt(r.price) + '/cwt</td><td class="num">' + (r.vog != null ? '$' + fmt(r.vog, 2) + '/lb' : '—') + '</td><td class="num">' + (r.cog != null ? '$' + fmt(r.cog, 2) + '/lb' : '—') + '</td>' +
-          '<td class="num">' + money(r.sup) + ' · ' + money(r.hay) + '</td><td class="num">' + money(r.interest) + ' · ' + money(r.death) + '</td><td class="num"><strong>' + money(r.net) + '</strong></td></tr>'; }).join('') + '</tbody>';
+          '<td class="num">' + fmt(r.lb) + ' lb</td><td class="num">$' + fmt(r.price) + '/cwt</td><td class="num">' + money(r.V) + '</td>' +
+          '<td class="num">' + money(r.sup) + ' · ' + money(r.hay) + '</td><td class="num">' + money(r.interest) + ' · ' + money(r.death) + '</td><td class="num"><strong>' + money(r.V - r.cost) + '</strong></td><td class="num">' + (r.net >= 0 ? '+' : '') + money(r.net) + '</td>' +
+          '<td class="num">' + (r.vog != null ? '$' + fmt(r.vog, 2) + ' · $' + fmt(r.cog, 2) : '—') + '</td></tr>'; }).join('') + '</tbody>';
     })();
 
     /* 3. calving month and weaning date together (drawn a moment later so the page stays responsive) */
