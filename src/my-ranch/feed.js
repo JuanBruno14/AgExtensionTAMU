@@ -536,7 +536,10 @@
           var hHeads = cows*r.hN;
           var calfTdnSup = r.calfDm*f*dTdn/100, calfCpSup = r.calfDm*f*dCp/100;
           var wcHeads = cows*r.wcN;
-          var hayLb = (cows*cw.hay + bulls*bl.hay + wcHeads*wcHead.hay + hHeads*hHead.hay)*n, supLb = (cows*cw.sup + bulls*bl.sup + wcHeads*wcHead.sup + hHeads*hHead.sup)*n;
+          // hay fills dry-matter intake (its TDN and CP are on a dry-matter basis, like a forage test), so it is bought as fed:
+          // dry matter / hay DM (about 88%). Supplement is figured from the feed tag (as-fed CP and TDN), so it is already as fed.
+          var hayDm = Math.max(50, Math.min(100, feeds.hayDm || 88))/100;
+          var hayLb = (cows*cw.hay + bulls*bl.hay + wcHeads*wcHead.hay + hHeads*hHead.hay)*n/hayDm, supLb = (cows*cw.sup + bulls*bl.sup + wcHeads*wcHead.sup + hHeads*hHead.sup)*n;
           var weeks = n/7, trips = 0;
           if(hayLb > 1) trips = Math.max(trips, weeks*feeds.hayTrips);
           if(supLb > 1) trips = Math.max(trips, weeks*feeds.supTrips);

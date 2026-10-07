@@ -59,6 +59,8 @@ with sync_playwright() as pw:
     check('low cows lose condition on poor range with protein only', bc['low'] < bc['start'] - 0.05 or pg2.evaluate("MyRanch.feed().totals.hay")>0, bc)
     pg3=page(); setup(pg3, 900, 'protein')
     pg3.evaluate("(function(){var s=MyRanch.state(); s.herd.hayPrice=0;})()")
+    h88=pg3.evaluate("MyRanch.feed().totals.hay"); h100=pg3.evaluate("(()=>{MyRanch.state().herd.hayDm=100; var r=MyRanch.netOf({}).totals.hay; MyRanch.state().herd.hayDm=88; return r})()")
+    check('hay tons are as fed (dry matter / 88%)', h88 > 1000 and abs(h88*0.88 - h100) < 1, (h88, h100))
     t=pg3.inner_text('#fc_short')
     check('feed calendar text mentions condition', 'condition' in t, t[-200:])
     check('no JS errors', not errs, errs)

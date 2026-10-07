@@ -139,7 +139,7 @@
   }
   function feedsFor(over){
     var h = state.herd;
-    return Object.assign({hayTdn:h.hayTdn, hayCp:h.hayCp, hayPrice:h.hayPrice, supTdn:h.supTdn, supCp:h.supCp, supPrice:h.supPrice,
+    return Object.assign({hayTdn:h.hayTdn, hayCp:h.hayCp, hayDm:+h.hayDm || 88, hayPrice:h.hayPrice, supTdn:h.supTdn, supCp:h.supCp, supPrice:h.supPrice,
       tripCost:h.tripCost, supTrips:+h.supTrips, hayTrips:+h.hayTrips, distPerTon:h.distPerTon}, over || {});
   }
   function supplyNow(mult){

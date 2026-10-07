@@ -1161,6 +1161,7 @@
                 <div class="field-grid cols-3">
                   <div class="field"><label for="fc_hayTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayTdn" data-h="hayTdn" min="30" max="80" step="1"><span class="suffix">%</span></div></div>
                   <div class="field"><label for="fc_hayCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayCp" data-h="hayCp" min="2" max="25" step="0.5"><span class="suffix">%</span></div></div>
+                  <div class="field"><label for="fc_hayDm">Dry matter</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayDm" data-h="hayDm" min="50" max="100" step="1"><span class="suffix">%</span></div><span class="hint">TDN and protein from a forage test are on a dry-matter basis; tons and cost are as you buy it</span></div>
                   <div class="field"><label for="fc_hayPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_hayPrice" data-h="hayPrice" min="0" max="5000" step="5"><span class="suffix">/ton</span></div></div>
                 </div>
               </fieldset>
@@ -1171,7 +1172,7 @@
                   <span class="hint">Applies to cows and bulls. Growing heifers and weaned calves always get what they need to keep growing.</span></div>
                 <div class="field-grid cols-3">
                   <div class="field"><label for="fc_source">Source</label><select id="fc_source"></select></div>
-                  <div class="field"><label for="fc_supCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_supCp" data-h="supCp" min="5" max="60" step="1"><span class="suffix">%</span></div></div>
+                  <div class="field"><label for="fc_supCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_supCp" data-h="supCp" min="5" max="60" step="1"><span class="suffix">%</span></div><span class="hint">As on the feed tag (as fed)</span></div>
                   <div class="field"><label for="fc_supTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="fc_supTdn" data-h="supTdn" min="40" max="100" step="1"><span class="suffix">%</span></div></div>
                   <div class="field"><label for="fc_supPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_supPrice" data-h="supPrice" min="0" max="5000" step="5"><span class="suffix">/ton</span></div><span class="hint" id="fc_perLbCp"></span></div>
                 </div>
@@ -1239,7 +1240,7 @@
             <div class="adv-body">
           <div class="table-scroll" id="fc_tableWrap" style="margin-top:16px;">
             <table class="plan fc-table" id="fc_table"></table>
-            <p class="card-note" style="margin:8px 0 0;">Need / pasture: whole herd, lb per day. Hay and supplement: lb per cow per day (bulls and weaned calves get theirs too; it's in the cost). Cost includes feeding trips and delivery.</p>
+            <p class="card-note" style="margin:8px 0 0;">Need / pasture: whole herd, lb per day. Hay and supplement: lb per cow per day, as fed (bulls and weaned calves get theirs too; it's in the cost). Cost includes feeding trips and delivery.</p>
           </div>
             </div>
           </details>
@@ -1398,7 +1399,7 @@
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535,
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto',
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
-    hayTdn:55, hayCp:10, hayPrice:200, source:'cube20', supCp:20, supTdn:70, supPrice:392,
+    hayTdn:55, hayCp:10, hayDm:88, hayPrice:200, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
     dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0},
     sell:{rate:8, death:0.5}};
@@ -1941,7 +1942,10 @@
           var hHeads = cows*r.hN;
           var calfTdnSup = r.calfDm*f*dTdn/100, calfCpSup = r.calfDm*f*dCp/100;
           var wcHeads = cows*r.wcN;
-          var hayLb = (cows*cw.hay + bulls*bl.hay + wcHeads*wcHead.hay + hHeads*hHead.hay)*n, supLb = (cows*cw.sup + bulls*bl.sup + wcHeads*wcHead.sup + hHeads*hHead.sup)*n;
+          // hay fills dry-matter intake (its TDN and CP are on a dry-matter basis, like a forage test), so it is bought as fed:
+          // dry matter / hay DM (about 88%). Supplement is figured from the feed tag (as-fed CP and TDN), so it is already as fed.
+          var hayDm = Math.max(50, Math.min(100, feeds.hayDm || 88))/100;
+          var hayLb = (cows*cw.hay + bulls*bl.hay + wcHeads*wcHead.hay + hHeads*hHead.hay)*n/hayDm, supLb = (cows*cw.sup + bulls*bl.sup + wcHeads*wcHead.sup + hHeads*hHead.sup)*n;
           var weeks = n/7, trips = 0;
           if(hayLb > 1) trips = Math.max(trips, weeks*feeds.hayTrips);
           if(supLb > 1) trips = Math.max(trips, weeks*feeds.supTrips);
@@ -3219,7 +3223,7 @@
   }
   function feedsFor(over){
     var h = state.herd;
-    return Object.assign({hayTdn:h.hayTdn, hayCp:h.hayCp, hayPrice:h.hayPrice, supTdn:h.supTdn, supCp:h.supCp, supPrice:h.supPrice,
+    return Object.assign({hayTdn:h.hayTdn, hayCp:h.hayCp, hayDm:+h.hayDm || 88, hayPrice:h.hayPrice, supTdn:h.supTdn, supCp:h.supCp, supPrice:h.supPrice,
       tripCost:h.tripCost, supTrips:+h.supTrips, hayTrips:+h.hayTrips, distPerTon:h.distPerTon}, over || {});
   }
   function supplyNow(mult){
