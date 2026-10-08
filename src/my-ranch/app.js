@@ -51,7 +51,7 @@
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
     hayTdn:55, hayCp:10, hayDm:88, hayPrice:200, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
-    dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0},
+    dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', buyPrice:null, buyYear:1, otherCost:202, devCost:900, rate:7, later:0},
     sell:{rate:8, death:0.5}};
 
 /*@@FEED@@*/

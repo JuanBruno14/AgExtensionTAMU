@@ -276,7 +276,7 @@ with sync_playwright() as pw:
     check('flat price option', 'today’s market prices' in page.inner_text('#dec_calvEconText'))
     page.select_option('#dec_calvPrice','season'); page.wait_for_timeout(900)
     page.click('.seg-btn[data-dec="drought"]'); page.wait_for_timeout(700)
-    check('drought: three options', page.locator('.dec-drtable thead th').count()==4 and page.locator('.dec-drtable thead th.best').count()==1, page.inner_text('#dec_drText')[:150])
+    check('drought: four options this year', page.locator('.dec-drtable thead th').count()==5 and page.locator('.dec-drtable thead th.best').count()==1, page.inner_text('#dec_drText')[:150])
     before_dr=page.inner_text('#dec_drOptions')
     page.fill('#dr_cut','90'); page.wait_for_timeout(700)
     check('drought inputs recompute', page.inner_text('#dec_drOptions')!=before_dr)

@@ -528,7 +528,8 @@
         </div>
 
         <div class="dec-panel" id="dec_drought" hidden>
-          <p class="card-note" style="margin-top:14px;">A dry year or failed small grains cut the forage your pastures grow. Compare three ways through it: keep the calves on the cows and buy feed, wean early and sell, or wean early and feed the calves yourself until your normal weaning age.</p>
+          <p class="card-note" style="margin-top:14px;">A dry year or failed small grains cut the forage your pastures grow. First, four ways through the dry year: keep the calves on the cows and buy feed, wean early and sell, wean early and feed the calves, or sell part of the cows. Then, because selling cows changes the years after, the next 10 years.</p>
+          <h3 class="sub-h">1. This year</h3>
           <div class="field-grid cols-3">
             <div class="field"><label for="dr_cut">Forage lost</label><div class="input-wrap has-suffix"><input type="number" id="dr_cut" data-dr="cut" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
             <div class="field"><label for="dr_from">Starting in</label><select id="dr_from" data-drs="from" data-num="1"></select></div>
@@ -537,9 +538,30 @@
               <select id="dr_which" data-drs="which"><option value="all">All pastures</option><option value="range">Native range only</option><option value="smallgrain">Small grains (wheat, oats) only</option><option value="improved">Improved pasture only</option></select></div>
             <div class="field"><label for="dr_earlyAge">Early weaning at</label><div class="input-wrap has-suffix"><input type="number" id="dr_earlyAge" data-dr="earlyAge" min="60" max="250" step="5"><span class="suffix">days</span></div></div>
             <div class="field"><label for="dr_feedAdg">Gain if you feed early-weaned calves</label><div class="input-wrap has-suffix"><input type="number" id="dr_feedAdg" data-dr="feedAdg" min="0.5" max="4" step="0.1"><span class="suffix">lb/day</span></div></div>
+            <div class="field"><label for="dr_sellPct">Cows to sell</label><div class="input-wrap has-suffix"><input type="number" id="dr_sellPct" data-dr="sellPct" min="0" max="90" step="5"><span class="suffix">%</span></div></div>
+            <div class="field"><label for="dr_sellWhen">Sell them</label><select id="dr_sellWhen" data-drs="sellWhen"><option value="start">When the drought starts (with their calves)</option><option value="weaning">After weaning (feed them till then)</option></select></div>
           </div>
           <div class="dec-options" id="dec_drOptions"></div>
           <p class="fc-short" id="dec_drText"></p>
+          <h3 class="sub-h" style="margin-top:26px;">2. The next 10 years: keep the cows, or sell and rebuild?</h3>
+          <p class="card-note" style="margin:0 0 8px;">Selling cows looks good the year you sell — the money comes in and the feed bill drops — but the herd has to be rebuilt. This compares keeping the herd with selling and then buying bred cows back, raising your own heifers, or staying smaller, using your ranch in a normal year after the drought.</p>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="dr_buyPrice">Bred cow price to buy back</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_buyPrice" data-dr="buyPrice" min="200" max="10000" step="25"><span class="suffix">/hd</span></div><span class="hint">Blank = the site’s market price (USDA bred cows)</span></div>
+            <div class="field"><label for="dr_buyYear">Buy them back in</label><select id="dr_buyYear" data-drs="buyYear" data-num="1"><option value="1">Year 1 (right after)</option><option value="2">Year 2 (rest the grass a year)</option><option value="3">Year 3</option></select></div>
+            <div class="field"><label for="dr_later">Calf prices from year 4</label><select id="dr_later" data-drs="later" data-num="1"><option value="15">15% higher</option><option value="0">Same as today</option><option value="-15">15% lower</option><option value="-30">30% lower</option></select></div>
+          </div>
+          <details class="advanced" style="margin-top:4px;">
+            <summary>Costs and interest</summary>
+            <div class="adv-body"><div class="field-grid cols-3">
+              <div class="field"><label for="dr_otherCost">Other costs per cow</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_otherCost" data-dr="otherCost" min="0" max="3000" step="5"><span class="suffix">/yr</span></div><span class="hint">Besides hay and supplement. AgriLife 2026 Rolling Plains budget: $202 (vet, mineral, fuel, repairs, marketing, labor, interest)</span></div>
+              <div class="field"><label for="dr_devCost">Raising a heifer to calving</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_devCost" data-dr="devCost" min="0" max="5000" step="25"><span class="suffix">/hd</span></div><span class="hint">Feed and care from weaning to first calf, beyond the heifer’s own sale value</span></div>
+              <div class="field"><label for="dr_rate">Interest rate</label><div class="input-wrap has-suffix"><input type="number" id="dr_rate" data-dr="rate" min="0" max="20" step="0.5"><span class="suffix">%/yr</span></div><span class="hint">What money is worth to you: what you pay to borrow, or earn on savings</span></div>
+            </div></div>
+          </details>
+          <div class="fc-chart" id="dec_drLongChart" style="margin-top:12px;"></div>
+          <p class="fc-short" id="dec_drLongText"></p>
+          <div class="table-scroll"><table class="plan fc-table" id="dec_drLongTable"></table></div>
+          <p class="card-note" style="margin:8px 0 0;">* Worth today: each year’s cash discounted at your interest rate, plus the cows you still own in year 10 valued as culls, so selling and staying smaller isn’t rewarded just for holding cash. A normal year after the drought uses your ranch’s own feed calendar and today’s prices; thin cows at breeding during the drought mean fewer calves the next year (Sprott 1985). Not counted: taxes (drought sales can be deferred), the grass resting when stocked lighter, and buying cows of unknown health. Idea and structure from Texas A&amp;M AgriLife’s <em>Drought Decision-Aid / Restocking Options</em> (F. Abello, Vernon).</p>
         </div>
 
         <div class="dec-panel" id="dec_whatif" hidden>
