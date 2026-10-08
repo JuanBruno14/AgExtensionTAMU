@@ -796,15 +796,16 @@
     try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); if(mp && +mp.mp_bredCowPrice > 0) v = +mp.mp_bredCowPrice; }catch(e){}
     return v;
   }
-  var DR_DEFAULTS = {cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', buyPrice:null, buyYear:1, otherCost:202, devCost:900, rate:7, later:0};
+  var DR_DEFAULTS = {cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:202, devCost:900, rate:7, later:0};
   function renderDroughtDecision(){
     var h = state.herd, dr = Object.assign({}, DR_DEFAULTS, h.dr || {});
     var cut = function(sup){ return FEED.adjustSupply(sup, dr.cut, +dr.from, dr.months, dr.which); };
     var base = feedOptions(), normalAge = Math.round(base.refWeanAge), cows = h.cows, bulls = base.bulls;
     var nowM = new Date().getMonth();
-    var A = netOf({}, {}, 1, cut);
-    var B = netOf({weanMode:'age', weanAge:dr.earlyAge, weanPeriod:0, refWeanAge:normalAge}, {}, 1, cut);
-    var C = netOf({weanMode:'age', weanAge:dr.earlyAge, weanPeriod:Math.max(0, normalAge - dr.earlyAge) + (h.weanPeriod || 0), postAdg:dr.feedAdg, refWeanAge:normalAge}, {}, 1, cut);
+    var hayD = +dr.hayPrice > 0 ? {hayPrice:+dr.hayPrice} : {};   // hay usually costs more in a drought
+    var A = netOf({}, hayD, 1, cut);
+    var B = netOf({weanMode:'age', weanAge:dr.earlyAge, weanPeriod:0, refWeanAge:normalAge}, hayD, 1, cut);
+    var C = netOf({weanMode:'age', weanAge:dr.earlyAge, weanPeriod:Math.max(0, normalAge - dr.earlyAge) + (h.weanPeriod || 0), postAdg:dr.feedAdg, refWeanAge:normalAge}, hayD, 1, cut);
     var N = feedLast;
     /* selling cows: as if sold when the drought starts (their calves go with them) or after weaning */
     var X = Math.max(0, Math.min(90, +dr.sellPct || 0))/100, nSell = Math.round(cows*X), keepCows = cows - nSell;
@@ -812,7 +813,7 @@
     var sellM = dr.sellWhen === 'weaning' ? (midA ? midA.saleMonth : 9) : +dr.from;
     var cullHd = h.cowLb/100*cullPrice()*FEED.SEASON_CULL[sellM]/FEED.SEASON_CULL[nowM];
     var saleVal = nSell*cullHd;
-    var Dr = dr.sellWhen === 'weaning' ? A : netOf({cows:keepCows, bulls:Math.max(1, Math.round(bulls*(1 - X)))}, {}, 1, cut);
+    var Dr = dr.sellWhen === 'weaning' ? A : netOf({cows:keepCows, bulls:Math.max(1, Math.round(bulls*(1 - X)))}, hayD, 1, cut);
     var D = {r:Dr, sale:saleVal};
     var opts = [
       {key:'A', title:'Keep calves on the cows, buy feed', r:A, sub:'Wean as planned; cows keep nursing through the dry spell.', extra:0},
@@ -839,13 +840,28 @@
     var second = opts.filter(function(o){ return o !== best; }).reduce(function(a, o){ return o.net > a.net ? o : a; });
     $('dec_drText').innerHTML = 'With ' + dr.cut + '% less forage from ' + FEED.MONTHS[+dr.from] + ' for ' + dr.months + ' month' + (dr.months > 1 ? 's' : '') + ', the drought costs about <strong>' + money(N.econ.net - A.econ.net) + '</strong> this year if you just buy feed. ' +
       '<strong>' + esc(best.title) + '</strong> leaves ' + money(best.net - second.net) + ' more than the next option <em>this year</em>' + (best.key === 'D' ? ' — but selling cows is spending the herd: the next 10 years below show what it costs to get them back.' : '.') +
-      ' Lighter calves bring more per hundredweight (price slide), which is why early weaning loses less than the weight alone suggests.';
+      ' Lighter calves bring more per hundredweight (price slide), which is why early weaning loses less than the weight alone suggests.' + (+dr.hayPrice > 0 ? ' Hay this year at ' + money(+dr.hayPrice) + '/ton (normal ' + money(h.hayPrice) + ').' : ' Hay at your normal price, ' + money(h.hayPrice) + '/ton — in a drought it usually costs more: set it above.');
 
     /* ---- 2. the next 10 years: keep the herd, or sell and then buy back / raise heifers / stay smaller */
     var Y = 10, r = Math.max(0, +dr.rate || 0)/100, other = Math.max(0, +dr.otherCost || 0), buyP = +dr.buyPrice > 0 ? +dr.buyPrice : bredCowPrice();
     var later = 1 + (+dr.later || 0)/100;
     var Nl = later !== 1 ? netOf({priceMult:later}) : N;
     function mPerCow(y){ return ((y >= 4 ? Nl : N).econ.net)/cows - other; }   // a normal year, per cow, after your other costs
+    // grass after the drought: year 1 at "recover" % of normal, year 2 halfway back, then normal. A herd too big for the
+    // recovering grass buys hay (at your normal price) — this is where stocking lighter pays: the range rests.
+    var rec1 = Math.max(30, Math.min(100, +dr.recover || 100))/100, recY = function(y){ return y === 1 ? rec1 : y === 2 ? (1 + rec1)/2 : 1; };
+    var mCache = {};
+    function herdNet(c, y){
+      c = Math.round(c); if(c <= 0) return 0;
+      var mult = recY(y), pm = y >= 4 ? later : 1;
+      if(mult === 1 && c === cows) return (pm !== 1 ? Nl : N).econ.net - other*c;
+      var key = c + '|' + mult + '|' + pm;
+      if(!(key in mCache)){
+        var o = {cows:c, bulls:Math.max(1, Math.round(bulls*c/cows))}; if(pm !== 1) o.priceMult = pm;
+        mCache[key] = netOf(o, {}, mult).econ.net;
+      }
+      return mCache[key] - other*c;
+    }
     var heiferCalvesPerCow = (N.econ.calvesSold + N.econ.heifersKept)/cows/2, keptPerCow = N.econ.heifersKept/cows;
     var calfVal = N.econ.avgSaleLb/100*N.econ.avgPrice, preg = (+h.heiferPreg || 85)/100;
     // thin cows at breeding during the drought get pregnant less: fewer calves the year after (Sprott 1985)
@@ -866,21 +882,21 @@
     var year0Sell = D.r.econ.net + saleVal - other*(dr.sellWhen === 'weaning' ? cows : keepCows);
     var S = [];
     S.push(strat('keep', 'Keep the herd (' + K.title.charAt(0).toLowerCase() + K.title.slice(1) + ')', year0Keep, cows, function(y, c){
-      return {cows:c, cash:c*mPerCow(y) - (y === 1 ? pregLoss(K.r, c) : 0)}; }));
+      return {cows:c, cash:herdNet(c, y) - (y === 1 ? pregLoss(K.r, c) : 0)}; }));
     var bYear = Math.max(1, Math.min(3, +dr.buyYear || 1));
     if(nSell > 0){
       S.push(strat('buy', 'Sell ' + fmt(nSell) + ', buy back bred cows in year ' + bYear, year0Sell, keepCows, function(y, c){
         var cash = 0, sp = 0; if(y === bYear){ sp = nSell*buyP; cash -= sp; c = cows; }
-        return {cows:c, spent:sp, cash:cash + c*mPerCow(y) - (y === 1 ? pregLoss(D.r, c) : 0)}; }));
+        return {cows:c, spent:sp, cash:cash + herdNet(c, y) - (y === 1 ? pregLoss(D.r, c) : 0)}; }));
       S.push(strat('raise', 'Sell ' + fmt(nSell) + ', raise your own heifers', year0Sell, keepCows, function(y, c, pipe){
         c = Math.min(cows, c + (pipe[y] || 0)); delete pipe[y];
-        var cash = c*mPerCow(y) - (y === 1 ? pregLoss(D.r, c) : 0);
+        var cash = herdNet(c, y) - (y === 1 ? pregLoss(D.r, c) : 0);
         var coming = Object.keys(pipe).reduce(function(a, k){ return a + pipe[k]; }, 0);
         var extra = Math.max(0, Math.min(c*(heiferCalvesPerCow - keptPerCow), (cows - c - coming)/preg));
         var sp = 0; if(extra > 0.01){ pipe[y + 2] = (pipe[y + 2] || 0) + extra*preg; sp = extra*(calfVal*(y >= 4 ? later : 1) + (+dr.devCost || 0)); cash -= sp; }
         return {cows:c, cash:cash, spent:sp}; }));
       S.push(strat('stay', 'Sell ' + fmt(nSell) + ' and stay smaller', year0Sell, keepCows, function(y, c){
-        return {cows:c, cash:c*mPerCow(y) - (y === 1 ? pregLoss(D.r, c) : 0)}; }));
+        return {cows:c, cash:herdNet(c, y) - (y === 1 ? pregLoss(D.r, c) : 0)}; }));
     }
     var bestS = S.reduce(function(a, s){ return s.pv > a.pv ? s : a; }, S[0]);
     var COLORS = {keep:'var(--accent)', buy:'#115740', raise:'#b8860b', stay:'#707070'};
@@ -914,7 +930,7 @@
       S.filter(function(s){ return s !== bestS; }).map(function(s){ return esc({keep:'Keeping the herd', buy:'Buying back', raise:'Raising heifers', stay:'Staying smaller'}[s.key]) + ': ' + money(s.pv - bestS.pv); }).join(' · ') + '. ' +
       (S[1] ? 'Buying back ' + fmt(nSell) + ' bred cows at ' + money(buyP) + ' takes ' + money(nSell*buyP) + '; a cow earns about ' + money(mPerCow(1)) + ' a year after feed and other costs, so she pays for herself in about ' + fmt(buyP/Math.max(1, mPerCow(1)), 1) + ' years. ' : '') +
       (S[2] ? 'Raising heifers brings the herd back in year ' + (S[2].full > 0 ? S[2].full : '10+') + ', without buying, but you give up selling those heifers and wait two years for each one to calve. ' : '') +
-      'Selling cows also rests the grass, which this doesn’t count — a drought-hit range may need a year or two before it carries a full herd again.'
+      'The grass is counted at ' + fmt(rec1*100) + '% of normal the year after the drought and ' + fmt((1 + rec1)/2*100) + '% the next, so a herd too big for it buys hay — that is what resting the range with fewer cows is worth here. ' + (+dr.hayPrice > 0 ? 'Drought-year hay at ' + money(+dr.hayPrice) + '/ton.' : '')
       : 'Set a share of cows to sell above 0% to compare selling and rebuilding with keeping the herd.';
     $('dec_drLongTable').innerHTML = '<thead><tr><th></th><th class="num">Drought year</th><th class="num">Cows yr 1 · 3 · 5 · 10</th><th class="num">Back to ' + fmt(cows) + ' cows</th><th class="num">Spent to rebuild</th><th class="num">10-year cash</th><th class="num">Worth today*</th></tr></thead><tbody>' +
       S.map(function(s){ return '<tr' + (s === bestS ? ' class="best"' : '') + '><td><i class="sw" style="display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;background:' + COLORS[s.key] + ';"></i>' + (s === bestS ? '★ ' : '') + esc(s.label) + '</td>' +
@@ -922,6 +938,7 @@
         '<td class="num">' + (s.key === 'keep' ? '—' : s.full > 0 ? 'year ' + s.full : 'not in 10 yrs') + '</td><td class="num">' + (s.spent > 0.5 ? money(s.spent) + (s.key === 'raise' ? '<br><small>heifers not sold + raising</small>' : '') : '—') + '</td>' +
         '<td class="num">' + money(s.total) + '</td><td class="num"><strong>' + money(s.pv) + '</strong></td></tr>'; }).join('') + '</tbody>';
     var bp = $('dr_buyPrice'); if(bp) bp.placeholder = fmt(bredCowPrice());
+    var hp = $('dr_hayPrice'); if(hp) hp.placeholder = fmt(h.hayPrice);
   }
 
   function renderWhatIf(){
@@ -975,7 +992,7 @@
     });
     document.querySelectorAll('[data-dr]').forEach(function(el){
       var k = el.getAttribute('data-dr'), mn = +el.min, mx = +el.max;
-      el.addEventListener('input', function(){ var v = num(this.value); if(this.value === '' && k === 'buyPrice'){ state.herd.dr[k] = null; save(); scheduleDecisions(); return; } if(v != null && v >= mn && v <= mx){ state.herd.dr[k] = v; save(); scheduleDecisions(); } });
+      el.addEventListener('input', function(){ var v = num(this.value); if(this.value === '' && (k === 'buyPrice' || k === 'hayPrice')){ state.herd.dr[k] = null; save(); scheduleDecisions(); return; } if(v != null && v >= mn && v <= mx){ state.herd.dr[k] = v; save(); scheduleDecisions(); } });
       el.addEventListener('blur', function(){ this.value = state.herd.dr[k] == null ? '' : state.herd.dr[k]; });
     });
     document.querySelectorAll('[data-sl]').forEach(function(el){

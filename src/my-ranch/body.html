@@ -538,6 +538,7 @@
               <select id="dr_which" data-drs="which"><option value="all">All pastures</option><option value="range">Native range only</option><option value="smallgrain">Small grains (wheat, oats) only</option><option value="improved">Improved pasture only</option></select></div>
             <div class="field"><label for="dr_earlyAge">Early weaning at</label><div class="input-wrap has-suffix"><input type="number" id="dr_earlyAge" data-dr="earlyAge" min="60" max="250" step="5"><span class="suffix">days</span></div></div>
             <div class="field"><label for="dr_feedAdg">Gain if you feed early-weaned calves</label><div class="input-wrap has-suffix"><input type="number" id="dr_feedAdg" data-dr="feedAdg" min="0.5" max="4" step="0.1"><span class="suffix">lb/day</span></div></div>
+            <div class="field"><label for="dr_hayPrice">Hay price in the drought</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_hayPrice" data-dr="hayPrice" min="0" max="2000" step="5"><span class="suffix">/ton</span></div><span class="hint">Blank = your normal hay price</span></div>
             <div class="field"><label for="dr_sellPct">Cows to sell</label><div class="input-wrap has-suffix"><input type="number" id="dr_sellPct" data-dr="sellPct" min="0" max="90" step="5"><span class="suffix">%</span></div></div>
             <div class="field"><label for="dr_sellWhen">Sell them</label><select id="dr_sellWhen" data-drs="sellWhen"><option value="start">When the drought starts (with their calves)</option><option value="weaning">After weaning (feed them till then)</option></select></div>
           </div>
@@ -548,6 +549,7 @@
           <div class="field-grid cols-3">
             <div class="field"><label for="dr_buyPrice">Bred cow price to buy back</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_buyPrice" data-dr="buyPrice" min="200" max="10000" step="25"><span class="suffix">/hd</span></div><span class="hint">Blank = the site’s market price (USDA bred cows)</span></div>
             <div class="field"><label for="dr_buyYear">Buy them back in</label><select id="dr_buyYear" data-drs="buyYear" data-num="1"><option value="1">Year 1 (right after)</option><option value="2">Year 2 (rest the grass a year)</option><option value="3">Year 3</option></select></div>
+            <div class="field"><label for="dr_recover">Grass the year after</label><div class="input-wrap has-suffix"><input type="number" id="dr_recover" data-dr="recover" min="30" max="100" step="5"><span class="suffix">% of normal</span></div><span class="hint">Halfway back the year after that, then normal. Lower after a severe drought or heavy grazing.</span></div>
             <div class="field"><label for="dr_later">Calf prices from year 4</label><select id="dr_later" data-drs="later" data-num="1"><option value="15">15% higher</option><option value="0">Same as today</option><option value="-15">15% lower</option><option value="-30">30% lower</option></select></div>
           </div>
           <details class="advanced" style="margin-top:4px;">
@@ -561,7 +563,7 @@
           <div class="fc-chart" id="dec_drLongChart" style="margin-top:12px;"></div>
           <p class="fc-short" id="dec_drLongText"></p>
           <div class="table-scroll"><table class="plan fc-table" id="dec_drLongTable"></table></div>
-          <p class="card-note" style="margin:8px 0 0;">* Worth today: each year’s cash discounted at your interest rate, plus the cows you still own in year 10 valued as culls, so selling and staying smaller isn’t rewarded just for holding cash. A normal year after the drought uses your ranch’s own feed calendar and today’s prices; thin cows at breeding during the drought mean fewer calves the next year (Sprott 1985). Not counted: taxes (drought sales can be deferred), the grass resting when stocked lighter, and buying cows of unknown health. Idea and structure from Texas A&amp;M AgriLife’s <em>Drought Decision-Aid / Restocking Options</em> (F. Abello, Vernon).</p>
+          <p class="card-note" style="margin:8px 0 0;">* Worth today: each year’s cash discounted at your interest rate, plus the cows you still own in year 10 valued as culls, so selling and staying smaller isn’t rewarded just for holding cash. A normal year after the drought uses your ranch’s own feed calendar and today’s prices; thin cows at breeding during the drought mean fewer calves the next year (Sprott 1985). The grass recovers over two years after the drought (your setting); a herd too big for it buys hay at your normal price. Not counted: taxes (drought sales can be deferred) and buying cows of unknown health. Idea and structure from Texas A&amp;M AgriLife’s <em>Drought Decision-Aid / Restocking Options</em> (F. Abello, Vernon).</p>
         </div>
 
         <div class="dec-panel" id="dec_whatif" hidden>
