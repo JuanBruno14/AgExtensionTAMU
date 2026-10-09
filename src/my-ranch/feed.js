@@ -619,9 +619,12 @@
         nwsCare:o.nwsPresent ? o.cows*co.nwsCalves*(o.nwsCost || 0) : 0, creep:calfInfo.creepCost, creepLb:calfInfo.creepLb,
         weanLbNoCreep:co.avgWeanLb - (calfStrat === 'creep' ? lbLost : 0), lbLostPerCalf:lbLost, creepLbPerCalf:creepPerCalf,
         deadWeather:o.cows*co.deadWeather, deadNws:o.cows*co.deadNws, deadOther:o.cows*co.deadOther,
-        cowDeaths:o.cows*(o.cowLoss || 0)/100, bcsRestore:o.cows*restoreLb/2000*(feeds.supPrice || 0)
+        cowDeaths:o.cows*(o.cowLoss || 0)/100, bcsRestore:o.cows*restoreLb/2000*(feeds.supPrice || 0),
+        // free-choice mineral and salt for cows and bulls (AgriLife 2026 budgets price it per lb)
+        mineralLb:(o.cows + (o.bulls || 0))*(o.mineralOz || 0)/16*365
       };
-      econ.costs = econ.feed + econ.trips + econ.dist + econ.nwsCare + econ.creep + econ.bcsRestore;
+      econ.mineral = econ.mineralLb*(o.mineralPrice || 0);
+      econ.costs = econ.feed + econ.trips + econ.dist + econ.nwsCare + econ.creep + econ.bcsRestore + econ.mineral;
       econ.net = econ.income - econ.costs;
       return {months:months, totals:tot, econ:econ, calves:co, forageTdn:ftdn, bcs:bcsInfo, calf:calfInfo};
     }

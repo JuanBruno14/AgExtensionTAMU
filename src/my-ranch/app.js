@@ -49,9 +49,9 @@
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535,
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto',
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
-    hayTdn:55, hayCp:10, hayDm:88, hayPrice:200, source:'cube20', supCp:20, supTdn:70, supPrice:392,
+    hayTdn:55, hayCp:10, hayDm:88, hayPrice:200, mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
-    dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:202, devCost:900, rate:7, later:0},
+    dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0},
     sell:{rate:8, death:0.5}};
 
 /*@@FEED@@*/
@@ -1018,6 +1018,7 @@
     var retry = $('droughtRetry'); if(retry) retry.addEventListener('click', function(){ refreshDroughtIfMoved(true); });
   }
 
+  var rotOpen = false;   // keep 'Grazing days by pasture' open while re-rendering (arrows)
   function renderRotation(){
     var el = $('rotationBody');
     var herd = herdAU();
@@ -1036,12 +1037,16 @@
     }).join('');
     var shortTxt = total >= 365 ? 'enough for a full year (' + fmt(total) + ' days) at this herd size, before any hay or supplement.'
                                 : fmt(total) + ' days — about ' + fmt(365 - total) + ' days short of a full year for this herd. Plan hay, supplement, leased grazing, or a smaller herd for the gap.';
-    el.innerHTML = '<div class="table-scroll"><table class="plan"><thead><tr><th style="width:62px;">Order</th><th>Pasture</th><th class="num">Acres</th><th class="num">Days for ' + fmt(herd) + ' AU</th></tr></thead><tbody>' + rows + '</tbody>' +
+    el.innerHTML = '<div id="grazingPlan">' + grazingPlanHtml() + '</div>' +
+      '<div id="herdNow">' + herdNowHtml() + '</div>' +
+      '<details class="advanced rot-days"' + (rotOpen ? ' open' : '') + '><summary>Grazing days by pasture · ' + (total >= 365 ? 'a full year' : fmt(total) + ' of 365 days') + '</summary><div class="adv-body">' +
+      '<p class="card-note" style="margin:0 0 8px;">How many days each pasture carries your herd, in the order you graze them (use the arrows).</p>' +
+      '<div class="table-scroll"><table class="plan"><thead><tr><th style="width:62px;">Order</th><th>Pasture</th><th class="num">Acres</th><th class="num">Days for ' + fmt(herd) + ' AU</th></tr></thead><tbody>' + rows + '</tbody>' +
       '<tfoot><tr><td></td><td>Total</td><td></td><td class="num">' + fmt(total) + ' days</td></tr></tfoot></table></div>' +
       '<p class="narrative" style="margin:12px 0 0;font-size:13px;">Your grazed pastures together provide ' + shortTxt + (anyMissing ? ' (Pastures still missing a forage estimate aren’t counted.)' : '') + '</p>' +
-      '<p class="card-note" style="margin:8px 0 0;">These are forage-supply days, not a rest schedule: rotation lets plants recover, but it doesn’t create extra forage.</p>' +
-      '<div id="grazingPlan">' + grazingPlanHtml() + '</div>' +
-      '<div id="herdNow">' + herdNowHtml() + '</div>';
+      '<p class="card-note" style="margin:8px 0 0;">These are forage-supply days, not a rest schedule: rotation lets plants recover, but it doesn’t create extra forage.</p></div></details>';
+    var rd = el.querySelector('.rot-days'); if(rd) rd.addEventListener('toggle', function(){ rotOpen = rd.open; });
+    var hd = el.querySelector('.hn-details'); if(hd) hd.addEventListener('toggle', function(){ hnOpen = hd.open; });
     var hp = $('hn_pid'), hs = $('hn_since');
     if(hp) hp.addEventListener('change', function(){
       if(!this.value){ state.herdNow = null; }

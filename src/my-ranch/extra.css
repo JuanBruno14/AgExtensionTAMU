@@ -441,3 +441,4 @@
     .mr-step[hidden]{display:block !important;}
     .mr-step{padding:0;max-width:none;}
   }
+  .plan-col #grazingPlan > .gp-title:first-child{margin-top:0;}

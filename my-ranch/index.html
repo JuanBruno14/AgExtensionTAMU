@@ -780,6 +780,7 @@
     .mr-step[hidden]{display:block !important;}
     .mr-step{padding:0;max-width:none;}
   }
+  .plan-col #grazingPlan > .gp-title:first-child{margin-top:0;}
 </style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
 </head>
@@ -1177,6 +1178,12 @@
                   <div class="field"><label for="fc_supPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_supPrice" data-h="supPrice" min="0" max="5000" step="5"><span class="suffix">/ton</span></div><span class="hint" id="fc_perLbCp"></span></div>
                 </div>
               </fieldset>
+              <fieldset style="margin-top:18px;"><legend>Mineral &amp; salt</legend>
+                <div class="field-grid cols-3">
+                  <div class="field"><label for="fc_mineralOz">Fed per cow and bull</label><div class="input-wrap has-suffix"><input type="number" id="fc_mineralOz" data-h="mineralOz" min="0" max="16" step="0.5"><span class="suffix">oz/day</span></div><span class="hint">Free-choice mineral usually runs 2–4 oz a day (4 oz ≈ 90 lb a year)</span></div>
+                  <div class="field"><label for="fc_mineralPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_mineralPrice" data-h="mineralPrice" min="0" max="5" step="0.01"><span class="suffix">/lb</span></div><span class="hint">AgriLife 2026 Rolling Plains budget: $0.45/lb</span></div>
+                </div>
+              </fieldset>
               <fieldset style="margin-top:18px;">
                 <legend>How often you feed</legend>
                 <div class="field-grid cols-3">
@@ -1230,8 +1237,6 @@
           <p class="fc-short" id="fc_short"></p>
             </div>
             <div class="plan-col">
-              <h3 class="sub-h" style="margin-top:0;">Grazing days &amp; calendar</h3>
-              <p class="card-note" style="margin:0 0 8px;">How many days each pasture carries your herd, in the order you graze them (use the arrows).</p>
                       <div id="rotationBody"></div>
             </div>
           </div>
@@ -1340,7 +1345,7 @@
           <details class="advanced" style="margin-top:4px;">
             <summary>Costs and interest</summary>
             <div class="adv-body"><div class="field-grid cols-3">
-              <div class="field"><label for="dr_otherCost">Other costs per cow</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_otherCost" data-dr="otherCost" min="0" max="3000" step="5"><span class="suffix">/yr</span></div><span class="hint">Besides hay and supplement. AgriLife 2026 Rolling Plains budget: $202 (vet, mineral, fuel, repairs, marketing, labor, interest)</span></div>
+              <div class="field"><label for="dr_otherCost">Other costs per cow</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_otherCost" data-dr="otherCost" min="0" max="3000" step="5"><span class="suffix">/yr</span></div><span class="hint">Besides hay, supplement and mineral (those come from your feed settings). AgriLife 2026 Rolling Plains budget: $189 (vet, fuel, repairs, marketing, labor, interest)</span></div>
               <div class="field"><label for="dr_devCost">Raising a heifer to calving</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_devCost" data-dr="devCost" min="0" max="5000" step="25"><span class="suffix">/hd</span></div><span class="hint">Feed and care from weaning to first calf, beyond the heifer’s own sale value</span></div>
               <div class="field"><label for="dr_rate">Interest rate</label><div class="input-wrap has-suffix"><input type="number" id="dr_rate" data-dr="rate" min="0" max="20" step="0.5"><span class="suffix">%/yr</span></div><span class="hint">What money is worth to you: what you pay to borrow, or earn on savings</span></div>
             </div></div>
@@ -1423,9 +1428,9 @@
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535,
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto',
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
-    hayTdn:55, hayCp:10, hayDm:88, hayPrice:200, source:'cube20', supCp:20, supTdn:70, supPrice:392,
+    hayTdn:55, hayCp:10, hayDm:88, hayPrice:200, mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
-    dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:202, devCost:900, rate:7, later:0},
+    dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0},
     sell:{rate:8, death:0.5}};
 
   /* ================================================================ FEED CALENDAR ENGINE
@@ -2049,9 +2054,12 @@
         nwsCare:o.nwsPresent ? o.cows*co.nwsCalves*(o.nwsCost || 0) : 0, creep:calfInfo.creepCost, creepLb:calfInfo.creepLb,
         weanLbNoCreep:co.avgWeanLb - (calfStrat === 'creep' ? lbLost : 0), lbLostPerCalf:lbLost, creepLbPerCalf:creepPerCalf,
         deadWeather:o.cows*co.deadWeather, deadNws:o.cows*co.deadNws, deadOther:o.cows*co.deadOther,
-        cowDeaths:o.cows*(o.cowLoss || 0)/100, bcsRestore:o.cows*restoreLb/2000*(feeds.supPrice || 0)
+        cowDeaths:o.cows*(o.cowLoss || 0)/100, bcsRestore:o.cows*restoreLb/2000*(feeds.supPrice || 0),
+        // free-choice mineral and salt for cows and bulls (AgriLife 2026 budgets price it per lb)
+        mineralLb:(o.cows + (o.bulls || 0))*(o.mineralOz || 0)/16*365
       };
-      econ.costs = econ.feed + econ.trips + econ.dist + econ.nwsCare + econ.creep + econ.bcsRestore;
+      econ.mineral = econ.mineralLb*(o.mineralPrice || 0);
+      econ.costs = econ.feed + econ.trips + econ.dist + econ.nwsCare + econ.creep + econ.bcsRestore + econ.mineral;
       econ.net = econ.income - econ.costs;
       return {months:months, totals:tot, econ:econ, calves:co, forageTdn:ftdn, bcs:bcsInfo, calf:calfInfo};
     }
@@ -3045,6 +3053,7 @@
     var retry = $('droughtRetry'); if(retry) retry.addEventListener('click', function(){ refreshDroughtIfMoved(true); });
   }
 
+  var rotOpen = false;   // keep 'Grazing days by pasture' open while re-rendering (arrows)
   function renderRotation(){
     var el = $('rotationBody');
     var herd = herdAU();
@@ -3063,12 +3072,16 @@
     }).join('');
     var shortTxt = total >= 365 ? 'enough for a full year (' + fmt(total) + ' days) at this herd size, before any hay or supplement.'
                                 : fmt(total) + ' days — about ' + fmt(365 - total) + ' days short of a full year for this herd. Plan hay, supplement, leased grazing, or a smaller herd for the gap.';
-    el.innerHTML = '<div class="table-scroll"><table class="plan"><thead><tr><th style="width:62px;">Order</th><th>Pasture</th><th class="num">Acres</th><th class="num">Days for ' + fmt(herd) + ' AU</th></tr></thead><tbody>' + rows + '</tbody>' +
+    el.innerHTML = '<div id="grazingPlan">' + grazingPlanHtml() + '</div>' +
+      '<div id="herdNow">' + herdNowHtml() + '</div>' +
+      '<details class="advanced rot-days"' + (rotOpen ? ' open' : '') + '><summary>Grazing days by pasture · ' + (total >= 365 ? 'a full year' : fmt(total) + ' of 365 days') + '</summary><div class="adv-body">' +
+      '<p class="card-note" style="margin:0 0 8px;">How many days each pasture carries your herd, in the order you graze them (use the arrows).</p>' +
+      '<div class="table-scroll"><table class="plan"><thead><tr><th style="width:62px;">Order</th><th>Pasture</th><th class="num">Acres</th><th class="num">Days for ' + fmt(herd) + ' AU</th></tr></thead><tbody>' + rows + '</tbody>' +
       '<tfoot><tr><td></td><td>Total</td><td></td><td class="num">' + fmt(total) + ' days</td></tr></tfoot></table></div>' +
       '<p class="narrative" style="margin:12px 0 0;font-size:13px;">Your grazed pastures together provide ' + shortTxt + (anyMissing ? ' (Pastures still missing a forage estimate aren’t counted.)' : '') + '</p>' +
-      '<p class="card-note" style="margin:8px 0 0;">These are forage-supply days, not a rest schedule: rotation lets plants recover, but it doesn’t create extra forage.</p>' +
-      '<div id="grazingPlan">' + grazingPlanHtml() + '</div>' +
-      '<div id="herdNow">' + herdNowHtml() + '</div>';
+      '<p class="card-note" style="margin:8px 0 0;">These are forage-supply days, not a rest schedule: rotation lets plants recover, but it doesn’t create extra forage.</p></div></details>';
+    var rd = el.querySelector('.rot-days'); if(rd) rd.addEventListener('toggle', function(){ rotOpen = rd.open; });
+    var hd = el.querySelector('.hn-details'); if(hd) hd.addEventListener('toggle', function(){ hnOpen = hd.open; });
     var hp = $('hn_pid'), hs = $('hn_since');
     if(hp) hp.addEventListener('change', function(){
       if(!this.value){ state.herdNow = null; }
@@ -3239,7 +3252,7 @@
       seasonal:h.seasonal !== 'off', nowMonth:new Date().getMonth(),
       weatherAdj:h.weatherAdj !== 'off', windMph:h.windMph, coat:+h.coat || 1, heat:+h.heat || 1,
       nwsPresent:h.nws === 'yes', nwsLoss:h.nwsLoss, nwsCost:h.nwsCost, hornFly:+h.hornFly,
-      supMode:h.supMode === 'full' ? 'full' : 'protein', calfShort:h.calfShort === 'lighter' ? 'lighter' : 'creep', creepPrice:+h.creepPrice || 0, creepConv:+h.creepConv || 8,
+      supMode:h.supMode === 'full' ? 'full' : 'protein', mineralOz:h.mineralOz == null ? 4 : +h.mineralOz, mineralPrice:h.mineralPrice == null ? 0.45 : +h.mineralPrice, calfShort:h.calfShort === 'lighter' ? 'lighter' : 'creep', creepPrice:+h.creepPrice || 0, creepConv:+h.creepConv || 8,
       steerSlide:sl.steer, heiferSlide:sl.heifer};
     var ownCs = FEED.cohorts(o);
     o.refWeanAge = ownCs.reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
@@ -3456,6 +3469,7 @@
   }
   function grassClass(r){ return r.herdHere ? 'herd' : r.days >= 21 ? 'good' : r.days >= 7 ? 'mid' : 'low'; }
   var GRASS_COLORS = {herd:'#8B0215', good:'#1f9e5a', mid:'#e0a526', low:'#c2410c', none:'#8a8a8a'};
+  var hnOpen = false;
   function herdNowHtml(){
     var t = grassToday(); if(!t) return '';
     var opts = '<option value="">Follow the grazing calendar</option>' + t.g.P.map(function(x){ return '<option value="' + x.p.id + '"' + ((state.herdNow || {}).pid === x.p.id ? ' selected' : '') + '>' + esc(x.p.name) + '</option>'; }).join('');
@@ -3480,8 +3494,9 @@
       '<div class="herd-now-form"><label>Herd is in <select id="hn_pid" aria-label="Pasture the herd is in now">' + opts + '</select></label>' +
       '<label' + (hn.pid ? '' : ' hidden') + '>since <input type="date" id="hn_since" max="' + isoDate(t.today) + '" value="' + (hn.since || '') + '" aria-label="Day the herd went in"></label></div>' +
       '<p class="narrative" id="hn_msg" style="margin:10px 0 0;font-size:13px;">' + msg + '</p>' +
-      '<div class="table-scroll" style="margin-top:10px;"><table class="plan" id="hn_table"><thead><tr><th>Pasture</th><th>Today</th><th class="num">Standing grass</th><th class="num">Days for the herd</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-      '<p class="card-note" style="margin:8px 0 0;">Estimates from the grazing calendar: growth by month for your region, minus what the herd ate where the calendar put it. Measure a pasture under <em>Pastures → Measured forage</em> to correct it. Same colors as <em>Grass today</em> on the map: green 3+ weeks, yellow 1–3 weeks, orange under a week.</p>';
+      '<details class="advanced hn-details"' + (hnOpen ? ' open' : '') + ' style="margin-top:10px;"><summary>Grass in each pasture today</summary><div class="adv-body">' +
+      '<div class="table-scroll"><table class="plan" id="hn_table"><thead><tr><th>Pasture</th><th>Today</th><th class="num">Standing grass</th><th class="num">Days for the herd</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<p class="card-note" style="margin:8px 0 0;">Estimates from the grazing calendar: growth by month for your region, minus what the herd ate where the calendar put it. Measure a pasture under <em>Pastures → Measured forage</em> to correct it. Same colors as <em>Grass today</em> on the map: green 3+ weeks, yellow 1–3 weeks, orange under a week.</p></div></details>';
   }
   function grazingPlanHtml(){
     var g = grazingPlan(); if(!g) return '';
@@ -3490,7 +3505,7 @@
     FEED.MONTHS.forEach(function(n, m){ var x = lw + FEED.MONTH_START[m]*cw; s += '<line class="gp-grid" x1="' + x + '" x2="' + x + '" y1="18" y2="' + (H - 4) + '"/><text class="gp-mon" x="' + (x + FEED.MONTH_DAYS[m]*cw/2) + '" y="13" text-anchor="middle">' + n + '</text>'; });
     g.P.forEach(function(x, i){
       var y = 22 + i*rh;
-      s += '<text class="gp-name" x="' + (lw - 8) + '" y="' + (y + 14) + '" text-anchor="end">' + esc(x.p.name.length > 20 ? x.p.name.slice(0, 19) + '…' : x.p.name) + '</text>';
+      s += '<text class="gp-name" x="' + (lw - 8) + '" y="' + (y + 14) + '" text-anchor="end">' + esc(x.p.name.length > 16 ? x.p.name.slice(0, 15) + '…' : x.p.name) + '</text>';
       s += '<rect class="gp-rest" x="' + lw + '" y="' + (y + 4) + '" width="' + (365*cw) + '" height="' + (rh - 8) + '" rx="3"/>';
       var d = 0;
       while(d < 365){
@@ -3507,9 +3522,9 @@
       '<div class="fc-legend"><span><i class="sw gp-graze"></i>Grazing</span><span><i class="sw gp-feed"></i>Herd here, feeding hay</span><span><i class="sw gp-rest"></i>Resting</span>' +
       '<label class="gp-max">Move at least every <input type="number" id="gp_max" min="3" max="120" step="1" value="' + g.maxStay + '"> days</label></div>' +
       '<div class="table-scroll">' + s + '</div>' +
-      '<p class="narrative" style="margin:10px 0 0;font-size:13px;">One herd moved through your pastures in the order above, leaving each one when its usable forage runs out or after ' + g.maxStay + ' days, whichever comes first. ' +
+      '<p class="narrative" style="margin:10px 0 0;font-size:13px;">One herd moving through your pastures in order, leaving each when its grass runs out or after ' + g.maxStay + ' days. ' +
       (g.hayDays > 0 ? 'On about <strong>' + fmt(g.hayDays) + ' days</strong> no pasture has enough, so the herd stays put and is fed hay (orange). ' : 'Pasture carries the herd every day of the year. ') +
-      (unused.length ? 'Never needed: ' + esc(unused.join(', ')) + '. ' : '') + 'Longer rest lets grass recover; aim for 30–90 days in the growing season.</p>';
+      (unused.length ? 'Never needed: ' + esc(unused.join(', ')) + '. ' : '') + 'Aim for 30–90 days of rest in the growing season.</p>';
   }
 
   /* ---- charts */
@@ -3707,7 +3722,7 @@
     $('fc_tiles').innerHTML = res.hasSupply ?
       '<div class="stat-tile"><span class="label">Calves sold</span><span class="value small">' + fmt(ec.calvesSold) + '</span><span class="sub">' + fmt(ec.avgSaleLb) + ' lb at $' + fmt(ec.avgPrice) + '/cwt</span></div>' +
       '<div class="stat-tile"><span class="label">Cattle sales</span><span class="value small">' + money(ec.income) + '</span><span class="sub">' + (ec.cullIncome + ec.openIncome > 0.5 ? 'calves ' + money(ec.calfIncome) + ' · culls ' + money(ec.cullIncome + ec.openIncome) : money(ec.income/h.cows) + ' per cow') + '</span></div>' +
-      '<div class="stat-tile"><span class="label">Feed &amp; feeding</span><span class="value small">' + money(ec.costs) + '</span><span class="sub">' + (feedLbs >= 100 ? [t.hay >= 100 ? fmt(t.hay/2000, 1) + ' t hay' : '', t.sup >= 100 ? fmt(t.sup/2000, 1) + ' t supplement' : '', (ec.creepLb || 0) >= 100 ? fmt(ec.creepLb/2000, 1) + ' t creep' : ''].filter(Boolean).join(' · ') + ' + trips' : 'nothing to buy') + '</span></div>' +
+      '<div class="stat-tile"><span class="label">Feed &amp; feeding</span><span class="value small">' + money(ec.costs) + '</span><span class="sub">' + (feedLbs >= 100 ? [t.hay >= 100 ? fmt(t.hay/2000, 1) + ' t hay' : '', t.sup >= 100 ? fmt(t.sup/2000, 1) + ' t supplement' : '', (ec.creepLb || 0) >= 100 ? fmt(ec.creepLb/2000, 1) + ' t creep' : '', (ec.mineralLb || 0) >= 100 ? fmt(ec.mineralLb/2000, 1) + ' t mineral' : ''].filter(Boolean).join(' · ') + ' + trips' : (ec.mineral > 0.5 ? 'mineral only' : 'nothing to buy')) + '</span></div>' +
       '<div class="stat-tile ' + (ec.net >= 0 ? 'good' : 'critical') + '"><span class="label">Sales minus feed</span><span class="value small">' + money(ec.net) + '</span><span class="sub">' + money(ec.net/h.cows) + ' per cow · not profit</span></div>'
       : '';
     $('fc_tiles2').innerHTML = res.hasSupply ?
@@ -3905,7 +3920,7 @@
     try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); if(mp && +mp.mp_bredCowPrice > 0) v = +mp.mp_bredCowPrice; }catch(e){}
     return v;
   }
-  var DR_DEFAULTS = {cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:202, devCost:900, rate:7, later:0};
+  var DR_DEFAULTS = {cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0};
   function renderDroughtDecision(){
     var h = state.herd, dr = Object.assign({}, DR_DEFAULTS, h.dr || {});
     var cut = function(sup){ return FEED.adjustSupply(sup, dr.cut, +dr.from, dr.months, dr.which); };

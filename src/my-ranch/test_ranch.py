@@ -98,7 +98,7 @@ with sync_playwright() as pw:
     page.wait_for_timeout(200)
     check('over-capacity verdict', 'over estimated capacity' in page.inner_text('#summaryBody'))
     check('label follows rename', 'North trap' in page.inner_text('.leaflet-tooltip.pasture-label'))
-    rot=page.inner_text('#rotationBody')
+    rot=page.text_content('#rotationBody')
     check('rotation days shown', 'days' in rot and 'short of a full year' in rot, rot[:120])
     days=page.evaluate("(()=>{const s=MyRanch.state(),p=s.pastures[0];const au=MyRanch.herdAU();return p.acres*p.soil.normal*0.75*0.25/(au*26)})()")
     check('grazing days math', str(round(days)) in rot.replace(',',''), round(days))

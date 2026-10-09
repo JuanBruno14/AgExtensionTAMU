@@ -130,7 +130,7 @@
       seasonal:h.seasonal !== 'off', nowMonth:new Date().getMonth(),
       weatherAdj:h.weatherAdj !== 'off', windMph:h.windMph, coat:+h.coat || 1, heat:+h.heat || 1,
       nwsPresent:h.nws === 'yes', nwsLoss:h.nwsLoss, nwsCost:h.nwsCost, hornFly:+h.hornFly,
-      supMode:h.supMode === 'full' ? 'full' : 'protein', calfShort:h.calfShort === 'lighter' ? 'lighter' : 'creep', creepPrice:+h.creepPrice || 0, creepConv:+h.creepConv || 8,
+      supMode:h.supMode === 'full' ? 'full' : 'protein', mineralOz:h.mineralOz == null ? 4 : +h.mineralOz, mineralPrice:h.mineralPrice == null ? 0.45 : +h.mineralPrice, calfShort:h.calfShort === 'lighter' ? 'lighter' : 'creep', creepPrice:+h.creepPrice || 0, creepConv:+h.creepConv || 8,
       steerSlide:sl.steer, heiferSlide:sl.heifer};
     var ownCs = FEED.cohorts(o);
     o.refWeanAge = ownCs.reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
@@ -347,6 +347,7 @@
   }
   function grassClass(r){ return r.herdHere ? 'herd' : r.days >= 21 ? 'good' : r.days >= 7 ? 'mid' : 'low'; }
   var GRASS_COLORS = {herd:'#8B0215', good:'#1f9e5a', mid:'#e0a526', low:'#c2410c', none:'#8a8a8a'};
+  var hnOpen = false;
   function herdNowHtml(){
     var t = grassToday(); if(!t) return '';
     var opts = '<option value="">Follow the grazing calendar</option>' + t.g.P.map(function(x){ return '<option value="' + x.p.id + '"' + ((state.herdNow || {}).pid === x.p.id ? ' selected' : '') + '>' + esc(x.p.name) + '</option>'; }).join('');
@@ -371,8 +372,9 @@
       '<div class="herd-now-form"><label>Herd is in <select id="hn_pid" aria-label="Pasture the herd is in now">' + opts + '</select></label>' +
       '<label' + (hn.pid ? '' : ' hidden') + '>since <input type="date" id="hn_since" max="' + isoDate(t.today) + '" value="' + (hn.since || '') + '" aria-label="Day the herd went in"></label></div>' +
       '<p class="narrative" id="hn_msg" style="margin:10px 0 0;font-size:13px;">' + msg + '</p>' +
-      '<div class="table-scroll" style="margin-top:10px;"><table class="plan" id="hn_table"><thead><tr><th>Pasture</th><th>Today</th><th class="num">Standing grass</th><th class="num">Days for the herd</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-      '<p class="card-note" style="margin:8px 0 0;">Estimates from the grazing calendar: growth by month for your region, minus what the herd ate where the calendar put it. Measure a pasture under <em>Pastures → Measured forage</em> to correct it. Same colors as <em>Grass today</em> on the map: green 3+ weeks, yellow 1–3 weeks, orange under a week.</p>';
+      '<details class="advanced hn-details"' + (hnOpen ? ' open' : '') + ' style="margin-top:10px;"><summary>Grass in each pasture today</summary><div class="adv-body">' +
+      '<div class="table-scroll"><table class="plan" id="hn_table"><thead><tr><th>Pasture</th><th>Today</th><th class="num">Standing grass</th><th class="num">Days for the herd</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
+      '<p class="card-note" style="margin:8px 0 0;">Estimates from the grazing calendar: growth by month for your region, minus what the herd ate where the calendar put it. Measure a pasture under <em>Pastures → Measured forage</em> to correct it. Same colors as <em>Grass today</em> on the map: green 3+ weeks, yellow 1–3 weeks, orange under a week.</p></div></details>';
   }
   function grazingPlanHtml(){
     var g = grazingPlan(); if(!g) return '';
@@ -381,7 +383,7 @@
     FEED.MONTHS.forEach(function(n, m){ var x = lw + FEED.MONTH_START[m]*cw; s += '<line class="gp-grid" x1="' + x + '" x2="' + x + '" y1="18" y2="' + (H - 4) + '"/><text class="gp-mon" x="' + (x + FEED.MONTH_DAYS[m]*cw/2) + '" y="13" text-anchor="middle">' + n + '</text>'; });
     g.P.forEach(function(x, i){
       var y = 22 + i*rh;
-      s += '<text class="gp-name" x="' + (lw - 8) + '" y="' + (y + 14) + '" text-anchor="end">' + esc(x.p.name.length > 20 ? x.p.name.slice(0, 19) + '…' : x.p.name) + '</text>';
+      s += '<text class="gp-name" x="' + (lw - 8) + '" y="' + (y + 14) + '" text-anchor="end">' + esc(x.p.name.length > 16 ? x.p.name.slice(0, 15) + '…' : x.p.name) + '</text>';
       s += '<rect class="gp-rest" x="' + lw + '" y="' + (y + 4) + '" width="' + (365*cw) + '" height="' + (rh - 8) + '" rx="3"/>';
       var d = 0;
       while(d < 365){
@@ -398,9 +400,9 @@
       '<div class="fc-legend"><span><i class="sw gp-graze"></i>Grazing</span><span><i class="sw gp-feed"></i>Herd here, feeding hay</span><span><i class="sw gp-rest"></i>Resting</span>' +
       '<label class="gp-max">Move at least every <input type="number" id="gp_max" min="3" max="120" step="1" value="' + g.maxStay + '"> days</label></div>' +
       '<div class="table-scroll">' + s + '</div>' +
-      '<p class="narrative" style="margin:10px 0 0;font-size:13px;">One herd moved through your pastures in the order above, leaving each one when its usable forage runs out or after ' + g.maxStay + ' days, whichever comes first. ' +
+      '<p class="narrative" style="margin:10px 0 0;font-size:13px;">One herd moving through your pastures in order, leaving each when its grass runs out or after ' + g.maxStay + ' days. ' +
       (g.hayDays > 0 ? 'On about <strong>' + fmt(g.hayDays) + ' days</strong> no pasture has enough, so the herd stays put and is fed hay (orange). ' : 'Pasture carries the herd every day of the year. ') +
-      (unused.length ? 'Never needed: ' + esc(unused.join(', ')) + '. ' : '') + 'Longer rest lets grass recover; aim for 30–90 days in the growing season.</p>';
+      (unused.length ? 'Never needed: ' + esc(unused.join(', ')) + '. ' : '') + 'Aim for 30–90 days of rest in the growing season.</p>';
   }
 
   /* ---- charts */
@@ -598,7 +600,7 @@
     $('fc_tiles').innerHTML = res.hasSupply ?
       '<div class="stat-tile"><span class="label">Calves sold</span><span class="value small">' + fmt(ec.calvesSold) + '</span><span class="sub">' + fmt(ec.avgSaleLb) + ' lb at $' + fmt(ec.avgPrice) + '/cwt</span></div>' +
       '<div class="stat-tile"><span class="label">Cattle sales</span><span class="value small">' + money(ec.income) + '</span><span class="sub">' + (ec.cullIncome + ec.openIncome > 0.5 ? 'calves ' + money(ec.calfIncome) + ' · culls ' + money(ec.cullIncome + ec.openIncome) : money(ec.income/h.cows) + ' per cow') + '</span></div>' +
-      '<div class="stat-tile"><span class="label">Feed &amp; feeding</span><span class="value small">' + money(ec.costs) + '</span><span class="sub">' + (feedLbs >= 100 ? [t.hay >= 100 ? fmt(t.hay/2000, 1) + ' t hay' : '', t.sup >= 100 ? fmt(t.sup/2000, 1) + ' t supplement' : '', (ec.creepLb || 0) >= 100 ? fmt(ec.creepLb/2000, 1) + ' t creep' : ''].filter(Boolean).join(' · ') + ' + trips' : 'nothing to buy') + '</span></div>' +
+      '<div class="stat-tile"><span class="label">Feed &amp; feeding</span><span class="value small">' + money(ec.costs) + '</span><span class="sub">' + (feedLbs >= 100 ? [t.hay >= 100 ? fmt(t.hay/2000, 1) + ' t hay' : '', t.sup >= 100 ? fmt(t.sup/2000, 1) + ' t supplement' : '', (ec.creepLb || 0) >= 100 ? fmt(ec.creepLb/2000, 1) + ' t creep' : '', (ec.mineralLb || 0) >= 100 ? fmt(ec.mineralLb/2000, 1) + ' t mineral' : ''].filter(Boolean).join(' · ') + ' + trips' : (ec.mineral > 0.5 ? 'mineral only' : 'nothing to buy')) + '</span></div>' +
       '<div class="stat-tile ' + (ec.net >= 0 ? 'good' : 'critical') + '"><span class="label">Sales minus feed</span><span class="value small">' + money(ec.net) + '</span><span class="sub">' + money(ec.net/h.cows) + ' per cow · not profit</span></div>'
       : '';
     $('fc_tiles2').innerHTML = res.hasSupply ?
@@ -796,7 +798,7 @@
     try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); if(mp && +mp.mp_bredCowPrice > 0) v = +mp.mp_bredCowPrice; }catch(e){}
     return v;
   }
-  var DR_DEFAULTS = {cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:202, devCost:900, rate:7, later:0};
+  var DR_DEFAULTS = {cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0};
   function renderDroughtDecision(){
     var h = state.herd, dr = Object.assign({}, DR_DEFAULTS, h.dr || {});
     var cut = function(sup){ return FEED.adjustSupply(sup, dr.cut, +dr.from, dr.months, dr.which); };
