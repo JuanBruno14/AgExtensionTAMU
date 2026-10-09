@@ -62,13 +62,14 @@
         <p class="card-note">Your map is saved automatically in this browser only &mdash; nothing is sent to Texas A&amp;M. To move it to another device or give it to your agent, download a file and open it there.</p>
         <div class="file-actions">
           <button type="button" class="tool-btn" id="importBtn">⬆ Open a file</button>
-          <button type="button" class="tool-btn" id="exportGeoBtn">⬇ GeoJSON</button>
+          <button type="button" class="tool-btn" id="exportGeoBtn" title="The whole ranch: map, herd, feed and decision settings">⬇ Ranch file (GeoJSON)</button>
           <button type="button" class="tool-btn" id="exportKmlBtn">⬇ Google Earth (KML)</button>
           <button type="button" class="tool-btn" id="printBtn">🖨 Print a report</button>
           <button type="button" class="tool-btn primary" id="planBtn">🗒 One-page year plan</button>
         </div>
         <input type="file" id="fileInput" accept=".geojson,.json,.kml,.kmz,.zip" hidden>
         <p class="card-note" style="margin:10px 0 0;">Opens Google Earth files (KML/KMZ), GeoJSON, or a zipped shapefile from your agent or FSA office. The GeoJSON download also keeps your herd, feed and decision settings, so opening it on another device brings back the whole ranch.</p>
+        <p class="ex-row">Example ranches to try or demonstrate with: <button type="button" class="link-btn" data-example="central-texas-1600ac">Central Texas · 1,600 ac · 80 cows</button> · <button type="button" class="link-btn" data-example="rolling-plains-154-cows">Rolling Plains · 154 cows</button></p>
         <p class="notice" id="fileNotice" hidden></p>
         <div class="btn-row" style="padding:14px 0 0;">
           <button type="button" class="tool-btn danger" id="clearBtn">Delete this ranch from this device</button>
@@ -191,6 +192,16 @@
             <div class="input-wrap has-suffix"><input type="number" id="manualCap" min="0" step="1" inputmode="decimal" placeholder="Leave blank to use the soil survey"><span class="suffix">AU</span></div>
             <span class="hint">If you know how many animal units your place carries, enter it; the tool then uses it instead of the soil survey (and scales the feed calendar to match).</span>
           </div>
+          <div class="field" style="grid-column:1 / -1;">
+            <label for="grazeSys">How you graze</label>
+            <select id="grazeSys">
+              <option value="25">Continuous (25%)</option>
+              <option value="30">Rotation, 4–8 pastures (30%)</option>
+              <option value="40">Intensive rotation, many paddocks (40%)</option>
+              <option value="custom">My own number</option>
+            </select>
+            <span class="hint">Continuous: one pasture, or a few moves a year. Rotation: each pasture rested between grazings. Intensive: small paddocks, moves every few days. More pastures and shorter stays waste less grass, so cattle eat a bigger share of what grows (UNL Extension EC127; Smart et al., 2010).</span>
+          </div>
           <div class="field">
             <label for="harvestEff">Harvest efficiency</label>
             <div class="input-wrap has-suffix"><input type="number" id="harvestEff" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
@@ -201,7 +212,7 @@
             <div class="input-wrap has-suffix"><input type="number" id="intakeLb" min="1" step="0.5" inputmode="decimal"><span class="suffix">lb</span></div>
           </div>
         </div>
-        <p class="card-note" style="margin:14px 0 0;">Defaults follow AgriLife Extension's <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering).</p>
+        <p class="card-note" style="margin:14px 0 0;">Defaults follow AgriLife Extension's <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and with continuous grazing about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering). Rotation with rest raises that to about 30%, and intensive rotation to about 40% (University of Nebraska Extension).</p>
       </div>
     </div>
 
@@ -534,6 +545,7 @@
         <div class="dec-panel" id="dec_drought" hidden>
           <p class="card-note" style="margin-top:14px;">A dry year or failed small grains cut the forage your pastures grow. First, four ways through the dry year: keep the calves on the cows and buy feed, wean early and sell, wean early and feed the calves, or sell part of the cows. Then, because selling cows changes the years after, the next 10 years.</p>
           <h3 class="sub-h">1. This year</h3>
+          <div class="dm-suggest" id="dec_drMonitor" hidden></div>
           <div class="field-grid cols-3">
             <div class="field"><label for="dr_cut">Forage lost</label><div class="input-wrap has-suffix"><input type="number" id="dr_cut" data-dr="cut" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
             <div class="field"><label for="dr_from">Starting in</label><select id="dr_from" data-drs="from" data-num="1"></select></div>

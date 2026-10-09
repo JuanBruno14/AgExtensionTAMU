@@ -33,6 +33,7 @@ python3 src/my-ranch/test_portal.py     # home-page "Your ranch" card and shared
 python3 src/my-ranch/test_import.py     # opening a downloaded ranch file (replace or add)
 python3 src/my-ranch/test_supplement.py # protein-only supplementation and cow condition (Vanzandt 2023 check)
 python3 src/my-ranch/test_steps.py      # the four steps, summary strip, save panel (desktop and phone)
+python3 src/my-ranch/test_examples.py   # example ranches (my-ranch/examples), grazing system, Drought Monitor suggestion
 python3 src/herd-tools/test_tools.py    # Herd Calculators
 cd src/my-ranch && node valbc.js        # nutrition vs. BCNRM
 ```

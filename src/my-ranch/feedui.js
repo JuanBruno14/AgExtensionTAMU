@@ -799,7 +799,44 @@
     return v;
   }
   var DR_DEFAULTS = {cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0};
+  /* Drought Monitor -> a starting point for "forage lost": the soil survey's own unfavorable year
+     (how much less these soils grow in a dry year) scaled by this week's category. A rough start, not a forecast. */
+  var DM_SCALE = [0.25, 0.5, 1, 1.5, 2];
+  function droughtSuggestion(){
+    var d = state.drought;
+    if(!d || d.status !== 'ok') return null;
+    var nor = 0, low = 0;
+    state.pastures.forEach(function(p){
+      if(!isGrazed(p) || p.mode !== 'soil' || !p.soil || p.soil.status !== 'ok' || !(p.soil.normal > 0) || p.soil.low == null) return;
+      var fa = forageAcres(p); nor += fa*p.soil.normal; low += fa*p.soil.low;
+    });
+    var unfav = nor > 0 ? Math.max(0, 1 - low/nor) : null;
+    if(d.dm < 0) return {dm:-1, unfav:unfav, pct:null};
+    var lvl = Math.min(d.dm, 4);
+    return {dm:lvl, unfav:unfav, pct: unfav != null ? Math.max(5, Math.min(90, Math.round(unfav*DM_SCALE[lvl]*100))) : null, date:d.date};
+  }
+  function renderDroughtMonitor(){
+    var el = $('dec_drMonitor'); if(!el) return;
+    var sg = droughtSuggestion();
+    if(!sg){ el.hidden = true; el.innerHTML = ''; return; }
+    el.hidden = false;
+    var cur = (state.herd.dr || {}).cut;
+    if(sg.dm < 0){ el.innerHTML = '<strong>Drought Monitor this week: no drought mapped</strong> at your ranch. Use the inputs below to test a dry year anyway.'; return; }
+    var L = DM_LABELS[sg.dm];
+    var html = '<span class="dot" style="background:' + L.color + ';"></span><strong>Drought Monitor this week: ' + L.code + ' · ' + esc(L.name) + '</strong> at your ranch. ';
+    if(sg.pct != null){
+      html += 'Your soils grow about <strong>' + fmt(sg.unfav*100) + '% less</strong> in an unfavorable year (soil survey). ' +
+        (sg.dm === 2 ? 'A ' + L.code + ' drought is about that dry' : sg.dm < 2 ? 'A ' + L.code + ' is milder than that' : 'A ' + L.code + ' drought is drier than that') +
+        ', so a starting point is <strong>' + sg.pct + '% of forage lost</strong> from this month. ' +
+        (cur === sg.pct && +(state.herd.dr || {}).from === new Date().getMonth() ? '<em>In use below.</em>' : '<button type="button" class="tool-btn small" id="dr_useDm">Use ' + sg.pct + '% from ' + FEED.MONTHS[new Date().getMonth()] + '</button>') +
+        ' <span class="hint">A rough start, not a forecast: change it to what you see in your pastures.</span>';
+    } else html += 'Enter your own estimate of forage lost below (a suggestion needs rangeland pastures with soil-survey forage).';
+    el.innerHTML = html;
+    var b = $('dr_useDm');
+    if(b) b.addEventListener('click', function(){ state.herd.dr = Object.assign({}, DR_DEFAULTS, state.herd.dr || {}, {cut:sg.pct, from:new Date().getMonth()}); bindFeedValues(); save(); scheduleDecisions(); });
+  }
   function renderDroughtDecision(){
+    renderDroughtMonitor();
     var h = state.herd, dr = Object.assign({}, DR_DEFAULTS, h.dr || {});
     var cut = function(sup){ return FEED.adjustSupply(sup, dr.cut, +dr.from, dr.months, dr.which); };
     var base = feedOptions(), normalAge = Math.round(base.refWeanAge), cows = h.cows, bulls = base.bulls;

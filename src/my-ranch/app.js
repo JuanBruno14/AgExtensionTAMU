@@ -811,7 +811,7 @@
     }).catch(function(){
       state.drought = {status:'error', lat:c.lat, lng:c.lng, at:Date.now()};
     }).then(function(){
-      droughtBusy = false; renderSummary(); renderBudget(); updateStrip(); save();
+      droughtBusy = false; renderSummary(); renderBudget(); updateStrip(); if(typeof renderDroughtMonitor === 'function') renderDroughtMonitor(); save();
     });
   }
   function droughtHtml(){
@@ -976,6 +976,7 @@
         '<li><strong>Draw each pasture</strong> by clicking its corners along the fence.</li>' +
         '<li><strong>Check the land use</strong> for each one — the soil survey fills in rangeland forage for you.</li>' +
         '<li><strong>Enter your cows and bulls</strong> to see if the ranch can carry them and when you’ll need hay.</li></ol>' +
+        '<p class="ex-row">Just looking? Open an example ranch: <button type="button" class="link-btn" data-example="central-texas-1600ac">Central Texas · 1,600 ac · 80 cows</button> · <button type="button" class="link-btn" data-example="rolling-plains-154-cows">Rolling Plains · 154 cows</button></p>' +
         '<div class="save-status" id="saveStatus"></div>';
       renderSaveStatus();
       return;
@@ -1240,7 +1241,22 @@
   function handleFile(file){
     if(!file) return;
     showNotice('Reading ' + file.name + '…', 'good');
-    parseFile(file).then(function(obj){
+    parseFile(file).then(function(obj){ applyObject(obj, file.name); }).catch(function(err){
+      showNotice((err && err.message) || 'That file couldn’t be opened.', 'bad');
+    });
+  }
+  var EXAMPLES = {'central-texas-1600ac':'Central Texas example', 'rolling-plains-154-cows':'Rolling Plains example'};
+  function loadExample(slug){
+    if(!EXAMPLES[slug]) return;
+    showFilePanel(); showNotice('Opening the ' + EXAMPLES[slug] + '…', 'good');
+    fetch('examples/' + slug + '.geojson').then(function(r){ if(!r.ok) throw new Error('The example ranch couldn’t be loaded. Check your internet connection.'); return r.json(); })
+      .then(function(obj){ applyObject(obj, 'the ' + EXAMPLES[slug]); })
+      .catch(function(err){ showNotice((err && err.message) || 'The example ranch couldn’t be loaded.', 'bad'); });
+  }
+  function showFilePanel(){ var fp = $('filePanel'), b = $('stripSaveBtn'); if(fp && fp.hidden){ fp.hidden = false; if(b) b.setAttribute('aria-expanded', 'true'); } }
+  function applyObject(obj, label){
+    (function(){
+      var file = {name:label};
       var whole = !!(obj && !Array.isArray(obj) && obj.my_ranch && obj.my_ranch.herd), useHerd = whole;
       if(whole && (state.pastures.length || state.points.length || state.zones.length || state.herd.cows > 0)){
         useHerd = confirm('“' + file.name + '” is a complete My Ranch file' + (obj.my_ranch.name ? ' (' + obj.my_ranch.name + ')' : '') + '.\n\nOK: replace the ranch on this device with it (pastures, herd and settings).\nCancel: keep your ranch and only add its pastures.');
@@ -1258,9 +1274,7 @@
       fitRanch();
       refreshDroughtIfMoved(true);
       showNotice((r.herd ? 'Loaded ' + (state.name ? '“' + state.name + '”' : 'the ranch') + ' — ' : 'Added ') + r.pastures + ' pasture' + (r.pastures === 1 ? '' : 's') + (r.points ? ' and ' + r.points + ' point' + (r.points === 1 ? '' : 's') : '') + (r.herd ? ', herd and feed settings' : '') + ' from ' + file.name + '.' + (r.skipped ? ' Skipped ' + r.skipped + ' line or other shape' + (r.skipped === 1 ? '' : 's') + '.' : ''), 'good');
-    }).catch(function(err){
-      showNotice((err && err.message) || 'That file couldn’t be opened.', 'bad');
-    });
+    })();
   }
   function toGeoJSON(){
     var feats = state.pastures.map(function(p){
@@ -1386,7 +1400,9 @@
       $(f[0]).addEventListener('input', function(){ var v = num(this.value); if(v != null && v >= f[2] && v <= f[3]){ state.herd[f[1]] = v; renderHerdNote(); renderAll(false); } });
       $(f[0]).addEventListener('blur', function(){ this.value = state.herd[f[1]]; });
     });
-    $('harvestEff').addEventListener('input', function(){ var v = num(this.value); if(v != null && v > 0 && v <= 100){ state.settings.harvestEff = v; renderAll(false); } });
+    $('harvestEff').addEventListener('input', function(){ var v = num(this.value); if(v != null && v > 0 && v <= 100){ state.settings.harvestEff = v; syncGrazeSys(); renderAll(false); } });
+    $('grazeSys').addEventListener('change', function(){ if(this.value !== 'custom'){ state.settings.harvestEff = +this.value; $('harvestEff').value = state.settings.harvestEff; renderAll(false); } else $('harvestEff').focus(); });
+    syncGrazeSys();
     $('intakeLb').addEventListener('input', function(){ var v = num(this.value); if(v != null && v > 0){ state.settings.intakeLb = v; renderAll(false); } });
     ['harvestEff','intakeLb'].forEach(function(id){
       $(id).addEventListener('blur', function(){ if(!(num(this.value) > 0)) this.value = state.settings[id]; });
@@ -1491,6 +1507,7 @@
     $('locateBtn').addEventListener('click', locate);
 
     $('importBtn').addEventListener('click', function(){ $('fileInput').click(); });
+    document.addEventListener('click', function(e){ var b = e.target.closest && e.target.closest('[data-example]'); if(b){ e.preventDefault(); loadExample(b.getAttribute('data-example')); } });
     $('fileInput').addEventListener('change', function(){ handleFile(this.files[0]); this.value = ''; });
     $('exportGeoBtn').addEventListener('click', function(){
       if(!state.pastures.length && !state.points.length){ showNotice('Draw a pasture first — there’s nothing to download yet.', 'bad'); return; }
@@ -1527,12 +1544,13 @@
     state = blankState(); state.view = view;
     bindSettingsValues();
   }
+  function syncGrazeSys(){ var g = $('grazeSys'); if(g) g.value = [25, 30, 40].indexOf(+state.settings.harvestEff) >= 0 ? String(+state.settings.harvestEff) : 'custom'; }
   function bindSettingsValues(){
     $('ranchName').value = state.name || ''; bindHerdValues();
     $('manualCap').value = state.settings.manualCap > 0 ? state.settings.manualCap : '';
     ['la_poor','la_fair','la_excellent'].forEach(function(id){ $(id).value = state.settings.cond[id.slice(3)]; });
     $('la_brush').value = state.settings.zoneF.brush; $('la_bottom').value = state.settings.zoneF.bottom;
-    $('harvestEff').value = state.settings.harvestEff; $('intakeLb').value = state.settings.intakeLb;
+    $('harvestEff').value = state.settings.harvestEff; $('intakeLb').value = state.settings.intakeLb; syncGrazeSys();
   }
 
 

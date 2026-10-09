@@ -1,0 +1,53 @@
+import os
+HERE=os.path.dirname(os.path.realpath(__file__))
+__file__=os.path.join(HERE,'test_ranch.py')
+exec(open(__file__).read().split('with sync_playwright() as pw:')[0].replace('PORT=8765','PORT=8781'))
+# example ranches, grazing system -> harvest efficiency, Drought Monitor -> forage lost
+POLY="{type:'Polygon',coordinates:[[[-99.30,33.10],[-99.27,33.10],[-99.27,33.125],[-99.30,33.125],[-99.30,33.10]]]}"
+with sync_playwright() as pw:
+    b=pw.chromium.launch(); errs=[]
+    def page():
+        c=b.new_context(viewport={'width':1360,'height':1300}); c.route('**/*', route); p=c.new_page(); p.on('pageerror', lambda e: errs.append(str(e)))
+        p.on('dialog', lambda d: d.accept())
+        p.goto(f'http://127.0.0.1:{PORT}/my-ranch/index.html'); p.wait_for_timeout(700); return p
+    pg=page()
+    check('empty ranch offers the examples', pg.locator('#summaryBody [data-example]').count()==2)
+    pg.click('#summaryBody [data-example="central-texas-1600ac"]'); pg.wait_for_timeout(1800)
+    st=pg.evaluate("MyRanch.state()")
+    check('central Texas example loads 4 pastures, 80 cows', len(st['pastures'])==4 and st['herd']['cows']==80 and st['name'].startswith('Example'), (len(st['pastures']), st['herd']['cows']))
+    check('example acres ~1,600', 1580 < pg.evaluate("MyRanch.totals().acres") < 1620)
+    check('example: no hay selling at weaning', pg.evaluate("MyRanch.feed().totals.hay") < 100)
+    hk=pg.evaluate("MyRanch.netOf({weanPeriod:165}).totals.hay/2000")
+    check('example: keeping calves 165 days needs ~89 t of hay (SAEA case)', 85 < hk < 93, round(hk,1))
+    check('file panel notice after example', 'loaded' in pg.inner_text('#fileNotice').lower())
+    # second example replaces the first (dialog accepted)
+    pg.click('#fileCard [data-example="rolling-plains-154-cows"]'); pg.wait_for_timeout(1800)
+    st=pg.evaluate("MyRanch.state()")
+    check('rolling plains example replaces the ranch', len(st['pastures'])==3 and st['herd']['cows']==154 and st['herd']['region']=='rp', (len(st['pastures']), st['herd']['cows']))
+    check('ranch file button says it keeps the whole ranch', 'ranch file' in pg.inner_text('#exportGeoBtn').lower())
+    # grazing system
+    pg.evaluate("MyRanch.go('ranch')"); pg.wait_for_timeout(300)
+    check('continuous grazing = 25% by default', pg.input_value('#grazeSys')=='25' and pg.input_value('#harvestEff')=='25')
+    cap25=pg.evaluate("MyRanch.totals().cap")
+    pg.select_option('#grazeSys','40'); pg.wait_for_timeout(500)
+    cap40=pg.evaluate("MyRanch.totals().cap")
+    check('intensive rotation sets 40% and raises capacity', pg.input_value('#harvestEff')=='40' and abs(cap40/cap25 - 1.6) < 0.01, (cap25, cap40))
+    pg.fill('#harvestEff','33'); pg.wait_for_timeout(400)
+    check('typing your own number shows "My own number"', pg.input_value('#grazeSys')=='custom')
+    pg.fill('#harvestEff','30'); pg.wait_for_timeout(400)
+    check('30% matches rotation', pg.input_value('#grazeSys')=='30')
+    # Drought Monitor suggestion (mock: D2; soils 35% lower in an unfavorable year)
+    p2=page()
+    p2.evaluate("MyRanch.addPasture(%s,{name:'Range'})" % POLY); p2.wait_for_timeout(2500)
+    p2.evaluate("MyRanch.drought(true)"); p2.wait_for_timeout(1200)
+    p2.evaluate("MyRanch.go('herd')"); p2.fill('#hd_cows','60'); p2.wait_for_timeout(900)
+    p2.evaluate("MyRanch.go('decide')"); p2.click('.seg-btn[data-dec="drought"]'); p2.wait_for_timeout(1500)
+    t=p2.inner_text('#dec_drMonitor')
+    check('drought tab shows this week\'s Drought Monitor', p2.is_visible('#dec_drMonitor') and 'D2' in t, t)
+    check('suggests forage lost from the soil survey unfavorable year', '36% of forage lost' in t, t)
+    p2.click('#dr_useDm'); p2.wait_for_timeout(1200)
+    import datetime
+    check('use button sets forage lost and start month', p2.input_value('#dr_cut')=='36' and p2.evaluate("MyRanch.state().herd.dr.from")==datetime.date.today().month-1 and 'in use' in p2.inner_text('#dec_drMonitor').lower())
+    check('no JS errors', not errs, errs)
+    b.close()
+print('\n%d failures' % len(fails)); sys.exit(1 if fails else 0)
