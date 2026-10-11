@@ -470,7 +470,12 @@
     el.innerHTML = s;
     var unit = nut === 'tdn' ? 'lb TDN' : 'lb crude protein';
     if(!interactive) return;
-    el.setAttribute('aria-label', 'Whole-herd ' + unit + ' per day by month: needs of cows, bulls and calves compared with what pasture supplies. The table below has the same numbers.');
+    var dU = nut === 'tdn' ? 0 : 1;
+    el.removeAttribute('role'); el.removeAttribute('aria-label');
+    a11yHits(el, 'Whole-herd ' + unit + ' per day by month: needs of cows, bulls and calves compared with what pasture supplies. The table below has the same numbers.', function(m){
+      var r = rows[m];
+      return r.x.name + ': herd needs ' + fmt(r.total, dU) + ' ' + unit + ' a day' + (res.hasSupply ? ', pasture gives ' + fmt(r.supply, dU) : '');
+    });
     $('fc_legend').innerHTML = ser.map(function(se){ return '<span><i class="sw" style="background:' + se.color + '"></i>' + se.label + '</span>'; }).join('') +
       (res.hasSupply ? '<span><i class="ln"></i>From pasture</span>' : '') + '<span style="color:var(--ink-muted);">' + unit + ' per day, whole herd</span>';
     var tip = feedTip();
@@ -488,6 +493,20 @@
       h.addEventListener('mouseenter', show); h.addEventListener('focus', show);
       h.addEventListener('mouseleave', function(){ tip.classList.remove('show'); }); h.addEventListener('blur', function(){ tip.classList.remove('show'); });
     });
+  }
+  /* Chart month targets stay keyboard-focusable for their tooltips; give each one the tooltip's words as its name
+     and hide the drawing itself from screen readers (axes, bars and lines would only be noise). */
+  function htmlText(h){
+    var d = document.createElement('div'); d.innerHTML = h;
+    return Array.prototype.map.call(d.childNodes, function(n){ return n.textContent.trim(); }).filter(Boolean).join('. ');
+  }
+  function a11yHits(el, groupLabel, labelFor){
+    var svg = el.querySelector('svg'); if(!svg) return;
+    svg.removeAttribute('aria-hidden');
+    svg.setAttribute('role', 'group');
+    svg.setAttribute('aria-label', groupLabel);
+    Array.prototype.forEach.call(svg.children, function(n){ if(!n.classList.contains('hit')) n.setAttribute('aria-hidden', 'true'); });
+    svg.querySelectorAll('.hit').forEach(function(h){ h.setAttribute('role', 'img'); h.setAttribute('aria-label', labelFor(+h.getAttribute('data-m'))); });
   }
   function feedTip(){
     var t = $('fcTooltip');
@@ -686,6 +705,7 @@
     });
     sv += '</svg>';
     el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span style="color:var(--ink-muted);">' + o.legend + '</span>' + (o.cur >= 0 ? '<span><i class="sw" style="background:var(--dec-muted);border-radius:50%;box-shadow:0 0 0 2px var(--ink);"></i>Your season</span>' : '') + '<span><i class="sw" style="background:var(--accent);border-radius:50%;"></i>Best</span></div>' + sv;
+    a11yHits(el, htmlText(o.legend), function(m){ return htmlText(o.tip(m)); });
     var tip = feedTip();
     el.querySelectorAll('.hit').forEach(function(hh){
       function show(){ var b = hh.getBoundingClientRect(); tip.innerHTML = o.tip(+hh.getAttribute('data-m')); tip.style.left = (b.left + b.width/2) + 'px'; tip.style.top = (b.top + 10) + 'px'; tip.classList.add('show'); }
@@ -742,6 +762,10 @@
       });
       sv += '</svg>';
       el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span style="color:var(--ink-muted);">% of the herd’s energy and protein that grass covers in the 4 months after calving starts · calving from the 15th</span>' + (curM >= 0 ? '<span><i class="sw" style="background:var(--dec-muted);box-shadow:0 0 0 2px var(--ink);"></i>Your season</span>' : '') + '<span><i class="sw" style="background:var(--accent);"></i>Best</span></div>' + sv;
+      a11yHits(el, 'Share of the herd’s energy and protein that grass covers in the 4 months after calving starts, by calving month', function(m){
+        var r = rows[m];
+        return 'Calving from ' + moStr(r.m) + ': grass covers ' + fmt(r.postCov*100) + '% in ' + FEED.MONTHS[r.postMonths[0]] + '–' + FEED.MONTHS[r.postMonths[3]] + ', ' + fmt(r.postFeed) + ' lb hay and supplement per cow those months';
+      });
       var tip = feedTip();
       el.querySelectorAll('.hit').forEach(function(hh){
         function show(){ var r = rows[+hh.getAttribute('data-m')], b = hh.getBoundingClientRect();

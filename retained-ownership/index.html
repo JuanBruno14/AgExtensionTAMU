@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Texas A&amp;M AgriLife Extension - Decision Making</title>
+<title>Sell or Keep to Upgrade · Decision Making · Texas A&amp;M AgriLife Extension</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap">
@@ -1523,12 +1523,24 @@
   });
 
   /* ---------------- Tab switching ---------------- */
+  /* Expose each set of tabs to assistive tech: which tab is selected, and which panel it shows. */
+  function ariaTabs(buttons, panelIdFor){
+    if(buttons[0] && buttons[0].parentElement) buttons[0].parentElement.setAttribute('role', 'tablist');
+    buttons.forEach(function(b){
+      var panel = document.getElementById(panelIdFor(b));
+      if(!b.id) b.id = 'tab-' + panelIdFor(b);
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-selected', b.classList.contains('active') ? 'true' : 'false');
+      if(panel){ b.setAttribute('aria-controls', panel.id); panel.setAttribute('role', 'tabpanel'); panel.setAttribute('aria-labelledby', b.id); }
+    });
+  }
   function initTabs(){
     var buttons = Array.prototype.slice.call(document.querySelectorAll('.tab-btn'));
+    ariaTabs(buttons, function(b){ return 'panel-' + b.dataset.tab; });
     buttons.forEach(function(btn){
       btn.addEventListener('click', function(){
         var tab = btn.dataset.tab;
-        buttons.forEach(function(b){ b.classList.toggle('active', b === btn); });
+        buttons.forEach(function(b){ b.classList.toggle('active', b === btn); b.setAttribute('aria-selected', b === btn ? 'true' : 'false'); });
         document.querySelectorAll('.tool-panel').forEach(function(panel){
           panel.hidden = (panel.id !== 'panel-' + tab);
         });
@@ -1547,10 +1559,11 @@
   /* ---------------- Sub-tab switching (within Stockers) ---------------- */
   function initSubTabs(){
     var buttons = Array.prototype.slice.call(document.querySelectorAll('.subtab-btn'));
+    ariaTabs(buttons, function(b){ return 'subpanel-' + b.dataset.subtab; });
     buttons.forEach(function(btn){
       btn.addEventListener('click', function(){
         var sub = btn.dataset.subtab;
-        buttons.forEach(function(b){ b.classList.toggle('active', b === btn); });
+        buttons.forEach(function(b){ b.classList.toggle('active', b === btn); b.setAttribute('aria-selected', b === btn ? 'true' : 'false'); });
         document.querySelectorAll('.subtool-panel').forEach(function(panel){
           panel.hidden = (panel.dataset.subtab !== sub);
         });
@@ -2004,5 +2017,6 @@
 })();
 </script>
 <script src="../jim/jim.js" defer></script>
+<script src="../brand/a11y-scroll.js" defer></script>
 </body>
 </html>

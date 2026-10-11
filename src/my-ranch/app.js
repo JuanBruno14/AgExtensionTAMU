@@ -588,6 +588,56 @@
     }
     return p;
   }
+  /* Keyboard path for pastures: a square of the typed acreage, placed east of the ranch (or at the map centre),
+     so every later step (soil, capacity, feed calendar) works the same as for a drawn pasture. */
+  function squareOfAcres(lat, lng, acres){
+    var side = Math.sqrt(acres * ACRE_M2), k = Math.PI/180;
+    function ring(f){
+      var dLat = side*f/111320/2, dLng = side*f/(111320*Math.cos(lat*k))/2;
+      return [[lng - dLng, lat - dLat], [lng + dLng, lat - dLat], [lng + dLng, lat + dLat], [lng - dLng, lat + dLat], [lng - dLng, lat - dLat]];
+    }
+    var g = {type:'Polygon', coordinates:[ring(1)]};
+    g.coordinates = [ring(Math.sqrt(acres/(polygonAcres(g) || acres)))];
+    return g;
+  }
+  function typedPastureCenter(acres){
+    var side = Math.sqrt(acres * ACRE_M2), k = Math.PI/180;
+    if(state.pastures.length){
+      var maxLat = -90, maxLng = -180;
+      state.pastures.forEach(function(p){ p.geometry.coordinates[0].forEach(function(c){ if(c[1] > maxLat) maxLat = c[1]; if(c[0] > maxLng) maxLng = c[0]; }); });
+      var lat = maxLat - side/111320/2, mPerDeg = 111320*Math.cos(lat*k);
+      return {lat:lat, lng:maxLng + (Math.max(60, side*0.15) + side/2)/mPerDeg};
+    }
+    if(map){ var c = map.getCenter(); return {lat:c.lat, lng:c.lng}; }
+    if(state.view) return {lat:state.view.lat, lng:state.view.lng};
+    return {lat:31.2, lng:-99.3};
+  }
+  function bindTyped(){
+    var sel = $('tp_type'), acresIn = $('tp_acres'), status = $('tp_status');
+    if(!sel || !acresIn) return;
+    sel.innerHTML = Object.keys(TYPES).map(function(k){ return '<option value="' + k + '">' + esc(TYPES[k].label) + '</option>'; }).join('');
+    $('tp_add').addEventListener('click', function(){
+      var acres = num(acresIn.value);
+      if(!(acres > 0) || acres > 200000){
+        acresIn.setAttribute('aria-invalid', 'true');
+        status.className = 'tp-status bad';
+        status.textContent = 'Type the pasture’s size in acres (a number above 0).';
+        acresIn.focus();
+        return;
+      }
+      acresIn.removeAttribute('aria-invalid');
+      var ctr = typedPastureCenter(acres);
+      var name = $('tp_name').value.trim();
+      var p = addPasture(squareOfAcres(ctr.lat, ctr.lng, acres), {name:name || null, type:sel.value}, false);
+      if(!p) return;
+      fitRanch(); save();
+      status.className = 'tp-status';
+      status.textContent = 'Added ' + p.name + ', ' + fmt(p.acres, p.acres < 10 ? 1 : 0) + ' ac. It’s in the pasture list below.';
+      $('tp_name').value = ''; acresIn.value = '';
+    });
+    acresIn.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); $('tp_add').click(); } });
+  }
+
   /* acres of pasture p that lie inside other pastures */
   function overlaps(p){
     var out = [];
@@ -888,14 +938,14 @@
   function condSelect(p){
     if(!isGrazed(p) || p.mode !== 'soil') return '';
     var c = state.settings.cond;
-    return '<div class="p-cond"><label>Range condition</label><select class="p-condition">' + Object.keys(CONDITIONS).map(function(k){
+    return '<div class="p-cond"><label>Range condition</label><select class="p-condition" aria-label="Range condition, ' + esc(p.name) + '">' + Object.keys(CONDITIONS).map(function(k){
       return '<option value="' + k + '"' + ((p.condition || 'fair') === k ? ' selected' : '') + '>' + CONDITIONS[k] + ' condition (' + c[k] + '%)</option>'; }).join('') + '</select></div>';
   }
 
   function renderPastures(){
     var list = $('pastureList');
     if(!state.pastures.length){
-      list.innerHTML = '<p class="narrative" style="margin:0;">No pastures yet. Draw one on the map above, or open a Google Earth / GeoJSON / shapefile under <strong>Save, share &amp; print</strong>.</p>';
+      list.innerHTML = '<p class="narrative" style="margin:0;">No pastures yet. Draw one on the map above, add one by acres just above this list, or open a Google Earth / GeoJSON / shapefile under <strong>Save, share &amp; print</strong>.</p>';
       return;
     }
     list.innerHTML = state.pastures.map(function(p){
@@ -909,9 +959,9 @@
           '<input type="text" class="p-name" value="' + esc(p.name) + '" maxlength="60" aria-label="Pasture name">' +
           '<span class="p-acres">' + fmt(p.acres, p.acres < 10 ? 1 : 0) + ' ac</span></div>' +
         '<div class="p-grid">' +
-          '<div><label>Land use</label><select class="p-type">' + typeOpts + '</select></div>' +
+          '<div><label>Land use</label><select class="p-type" aria-label="Land use, ' + esc(p.name) + '">' + typeOpts + '</select></div>' +
           '<div><label>Forage estimate</label>' + (grazed ?
-            '<select class="p-mode"><option value="soil"' + (p.mode === 'soil' ? ' selected' : '') + '>Soil survey</option><option value="manual"' + (p.mode === 'manual' ? ' selected' : '') + '>My estimate</option></select>' +
+            '<select class="p-mode" aria-label="Forage estimate, ' + esc(p.name) + '"><option value="soil"' + (p.mode === 'soil' ? ' selected' : '') + '>Soil survey</option><option value="manual"' + (p.mode === 'manual' ? ' selected' : '') + '>My estimate</option></select>' +
             condSelect(p) + (p.mode === 'manual' ? '<div class="input-wrap has-suffix" style="margin-top:6px;"><input type="number" class="p-manual" min="0" step="50" inputmode="decimal" placeholder="lb per acre" value="' + (p.manual != null ? p.manual : '') + '" aria-label="Forage per acre per year"><span class="suffix">lb/ac/yr</span></div>' : '')
             : '<div class="sub" style="font-size:12.5px;color:var(--ink-muted);padding-top:8px;">—</div>') + '</div>' +
           '<div class="p-cap">' + capBlock(p) + '</div>' +
@@ -1632,6 +1682,7 @@
     initThemeToggle();
     bindSettings();
     bindList();
+    bindTyped();
     bindFeed();
     var ok = initMap();
     bindTools();

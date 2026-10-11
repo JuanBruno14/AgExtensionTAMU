@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Texas A&amp;M AgriLife Extension - Decision Making</title>
+<title>Weaned Calf to Bred Heifer Cost · Decision Making · Texas A&amp;M AgriLife Extension</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap">
@@ -516,16 +516,16 @@
         <p class="card-note">Days on each phase &times; a per-day cost, for the whole starting head count. "Other" is 0 by default &mdash; use it for any extra phase (creep feed, weaning pen, etc.).</p>
         <div class="field-grid cols-3">
           <div class="field"><label for="rh_preconDays">Preconditioning</label><div class="input-wrap has-suffix"><input type="number" id="rh_preconDays" value="45" min="0"><span class="suffix">days</span></div></div>
-          <div class="field"><label for="rh_preconRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_preconRate" value="1.10" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"><label for="rh_preconRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_preconRate" aria-label="Preconditioning cost per day ($/day)" value="1.10" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
           <div class="field"></div>
           <div class="field"><label for="rh_winterDays">Winter</label><div class="input-wrap has-suffix"><input type="number" id="rh_winterDays" value="90" min="0"><span class="suffix">days</span></div></div>
-          <div class="field"><label for="rh_winterRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_winterRate" value="1.00" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"><label for="rh_winterRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_winterRate" aria-label="Winter cost per day ($/day)" value="1.00" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
           <div class="field"></div>
           <div class="field"><label for="rh_springDays">Spring &amp; summer</label><div class="input-wrap has-suffix"><input type="number" id="rh_springDays" value="176" min="0"><span class="suffix">days</span></div></div>
-          <div class="field"><label for="rh_springRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_springRate" value="0.60" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"><label for="rh_springRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_springRate" aria-label="Spring &amp; summer cost per day ($/day)" value="0.60" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
           <div class="field"></div>
           <div class="field"><label for="rh_otherGrazeDays">Other</label><div class="input-wrap has-suffix"><input type="number" id="rh_otherGrazeDays" value="0" min="0"><span class="suffix">days</span></div></div>
-          <div class="field"><label for="rh_otherGrazeRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_otherGrazeRate" value="0" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
+          <div class="field"><label for="rh_otherGrazeRate">&nbsp;</label><div class="input-wrap has-suffix"><input type="number" id="rh_otherGrazeRate" aria-label="Other phase cost per day ($/day)" value="0" min="0" step="0.05"><span class="suffix">$/day</span></div></div>
           <div class="field"></div>
         </div>
         <p class="derived-note" id="rh_daysFedNote">&mdash;</p>
