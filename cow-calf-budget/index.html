@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Texas A&amp;M AgriLife Extension - Decision Making</title>
+<title>Bull Investment &amp; Cow-Calf Budget · Decision Making · Texas A&amp;M AgriLife Extension</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap">
@@ -258,6 +258,7 @@
   .stackbar{display:flex;width:100%;height:26px;border-radius:6px;overflow:hidden;background:var(--surface-sunken);gap:2px;}
   .stackbar .seg{height:100%;position:relative;cursor:pointer;outline:none;min-width:3px;transition:filter 0.12s ease;}
   .stackbar .seg:hover,.stackbar .seg:focus-visible{filter:brightness(1.08) saturate(1.05);}
+  .stackbar .seg:focus-visible{box-shadow:inset 0 0 0 2px #fff, inset 0 0 0 4px var(--focus);}
   .stackbar .seg:first-child{border-top-left-radius:5px;border-bottom-left-radius:5px;}
   .stackbar .seg:last-child{border-top-right-radius:5px;border-bottom-right-radius:5px;}
   .legend-rows{margin-top:14px;display:flex;flex-direction:column;gap:7px;}
@@ -1392,6 +1393,9 @@
     el.innerHTML = '';
     legendEl.innerHTML = '';
     totalEl.textContent = money(total) + (suffix || ' / bull / yr');
+    var caption = el.previousElementSibling && el.previousElementSibling.querySelector('span');
+    el.setAttribute('role', 'group');
+    if(caption) el.setAttribute('aria-label', caption.textContent);
     segments.forEach(function(seg, i){
       var pct = total>0 ? (seg.value/total*100) : 0;
       var s = document.createElement('div');
@@ -1399,6 +1403,8 @@
       s.style.width = Math.max(pct,0) + '%';
       s.style.background = swatches[i % swatches.length];
       s.tabIndex = 0;
+      s.setAttribute('role', 'img');
+      s.setAttribute('aria-label', seg.label + ': ' + money(seg.value) + ' (' + pct.toFixed(1) + '%)');
       s.addEventListener('mouseenter', function(e){ showTip(e, seg.label, money(seg.value)); });
       s.addEventListener('mousemove', function(e){ moveTip(e); });
       s.addEventListener('mouseleave', hideTip);
@@ -2430,5 +2436,6 @@
   }
 })();
 </script>
+<script src="../brand/a11y-scroll.js" defer></script>
 </body>
 </html>

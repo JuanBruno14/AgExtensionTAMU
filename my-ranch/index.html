@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Texas A&amp;M AgriLife Extension - Decision Making</title>
+<title>My Ranch · Decision Making · Texas A&amp;M AgriLife Extension</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap">
@@ -531,6 +531,7 @@
   .fc-chart .supply-dot{fill:var(--ink);stroke:var(--surface);stroke-width:2;}
   .fc-chart .hit{fill:transparent;cursor:crosshair;}
   .fc-chart .hit:hover, .fc-chart .hit:focus{fill:color-mix(in srgb, var(--ink) 6%, transparent);outline:none;}
+  .fc-chart .hit:focus-visible{stroke:var(--focus);stroke-width:2;}
   .fc-chart .short-mark{fill:var(--critical-700);}
   .fc-short{font-size:13px;color:var(--ink-secondary);margin:10px 0 0;line-height:1.5;}
   .fc-short strong{color:var(--ink);}
@@ -788,6 +789,14 @@
 .dm-suggest .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:baseline;}
 .dm-suggest .tool-btn.small{margin-left:4px;}
 .dm-suggest .hint{display:block;margin-top:4px;color:var(--ink-muted);font-size:12.5px;}
+  /* add a pasture by acres (keyboard path, no map) */
+  .p-typed{margin:0 0 14px;border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface);}
+  .p-typed > summary{cursor:pointer;font-weight:600;color:var(--accent);}
+  .p-typed-body{margin-top:10px;}
+  .p-typed-grid{display:grid;grid-template-columns:2fr 1fr 2fr;gap:10px;margin-bottom:10px;}
+  @media (max-width:640px){ .p-typed-grid{grid-template-columns:1fr;} }
+  .tp-status{margin:8px 0 0;font-size:12.5px;color:var(--good-700);}
+  .tp-status.bad{color:var(--critical-700);}
 </style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
 </head>
@@ -924,6 +933,19 @@
       </div>
       <div class="card-body">
         <p class="card-note">For rangeland, forage comes from the USDA-NRCS soil survey: its estimate of total plant growth per acre in a normal year, weighted by the soils inside each pasture. Improved pasture, wheat and hay meadows usually have no soil-survey number &mdash; enter your own estimate (your county agent can help).</p>
+        <details class="p-typed" id="typedPasture">
+          <summary>Add a pasture by acres, without the map</summary>
+          <div class="p-typed-body">
+            <div class="p-typed-grid">
+              <div class="field"><label for="tp_name">Name</label><input type="text" id="tp_name" maxlength="60" placeholder="e.g. North trap"></div>
+              <div class="field"><label for="tp_acres">Acres</label><div class="input-wrap has-suffix"><input type="number" id="tp_acres" min="1" step="1" inputmode="decimal" aria-describedby="tp_status"><span class="suffix">ac</span></div></div>
+              <div class="field"><label for="tp_type">Land use</label><select id="tp_type"></select></div>
+            </div>
+            <p class="card-note" style="margin:0 0 10px;">It appears on the map as a square next to your other pastures, or where the map is centered, so search for your ranch first. For rangeland, forage comes from the soils under that square; if that isn&rsquo;t your land, set the pasture&rsquo;s forage estimate to <strong>My estimate</strong>.</p>
+            <button type="button" class="tool-btn primary" id="tp_add">Add pasture</button>
+            <p class="tp-status" id="tp_status" role="status"></p>
+          </div>
+        </details>
         <div class="pasture-list" id="pastureList"></div>
         <h3 class="sub-h">Ponds, brush &amp; bottomland</h3>
         <div class="point-list" id="zoneList"></div>
@@ -1391,6 +1413,7 @@
   Forage estimates: USDA-NRCS Soil Survey (SSURGO) through Soil Data Access, &ldquo;range production, normal year&rdquo; weighted by soil area and component share. Drought status: U.S. Drought Monitor (National Drought Mitigation Center, USDA, NOAA), current week. Stocking rate method: AgriLife Extension, <em>Stocking Rate: The Key Grazing Management Decision</em>. Budget benchmark: AgriLife Extension 2026 District 3 (Rolling Plains) cow-calf enterprise budget. Satellite imagery &copy; Esri and its partners; search &copy; OpenStreetMap contributors. These are planning estimates, not a range inspection &mdash; walk your pastures and check with your county agent or NRCS office before setting a stocking rate.
   <p class="eeo-statement" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the County Commissioners Courts of Texas Cooperating.</p>
 </footer>
+<script src="../brand/a11y-scroll.js" defer></script>
 
 <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@geoman-io/leaflet-geoman-free@2.17.0/dist/leaflet-geoman.min.js"></script>
@@ -2642,6 +2665,56 @@
     }
     return p;
   }
+  /* Keyboard path for pastures: a square of the typed acreage, placed east of the ranch (or at the map centre),
+     so every later step (soil, capacity, feed calendar) works the same as for a drawn pasture. */
+  function squareOfAcres(lat, lng, acres){
+    var side = Math.sqrt(acres * ACRE_M2), k = Math.PI/180;
+    function ring(f){
+      var dLat = side*f/111320/2, dLng = side*f/(111320*Math.cos(lat*k))/2;
+      return [[lng - dLng, lat - dLat], [lng + dLng, lat - dLat], [lng + dLng, lat + dLat], [lng - dLng, lat + dLat], [lng - dLng, lat - dLat]];
+    }
+    var g = {type:'Polygon', coordinates:[ring(1)]};
+    g.coordinates = [ring(Math.sqrt(acres/(polygonAcres(g) || acres)))];
+    return g;
+  }
+  function typedPastureCenter(acres){
+    var side = Math.sqrt(acres * ACRE_M2), k = Math.PI/180;
+    if(state.pastures.length){
+      var maxLat = -90, maxLng = -180;
+      state.pastures.forEach(function(p){ p.geometry.coordinates[0].forEach(function(c){ if(c[1] > maxLat) maxLat = c[1]; if(c[0] > maxLng) maxLng = c[0]; }); });
+      var lat = maxLat - side/111320/2, mPerDeg = 111320*Math.cos(lat*k);
+      return {lat:lat, lng:maxLng + (Math.max(60, side*0.15) + side/2)/mPerDeg};
+    }
+    if(map){ var c = map.getCenter(); return {lat:c.lat, lng:c.lng}; }
+    if(state.view) return {lat:state.view.lat, lng:state.view.lng};
+    return {lat:31.2, lng:-99.3};
+  }
+  function bindTyped(){
+    var sel = $('tp_type'), acresIn = $('tp_acres'), status = $('tp_status');
+    if(!sel || !acresIn) return;
+    sel.innerHTML = Object.keys(TYPES).map(function(k){ return '<option value="' + k + '">' + esc(TYPES[k].label) + '</option>'; }).join('');
+    $('tp_add').addEventListener('click', function(){
+      var acres = num(acresIn.value);
+      if(!(acres > 0) || acres > 200000){
+        acresIn.setAttribute('aria-invalid', 'true');
+        status.className = 'tp-status bad';
+        status.textContent = 'Type the pasture’s size in acres (a number above 0).';
+        acresIn.focus();
+        return;
+      }
+      acresIn.removeAttribute('aria-invalid');
+      var ctr = typedPastureCenter(acres);
+      var name = $('tp_name').value.trim();
+      var p = addPasture(squareOfAcres(ctr.lat, ctr.lng, acres), {name:name || null, type:sel.value}, false);
+      if(!p) return;
+      fitRanch(); save();
+      status.className = 'tp-status';
+      status.textContent = 'Added ' + p.name + ', ' + fmt(p.acres, p.acres < 10 ? 1 : 0) + ' ac. It’s in the pasture list below.';
+      $('tp_name').value = ''; acresIn.value = '';
+    });
+    acresIn.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); $('tp_add').click(); } });
+  }
+
   /* acres of pasture p that lie inside other pastures */
   function overlaps(p){
     var out = [];
@@ -2942,14 +3015,14 @@
   function condSelect(p){
     if(!isGrazed(p) || p.mode !== 'soil') return '';
     var c = state.settings.cond;
-    return '<div class="p-cond"><label>Range condition</label><select class="p-condition">' + Object.keys(CONDITIONS).map(function(k){
+    return '<div class="p-cond"><label>Range condition</label><select class="p-condition" aria-label="Range condition, ' + esc(p.name) + '">' + Object.keys(CONDITIONS).map(function(k){
       return '<option value="' + k + '"' + ((p.condition || 'fair') === k ? ' selected' : '') + '>' + CONDITIONS[k] + ' condition (' + c[k] + '%)</option>'; }).join('') + '</select></div>';
   }
 
   function renderPastures(){
     var list = $('pastureList');
     if(!state.pastures.length){
-      list.innerHTML = '<p class="narrative" style="margin:0;">No pastures yet. Draw one on the map above, or open a Google Earth / GeoJSON / shapefile under <strong>Save, share &amp; print</strong>.</p>';
+      list.innerHTML = '<p class="narrative" style="margin:0;">No pastures yet. Draw one on the map above, add one by acres just above this list, or open a Google Earth / GeoJSON / shapefile under <strong>Save, share &amp; print</strong>.</p>';
       return;
     }
     list.innerHTML = state.pastures.map(function(p){
@@ -2963,9 +3036,9 @@
           '<input type="text" class="p-name" value="' + esc(p.name) + '" maxlength="60" aria-label="Pasture name">' +
           '<span class="p-acres">' + fmt(p.acres, p.acres < 10 ? 1 : 0) + ' ac</span></div>' +
         '<div class="p-grid">' +
-          '<div><label>Land use</label><select class="p-type">' + typeOpts + '</select></div>' +
+          '<div><label>Land use</label><select class="p-type" aria-label="Land use, ' + esc(p.name) + '">' + typeOpts + '</select></div>' +
           '<div><label>Forage estimate</label>' + (grazed ?
-            '<select class="p-mode"><option value="soil"' + (p.mode === 'soil' ? ' selected' : '') + '>Soil survey</option><option value="manual"' + (p.mode === 'manual' ? ' selected' : '') + '>My estimate</option></select>' +
+            '<select class="p-mode" aria-label="Forage estimate, ' + esc(p.name) + '"><option value="soil"' + (p.mode === 'soil' ? ' selected' : '') + '>Soil survey</option><option value="manual"' + (p.mode === 'manual' ? ' selected' : '') + '>My estimate</option></select>' +
             condSelect(p) + (p.mode === 'manual' ? '<div class="input-wrap has-suffix" style="margin-top:6px;"><input type="number" class="p-manual" min="0" step="50" inputmode="decimal" placeholder="lb per acre" value="' + (p.manual != null ? p.manual : '') + '" aria-label="Forage per acre per year"><span class="suffix">lb/ac/yr</span></div>' : '')
             : '<div class="sub" style="font-size:12.5px;color:var(--ink-muted);padding-top:8px;">—</div>') + '</div>' +
           '<div class="p-cap">' + capBlock(p) + '</div>' +
@@ -3612,7 +3685,12 @@
     el.innerHTML = s;
     var unit = nut === 'tdn' ? 'lb TDN' : 'lb crude protein';
     if(!interactive) return;
-    el.setAttribute('aria-label', 'Whole-herd ' + unit + ' per day by month: needs of cows, bulls and calves compared with what pasture supplies. The table below has the same numbers.');
+    var dU = nut === 'tdn' ? 0 : 1;
+    el.removeAttribute('role'); el.removeAttribute('aria-label');
+    a11yHits(el, 'Whole-herd ' + unit + ' per day by month: needs of cows, bulls and calves compared with what pasture supplies. The table below has the same numbers.', function(m){
+      var r = rows[m];
+      return r.x.name + ': herd needs ' + fmt(r.total, dU) + ' ' + unit + ' a day' + (res.hasSupply ? ', pasture gives ' + fmt(r.supply, dU) : '');
+    });
     $('fc_legend').innerHTML = ser.map(function(se){ return '<span><i class="sw" style="background:' + se.color + '"></i>' + se.label + '</span>'; }).join('') +
       (res.hasSupply ? '<span><i class="ln"></i>From pasture</span>' : '') + '<span style="color:var(--ink-muted);">' + unit + ' per day, whole herd</span>';
     var tip = feedTip();
@@ -3630,6 +3708,20 @@
       h.addEventListener('mouseenter', show); h.addEventListener('focus', show);
       h.addEventListener('mouseleave', function(){ tip.classList.remove('show'); }); h.addEventListener('blur', function(){ tip.classList.remove('show'); });
     });
+  }
+  /* Chart month targets stay keyboard-focusable for their tooltips; give each one the tooltip's words as its name
+     and hide the drawing itself from screen readers (axes, bars and lines would only be noise). */
+  function htmlText(h){
+    var d = document.createElement('div'); d.innerHTML = h;
+    return Array.prototype.map.call(d.childNodes, function(n){ return n.textContent.trim(); }).filter(Boolean).join('. ');
+  }
+  function a11yHits(el, groupLabel, labelFor){
+    var svg = el.querySelector('svg'); if(!svg) return;
+    svg.removeAttribute('aria-hidden');
+    svg.setAttribute('role', 'group');
+    svg.setAttribute('aria-label', groupLabel);
+    Array.prototype.forEach.call(svg.children, function(n){ if(!n.classList.contains('hit')) n.setAttribute('aria-hidden', 'true'); });
+    svg.querySelectorAll('.hit').forEach(function(h){ h.setAttribute('role', 'img'); h.setAttribute('aria-label', labelFor(+h.getAttribute('data-m'))); });
   }
   function feedTip(){
     var t = $('fcTooltip');
@@ -3828,6 +3920,7 @@
     });
     sv += '</svg>';
     el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span style="color:var(--ink-muted);">' + o.legend + '</span>' + (o.cur >= 0 ? '<span><i class="sw" style="background:var(--dec-muted);border-radius:50%;box-shadow:0 0 0 2px var(--ink);"></i>Your season</span>' : '') + '<span><i class="sw" style="background:var(--accent);border-radius:50%;"></i>Best</span></div>' + sv;
+    a11yHits(el, htmlText(o.legend), function(m){ return htmlText(o.tip(m)); });
     var tip = feedTip();
     el.querySelectorAll('.hit').forEach(function(hh){
       function show(){ var b = hh.getBoundingClientRect(); tip.innerHTML = o.tip(+hh.getAttribute('data-m')); tip.style.left = (b.left + b.width/2) + 'px'; tip.style.top = (b.top + 10) + 'px'; tip.classList.add('show'); }
@@ -3884,6 +3977,10 @@
       });
       sv += '</svg>';
       el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span style="color:var(--ink-muted);">% of the herd’s energy and protein that grass covers in the 4 months after calving starts · calving from the 15th</span>' + (curM >= 0 ? '<span><i class="sw" style="background:var(--dec-muted);box-shadow:0 0 0 2px var(--ink);"></i>Your season</span>' : '') + '<span><i class="sw" style="background:var(--accent);"></i>Best</span></div>' + sv;
+      a11yHits(el, 'Share of the herd’s energy and protein that grass covers in the 4 months after calving starts, by calving month', function(m){
+        var r = rows[m];
+        return 'Calving from ' + moStr(r.m) + ': grass covers ' + fmt(r.postCov*100) + '% in ' + FEED.MONTHS[r.postMonths[0]] + '–' + FEED.MONTHS[r.postMonths[3]] + ', ' + fmt(r.postFeed) + ' lb hay and supplement per cow those months';
+      });
       var tip = feedTip();
       el.querySelectorAll('.hit').forEach(function(hh){
         function show(){ var r = rows[+hh.getAttribute('data-m')], b = hh.getBoundingClientRect();
@@ -4764,6 +4861,7 @@
     initThemeToggle();
     bindSettings();
     bindList();
+    bindTyped();
     bindFeed();
     var ok = initMap();
     bindTools();

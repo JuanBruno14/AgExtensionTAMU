@@ -131,6 +131,19 @@
       </div>
       <div class="card-body">
         <p class="card-note">For rangeland, forage comes from the USDA-NRCS soil survey: its estimate of total plant growth per acre in a normal year, weighted by the soils inside each pasture. Improved pasture, wheat and hay meadows usually have no soil-survey number &mdash; enter your own estimate (your county agent can help).</p>
+        <details class="p-typed" id="typedPasture">
+          <summary>Add a pasture by acres, without the map</summary>
+          <div class="p-typed-body">
+            <div class="p-typed-grid">
+              <div class="field"><label for="tp_name">Name</label><input type="text" id="tp_name" maxlength="60" placeholder="e.g. North trap"></div>
+              <div class="field"><label for="tp_acres">Acres</label><div class="input-wrap has-suffix"><input type="number" id="tp_acres" min="1" step="1" inputmode="decimal" aria-describedby="tp_status"><span class="suffix">ac</span></div></div>
+              <div class="field"><label for="tp_type">Land use</label><select id="tp_type"></select></div>
+            </div>
+            <p class="card-note" style="margin:0 0 10px;">It appears on the map as a square next to your other pastures, or where the map is centered, so search for your ranch first. For rangeland, forage comes from the soils under that square; if that isn&rsquo;t your land, set the pasture&rsquo;s forage estimate to <strong>My estimate</strong>.</p>
+            <button type="button" class="tool-btn primary" id="tp_add">Add pasture</button>
+            <p class="tp-status" id="tp_status" role="status"></p>
+          </div>
+        </details>
         <div class="pasture-list" id="pastureList"></div>
         <h3 class="sub-h">Ponds, brush &amp; bottomland</h3>
         <div class="point-list" id="zoneList"></div>
@@ -598,3 +611,4 @@
   Forage estimates: USDA-NRCS Soil Survey (SSURGO) through Soil Data Access, &ldquo;range production, normal year&rdquo; weighted by soil area and component share. Drought status: U.S. Drought Monitor (National Drought Mitigation Center, USDA, NOAA), current week. Stocking rate method: AgriLife Extension, <em>Stocking Rate: The Key Grazing Management Decision</em>. Budget benchmark: AgriLife Extension 2026 District 3 (Rolling Plains) cow-calf enterprise budget. Satellite imagery &copy; Esri and its partners; search &copy; OpenStreetMap contributors. These are planning estimates, not a range inspection &mdash; walk your pastures and check with your county agent or NRCS office before setting a stocking rate.
   <p class="eeo-statement" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the County Commissioners Courts of Texas Cooperating.</p>
 </footer>
+<script src="../brand/a11y-scroll.js" defer></script>

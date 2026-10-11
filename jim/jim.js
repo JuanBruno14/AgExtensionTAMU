@@ -55,6 +55,7 @@
     ".jim-head .s{font-size:12.5px;opacity:.85;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}",
     ".jim-iconbtn{flex:none;width:34px;height:34px;border-radius:8px;border:0;background:transparent;color:#fff;cursor:pointer;display:grid;place-items:center}",
     ".jim-iconbtn:hover{background:rgba(255,255,255,.14)}",
+    ".jim-root .jim-head .jim-iconbtn:focus-visible{outline-color:#fff}",
     ".jim-iconbtn svg{width:18px;height:18px}",
     ".jim-log{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:14px;background:var(--jim-surface);overscroll-behavior:contain}",
     ".jim-row{display:flex;gap:8px;align-items:flex-start}",
@@ -130,7 +131,7 @@
   var root = el("div", "jim-root");
   var launch = el("button", "jim-launch", '<span class="jim-avatar">' + HAT + '</span><span>Ask Jim</span>');
   launch.type = "button";
-  launch.setAttribute("aria-label", "Open chat with Jim, the budgets assistant");
+  launch.setAttribute("aria-label", "Ask Jim, the budgets assistant");
 
   var panel = el("section", "jim-panel");
   panel.setAttribute("role", "dialog");
@@ -254,15 +255,36 @@
   }
 
   /* ------------------------------------------------------------------ open / close */
+  /* On phones the panel covers the whole screen, so it behaves as a modal: the page behind is inert
+     (out of the Tab order and hidden from screen readers) until Jim is closed. */
+  var phone = window.matchMedia ? window.matchMedia("(max-width: 520px)") : null;
+  var inerted = [];
+  function syncModal() {
+    var on = !panel.hidden && !!(phone && phone.matches);
+    if (on) {
+      panel.setAttribute("aria-modal", "true");
+      Array.prototype.forEach.call(document.body.children, function (n) {
+        if (n !== root && !n.inert && n.tagName !== "SCRIPT" && n.tagName !== "STYLE") { n.inert = true; inerted.push(n); }
+      });
+    } else {
+      panel.removeAttribute("aria-modal");
+      inerted.forEach(function (n) { n.inert = false; });
+      inerted = [];
+    }
+  }
+  if (phone) { if (phone.addEventListener) phone.addEventListener("change", syncModal); else if (phone.addListener) phone.addListener(syncModal); }
+
   function openPanel(focus) {
     state.open = true; persist();
     panel.hidden = false; launch.hidden = true;
+    syncModal();
     scrollDown();
     if (focus !== false) setTimeout(function () { input.focus(); }, 30);
   }
   function closePanel() {
     state.open = false; persist();
     panel.hidden = true; launch.hidden = false;
+    syncModal();
     launch.focus();
   }
   launch.addEventListener("click", function () { openPanel(true); });
@@ -288,7 +310,7 @@
   }
 
   /* ------------------------------------------------------------------ talking to the worker */
-  function setBusy(b) { busy = b; sendBtn.disabled = b; }
+  function setBusy(b) { busy = b; sendBtn.disabled = b; if (b) log.setAttribute("aria-busy", "true"); else log.removeAttribute("aria-busy"); }
 
   /* ask(question[, {context}]): context is sent to Jim but only the question is shown in the chat. */
   function ask(question, opts) {

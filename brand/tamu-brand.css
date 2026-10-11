@@ -167,3 +167,6 @@ footer .eeo-statement{
   margin-top:14px;padding-top:14px;border-top:1px solid var(--border);
   color:var(--ink-secondary);font-size:12.5px;line-height:1.6;max-width:110ch;
 }
+
+/* ---------- Tables that scroll sideways get keyboard focus (brand/a11y-scroll.js) ---------- */
+.table-scroll[data-a11y-scroll]:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
