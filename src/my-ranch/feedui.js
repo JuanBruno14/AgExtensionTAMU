@@ -892,30 +892,77 @@
   function renderDroughtDecision(){
     renderDroughtMonitor();
     var h = state.herd, dr = Object.assign({}, DR_DEFAULTS, h.dr || {});
-    var cut = function(sup){ return FEED.adjustSupply(sup, dr.cut, +dr.from, dr.months, dr.which); };
     var base = feedOptions(), normalAge = Math.round(base.refWeanAge), cows = h.cows, bulls = base.bulls;
     var nowM = new Date().getMonth();
-    var hayD = +dr.hayPrice > 0 ? {hayPrice:+dr.hayPrice} : {};   // hay usually costs more in a drought
-    var A = netOf({}, hayD, 1, cut);
-    var B = netOf({weanMode:'age', weanAge:dr.earlyAge, weanPeriod:0, refWeanAge:normalAge}, hayD, 1, cut);
-    var C = netOf({weanMode:'age', weanAge:dr.earlyAge, weanPeriod:Math.max(0, normalAge - dr.earlyAge) + (h.weanPeriod || 0), postAdg:dr.feedAdg, refWeanAge:normalAge}, hayD, 1, cut);
-    var N = feedLast;
-    /* selling cows: as if sold when the drought starts (their calves go with them) or after weaning */
     var X = Math.max(0, Math.min(90, +dr.sellPct || 0))/100, nSell = Math.round(cows*X), keepCows = cows - nSell;
-    var midA = A.calves.cohorts[Math.floor(A.calves.cohorts.length/2)] || A.calves.cohorts[0];
-    var sellM = dr.sellWhen === 'weaning' ? (midA ? midA.saleMonth : 9) : +dr.from;
-    var cullHd = h.cowLb/100*cullPrice()*FEED.SEASON_CULL[sellM]/FEED.SEASON_CULL[nowM];
-    var saleVal = nSell*cullHd;
-    var Dr = dr.sellWhen === 'weaning' ? A : netOf({cows:keepCows, bulls:Math.max(1, Math.round(bulls*(1 - X)))}, hayD, 1, cut);
-    var D = {r:Dr, sale:saleVal};
-    var opts = [
-      {key:'A', title:'Keep calves on the cows, buy feed', r:A, sub:'Wean as planned; cows keep nursing through the dry spell.', extra:0},
-      {key:'B', title:'Wean early at ' + dr.earlyAge + ' days and sell', r:B, sub:'Lighter calves, but dry cows need about a third less feed.', extra:0},
-      {key:'C', title:'Wean early and feed the calves', r:C, sub:'Calves on feed gaining ' + dr.feedAdg + ' lb/day until your normal weaning age' + (h.weanPeriod ? ' plus the weaning period' : '') + ', then sold.', extra:0},
-      {key:'D', title:'Sell ' + fmt(nSell) + ' cows (' + fmt(X*100) + '%) ' + (dr.sellWhen === 'weaning' ? 'after weaning' : 'when it starts'), r:Dr, sub:(dr.sellWhen === 'weaning' ? 'Feed the whole herd through the drought, then sell them in ' : 'Fewer cows to feed; they go with their calves in ') + FEED.MONTHS[sellM] + ' at about ' + money(cullHd) + ' a head.', extra:saleVal}
-    ];
-    opts.forEach(function(o){ o.net = o.r.econ.net + o.extra; });
-    var best = opts.reduce(function(a, o){ return o.net > a.net ? o : a; }, opts[0]);
+    var cullNow = h.cowLb/100*cullPrice();   // what a cow on hand is worth today, as a cull
+    var LBL = {A:'Buy feed', B:'Wean early, sell calves', C:'Wean early, feed calves', D:'Sell ' + fmt(X*100) + '% of cows'};
+    /* one drought scenario: the four ways through it. Besides this year's cash, each counts the cows still owned at the end of
+       the year at their cull value, so selling cows isn't rewarded just for turning cows into cash (rebuilding is part 2). */
+    function scen(cutPct, months, hayPrice){
+      var cutF = function(sup){ return FEED.adjustSupply(sup, cutPct, +dr.from, months, dr.which); };
+      var hayO = hayPrice > 0 ? {hayPrice:hayPrice} : {};
+      var A = netOf({}, hayO, 1, cutF);
+      var B = netOf({weanMode:'age', weanAge:dr.earlyAge, weanPeriod:0, refWeanAge:normalAge}, hayO, 1, cutF);
+      var C = netOf({weanMode:'age', weanAge:dr.earlyAge, weanPeriod:Math.max(0, normalAge - dr.earlyAge) + (h.weanPeriod || 0), postAdg:dr.feedAdg, refWeanAge:normalAge}, hayO, 1, cutF);
+      var midA = A.calves.cohorts[Math.floor(A.calves.cohorts.length/2)] || A.calves.cohorts[0];
+      var sellM = dr.sellWhen === 'weaning' ? (midA ? midA.saleMonth : 9) : +dr.from;
+      var cullHd = h.cowLb/100*cullPrice()*FEED.SEASON_CULL[sellM]/FEED.SEASON_CULL[nowM];
+      var Dr = nSell <= 0 ? A : dr.sellWhen === 'weaning' ? A : netOf({cows:keepCows, bulls:Math.max(1, Math.round(bulls*(1 - X)))}, hayO, 1, cutF);
+      var o = [{key:'A', r:A, extra:0, onHand:cows}, {key:'B', r:B, extra:0, onHand:cows}, {key:'C', r:C, extra:0, onHand:cows}];
+      if(nSell > 0) o.push({key:'D', r:Dr, extra:nSell*cullHd, onHand:keepCows, sellM:sellM, cullHd:cullHd});
+      o.forEach(function(x){ x.net = x.r.econ.net + x.extra; x.val = x.net + x.onHand*cullNow; });
+      var best = o.reduce(function(a, x){ return x.val > a.val ? x : a; }, o[0]);
+      return {o:o, best:best, A:A};
+    }
+    var hayDrought = +dr.hayPrice > 0 ? +dr.hayPrice : 0;
+    var SC = scen(dr.cut, dr.months, hayDrought);
+    var A = SC.A, N = feedLast, nD = SC.o[3], sellM = nD ? nD.sellM : +dr.from, cullHd = nD ? nD.cullHd : cullNow, saleVal = nD ? nD.extra : 0;
+    var D = {r:nD ? nD.r : A, sale:saleVal};
+    var TITLES = {A:'Keep calves on the cows, buy feed', B:'Wean early at ' + dr.earlyAge + ' days and sell', C:'Wean early and feed the calves', D:'Sell ' + fmt(nSell) + ' cows (' + fmt(X*100) + '%) ' + (dr.sellWhen === 'weaning' ? 'after weaning' : 'when it starts')};
+    var SUBS = {A:'Wean as planned; cows keep nursing through the dry spell.', B:'Lighter calves, but dry cows need about a third less feed.',
+                C:'Calves on feed gaining ' + dr.feedAdg + ' lb/day until your normal weaning age' + (h.weanPeriod ? ' plus the weaning period' : '') + ', then sold.',
+                D:(dr.sellWhen === 'weaning' ? 'Feed the whole herd through the drought, then sell them in ' : 'Fewer cows to feed; they go with their calves in ') + FEED.MONTHS[sellM] + ' at about ' + money(cullHd) + ' a head.'};
+    var opts = SC.o.map(function(x){ return Object.assign(x, {title:TITLES[x.key], sub:SUBS[x.key]}); });
+    var best = SC.best;
+
+    /* ---- nobody knows how long a drought will last: the best way through for each severity and length */
+    var CUTS = [25, 50, 75], MONTHS_G = [3, 6, 9, 12], grid = {};
+    CUTS.forEach(function(c){ MONTHS_G.forEach(function(m){ grid[c + '|' + m] = (c === +dr.cut && m === +dr.months) ? SC : scen(c, m, hayDrought); }); });
+    var COLK = {A:'dg-a', B:'dg-b', C:'dg-c', D:'dg-d'};
+    $('dec_drGrid').innerHTML = '<div class="table-scroll"><table class="plan dr-grid"><thead><tr><th>Forage lost</th>' + MONTHS_G.map(function(m){ return '<th class="num">' + m + ' months</th>'; }).join('') + '</tr></thead><tbody>' +
+      CUTS.map(function(c){ return '<tr><td><strong>' + c + '%</strong></td>' + MONTHS_G.map(function(m){
+        var g = grid[c + '|' + m], bA = g.o[0], cur = c === +dr.cut && m === +dr.months;
+        return '<td class="dg ' + COLK[g.best.key] + (cur ? ' cur' : '') + '"><button type="button" data-cut="' + c + '" data-mo="' + m + '" title="Show this drought below">' +
+          '<b>' + esc(LBL[g.best.key]) + '</b><small>' + (g.best.key === 'A' ? 'drought costs ' + money(N.econ.net - bA.net) : (g.best.val - bA.val < Math.max(1000, bA.val*0.005) ? 'about the same as buying feed' : money(g.best.val - bA.val) + ' better than buying feed')) + '</small></button></td>'; }).join('') + '</tr>'; }).join('') +
+      '</tbody></table></div>';
+    document.querySelectorAll('#dec_drGrid [data-cut]').forEach(function(bt){ bt.addEventListener('click', function(){
+      state.herd.dr = Object.assign({}, DR_DEFAULTS, state.herd.dr || {}, {cut:+this.getAttribute('data-cut'), months:+this.getAttribute('data-mo')});
+      bindFeedValues(); save(); scheduleDecisions(); }); });
+    /* breakpoints: how long the drought has to last (at the forage lost you entered) before selling or early weaning pays,
+       and the hay price at which selling pays for the drought you entered */
+    // a way through only counts as better than buying feed if it beats it by more than $1,000 (or 0.5%): smaller gaps are a tie
+    function effKey(g){ var bA = g.o[0]; return g.best.key !== 'A' && g.best.val - bA.val < Math.max(1000, bA.val*0.005) ? 'A' : g.best.key; }
+    var byLen = [];
+    for(var L = 1; L <= 12; L++) byLen.push((MONTHS_G.indexOf(L) >= 0 && grid[(+dr.cut) + '|' + L]) || (L === +dr.months ? SC : scen(dr.cut, L, hayDrought)));
+    var firstD = -1, firstW = -1;
+    byLen.forEach(function(g, i){ var k = effKey(g); if(firstD < 0 && k === 'D') firstD = i + 1; if(firstW < 0 && (k === 'B' || k === 'C')) firstW = i + 1; });
+    var bk = 'At <strong>' + dr.cut + '% less grass from ' + FEED.MONTHS[+dr.from] + '</strong>: ';
+    if(nSell > 0) bk += firstD > 0 ? 'selling ' + fmt(X*100) + '% of the cows pays once the drought lasts <strong>' + firstD + ' month' + (firstD > 1 ? 's' : '') + ' or more</strong>' + (firstD > 1 ? '; for a shorter one, ' + (effKey(byLen[firstD - 2]) === 'A' ? 'buying feed' : 'weaning early') + ' is better' : '') + '. '
+      : 'selling ' + fmt(X*100) + '% of the cows doesn’t pay even if it lasts 12 months: ' + (effKey(byLen[11]) === 'A' ? 'buying feed' : 'weaning early') + ' stays ahead. ';
+    if(firstW > 0 && (firstD < 0 || firstW < firstD)) bk += 'Weaning early beats buying feed from <strong>' + firstW + ' month' + (firstW > 1 ? 's' : '') + '</strong>. ';
+    if(nSell > 0){
+      var gap = function(p){ var g = scen(dr.cut, dr.months, p), d = g.o[3].val, k = Math.max(g.o[0].val, g.o[1].val, g.o[2].val); return d - k; };
+      var p0 = hayDrought || h.hayPrice, g0 = gap(p0);
+      var lo = g0 > 0 ? 0 : p0, hi = g0 > 0 ? p0 : 1000;
+      if(gap(lo) * gap(hi) < 0){
+        for(var it = 0; it < 9; it++){ var mid = (lo + hi)/2; if((gap(mid) > 0) === (gap(hi) > 0)) hi = mid; else lo = mid; }
+        var pb = Math.round((lo + hi)/2/5)*5;
+        bk += 'For the drought set below (' + dr.cut + '% for ' + dr.months + ' months), selling pays once hay costs more than <strong>' + money(pb) + '/ton</strong> (you’re using ' + money(p0) + ').';
+      } else bk += 'For the drought set below, the hay price doesn’t change that between $0 and $1,000/ton.';
+    }
+    bk += ' <span class="hint">Cows still owned at the end of the year count at their cull value, so selling isn’t rewarded just for turning cows into cash; what it costs to rebuild is in part 2.</span>';
+    $('dec_drBreak').innerHTML = bk;
     var rowsDef = [
       ['Calves sold', function(o){ return fmt(o.r.econ.calvesSold) + ' × ' + fmt(o.r.econ.avgSaleLb) + ' lb'; }],
       ['Price', function(o){ return '$' + fmt(o.r.econ.avgPrice) + '/cwt'; }],
@@ -923,16 +970,18 @@
       ['Hay bought', function(o){ return fmt(o.r.totals.hay/2000, 1) + ' t'; }],
       ['Supplement bought', function(o){ return fmt(o.r.totals.sup/2000, 1) + ' t'; }],
       ['Feed &amp; feeding cost', function(o){ return money(o.r.econ.costs); }],
-      ['Cows going into next year', function(o){ return fmt(o.key === 'D' ? keepCows : cows) + ' · BCS ' + fmt(o.r.bcs.breed, 1) + ' at breeding'; }]
+      ['Cows going into next year', function(o){ return fmt(o.onHand) + ' · BCS ' + fmt(o.r.bcs.breed, 1) + ' at breeding'; }],
+      ['Income − feed (this year)', function(o){ return money(o.net); }],
+      ['Cows still owned, at cull value', function(o){ return money(o.onHand*cullNow); }]
     ];
     $('dec_drOptions').innerHTML = '<div class="table-scroll"><table class="plan dec-drtable"><thead><tr><th></th>' + opts.map(function(o){
         return '<th class="' + (o === best ? 'best' : '') + '">' + (o === best ? '<span class="verdict-pill good"><span class="dot"></span>Most this year</span>' : '') + '<div class="opt-title">' + esc(o.title) + '</div><div class="opt-sub">' + esc(o.sub) + '</div></th>'; }).join('') + '</tr></thead><tbody>' +
       rowsDef.map(function(rd){ return '<tr><td>' + rd[0] + '</td>' + opts.map(function(o){ return '<td class="num' + (o === best ? ' best' : '') + '">' + rd[1](o) + '</td>'; }).join('') + '</tr>'; }).join('') +
-      '</tbody><tfoot><tr><td>Income − feed (this year)</td>' + opts.map(function(o){ return '<td class="num' + (o === best ? ' best' : '') + '">' + money(o.net) + '</td>'; }).join('') + '</tr></tfoot></table></div>';
+      '</tbody><tfoot><tr><td>This year + cows still owned</td>' + opts.map(function(o){ return '<td class="num' + (o === best ? ' best' : '') + '">' + money(o.val) + '</td>'; }).join('') + '</tr></tfoot></table></div>';
     var keepOpts = opts.slice(0, 3), K = keepOpts.reduce(function(a, o){ return o.net > a.net ? o : a; });
-    var second = opts.filter(function(o){ return o !== best; }).reduce(function(a, o){ return o.net > a.net ? o : a; });
+    var second = opts.filter(function(o){ return o !== best; }).reduce(function(a, o){ return o.val > a.val ? o : a; });
     $('dec_drText').innerHTML = 'With ' + dr.cut + '% less forage from ' + FEED.MONTHS[+dr.from] + ' for ' + dr.months + ' month' + (dr.months > 1 ? 's' : '') + ', the drought costs about <strong>' + money(N.econ.net - A.econ.net) + '</strong> this year if you just buy feed. ' +
-      '<strong>' + esc(best.title) + '</strong> leaves ' + money(best.net - second.net) + ' more than the next option <em>this year</em>' + (best.key === 'D' ? ' — but selling cows is spending the herd: the next 10 years below show what it costs to get them back.' : '.') +
+      '<strong>' + esc(best.title) + '</strong> leaves ' + money(best.val - second.val) + ' more than the next option this year, counting the cows still owned' + (best.key === 'D' ? ' — but selling cows is spending the herd: the next 10 years below show what it costs to get them back.' : '.') +
       ' Lighter calves bring more per hundredweight (price slide), which is why early weaning loses less than the weight alone suggests.' + (+dr.hayPrice > 0 ? ' Hay this year at ' + money(+dr.hayPrice) + '/ton (normal ' + money(h.hayPrice) + ').' : ' Hay at your normal price, ' + money(h.hayPrice) + '/ton — in a drought it usually costs more: set it above.');
 
     /* ---- 2. the next 10 years: keep the herd, or sell and then buy back / raise heifers / stay smaller */

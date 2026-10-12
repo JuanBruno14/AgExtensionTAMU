@@ -56,6 +56,18 @@ with sync_playwright() as pw:
     p2.click('#dr_useDm'); p2.wait_for_timeout(1200)
     import datetime
     check('use button sets forage lost and start month', p2.input_value('#dr_cut')=='36' and p2.evaluate("MyRanch.state().herd.dr.from")==datetime.date.today().month-1 and 'in use' in p2.inner_text('#dec_drMonitor').lower())
+    # drought: scenario grid (forage lost x months), breakpoints, click a cell
+    pg.evaluate("document.querySelector('[data-example=central-texas-1600ac]').click()"); pg.wait_for_timeout(2000)
+    pg.evaluate("MyRanch.go('decide')"); pg.click('.seg-btn[data-dec="drought"]'); pg.wait_for_timeout(2500)
+    check('drought grid: 3 severities x 4 lengths', pg.locator('#dec_drGrid td.dg').count()==12)
+    pg.fill('#dr_hayPrice','350'); pg.wait_for_timeout(3000)
+    bt=pg.inner_text('#dec_drBreak')
+    check('drought breakpoints: how long before selling pays, and the hay price', 'pays once the drought lasts' in bt and 'hay costs more than' in bt, bt)
+    check('drought: at $350 hay a long severe drought favors selling', 'Sell 30%' in pg.inner_text('#dec_drGrid td.dg >> nth=11'))
+    check('drought: at $350 hay a short mild drought favors buying feed', 'Buy feed' in pg.inner_text('#dec_drGrid td.dg >> nth=0'))
+    pg.click('#dec_drGrid [data-cut="75"][data-mo="9"]'); pg.wait_for_timeout(3000)
+    check('drought: clicking a cell shows that drought in detail', pg.input_value('#dr_cut')=='75' and pg.input_value('#dr_months')=='9' and '75% less forage' in pg.inner_text('#dec_drText'))
+    check('drought: cows still owned counted at cull value', 'cows still owned' in pg.inner_text('#dec_drOptions').lower())
     check('no JS errors', not errs, errs)
     b.close()
 print('\n%d failures' % len(fails)); sys.exit(1 if fails else 0)
