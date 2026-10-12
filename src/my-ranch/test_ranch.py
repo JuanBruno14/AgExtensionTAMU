@@ -268,7 +268,7 @@ with sync_playwright() as pw:
     # decisions
     page.evaluate("document.getElementById('decCard').scrollIntoView()"); page.wait_for_timeout(600)
     check('best calving season computed', page.locator('#dec_calvChart rect.seg').count()>=6 and 'best time to calve' in page.inner_text('#dec_calvText') and page.locator('#dec_calvChart polyline.supply-line').count()==1, page.inner_text('#dec_calvText')[:120])
-    check('calving table 12 rows', page.locator('#dec_calvTable tbody tr').count()==12)
+    check('calving: chart only, no table', page.locator('#dec_calvTable').count()==0)
     page.click('.seg-btn[data-dec="drought"]'); page.wait_for_timeout(700)
     check('drought: four options this year', page.locator('.dec-drtable thead th').count()==5 and page.locator('.dec-drtable thead th.best').count()==1, page.inner_text('#dec_drText')[:150])
     before_dr=page.inner_text('#dec_drOptions')

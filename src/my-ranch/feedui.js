@@ -836,10 +836,6 @@
     txt += 'On milk and grass alone, calves wean at about ' + fmt(b.natLb) + ' lb calving from ' + FEED.MONTHS[b.m] + (heavy.natLb - light.natLb > 5 ? ' (heaviest ' + fmt(heavy.natLb) + ' lb from ' + FEED.MONTHS[heavy.m] + ', lightest ' + fmt(light.natLb) + ' lb from ' + FEED.MONTHS[light.m] + ')' : '') + '. ' +
       (function(){ var thin = rows.filter(function(r){ return r.bcsBreed < 4.75; }); return thin.length ? 'Cows calving from ' + monthList(thin.map(function(r){ return r.m; })) + ' are under condition 4.75 at breeding, so fewer get pregnant (58% at BCS 4, 85% at 5, 95% at 6; Sprott 1985). ' : ''; })();
     $('dec_calvText').innerHTML = txt;
-    $('dec_calvTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Grass grown covers, nursing months</th><th class="num">Cow BCS at breeding · calves born</th><th class="num">Calves weaned</th><th class="num">Weaning weight on milk + grass</th><th class="num">Creep to reach ' + fmt(h.weanLb) + ' lb</th><th class="num">Lb weaned per cow (no creep)</th><th class="num">Deaths (cold · screwworm)</th><th class="num">Hay · supplement</th><th class="num">Feed bought per cow (year, incl. creep)</th></tr></thead><tbody>' +
-      rows.map(function(r){ return '<tr' + (r === bestCov ? ' class="best"' : '') + '><td>' + (r === bestCov ? '★ ' : '') + moStr(r.m) + (r.m === curM ? ' (yours)' : '') + '</td>' +
-        '<td class="num">' + fmt(r.match*100) + '%</td><td class="num">' + fmt(r.bcsBreed, 1) + ' · ' + fmt(r.calvRate) + '%</td><td class="num">' + fmt(r.weaned, 1) + '</td><td class="num">' + fmt(r.natLb) + ' lb</td><td class="num">' + (r.creepCalf >= 1 ? fmt(r.creepCalf) + ' lb/calf' : '—') + '</td><td class="num">' + fmt(r.lbPerCow) + '</td>' +
-        '<td class="num">' + fmt(r.deadCold, 1) + ' · ' + fmt(r.deadNws, 1) + '</td><td class="num">' + fmt(r.hayT, 1) + ' t · ' + fmt(r.supT, 1) + ' t</td><td class="num">' + fmt(r.feedPerCow) + ' lb</td></tr>'; }).join('') + '</tbody>';
 
     /* keeping the calves after weaning: hand the numbers to the stocker budget (Retained Ownership page) */
     (function(){
