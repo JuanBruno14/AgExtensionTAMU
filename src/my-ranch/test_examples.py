@@ -67,6 +67,7 @@ with sync_playwright() as pw:
     check('drought: at $350 hay a short mild drought favors buying feed', 'Buy feed' in pg.inner_text('#dec_drGrid td.dg >> nth=0'))
     pg.click('#dec_drGrid [data-cut="75"][data-mo="9"]'); pg.wait_for_timeout(3000)
     check('drought: clicking a cell shows that drought in detail', pg.input_value('#dr_cut')=='75' and pg.input_value('#dr_months')=='9' and '75% less forage' in pg.inner_text('#dec_drText'))
+    check('drought: 10-year part hidden for now', not pg.is_visible('#dr_longWrap') and pg.locator('#dec_drLongTable tbody tr').count()==0)
     check('drought: cows still owned counted at cull value', 'cows still owned' in pg.inner_text('#dec_drOptions').lower())
     check('no JS errors', not errs, errs)
     b.close()

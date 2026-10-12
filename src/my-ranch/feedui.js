@@ -852,6 +852,8 @@
     try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); if(mp && +mp.mp_bredCowPrice > 0) v = +mp.mp_bredCowPrice; }catch(e){}
     return v;
   }
+  // the 10-year rebuild comparison (keep / buy back / raise heifers / stay smaller) is switched off for now; window.__MR_DRLONG turns it on
+  var DR_LONG = !!window.__MR_DRLONG;
   var DR_DEFAULTS = {cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0};
   /* Drought Monitor -> a starting point for "forage lost": the soil survey's own unfavorable year
      (how much less these soils grow in a dry year) scaled by this week's category. A rough start, not a forecast. */
@@ -961,7 +963,7 @@
         bk += 'For the drought set below (' + dr.cut + '% for ' + dr.months + ' months), selling pays once hay costs more than <strong>' + money(pb) + '/ton</strong> (you’re using ' + money(p0) + ').';
       } else bk += 'For the drought set below, the hay price doesn’t change that between $0 and $1,000/ton.';
     }
-    bk += ' <span class="hint">Cows still owned at the end of the year count at their cull value, so selling isn’t rewarded just for turning cows into cash; what it costs to rebuild is in part 2.</span>';
+    bk += ' <span class="hint">Cows still owned at the end of the year count at their cull value, so selling isn’t rewarded just for turning cows into cash.' + (DR_LONG ? ' What it costs to rebuild is in part 2.' : ' Buying cows back later usually costs more than their cull value.') + '</span>';
     $('dec_drBreak').innerHTML = bk;
     var rowsDef = [
       ['Calves sold', function(o){ return fmt(o.r.econ.calvesSold) + ' × ' + fmt(o.r.econ.avgSaleLb) + ' lb'; }],
@@ -981,9 +983,11 @@
     var keepOpts = opts.slice(0, 3), K = keepOpts.reduce(function(a, o){ return o.net > a.net ? o : a; });
     var second = opts.filter(function(o){ return o !== best; }).reduce(function(a, o){ return o.val > a.val ? o : a; });
     $('dec_drText').innerHTML = 'With ' + dr.cut + '% less forage from ' + FEED.MONTHS[+dr.from] + ' for ' + dr.months + ' month' + (dr.months > 1 ? 's' : '') + ', the drought costs about <strong>' + money(N.econ.net - A.econ.net) + '</strong> this year if you just buy feed. ' +
-      '<strong>' + esc(best.title) + '</strong> leaves ' + money(best.val - second.val) + ' more than the next option this year, counting the cows still owned' + (best.key === 'D' ? ' — but selling cows is spending the herd: the next 10 years below show what it costs to get them back.' : '.') +
+      '<strong>' + esc(best.title) + '</strong> leaves ' + money(best.val - second.val) + ' more than the next option this year, counting the cows still owned' + (best.key === 'D' ? (DR_LONG ? ' — but selling cows is spending the herd: the next 10 years below show what it costs to get them back.' : ' — but the herd has to be rebuilt later, and bred cows usually cost more to buy back than culls bring.') : '.') +
       ' Lighter calves bring more per hundredweight (price slide), which is why early weaning loses less than the weight alone suggests.' + (+dr.hayPrice > 0 ? ' Hay this year at ' + money(+dr.hayPrice) + '/ton (normal ' + money(h.hayPrice) + ').' : ' Hay at your normal price, ' + money(h.hayPrice) + '/ton — in a drought it usually costs more: set it above.');
 
+    var lw = $('dr_longWrap'); if(lw) lw.hidden = !DR_LONG;
+    if(!DR_LONG) return;
     /* ---- 2. the next 10 years: keep the herd, or sell and then buy back / raise heifers / stay smaller */
     var Y = 10, r = Math.max(0, +dr.rate || 0)/100, other = Math.max(0, +dr.otherCost || 0), buyP = +dr.buyPrice > 0 ? +dr.buyPrice : bredCowPrice();
     var later = 1 + (+dr.later || 0)/100;

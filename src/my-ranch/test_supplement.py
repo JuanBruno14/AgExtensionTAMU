@@ -11,7 +11,7 @@ def setup(pg, lb, mode=None):
 with sync_playwright() as pw:
     b=pw.chromium.launch(); errs=[]
     def page():
-        c=b.new_context(viewport={'width':1360,'height':1300}); c.route('**/*', route); p=c.new_page(); p.on('pageerror', lambda e: errs.append(str(e)))
+        c=b.new_context(viewport={'width':1360,'height':1300}); c.route('**/*', route); c.add_init_script('window.__MR_DRLONG=true'); p=c.new_page(); p.on('pageerror', lambda e: errs.append(str(e)))
         p.goto(f'http://127.0.0.1:{PORT}/my-ranch/index.html'); p.wait_for_timeout(600); return p
     pg=page(); setup(pg, 3200)
     check('protein-only is the default', pg.input_value('#fc_supMode')=='protein' and pg.evaluate("MyRanch.feed().bcs.mode")=='protein')
