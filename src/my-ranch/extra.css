@@ -479,3 +479,4 @@
 .fc-chart .calf-area{fill:color-mix(in srgb, var(--ink) 12%, transparent);}
 .fc-chart .cow-line{fill:none;stroke:var(--ink-muted);stroke-width:1;}
 .fc-legend .sw.calf-sw{background:color-mix(in srgb, var(--ink) 18%, transparent);}
+.fc-legend .sw.nurse-sw{background:color-mix(in srgb, var(--accent) 14%, transparent);}
