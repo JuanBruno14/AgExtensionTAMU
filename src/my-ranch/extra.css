@@ -473,3 +473,9 @@
 .dr-grid td.dg.cur button{outline:2px solid var(--ink);outline-offset:1px;}
 .dr-grid td.dg button:hover,.dr-grid td.dg button:focus-visible{border-color:var(--accent);}
 #dec_drBreak .hint{display:block;margin-top:4px;color:var(--ink-muted);font-size:12px;}
+.fc-chart .nurse-band{fill:color-mix(in srgb, var(--accent) 7%, transparent);}
+.fc-chart .nurse-lbl{fill:var(--accent);font-size:10.5px;font-weight:700;font-family:"Open Sans",system-ui,sans-serif;}
+.fc-chart .clip-lbl{fill:#fff;font-size:10.5px;font-weight:700;font-family:"Open Sans",system-ui,sans-serif;}
+.fc-chart .calf-area{fill:color-mix(in srgb, var(--ink) 12%, transparent);}
+.fc-chart .cow-line{fill:none;stroke:var(--ink-muted);stroke-width:1;}
+.fc-legend .sw.calf-sw{background:color-mix(in srgb, var(--ink) 18%, transparent);}

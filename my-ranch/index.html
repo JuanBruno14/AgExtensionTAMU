@@ -812,6 +812,12 @@
 .dr-grid td.dg.cur button{outline:2px solid var(--ink);outline-offset:1px;}
 .dr-grid td.dg button:hover,.dr-grid td.dg button:focus-visible{border-color:var(--accent);}
 #dec_drBreak .hint{display:block;margin-top:4px;color:var(--ink-muted);font-size:12px;}
+.fc-chart .nurse-band{fill:color-mix(in srgb, var(--accent) 7%, transparent);}
+.fc-chart .nurse-lbl{fill:var(--accent);font-size:10.5px;font-weight:700;font-family:"Open Sans",system-ui,sans-serif;}
+.fc-chart .clip-lbl{fill:#fff;font-size:10.5px;font-weight:700;font-family:"Open Sans",system-ui,sans-serif;}
+.fc-chart .calf-area{fill:color-mix(in srgb, var(--ink) 12%, transparent);}
+.fc-chart .cow-line{fill:none;stroke:var(--ink-muted);stroke-width:1;}
+.fc-legend .sw.calf-sw{background:color-mix(in srgb, var(--ink) 18%, transparent);}
 </style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
 </head>
@@ -4005,28 +4011,39 @@
     (function(){
       var el = $('dec_calvChart'), W = Math.round(Math.max(320, Math.min(720, el.clientWidth || 720))), H = W < 500 ? 240 : 270, ml = W < 500 ? 40 : 52, mr = 6, mt = 14, mb = 34, pw = W - ml - mr, ph = H - mt - mb, band = pw/12, bw = Math.min(40, band*0.62);
       var curRow = curM >= 0 && curM !== show ? rows[curM] : null;
-      var max = niceMax(Math.max.apply(null, grown.map(function(g){ return g.tot; }).concat(sel.need, curRow ? curRow.need : [])));
+      // scale to the herd's needs so their rise and fall shows; a spring flush far above the needs is cut at the top and labelled
+      var needMax = Math.max.apply(null, sel.need.concat(curRow ? curRow.need : [])), grownMax = Math.max.apply(null, grown.map(function(g){ return g.tot; }));
+      var max = niceMax(Math.max(needMax*1.3, Math.min(grownMax, needMax*1.3))), clipped = grownMax > max;
       function Y(v){ return mt + ph - v/max*ph; }
       var sv = '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><g class="grid">';
       for(var i = 0; i <= 4; i++) sv += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + Y(max*i/4) + '" y2="' + Y(max*i/4) + '"/>';
       sv += '</g><g class="axis">';
       for(i = 0; i <= 4; i++) sv += '<text x="' + (ml - 8) + '" y="' + (Y(max*i/4) + 4) + '" text-anchor="end">' + fmt(max*i/4) + '</text>';
       sv += '</g>';
+      // nursing months for the month shown: when the cows need the most
+      sel.nurseM.forEach(function(m, k){ sv += '<rect class="nurse-band" x="' + (ml + band*m).toFixed(1) + '" y="' + mt + '" width="' + band.toFixed(1) + '" height="' + ph + '"/>' + (k === 0 ? '<text class="nurse-lbl" x="' + (ml + band*m + 4).toFixed(1) + '" y="' + (mt + 11) + '">Cows nursing</text>' : ''); });
       grown.forEach(function(g, m){
         var cx = ml + band*m + band/2, x0 = cx - bw/2, acc = 0;
-        TYPES_G.forEach(function(t){ var v = g.by[t.k] || 0; if(v <= 0) return; var y1 = Y(acc + v), y0 = Y(acc); acc += v;
-          sv += '<rect class="seg" fill="' + t.c + '" x="' + x0.toFixed(1) + '" y="' + y1.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0, y0 - y1).toFixed(1) + '"/>'; });
+        TYPES_G.forEach(function(t){ var v = g.by[t.k] || 0; if(v <= 0) return; var top = Math.min(max, acc + v), y1 = Y(top), y0 = Y(Math.min(max, acc)); acc += v;
+          if(y0 - y1 > 0) sv += '<rect class="seg" fill="' + t.c + '" x="' + x0.toFixed(1) + '" y="' + y1.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (y0 - y1).toFixed(1) + '"/>'; });
+        if(g.tot > max) sv += '<text class="clip-lbl" x="' + cx + '" y="' + (mt + 14) + '" text-anchor="middle">▲' + fmt(g.tot) + '</text>';
         sv += '<g class="axis"><text x="' + cx + '" y="' + (mt + ph + 16) + '" text-anchor="middle">' + FEED.MONTHS[m] + '</text></g>';
         if(sel.gapM.indexOf(m) >= 0) sv += '<circle class="short-mark" cx="' + cx + '" cy="' + (mt + ph + 26) + '" r="3"/>';
       });
       function line(need, cls){ var pts = need.map(function(d, m){ return (ml + band*m + band/2).toFixed(1) + ',' + Y(d).toFixed(1); }); return '<polyline class="' + cls + '" points="' + pts.join(' ') + '"/>'; }
+      // the part of the needs that is calves eating grass (above the cows-and-bulls line)
+      var cowOnly = sel.res.months.map(function(x){ return x.herdReq.tdn - x.herdReq.calfTdn - x.herdReq.wcTdn; });
+      if(cowOnly.some(function(v, m){ return sel.need[m] - v > 1; })){
+        var top = sel.need.map(function(d, m){ return (ml + band*m + band/2).toFixed(1) + ',' + Y(d).toFixed(1); }), bot = cowOnly.map(function(d, m){ return (ml + band*m + band/2).toFixed(1) + ',' + Y(d).toFixed(1); }).reverse();
+        sv += '<polygon class="calf-area" points="' + top.concat(bot).join(' ') + '"/>' + line(cowOnly, 'cow-line');
+      }
       if(curRow) sv += line(curRow.need, 'need-line cur');
       sv += line(sel.need, 'supply-line');
       sel.need.forEach(function(d, m){ sv += '<circle class="supply-dot" cx="' + (ml + band*m + band/2).toFixed(1) + '" cy="' + Y(d).toFixed(1) + '" r="4"/>'; });
       rows.forEach(function(r, m){ sv += '<rect class="hit" data-m="' + m + '" tabindex="0" x="' + (ml + band*m) + '" y="' + mt + '" width="' + band + '" height="' + (ph + mb) + '"/>'; });
       sv += '</svg>';
       el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;">' + TYPES_G.map(function(t){ return '<span><i class="sw" style="background:' + t.c + ';"></i>' + t.l + ' grows</span>'; }).join('') +
-        '<span><i class="ln"></i>Herd needs, calving from ' + moStr(show) + '</span>' + (curRow ? '<span><i class="ln dash"></i>Your season</span>' : '') +
+        '<span><i class="ln"></i>Herd needs, calving from ' + moStr(show) + '</span><span><i class="sw calf-sw"></i>of which calves eating grass</span>' + (curRow ? '<span><i class="ln dash"></i>Your season</span>' : '') +
         '<span><i class="sw" style="background:var(--critical-700);border-radius:50%;"></i>Needs more than grows</span><span style="color:var(--ink-muted);">lb of energy (TDN) a day, whole herd</span></div>' + sv;
       a11yHits(el, 'Energy your pastures grow each month against the herd’s needs calving from ' + moStr(show), function(m){
         var g = grown[m], d = sel.need[m];
@@ -4036,7 +4053,7 @@
       el.querySelectorAll('.hit').forEach(function(hh){
         function show2(){ var m = +hh.getAttribute('data-m'), g = grown[m], d = sel.need[m], b = hh.getBoundingClientRect(), diff = g.tot - d;
           tip.innerHTML = '<div class="tt-val">' + FEED.MONTHS[m] + '</div><div>Grows ' + fmt(g.tot) + ' lb TDN/day' + (TYPES_G.length > 1 ? ' (' + TYPES_G.filter(function(t){ return g.by[t.k] > 0.5; }).map(function(t){ return t.l.toLowerCase() + ' ' + fmt(g.by[t.k]); }).join(', ') + ')' : '') + '</div>' +
-            '<div>Herd needs ' + fmt(d) + ' lb/day calving from ' + FEED.MONTHS[show] + '</div><div class="tt-lbl">' + (diff >= 0 ? fmt(diff) + ' lb/day extra — leave it standing' : fmt(-diff) + ' lb/day short — from grass left standing, or bought') + '</div>';
+            '<div>Herd needs ' + fmt(d) + ' lb/day calving from ' + FEED.MONTHS[show] + (function(){ var x = sel.res.months[m].herdReq, cal = x.calfTdn + x.wcTdn; return cal > 1 ? ' (cows & bulls ' + fmt(d - cal) + ', calves on grass ' + fmt(cal) + ')' : ''; })() + '</div><div class="tt-lbl">' + (diff >= 0 ? fmt(diff) + ' lb/day extra — leave it standing' : fmt(-diff) + ' lb/day short — from grass left standing, or bought') + '</div>';
           tip.style.left = (b.left + b.width/2) + 'px'; tip.style.top = (b.top + 10) + 'px'; tip.classList.add('show'); }
         hh.addEventListener('mouseenter', show2); hh.addEventListener('focus', show2);
         hh.addEventListener('mouseleave', function(){ tip.classList.remove('show'); }); hh.addEventListener('blur', function(){ tip.classList.remove('show'); });
