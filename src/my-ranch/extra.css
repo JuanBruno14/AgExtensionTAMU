@@ -49,7 +49,8 @@
     font:inherit;font-size:13px;padding:9px 12px;cursor:pointer;border-bottom:1px solid var(--border);
   }
   .search-results button:last-child{border-bottom:0;}
-  .search-results button:hover,.search-results button:focus-visible{background:var(--maroon-100);outline:none;}
+  .search-results button:hover{background:var(--maroon-100);}
+  .search-results button:focus-visible{background:var(--maroon-100);outline:2px solid var(--focus);outline-offset:-2px;}
   .search-results .msg{padding:9px 12px;font-size:12.5px;color:var(--ink-muted);}
   .draw-tools{display:flex;flex-wrap:wrap;gap:8px;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface-sunken);}
   .draw-tools .sep{width:1px;background:var(--border);margin:2px 2px;}
@@ -192,6 +193,7 @@
   .fc-chart .supply-dot{fill:var(--ink);stroke:var(--surface);stroke-width:2;}
   .fc-chart .hit{fill:transparent;cursor:crosshair;}
   .fc-chart .hit:hover, .fc-chart .hit:focus{fill:color-mix(in srgb, var(--ink) 6%, transparent);outline:none;}
+  .fc-chart .hit:focus-visible{stroke:var(--focus);stroke-width:2;}
   .fc-chart .short-mark{fill:var(--critical-700);}
   .fc-short{font-size:13px;color:var(--ink-secondary);margin:10px 0 0;line-height:1.5;}
   .fc-short strong{color:var(--ink);}
@@ -452,3 +454,11 @@
 .fc-chart .need-line.cur{fill:none;stroke:var(--ink-muted);stroke-width:1.5;stroke-dasharray:5 4;}
 .fc-legend .ln.dash{border-top:2px dashed var(--ink-muted);}
 .fc-legend .ln.dash::after{display:none;}
+  /* add a pasture by acres (keyboard path, no map) */
+  .p-typed{margin:0 0 14px;border:1px solid var(--border);border-radius:10px;padding:10px 12px;background:var(--surface);}
+  .p-typed > summary{cursor:pointer;font-weight:600;color:var(--accent);}
+  .p-typed-body{margin-top:10px;}
+  .p-typed-grid{display:grid;grid-template-columns:2fr 1fr 2fr;gap:10px;margin-bottom:10px;}
+  @media (max-width:640px){ .p-typed-grid{grid-template-columns:1fr;} }
+  .tp-status{margin:8px 0 0;font-size:12.5px;color:var(--good-700);}
+  .tp-status.bad{color:var(--critical-700);}

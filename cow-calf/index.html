@@ -5,7 +5,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Texas A&amp;M AgriLife Extension - Decision Making</title>
+<title>Cow Bid Price · Decision Making · Texas A&amp;M AgriLife Extension</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap">
@@ -170,10 +170,11 @@
     border-bottom-color:var(--wheat-500);
   }
   .roadmap .disabled{
-    color:rgba(255,255,255,0.4);
+    color:rgba(255,255,255,0.7);
     cursor:not-allowed;
   }
   .roadmap .soon{
+    color:#fff;
     font-size:10px;
     font-weight:700;
     letter-spacing:0.05em;
@@ -515,7 +516,7 @@
         <div class="hero-field" style="margin-bottom:18px;">
           <label for="bidPrice">Cow bid price ($/head)</label>
           <div class="hero-row">
-            <input type="range" id="bidPriceRange" min="400" max="7000" step="10" value="1300">
+            <input type="range" id="bidPriceRange" min="400" max="7000" step="10" value="1300" aria-label="Cow bid price ($/head) — drag to adjust">
             <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="2828.62" min="0" step="10" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
           </div>
           <span style="display:block;font-size:11px;color:var(--ink-muted);margin-top:6px;">Pre-filled from <a href="../index.html#market-prices-calculator" style="color:inherit;">Market prices &amp; factors</a> — edit freely, this field won't update on its own</span>
@@ -682,7 +683,7 @@
         <h2>Net cash flow by year</h2>
       </div>
       <div class="chart-wrap">
-        <svg id="cashChart" viewBox="0 0 460 220" width="100%" role="img" aria-labelledby="chartTitle"></svg>
+        <svg id="cashChart" viewBox="0 0 460 220" width="100%" role="img"></svg>
       </div>
       <div class="chart-legend">
         <span><i style="background:var(--good-700)"></i>Positive cash flow</span>
@@ -697,7 +698,7 @@
       </div>
       <div class="card-body">
         <p class="card-note">Running total of cash in vs. out, starting from your equity down payment — the same "payback" idea as the Result card above, drawn out year by year.</p>
-        <div class="linechart-wrap"><svg class="linechart" id="cashLineChart" viewBox="0 0 460 240"></svg></div>
+        <div class="linechart-wrap"><svg class="linechart" id="cashLineChart" viewBox="0 0 460 240" role="group" aria-label="Your cash position over time, by year"></svg></div>
       </div>
     </div>
   </div>
@@ -1043,7 +1044,7 @@
             <div class="item"><span class="swatch" style="background:var(--ink-muted);opacity:0.55;"></span>Current price</div>
             <div class="item"><span class="swatch" style="background:var(--accent);"></span>Price needed for your target ROA</div>
           </div>
-          <svg class="groupbar" id="a2_priceGroupbar" viewBox="0 0 400 200"></svg>
+          <svg class="groupbar" id="a2_priceGroupbar" viewBox="0 0 400 200" role="group" aria-label="Current price vs. price needed for your target ROA"></svg>
         </div>
 
         <div class="stat-tiles" style="margin:14px 0 4px;">
@@ -1308,7 +1309,8 @@
       if(i===crossIdx){
         parts.push('<text class="lc-callout" x="'+x+'" y="'+(y-12)+'" text-anchor="middle">Back above zero</text>');
       }
-      parts.push('<circle class="lc-dot-hit" data-i="'+i+'" data-v="'+v+'" cx="'+x+'" cy="'+y+'" r="13" tabindex="0"/>');
+      var hitLabel = (opts.tooltipLabel||'Cumulative')+', end of Year '+i+': '+(v<0?'-':'')+'$'+fmtMoney0.format(Math.abs(v));
+      parts.push('<circle class="lc-dot-hit" data-i="'+i+'" data-v="'+v+'" cx="'+x+'" cy="'+y+'" r="13" tabindex="0" role="img" aria-label="'+hitLabel+'"/>');
     });
 
     svg.setAttribute('viewBox','0 0 '+W+' '+H);
@@ -1351,7 +1353,7 @@
         {v:g.required, x:x2, cls:'gb-bar-required', lbl:opts.requiredLabel||'Needed'}
       ].forEach(function(b){
         var y = yAt(b.v), h = yAt(0)-y;
-        parts.push('<rect class="'+b.cls+'" x="'+b.x+'" y="'+y+'" width="'+barW+'" height="'+Math.max(h,0)+'" rx="4" ry="4" data-v="'+b.v+'" data-lbl="'+g.label+' — '+b.lbl+'" tabindex="0"/>');
+        parts.push('<rect class="'+b.cls+'" x="'+b.x+'" y="'+y+'" width="'+barW+'" height="'+Math.max(h,0)+'" rx="4" ry="4" data-v="'+b.v+'" data-lbl="'+g.label+' — '+b.lbl+'" tabindex="0" role="img" aria-label="'+g.label+' — '+b.lbl+': $'+b.v.toFixed(2)+(opts.unit||'')+'"/>');
         parts.push('<text class="gb-label" x="'+(b.x+barW/2)+'" y="'+(y-7)+'" text-anchor="middle">$'+b.v.toFixed(0)+'</text>');
       });
       parts.push('<text class="gb-axis" x="'+cx+'" y="'+(H-8)+'" text-anchor="middle">'+g.label+'</text>');
@@ -1598,6 +1600,7 @@
 
     rowsMeta.forEach(function(meta){
       var tr = document.querySelector('tr[data-row="'+meta.key+'"]');
+      var rowLabel = tr.cells[0].textContent.trim();
       YEARS.forEach(function(y,idx){
         var td = document.createElement('td');
         var wrap = document.createElement('div'); wrap.className='input-wrap'+(meta.prefix?' has-prefix':'')+(meta.suffix?' has-suffix':'');
@@ -1605,6 +1608,7 @@
         var input = document.createElement('input');
         input.type='number'; input.step=meta.step; input.value=meta.arr[idx];
         input.dataset.row=meta.key; input.dataset.year=y;
+        input.setAttribute('aria-label', rowLabel + ', year ' + y);
         wrap.appendChild(input);
         if(meta.suffix){ var s=document.createElement('span'); s.className='suffix'; s.textContent=meta.suffix; wrap.appendChild(s); }
         td.appendChild(wrap);

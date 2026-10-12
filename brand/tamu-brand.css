@@ -32,6 +32,7 @@
   --tamu-charcoal:#333333;
   --tamu-dark-gray:#3E3E3E;
   --tamu-gray:#707070;
+  --tamu-steel:#666666;
   --tamu-light-gray:#D1D1D1;
   --tamu-off-white:#F6F6F6;
 
@@ -58,7 +59,7 @@
   --border:var(--tamu-light-gray);
   --ink:var(--tamu-black);
   --ink-secondary:var(--tamu-dark-gray);
-  --ink-muted:var(--tamu-gray);    /* 4.6:1 on Off-White, 4.9:1 on White */
+  --ink-muted:var(--tamu-steel);   /* 5.3:1 on Off-White, 5.7:1 on White, 4.7:1 or more on the tints above */
   --focus:var(--tamu-dark-blue);
   --shadow-card:0 1px 2px rgba(80,0,0,0.05), 0 4px 16px rgba(2,35,59,0.07);
   /* chart series drawn from the brand palette */
@@ -155,7 +156,7 @@ button.btn.secondary{color:var(--accent);}
 
 /* ---------- Footer: logo + required nondiscrimination statement ---------- */
 footer .footer-brand{display:block;margin:0 0 14px;line-height:0;}
-footer .footer-brand img{height:40px;width:auto;}
+footer .footer-brand img{height:auto;max-height:40px;width:auto;max-width:100%;}
 footer .footer-brand .logo-on-dark{display:none;}
 :root[data-theme="dark"] footer .footer-brand .logo-on-light{display:none;}
 :root[data-theme="dark"] footer .footer-brand .logo-on-dark{display:inline;}
@@ -167,3 +168,6 @@ footer .eeo-statement{
   margin-top:14px;padding-top:14px;border-top:1px solid var(--border);
   color:var(--ink-secondary);font-size:12.5px;line-height:1.6;max-width:110ch;
 }
+
+/* ---------- Tables that scroll sideways get keyboard focus (brand/a11y-scroll.js) ---------- */
+.table-scroll[data-a11y-scroll]:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
