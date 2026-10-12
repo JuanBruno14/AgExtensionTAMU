@@ -717,8 +717,6 @@
   function renderCalvingDecision(){
     var h = state.herd, len = h.calving === 'us' ? 60 : h.len1, cows = h.cows;
     $('dec_calvLen').textContent = len;
-    var seasonal = h.decPrice !== 'flat';
-    var ps = $('dec_calvPrice'); if(ps) ps.value = seasonal ? 'season' : 'flat';
     var base = feedOptions(), age = Math.round(base.refWeanAge);
     var curM = h.calving === 'us' ? -1 : FEED.monthOfDay(FEED.doy(h.start1));
     /* what the pastures grow: usable forage (after harvest efficiency) × its TDN, lb of energy a day, by forage type */
@@ -731,7 +729,7 @@
     var grownYr = grown.reduce(function(a, g, m){ return a + g.tot*FEED.MONTH_DAYS[m]; }, 0);
     var rows = [];
     for(var s = 0; s < 12; s++){
-      var ov = {calving:'one', start1:FEED.MONTH_START[s] + 14, len1:len, weanMode:'age', weanAge:age, refWeanAge:age, seasonal:seasonal};
+      var ov = {calving:'one', start1:FEED.MONTH_START[s] + 14, len1:len, weanMode:'age', weanAge:age, refWeanAge:age};
       var r = netOf(ov);
       // thinner cows at breeding get pregnant less (Sprott 1985): scale your calving rate by the pregnancy rate at this
       // season's breeding condition vs. your own season's, and run it again
@@ -843,22 +841,6 @@
         '<td class="num">' + fmt(r.match*100) + '%</td><td class="num">' + fmt(r.bcsBreed, 1) + ' · ' + fmt(r.calvRate) + '%</td><td class="num">' + fmt(r.weaned, 1) + '</td><td class="num">' + fmt(r.natLb) + ' lb</td><td class="num">' + (r.creepCalf >= 1 ? fmt(r.creepCalf) + ' lb/calf' : '—') + '</td><td class="num">' + fmt(r.lbPerCow) + '</td>' +
         '<td class="num">' + fmt(r.deadCold, 1) + ' · ' + fmt(r.deadNws, 1) + '</td><td class="num">' + fmt(r.hayT, 1) + ' t · ' + fmt(r.supT, 1) + ' t</td><td class="num">' + fmt(r.feedPerCow) + ' lb</td></tr>'; }).join('') + '</tbody>';
 
-    /* 2. economics */
-    var best = argBest(function(r){ return r.e.net; }, true), worst = argBest(function(r){ return r.e.net; }, false);
-    decDotChart($('dec_calvEconChart'), rows.map(function(r){ return r.e.net/cows; }), {best:best.m, cur:curM, minPad:5,
-      legend:'Cattle sales minus feed, per cow' + (seasonal ? ' · calves priced in the month they’re sold' : ' · same price all year'), fmt:money,
-      tip:function(m){ var r = rows[m]; return '<div class="tt-val">Calving from ' + moStr(m) + '</div><div>' + money(r.e.net/cows) + ' per cow</div><div class="tt-lbl">Sold in ' + FEED.MONTHS[r.saleM] + ': ' + fmt(r.e.calvesSold) + ' calves × ' + fmt(r.e.avgSaleLb) + ' lb at $' + fmt(r.e.avgPrice) + '/cwt · feed ' + money(r.e.costs) + '</div>'; }});
-    $('dec_calvEconText').innerHTML = 'Adding prices, calving from <strong>' + moStr(best.m) + '</strong> leaves the most: <strong>' + money(best.e.net) + '</strong> a year (' + money(best.e.net/cows) + ' per cow), ' +
-      money(best.e.net - worst.e.net) + ' more than ' + FEED.MONTHS[worst.m] + '.' +
-      (cur && cur !== best ? ' Your season leaves ' + money(cur.e.net) + ' — ' + money(best.e.net - cur.e.net) + ' less.' : cur ? ' That’s already your season.' : '') +
-      (seasonal ? ' Calves and culls are priced in the month they’re sold, with the seasonal pattern of 2016–2025 Oklahoma City calf prices (USDA; Feb–Apr about 3–4% above the yearly average, October about 6% below), starting from today’s market prices.'
-                : ' Every month uses today’s market prices; switch to seasonal prices to see the effect of the sale month.') +
-      (state.herd.calfShort !== 'lighter' ? ' Feed costs include the creep feed each month needs to wean calves at ' + fmt(state.herd.weanLb) + ' lb.' : ' Calves are sold at the weight milk and grass give them in each month, so lighter calves bring more per hundredweight but less per head.') +
-      ' Fewer calves when cows are thin at breeding, cold-weather calf deaths by birth month (USDA NAHMS rate) and feed to put back condition the cows don’t regain by calving are all counted. Labor at calving isn’t included.';
-    $('dec_calvEconTable').innerHTML = '<thead><tr><th>Calving from</th><th class="num">Calves sold</th><th class="num">Sold in</th><th class="num">Price</th><th class="num">Cattle sales</th><th class="num">Feed &amp; feeding</th><th class="num">Income − feed</th></tr></thead><tbody>' +
-      rows.map(function(r){ var e = r.e; return '<tr' + (r === best ? ' class="best"' : '') + '><td>' + (r === best ? '★ ' : '') + moStr(r.m) + (r.m === curM ? ' (yours)' : '') + '</td>' +
-        '<td class="num">' + fmt(e.calvesSold, 1) + ' × ' + fmt(e.avgSaleLb) + ' lb</td><td class="num">' + FEED.MONTHS[r.saleM] + '</td><td class="num">$' + fmt(e.avgPrice) + '/cwt</td>' +
-        '<td class="num">' + money(e.income) + '</td><td class="num">' + money(e.costs) + '</td><td class="num"><strong>' + money(e.net) + '</strong></td></tr>'; }).join('') + '</tbody>';
     /* keeping the calves after weaning: hand the numbers to the stocker budget (Retained Ownership page) */
     (function(){
       var F = feedLast, cs = F.calves.cohorts, mid = cs[Math.floor(cs.length/2)] || cs[0];
@@ -1089,7 +1071,6 @@
     $('fc_breed').innerHTML = Object.keys(FEED.BREEDS).map(function(k){ return '<option value="' + k + '">' + esc(FEED.BREEDS[k].label) + '</option>'; }).join('');
     $('fc_source').innerHTML = Object.keys(FEED.SOURCES).map(function(k){ var s = FEED.SOURCES[k]; return '<option value="' + k + '">' + esc(s.label) + (s.cp != null ? ' (' + s.cp + '% CP)' : '') + '</option>'; }).join('');
     $('dr_from').innerHTML = FEED.MONTHS.map(function(m, i){ return '<option value="' + i + '">' + m + '</option>'; }).join('');
-    $('dec_calvPrice').addEventListener('change', function(){ state.herd.decPrice = this.value; save(); scheduleDecisions(); });
     bindFeedValues();
     function rerender(){ save(); renderSummary(); renderRotation(); renderFeed(); renderHerdNote(); }
     document.querySelectorAll('[data-h]').forEach(function(el){

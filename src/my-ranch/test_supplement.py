@@ -43,7 +43,7 @@ with sync_playwright() as pw:
     pg.go_back(); pg.wait_for_timeout(1500)
     ws=pg.evaluate("MyRanch.netOf({weanMode:'age',weanAge:200,calfShort:'lighter'}).econ.avgWeanLb")
     check('engine: weaned calf gain from forage', 0.2 < pg.evaluate("MyRanch.FEED.weanedGain({breed:'angus',cowLb:1100},400,48,4.5,75,38).adg") < 0.7 and pg.evaluate("MyRanch.FEED.weanedGain({breed:'angus',cowLb:1100},400,62,12,75,38).adg") > 1.2)
-    check('calving + sale table', pg.locator('#dec_calvEconTable tbody tr').count()==12 and 'leaves the most' in pg.inner_text('#dec_calvEconText'))
+    check('calving: no economics section any more', pg.locator('#dec_calvEconTable').count()==0)
     cf=pg.evaluate("MyRanch.feed().econ")
     check('creep cost included in costs', cf['creep'] >= 0 and abs(cf['costs'] - (cf['feed']+cf['trips']+cf['dist']+cf['nwsCare']+cf['creep']+cf['bcsRestore']+cf['mineral'])) < 1, cf)
     pg.evaluate("MyRanch.state().herd.calfShort='lighter'"); pg.fill('#hd_cows','153'); pg.wait_for_timeout(200); pg.fill('#hd_cows','154'); pg.wait_for_timeout(900)
