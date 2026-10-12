@@ -24,6 +24,13 @@ with sync_playwright() as pw:
     pg.click('#fileCard [data-example="rolling-plains-154-cows"]'); pg.wait_for_timeout(1800)
     st=pg.evaluate("MyRanch.state()")
     check('rolling plains example replaces the ranch', len(st['pastures'])==3 and st['herd']['cows']==154 and st['herd']['region']=='rp', (len(st['pastures']), st['herd']['cows']))
+    # calving season: forage grown (by type) vs. herd needs, and the decision from what the ranch has
+    pg.evaluate("MyRanch.go('decide')"); pg.click('.seg-btn[data-dec="calving"]'); pg.wait_for_timeout(1800)
+    t=pg.inner_text('#dec_calvText')
+    check('calving: grown energy bars and the herd-needs line', pg.locator('#dec_calvChart rect.seg').count()>=6 and pg.locator('#dec_calvChart polyline.supply-line').count()==1 and 'Native range grows' in pg.inner_text('#dec_calvChart'))
+    check('calving: says best month and whether to buy hay, from what the ranch grows', 'best time to calve is from' in t and ('no hay to buy' in t or 'of hay' in t), t[:300])
+    pg.select_option('#dec_calvShow','6'); pg.wait_for_timeout(800)
+    check('calving: pick another month to see its needs line', 'calving from Jul 15' in pg.inner_text('#dec_calvChart'))
     check('ranch file button says it keeps the whole ranch', 'ranch file' in pg.inner_text('#exportGeoBtn').lower())
     # grazing system
     pg.evaluate("MyRanch.go('ranch')"); pg.wait_for_timeout(300)

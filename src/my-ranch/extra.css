@@ -449,3 +449,6 @@
 .dm-suggest .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px;vertical-align:baseline;}
 .dm-suggest .tool-btn.small{margin-left:4px;}
 .dm-suggest .hint{display:block;margin-top:4px;color:var(--ink-muted);font-size:12.5px;}
+.fc-chart .need-line.cur{fill:none;stroke:var(--ink-muted);stroke-width:1.5;stroke-dasharray:5 4;}
+.fc-legend .ln.dash{border-top:2px dashed var(--ink-muted);}
+.fc-legend .ln.dash::after{display:none;}

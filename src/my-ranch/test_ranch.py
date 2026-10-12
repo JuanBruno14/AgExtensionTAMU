@@ -267,7 +267,7 @@ with sync_playwright() as pw:
     check('weaned calves appear in calendar', wcn>0)
     # decisions
     page.evaluate("document.getElementById('decCard').scrollIntoView()"); page.wait_for_timeout(600)
-    check('best calving season computed', page.locator('#dec_calvChart .pc-bar').count()==12 and 'Best time to calve' in page.inner_text('#dec_calvText') and 'least bought feed' in page.inner_text('#dec_calvText'), page.inner_text('#dec_calvText')[:120])
+    check('best calving season computed', page.locator('#dec_calvChart rect.seg').count()>=6 and 'best time to calve' in page.inner_text('#dec_calvText') and page.locator('#dec_calvChart polyline.supply-line').count()==1, page.inner_text('#dec_calvText')[:120])
     check('calving table 12 rows', page.locator('#dec_calvTable tbody tr').count()==12)
     check('calving economics after production', page.locator('#dec_calvEconChart .dec-dot').count()==12 and 'leaves the most' in page.inner_text('#dec_calvEconText') and page.locator('#dec_calvEconTable tbody tr').count()==12)
     ev=page.inner_text('#dec_calvEconTable')

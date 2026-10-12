@@ -25,7 +25,7 @@ with sync_playwright() as pw:
         check(tag+': strip filled', '%' in st and '$' in st and ' ac' in st, st)
         check(tag+': details closed by default', pg.evaluate("[...document.querySelectorAll('#step_plan details')].every(d=>!d.open)"))
         pg.click('.mr-step-btn[data-go="decide"]'); pg.wait_for_timeout(1200)
-        check(tag+': decisions drawn', vis(pg,'decide') and pg.locator('#dec_calvChart .pc-bar').count()==12)
+        check(tag+': decisions drawn', vis(pg,'decide') and pg.locator('#dec_calvChart rect.seg').count()>=6)
         pg.click('#stripSaveBtn'); pg.wait_for_timeout(200)
         check(tag+': save button opens file panel', pg.is_visible('#exportGeoBtn')); pg.click('#stripSaveBtn'); pg.wait_for_timeout(100)
         check(tag+': save button closes it', not pg.is_visible('#exportGeoBtn'))
