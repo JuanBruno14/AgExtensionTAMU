@@ -253,6 +253,8 @@
       var r = at(lo);
       return {adg:lo, dmLb:r.cap, forageDm:r.cap - r.sup, supLb:r.sup, dietTdn:r.dTdn};
     }
+    /* Energy retained in gain (NEg, Mcal/d), NRC 2016 Eq. 12-6 inverse / Table 12-1: 0.0635 x EQEBW^0.75 x EWG^1.097 */
+    function retainedEnergy(eqebw, ewg){ return 0.0635*Math.pow(eqebw, 0.75)*Math.pow(ewg, 1.097); }
     /* Replacement heifers (BCNRM 2016 targets): 60% of mature shrunk weight at conception (65% Bos indicus),
        80% at first calving; conception at 450 days, first calf at 730 days. */
     var H_BREED = 450, H_CALVE = 730, H_CHECK = 510;
@@ -276,7 +278,7 @@
       var nemBase = mbw*(0.077*br.be + a2Of(env)), nem = nemBase*(1 + (o.activity || 0));
       var eqsbw = Math.max(1, (sbw - cw)*478/T.msbw), eqebw = 0.891*eqsbw;
       var swg = st.adg, ewg = swg*0.956;
-      var re = swg > 0 ? 0.0635*Math.pow(eqebw, 0.75)*Math.pow(ewg, 1.097) : 0;
+      var re = swg > 0 ? retainedEnergy(eqebw, ewg) : 0;
       var mey = 0, mpp = 0;
       if(t > 0){
         mey = cbw*(0.05855 - 0.0000996*t)*Math.exp(0.03233*t - 0.0000275*t*t)/1000/0.13;
@@ -716,7 +718,7 @@
     }
     return {pastureGrowth:pastureGrowth, heiferDay:heiferDay, heiferState:heiferState, heifersKeptPerCow:heifersKeptPerCow, heiferAges:heiferAges, bodyEnergy:bodyEnergy, SEASON_CALF:SEASON_CALF, SEASON_CULL:SEASON_CULL, nemaOf:nemaOf, needAt:needAt, cowParams:cowParams, envFor:envFor, birthLb:birthLb, BREEDS:BREEDS, MILK:MILK, REGIONS:REGIONS, QUALITY:QUALITY, ACTIVITY:ACTIVITY, MONTHS:MONTHS, MONTH_DAYS:MONTH_DAYS, MONTH_START:MONTH_START,
             NAHMS:NAHMS, SOURCES:SOURCES, LOSS_DEFAULT:LOSS_DEFAULT, WEATHER_SHARE:WEATHER_SHARE,
-            cowDay:cowDay, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
+            cowDay:cowDay, retainedEnergy:retainedEnergy, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
             intakePct:intakePct, doy:doy, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfOutcome:calfOutcome,
             weatherFactor:weatherFactor, grazeFactor:grazeFactor, weatherLoss:weatherLoss, pregByBcs:pregByBcs, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
   })();

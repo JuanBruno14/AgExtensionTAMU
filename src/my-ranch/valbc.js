@@ -28,3 +28,8 @@ console.log('WORST % diff vs BCNRM (incl. GRAZE):',worst.toFixed(3));
     const d=Math.max(Math.abs(n/nem-1),Math.abs(p/mp-1))*100; console.log(`Table 20-2 bull ${sbw} kg: NEm ${n.toFixed(2)}/${nem}, MP ${p.toFixed(0)}/${mp} (${d.toFixed(2)}% rounding)`); if(d>1) worst=Math.max(worst,d); }); }
 { const sbw5=550, e=FEED.bodyEnergy(sbw5,5,5)-FEED.bodyEnergy(sbw5,5,4); console.log(`Table 13-5: 550 kg cow BCS 4->5 ${e.toFixed(0)} Mcal (book 228)`); if(Math.abs(e-228)>1.5) worst=Math.max(worst,100); }
 console.log('WORST % diff (incl. book tables):',worst.toFixed(3));
+// NASEM 2016 Table 12-1: NEg (Mcal/d) for a medium-frame steer, SBW 300 kg at 0.6/0.8/1.0/1.3 kg/d; 500 kg at 1.3
+{ const cells=[[300,0.6,2.28],[300,0.8,3.13],[300,1.0,4.00],[300,1.3,5.33],[500,1.3,7.81],[200,1.0,2.95]]; let w=0;
+  cells.forEach(([sbw,adg,neg])=>{ const r=FEED.retainedEnergy(0.891*sbw,0.956*adg); w=Math.max(w,Math.abs(r/neg-1)*100); });
+  console.log(`Table 12-1 NEg: worst ${w.toFixed(2)}% (rounding)`); if(w>1) worst=Math.max(worst,w); }
+console.log('WORST % diff (all checks):',worst.toFixed(3));
