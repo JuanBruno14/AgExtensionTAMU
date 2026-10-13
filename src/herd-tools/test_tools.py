@@ -32,6 +32,8 @@ with sync_playwright() as pw:
     check('water quality: NASEM Tables 9-2 and 9-4 bands, blank skipped', len(q)==3 and q[0]['level']==1 and q[1]['level']==2 and 'Very hard' in q[2]['text'], q)
     q2=pg.evaluate(H+".waterQuality({as:0.08,f:1.5})")
     check('water quality: arsenic over 0.05 ppm flagged, fluoride under 2 ppm ok (Table 9-5)', q2[0]['level']>=2 and q2[1]['level']==0, q2)
+    q3=pg.evaluate(H+".waterQuality({ph:9.2,h2s:0.2,coli:12,se:0.03,pb:0.05})")
+    check('water quality: pH, H2S, coliforms and Table 9-5 metals', [x['level'] for x in q3]==[2,2,2,2,0], [(x['item'],x['level']) for x in q3])
     check('water quality: 7,000 ppm TDS = do not use', pg.evaluate(H+".waterQuality({tds:7000})[0].level")==3)
     check('dry cows above 70F extended', pg.evaluate(H+".water('pregnant',900,90).gal")>9.7)
     # --- pearson

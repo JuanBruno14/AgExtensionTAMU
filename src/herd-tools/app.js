@@ -51,6 +51,9 @@
   /* Water quality, NASEM (2016) Nutrient Requirements of Beef Cattle, Ch. 9: Table 9-2 (total soluble salts), Table 9-4
      (nitrate, mg/L as NO3), text on sulfate (<500 mg/L for calves, <1,000 for adult cattle; 2,000-2,500 causes diarrhea at first;
      tolerated up to 2,500 for <90 d), Table 9-3 (hardness). level: 0 ok, 1 caution, 2 problem, 3 do not use. null = not tested. */
+  var METALS = [['al','Aluminum',0.5],['b','Boron',5.0],['cd','Cadmium',0.005],['cr','Chromium',0.1],['co','Cobalt',1.0],
+    ['cu','Copper',1.0,'Count the copper in mineral and feed too.'],['pb','Lead',0.015,'Find the source (old pipes, batteries, paint) and use other water.'],['mn','Manganese',0.05],['hg','Mercury',0.01],['ni','Nickel',0.25],
+    ['se','Selenium',0.05,'Selenium in water adds to what the mineral supplies; check the mineral tag before adding more.'],['v','Vanadium',0.1],['zn','Zinc',5.0]];
   function waterQuality(o){
     var out = [];
     function v(x){ return x === '' || x == null || !isFinite(+x) ? null : +x; }
@@ -77,6 +80,16 @@
       text:as <= 0.05 ? 'At or under the 0.05 ppm upper limit for cattle.' : 'Over the 0.05 ppm upper limit for cattle. Arsenic builds up over time: find another water source and talk to your veterinarian.'});
     if(fl != null) out.push({item:'Fluoride', val:fl, dec:1, level:fl <= 2 ? 0 : fl <= 4 ? 1 : 2,
       text:fl <= 2 ? 'At or under the 2 ppm upper limit for cattle.' : 'Over the 2 ppm upper limit. Years of high fluoride mottle and wear young cattle’s teeth (fluorosis); count fluoride in mineral and feed phosphate too.'});
+    var ph = v(o.ph), h2s = v(o.h2s), coli = v(o.coli);
+    if(ph != null) out.push({item:'pH', val:ph, dec:1, level:ph >= 6.5 && ph <= 8.5 ? 0 : (ph >= 5.5 && ph <= 9) ? 1 : 2,
+      text:ph >= 6.5 && ph <= 8.5 ? 'Within 6.5–8.5, the range EPA sets for drinking water (there is no cattle limit).' : 'Outside 6.5–8.5. There is no set limit for cattle, but very acid or alkaline water corrodes pipes and can cut how much cattle drink; retest and look for the cause.'});
+    if(h2s != null) out.push({item:'Hydrogen sulfide', val:h2s, dec:2, level:h2s < 0.1 ? 0 : 2,
+      text:h2s < 0.1 ? 'Under 0.1 ppm.' : 'At 0.1 ppm or more cattle drink less. It is the most toxic form of sulfur in water; aerating or storing the water lets much of it escape.'});
+    if(coli != null) out.push({item:'Total coliforms', val:coli, level:coli < 1 ? 0 : coli <= 8 ? 1 : 2,
+      text:coli < 1 ? 'Satisfactory.' : coli <= 8 ? 'Unsatisfactory (1–8). Ask for a fecal coliform test to find the source.' : 'Unsafe (9 or more). Ask for a fecal coliform test, keep cattle out of the water source and clean or shock the well or tank.'});
+    METALS.forEach(function(mm){ var x = v(o[mm[0]]); if(x == null) return;
+      out.push({item:mm[1], val:x, dec:3, level:x <= mm[2] ? 0 : x <= 2*mm[2] ? 1 : 2,
+        text:x <= mm[2] ? 'At or under the ' + mm[2] + ' ppm upper limit for cattle.' : 'Over the ' + mm[2] + ' ppm upper limit for cattle' + (mm[3] ? '. ' + mm[3] : '.')}); });
     if(hard != null) out.push({item:'Hardness', val:hard, level:0,
       text:(hard <= 60 ? 'Soft' : hard <= 120 ? 'Moderately hard' : hard <= 180 ? 'Hard' : 'Very hard') + ' water. Hardness itself is not a health problem for cattle; it matters for scale in pipes and waterers.'});
     return out;
@@ -144,7 +157,7 @@
   /* ================================================================ STATE */
   var DEF = {
     tool:'water',
-    w_class:'lactating', w_lb:1200, w_head:100, w_temp:95, w_tank:3000, w_tds:'', w_no3:'', w_so4:'', w_hard:'', w_as:'', w_f:'',
+    w_class:'lactating', w_lb:1200, w_head:100, w_temp:95, w_tank:3000, w_tds:'', w_no3:'', w_so4:'', w_hard:'', w_as:'', w_f:'', w_ph:'', w_h2s:'', w_coli:'', w_al:'', w_b:'', w_cd:'', w_cr:'', w_co:'', w_cu:'', w_pb:'', w_mn:'', w_hg:'', w_ni:'', w_se:'', w_v:'', w_zn:'', 
     r_nut:'cp', r_target:10, r_aName:'Grass hay', r_aCp:7, r_aTdn:52, r_aDm:90, r_aPrice:120,
     r_bName:'20% range cubes', r_bCp:22, r_bTdn:78, r_bDm:90, r_bPrice:392, r_dmi:26, r_bw:1200, r_head:100, r_days:90,
     d_prod:'ivm_inj', d_cDose:1, d_cPer:110, d_cWd:35, d_lb:600, d_head:100, d_bottle:500, d_date:'', d_sale:'',
@@ -177,7 +190,7 @@
     $('w_note').textContent = 'About ' + fmt(r.gal, 1) + ' gallons per head a day for ' + W_TABLE[S.w_class].label + ' weighing ' + fmt(S.w_lb) + ' lb at ' + fmt(S.w_temp) + '°F. ' + notes.join(' ');
     $('w_table').innerHTML = '<thead><tr><th>Temperature</th>' + W_TEMPS.map(function(t){ return '<th class="num">' + t + '°F</th>'; }).join('') + '</tr></thead><tbody><tr><td>Gal/head/day</td>' +
       r.row.map(function(v, i){ var on = Math.abs(Math.max(40, Math.min(90, S.w_temp)) - W_TEMPS[i]) < 5; return '<td class="num' + (on ? ' hl' : '') + '">' + fmt(v, 1) + '</td>'; }).join('') + '</tr></tbody>';
-    var q = waterQuality({tds:S.w_tds, no3:S.w_no3, so4:S.w_so4, hard:S.w_hard, as:S.w_as, f:S.w_f}), LV = ['ok','caution','problem','do not use'];
+    var q = waterQuality({tds:S.w_tds, no3:S.w_no3, so4:S.w_so4, hard:S.w_hard, as:S.w_as, f:S.w_f, ph:S.w_ph, h2s:S.w_h2s, coli:S.w_coli, al:S.w_al, b:S.w_b, cd:S.w_cd, cr:S.w_cr, co:S.w_co, cu:S.w_cu, pb:S.w_pb, mn:S.w_mn, hg:S.w_hg, ni:S.w_ni, se:S.w_se, v:S.w_v, zn:S.w_zn}), LV = ['ok','caution','problem','do not use'];
     $('w_quality').innerHTML = q.length ? '<table class="plan" aria-label="Water test results"><thead><tr><th>Water test</th><th class="num">ppm</th><th>What it means</th></tr></thead><tbody>' +
       q.map(function(x){ return '<tr><td>' + esc(x.item) + ' <span class="wq wq' + x.level + '">' + LV[x.level] + '</span></td><td class="num">' + fmt(x.val, x.dec || 0) + '</td><td>' + esc(x.text) + '</td></tr>'; }).join('') + '</tbody></table>' : '';
   }
@@ -306,7 +319,7 @@
       el.value = S[k];
       var isNum = el.type === 'number';
       el.addEventListener(el.tagName === 'SELECT' || el.type === 'date' ? 'change' : 'input', function(){
-        var optional = /^w_(tds|no3|so4|hard|as|f)$/.test(k);   // water-test fields may be left blank
+        var optional = /^w_(tds|no3|so4|hard|as|f|ph|h2s|coli|al|b|cd|cr|co|cu|pb|mn|hg|ni|se|v|zn)$/.test(k);   // water-test fields may be left blank
         if(isNum && optional && el.value.trim() === '') S[k] = '';
         else if(isNum){ var v = num(el.value); if(v == null || v < +el.min || v > +el.max) return; S[k] = v; }
         else S[k] = el.value;

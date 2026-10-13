@@ -67,6 +67,26 @@
           <div class="field"><label for="w_hard">Hardness (as CaCO<sub>3</sub>)</label><div class="input-wrap has-suffix"><input type="number" id="w_hard" data-k="w_hard" min="0" max="5000" step="1"><span class="suffix">ppm</span></div><span class="hint">Grains per gallon &times; 17.1</span></div>
           <div class="field"><label for="w_as">Arsenic (As)</label><div class="input-wrap has-suffix"><input type="number" id="w_as" data-k="w_as" min="0" max="100" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Reports in &micro;g/L or ppb: divide by 1,000</span></div>
           <div class="field"><label for="w_f">Fluoride (F)</label><div class="input-wrap has-suffix"><input type="number" id="w_f" data-k="w_f" min="0" max="100" step="0.1"><span class="suffix">ppm</span></div></div>
+          <div class="field"><label for="w_ph">pH</label><div class="input-wrap"><input type="number" id="w_ph" data-k="w_ph" min="0" max="14" step="0.1"></div></div>
+          <div class="field"><label for="w_h2s">Hydrogen sulfide (H<sub>2</sub>S)</label><div class="input-wrap has-suffix"><input type="number" id="w_h2s" data-k="w_h2s" min="0" max="100" step="0.01"><span class="suffix">ppm</span></div><span class="hint">Rotten-egg smell</span></div>
+          <div class="field"><label for="w_coli">Total coliforms</label><div class="input-wrap has-suffix"><input type="number" id="w_coli" data-k="w_coli" min="0" max="100000" step="1"><span class="suffix">MPN</span></div><span class="hint">Per 100 mL, as the lab reports it</span></div>
+          <details class="field" style="grid-column:1/-1;" id="w_more"><summary>Other metals and minerals (Table 9-5)</summary>
+            <div class="field-grid" style="margin-top:8px;">
+              <div class="field"><label for="w_al">Aluminum</label><div class="input-wrap has-suffix"><input type="number" id="w_al" data-k="w_al" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 0.5</span></div>
+              <div class="field"><label for="w_b">Boron</label><div class="input-wrap has-suffix"><input type="number" id="w_b" data-k="w_b" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 5</span></div>
+              <div class="field"><label for="w_cd">Cadmium</label><div class="input-wrap has-suffix"><input type="number" id="w_cd" data-k="w_cd" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 0.005</span></div>
+              <div class="field"><label for="w_cr">Chromium</label><div class="input-wrap has-suffix"><input type="number" id="w_cr" data-k="w_cr" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 0.1</span></div>
+              <div class="field"><label for="w_co">Cobalt</label><div class="input-wrap has-suffix"><input type="number" id="w_co" data-k="w_co" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 1</span></div>
+              <div class="field"><label for="w_cu">Copper</label><div class="input-wrap has-suffix"><input type="number" id="w_cu" data-k="w_cu" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 1</span></div>
+              <div class="field"><label for="w_pb">Lead</label><div class="input-wrap has-suffix"><input type="number" id="w_pb" data-k="w_pb" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 0.015</span></div>
+              <div class="field"><label for="w_mn">Manganese</label><div class="input-wrap has-suffix"><input type="number" id="w_mn" data-k="w_mn" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 0.05</span></div>
+              <div class="field"><label for="w_hg">Mercury</label><div class="input-wrap has-suffix"><input type="number" id="w_hg" data-k="w_hg" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 0.01</span></div>
+              <div class="field"><label for="w_ni">Nickel</label><div class="input-wrap has-suffix"><input type="number" id="w_ni" data-k="w_ni" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 0.25</span></div>
+              <div class="field"><label for="w_se">Selenium</label><div class="input-wrap has-suffix"><input type="number" id="w_se" data-k="w_se" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 0.05</span></div>
+              <div class="field"><label for="w_v">Vanadium</label><div class="input-wrap has-suffix"><input type="number" id="w_v" data-k="w_v" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 0.1</span></div>
+              <div class="field"><label for="w_zn">Zinc</label><div class="input-wrap has-suffix"><input type="number" id="w_zn" data-k="w_zn" min="0" max="1000" step="0.001"><span class="suffix">ppm</span></div><span class="hint">Limit 5</span></div>
+            </div>
+          </details>
         </div>
       </div>
     </div>
