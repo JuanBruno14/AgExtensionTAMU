@@ -45,7 +45,7 @@
     brush:  {label:'Brush / woods', icon:'🌳', style:{color:'#d5f0c8', weight:1.5, dashArray:'4 3', fillColor:'#2f5d27', fillOpacity:0.55}},
     bottom: {label:'Bottomland', icon:'〰', style:{color:'#e6fff5', weight:1.5, fillColor:'#35c29a', fillOpacity:0.45}}
   };
-  var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'rolling',
+  var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'none',
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535,
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto',
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,

@@ -1150,7 +1150,7 @@
                   <select id="fc_bcsWean" data-hs="bcsWean" data-num="1"><option value="0">Same as at calving</option><option value="3">3 — very thin</option><option value="4">4 — thin</option><option value="5">5 — moderate</option></select>
                   <span class="hint" id="fc_bcsHint">Cows lose condition while nursing</span></div>
                 <div class="field"><label for="fc_activity">Terrain &amp; walking</label>
-                  <select id="fc_activity" data-hs="activity"><option value="none">No adjustment (NRC tables)</option><option value="flat">Flat, plenty of grass (+10%)</option><option value="rolling">Rolling or moderate grass (+20%)</option><option value="rough">Rough or sparse range (+35%)</option><option value="extensive">Big range, long walks to water (+50%)</option></select><span class="hint">Extra energy for walking (CSIRO). The NRC 2016 model leaves it out: cows used to their range spend less than these figures</span></div>
+                  <select id="fc_activity" data-hs="activity"><option value="none">No adjustment (NRC 2016 model)</option><option value="flat">Flat, plenty of grass (+10%)</option><option value="rolling">Rolling or moderate grass (+20%)</option><option value="rough">Rough or sparse range (+35%)</option><option value="extensive">Big range, long walks to water (+50%)</option></select><span class="hint">The NRC 2016 model adds nothing for walking: cows used to their range spend little extra. Pick a terrain only if your cows travel far for feed or water (CSIRO figures)</span></div>
                 <div class="field"><label for="fc_calvingRate">Calving rate</label><div class="input-wrap has-suffix"><input type="number" id="fc_calvingRate" data-h="calvingRate" min="30" max="100" step="1"><span class="suffix">%</span></div></div>
                 <div class="field"><label for="fc_weanLb">Average weaning weight</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanLb" data-h="weanLb" min="250" max="900" step="5"><span class="suffix">lb</span></div><span class="hint" id="fc_weanLbHint"></span></div>
               </div>
@@ -1488,7 +1488,7 @@
     brush:  {label:'Brush / woods', icon:'🌳', style:{color:'#d5f0c8', weight:1.5, dashArray:'4 3', fillColor:'#2f5d27', fillOpacity:0.55}},
     bottom: {label:'Bottomland', icon:'〰', style:{color:'#e6fff5', weight:1.5, fillColor:'#35c29a', fillOpacity:0.45}}
   };
-  var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'rolling',
+  var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'none',
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535,
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto',
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,

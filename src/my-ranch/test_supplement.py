@@ -22,8 +22,10 @@ with sync_playwright() as pw:
     check('BCS column in monthly table', 'cow bcs' in pg.text_content('#fc_table').lower())
     # calf weight: varies with calving month, creep counted in costs
     pg.evaluate("document.getElementById('decCard').scrollIntoView()"); pg.wait_for_timeout(900)
-    rows=pg.evaluate("""(()=>{var F=MyRanch.FEED, age=Math.round(MyRanch.feed().calves.cohorts[0].weanAge||205);
-      return F.MONTH_START.map(function(d){ var r=MyRanch.netOf({calving:'one',start1:d+14,len1:63,weanMode:'age',weanAge:age,refWeanAge:age}); return [r.econ.weanLbNoCreep, r.bcs.breed, F.pregByBcs(r.bcs.breed)]; });})()""")
+    # with the NRC 2016 default (no walking allowance) cows on this wet-year range keep condition in every season;
+    # the check uses the rolling-terrain option (+20%), where fall-calving cows do lose condition before breeding
+    rows=pg.evaluate("""(()=>{var FEED_ACT=0.2, F=MyRanch.FEED, age=Math.round(MyRanch.feed().calves.cohorts[0].weanAge||205);
+      return F.MONTH_START.map(function(d){ var r=MyRanch.netOf({calving:'one',start1:d+14,len1:63,weanMode:'age',weanAge:age,refWeanAge:age,activity:FEED_ACT}); return [r.econ.weanLbNoCreep, r.bcs.breed, F.pregByBcs(r.bcs.breed)]; });})()""")
     nat=[r[0] for r in rows]; bcs=[r[1] for r in rows]; preg=[r[2] for r in rows]
     check('natural weaning weight varies by calving month', max(nat)-min(nat) > 40, nat)
     check('April natural weight within 15% of Vanzandt 426 lb', 360 < nat[3] < 440, nat[3])

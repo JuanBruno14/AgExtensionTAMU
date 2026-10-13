@@ -206,7 +206,7 @@
    "breed": "angus",
    "milk": "moderate",
    "bcs": 5,
-   "activity": "rolling",
+   "activity": "none",
    "calving": "one",
    "start1": "02-01",
    "len1": 60,
