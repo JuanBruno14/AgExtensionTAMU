@@ -129,7 +129,7 @@
     }
     /* Tissue insulation by age, NRC 2016 Eq. 19-8 (°C·m²·d/Mcal) */
     function tissueIns(ageD, bcs){
-      if(ageD <= 30) return 2.5;
+      if(ageD < 30) return 2.5;          // BCNRM Calc!D30
       if(ageD <= 183) return 6.5;
       if(ageD <= 363) return 5.1875 + 0.3125*bcs;
       return 5.25 + 0.75*bcs;
@@ -167,10 +167,11 @@
       return n/(a*Math.exp(k*n));
     }
     function birthLb(o){ return (BREEDS[o.breed] || BREEDS.angus).cbw; }
-    /* Milk by cow age, NRC 2016 Eq. 19-23 (Age Factor): 0.74 for cows calving at 2 years (first calf), 0.88 at 3, 1 when older.
-       Share of cows nursing their first and second calf from the replacement rate r (culls + deaths; steady herd, culling
-       spread evenly over ages): r first-calf, r(1 - r) second-calf, the rest mature. No replacement rate entered: all mature. */
-    var MILK_AGE = [0.74, 0.88, 1];
+    /* Milk by cow age, NRC 2016 Eq. 19-23, as coded in BCNRM (Calc!D53, age in months while nursing): 0.74 under 24 months,
+       0.88 from 24 to under 36, 1 after. Heifers here calve at 24 months (730 d), so a first-calf cow nurses at 24-34 months
+       (0.88) and a second-calf cow at 36+ months (1). Classes: first calf, second calf, mature; shares from the replacement
+       rate r (culls + deaths; steady herd, culling spread evenly over ages): r, r(1 - r), the rest. */
+    var MILK_AGE = [0.88, 1, 1];
     function cowAgeShares(o){
       var r = Math.max(0, Math.min(0.5, (o.replRate || 0)/100));
       return [r, r*(1 - r), 1 - r - r*(1 - r)];
