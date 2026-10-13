@@ -33,3 +33,23 @@ console.log('WORST % diff (incl. book tables):',worst.toFixed(3));
   cells.forEach(([sbw,adg,neg])=>{ const r=FEED.retainedEnergy(0.891*sbw,0.956*adg); w=Math.max(w,Math.abs(r/neg-1)*100); });
   console.log(`Table 12-1 NEg: worst ${w.toFixed(2)}% (rounding)`); if(w>1) worst=Math.max(worst,w); }
 console.log('WORST % diff (all checks):',worst.toFixed(3));
+// NASEM 2016 Table 20-1 (Angus steer, 550-kg finished SBW, SRW 478): NEm, MP maintenance, NEg and MP for gain at SBW >= 350 kg
+{ let w=0; const T={350:{nem:6.2,mpm:307,neg:[1.5,3.2,5,6.8,8.7],mpg:[129,246,358,466,571]},400:{nem:6.9,mpm:340,neg:[1.6,3.5,5.5,7.5,9.6],mpg:[120,226,326,423,516]},
+    450:{nem:7.5,mpm:371,neg:[1.8,3.8,6,8.2,10.5],mpg:[111,207,296,381,463]},500:{nem:8.1,mpm:402,neg:[1.9,4.1,6.5,8.9,11.3],mpg:[102,188,267,341,412]}};
+  for(const [sbw,t] of Object.entries(T)){ const m=Math.pow(+sbw,0.75), eq=sbw*478/550;
+    w=Math.max(w,Math.abs(m*0.077/t.nem-1)*100*(t.nem>=6?1:0),Math.abs(m*3.8/t.mpm-1)*100);
+    [0.4,0.8,1.2,1.6,2.0].forEach((adg,k)=>{ const re=FEED.retainedEnergy(0.891*eq,0.956*adg), np=adg*(268-29.4*re/adg), mp=np/FEED.mpToNp(eq);
+      if(t.neg[k]>=3) w=Math.max(w,Math.abs(re/t.neg[k]-1)*100); w=Math.max(w,Math.abs(mp/t.mpg[k]-1)*100); }); }
+  console.log(`Table 20-1 steer (350-500 kg): worst ${w.toFixed(2)}% (book rounds to 0.1 Mcal / 1 g)`); if(w>2.5) worst=Math.max(worst,w); }
+console.log('WORST % diff (all checks):',worst.toFixed(3));
+// NASEM 2016 Table 20-5 (550-kg Angus cow, 8-kg peak): milk at the end of each month since calving, maintenance NEm and MP
+{ const book=[6.7,8.0,7.2,5.8,4.3,3.1,2.2,1.5,1.0,0.7,0.4,0.3], o={cowLb:550/0.96*2.2046,breed:'angus',bcs:5,peakMilkLb:8*2.2046,activity:0}; let w=0;
+  book.forEach((y,m)=>{ const v=FEED.cowParams(o,Math.round((m+1)*30.4),0,null).milk; if(y>=1) w=Math.max(w,Math.abs(v/y-1)*100); });
+  const p=FEED.cowParams(o,30,0,null); w=Math.max(w,Math.abs(p.nem/10.5-1)*100,Math.abs(p.mbw*3.8/432-1)*100);
+  console.log(`Table 20-5 cow milk curve + maintenance: worst ${w.toFixed(2)}%`); if(w>2) worst=Math.max(worst,w); }
+console.log('WORST % diff (all checks):',worst.toFixed(3));
+// NASEM 2016 Table 13-7: NEm for pregnancy (38.5-kg calf, km 0.576)
+{ const T=[[130,0.327],[160,0.634],[190,1.166],[220,2.027],[250,3.333],[280,5.174]], o={cowLb:1200,breed:'angus',bcs:5,peakMilkLb:18,activity:0,birthLb:38.5*2.2046}; let w=0;
+  T.forEach(([dp,ne])=>{ const v=FEED.cowParams(o,0,dp,null).mey*0.576; w=Math.max(w,Math.abs(v/ne-1)*100); });
+  console.log(`Table 13-7 pregnancy NEm: worst ${w.toFixed(2)}%`); if(w>1) worst=Math.max(worst,w); }
+console.log('WORST % diff (all checks):',worst.toFixed(3));

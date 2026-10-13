@@ -212,7 +212,7 @@
       var eqsbw = sbw*478/(o.cowLb/LB*0.96), eqebw = 0.891*eqsbw;
       var swg = adgKg*0.96, ewg = swg*0.96;
       var re = Math.pow(ewg/(12.341*Math.pow(eqebw, -0.6837)), 1/0.9116);
-      var mpg = swg*(268 - 29.4*re/swg)/Math.max(0.492, 0.834 - 0.00114*eqsbw);
+      var mpg = swg*(268 - 29.4*re/swg)/mpToNp(eqsbw);
       var mp = mbw*3.8 + Math.max(0, mpg);
       var milkNE = milk*MILK_E*0.85, milkMP = milk*MILK_PROT/100*1000*0.85;
       var nm = nemaOf(forTdn), ng = Math.max(0.05, negaOf(forTdn)), me = forTdn/100*4.409*0.82, km = nm/me;
@@ -254,6 +254,8 @@
       return {adg:lo, dmLb:r.cap, forageDm:r.cap - r.sup, supLb:r.sup, dietTdn:r.dTdn};
     }
     /* Energy retained in gain (NEg, Mcal/d), NRC 2016 Eq. 12-6 inverse / Table 12-1: 0.0635 x EQEBW^0.75 x EWG^1.097 */
+    /* Efficiency of MP use for gain, BCNRM Inputs!F90: 0.834 - 0.00114 x EQSBW up to 300 kg EQSBW, 0.492 above */
+    function mpToNp(eqsbw){ return eqsbw <= 300 ? 0.834 - 0.00114*eqsbw : 0.492; }
     function retainedEnergy(eqebw, ewg){ return 0.0635*Math.pow(eqebw, 0.75)*Math.pow(ewg, 1.097); }
     /* Replacement heifers (BCNRM 2016 targets): 60% of mature shrunk weight at conception (65% Bos indicus),
        80% at first calving; conception at 450 days, first calf at 730 days. */
@@ -285,7 +287,7 @@
         mpp = cbw*(0.001669 - 0.00000211*t)*Math.exp(0.0278*t - 0.0000176*t*t)*6.25/0.65;
       }
       var npg = swg > 0 ? swg*(268 - 29.4*re/swg) : 0;
-      var mpg = npg/Math.max(0.28908, 0.834 - 0.00114*eqsbw);
+      var mpg = npg/mpToNp(eqsbw);
       var mp = mbw*3.8 + Math.max(0, mpg) + mpp;
       var c = stressCtx({env:env, bcs:5, fbwKg:sbw/0.96});
       if(env) c.ti = tissueIns(a, 5);
@@ -655,14 +657,14 @@
                       creepLb:calfStrat === 'creep' ? creepPerCalf*co.weaned*o.cows : 0};
       calfInfo.creepCost = calfInfo.creepLb/2000*(o.creepPrice || 0);
       // cow body condition through the year, starting at the calving-season month with the condition you set at calving.
-      // Energy short of need (TDN lb/day) is drawn from body reserves (NE from tissue at 0.8, NRC 2016); surplus is stored at the diet's NEg efficiency.
+      // Energy short of need (TDN lb/day) is drawn from body reserves (NE from tissue at 0.8, NRC 2016); surplus ME is stored at 0.60 (Eq. 13-14).
       var sbwC = o.cowLb/LB*0.96, perBcs = bodyEnergy(sbwC, 5, 5) - bodyEnergy(sbwC, 5, 4);
       var calvM = cs.reduce(function(a, c){ a[c.birthMonth] = (a[c.birthMonth] || 0) + c.share; return a; }, []);
       var m0 = 0; calvM.forEach(function(v, m){ if(v > (calvM[m0] || 0)) m0 = m; });
       var bcsStart = +o.bcs || 5, b = bcsStart, bcsByMonth = [], lowB = b, lowM = m0;
       for(var k = 0; k < 12; k++){
         var mm = (m0 + k) % 12, x = months[mm], me = x.dietTdn/100*4.409*0.82, km = nemaOf(x.dietTdn)/me, kg = Math.max(0.05, negaOf(x.dietTdn))/me;
-        var mcalDay = (x.cow.eSur*kg - x.cow.eLeft*km/0.8)*1.64;      // tissue energy, Mcal/day (1 lb TDN = 1.64 Mcal ME)
+        var mcalDay = (x.cow.eSur*0.60 - x.cow.eLeft*km/0.8)*1.64;  // tissue energy, Mcal/day (1 lb TDN = 1.64 Mcal ME); NRC 2016 Eq. 13-13/13-14: gain 0.60 x ME, loss 1 Mcal tissue = 0.80 Mcal NEm
         var d = mcalDay*x.days/perBcs;
         d = Math.max(-1, Math.min(0.5, d));
         b = Math.max(1, Math.min(Math.max(bcsStart, 5), b + d));   // cows regain on good grass, but not past calving condition (5 if thinner)
@@ -718,7 +720,7 @@
     }
     return {pastureGrowth:pastureGrowth, heiferDay:heiferDay, heiferState:heiferState, heifersKeptPerCow:heifersKeptPerCow, heiferAges:heiferAges, bodyEnergy:bodyEnergy, SEASON_CALF:SEASON_CALF, SEASON_CULL:SEASON_CULL, nemaOf:nemaOf, needAt:needAt, cowParams:cowParams, envFor:envFor, birthLb:birthLb, BREEDS:BREEDS, MILK:MILK, REGIONS:REGIONS, QUALITY:QUALITY, ACTIVITY:ACTIVITY, MONTHS:MONTHS, MONTH_DAYS:MONTH_DAYS, MONTH_START:MONTH_START,
             NAHMS:NAHMS, SOURCES:SOURCES, LOSS_DEFAULT:LOSS_DEFAULT, WEATHER_SHARE:WEATHER_SHARE,
-            cowDay:cowDay, retainedEnergy:retainedEnergy, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
+            cowDay:cowDay, retainedEnergy:retainedEnergy, mpToNp:mpToNp, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
             intakePct:intakePct, doy:doy, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfOutcome:calfOutcome,
             weatherFactor:weatherFactor, grazeFactor:grazeFactor, weatherLoss:weatherLoss, pregByBcs:pregByBcs, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
   })();
