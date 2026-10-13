@@ -1365,7 +1365,7 @@
 
         <div class="dec-panel" id="dec_calving">
           <p class="card-note" style="margin-top:14px;">Tries a <span id="dec_calvLen">60</span>-day calving season starting in each month, with the same herd, pastures and weaning age. It compares what your pastures grow with what the herd needs, and from that gives the best month to calve and what, if anything, you need to buy.</p>
-          <p class="card-note" style="margin:0 0 8px;">Bars: the energy your pastures grow each month, by what is planted. Line: what the cows need (with bulls and replacement heifers). Nursing cows need the most, so the best month to calve puts that peak on the months your grass grows.</p>
+          <p class="card-note" style="margin:0 0 8px;">Bars: the energy your pastures grow each month, by what is planted, per cow. Line: what a beef cow needs each month (NRC 2016 beef cattle requirements): dry, late pregnancy, nursing. Nursing cows need the most, so the best month to calve puts that peak on the months your grass grows.</p>
           <div class="field" style="max-width:340px;margin:0 0 8px;"><label for="dec_calvShow">Show the cows’ needs calving from</label><select id="dec_calvShow"></select></div>
           <div class="fc-chart" id="dec_calvChart"></div>
           <p class="fc-short" id="dec_calvText"></p>
@@ -3979,8 +3979,10 @@
       var postFeed = post.reduce(function(a, x){ return a + x.hayLb + x.supLb; }, 0);
       // the cows' own needs (with bulls and replacement heifers): what grass has to cover; calves on grass are left out so the
       // line shows the cow's year — dry, late pregnancy, nursing
-      var need = r.months.map(function(x){ return x.herdReq.tdn - x.herdReq.calfTdn - x.herdReq.wcTdn; }), needYr = 0, metYr = 0;
-      need.forEach(function(d, m){ var n = FEED.MONTH_DAYS[m]; needYr += d*n; metYr += Math.min(d, grown[m].tot)*n; });
+      // the beef cows' own needs (NRC 2016): the line on the chart is one cow's, the match uses the whole cow herd
+      var need = r.months.map(function(x){ return x.herdReq.cowTdn; }), needYr = 0, metYr = 0;
+      need.forEach(function(d, m){ var n = FEED.MONTH_DAYS[m]; metYr += Math.min(d, grown[m].tot)*n; });
+      r.months.forEach(function(x, m){ needYr += (x.herdReq.tdn - x.herdReq.calfTdn - x.herdReq.wcTdn)*FEED.MONTH_DAYS[m]; });   // with bulls and heifers, for the yearly check
       var gapM = [], surM = [];
       need.forEach(function(d, m){ if(d > grown[m].tot*1.02) gapM.push(m); else if(grown[m].tot > d*1.02) surM.push(m); });
       // nursing months: the 4 months after calving starts, when the cows need the most for themselves and their calves
@@ -4014,20 +4016,21 @@
     (function(){
       var el = $('dec_calvChart'), W = Math.round(Math.max(320, Math.min(720, el.clientWidth || 720))), H = W < 500 ? 240 : 270, ml = W < 500 ? 40 : 52, mr = 6, mt = 14, mb = 34, pw = W - ml - mr, ph = H - mt - mb, band = pw/12, bw = Math.min(40, band*0.62);
       var curRow = curM >= 0 && curM !== show ? rows[curM] : null;
-      // scale to the herd's needs so their rise and fall shows; a spring flush far above the needs is cut at the top and labelled
-      var needMax = Math.max.apply(null, sel.need.concat(curRow ? curRow.need : [])), grownMax = Math.max.apply(null, grown.map(function(g){ return g.tot; }));
-      var max = niceMax(needMax*1.15);
-      function Y(v){ return mt + ph - v/max*ph; }
+      // one cow's needs and the grass grown per cow (lb of TDN a day); the axis is cut a little above the cows' peak, in 2-lb steps
+      var PC = Math.max(1, cows), needMax = Math.max.apply(null, sel.need.concat(curRow ? curRow.need : []))/PC;
+      var step = needMax*1.25 > 30 ? 5 : 2, max = Math.ceil(needMax*1.25/step)*step, nT = Math.round(max/step);
+      function Y(v){ return mt + ph - Math.min(v/PC, max)/max*ph; }
       var sv = '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><g class="grid">';
-      for(var i = 0; i <= 4; i++) sv += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + Y(max*i/4) + '" y2="' + Y(max*i/4) + '"/>';
+      function YT(v){ return mt + ph - v/max*ph; }
+      for(var i = 0; i <= nT; i++) sv += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + YT(step*i) + '" y2="' + YT(step*i) + '"/>';
       sv += '</g><g class="axis">';
-      for(i = 0; i <= 4; i++) sv += '<text x="' + (ml - 8) + '" y="' + (Y(max*i/4) + 4) + '" text-anchor="end">' + fmt(max*i/4) + '</text>';
+      for(i = 0; i <= nT; i++) sv += '<text x="' + (ml - 8) + '" y="' + (YT(step*i) + 4) + '" text-anchor="end">' + fmt(step*i) + '</text>';
       sv += '</g>';
       // nursing months for the month shown: when the cows need the most
       sel.nurseM.forEach(function(m, k){ sv += '<rect class="nurse-band" x="' + (ml + band*m).toFixed(1) + '" y="' + mt + '" width="' + band.toFixed(1) + '" height="' + ph + '"/>'; });
       grown.forEach(function(g, m){
         var cx = ml + band*m + band/2, x0 = cx - bw/2, acc = 0;
-        TYPES_G.forEach(function(t){ var v = g.by[t.k] || 0; if(v <= 0) return; var top = Math.min(max, acc + v), y1 = Y(top), y0 = Y(Math.min(max, acc)); acc += v;
+        TYPES_G.forEach(function(t){ var v = g.by[t.k] || 0; if(v <= 0) return; var y1 = Y(acc + v), y0 = Y(acc); acc += v;
           if(y0 - y1 > 0) sv += '<rect class="seg" fill="' + t.c + '" x="' + x0.toFixed(1) + '" y="' + y1.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + (y0 - y1).toFixed(1) + '"/>'; });
 
         sv += '<g class="axis"><text x="' + cx + '" y="' + (mt + ph + 16) + '" text-anchor="middle">' + FEED.MONTHS[m] + '</text></g>';
@@ -4040,17 +4043,18 @@
       rows.forEach(function(r, m){ sv += '<rect class="hit" data-m="' + m + '" tabindex="0" x="' + (ml + band*m) + '" y="' + mt + '" width="' + band + '" height="' + (ph + mb) + '"/>'; });
       sv += '</svg>';
       el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;">' + TYPES_G.map(function(t){ return '<span><i class="sw" style="background:' + t.c + ';"></i>' + t.l + ' grows</span>'; }).join('') +
-        '<span><i class="ln"></i>Cows’ needs, calving from ' + moStr(show) + '</span><span><i class="sw nurse-sw"></i>Cows nursing</span>' + (curRow ? '<span><i class="ln dash"></i>Your season</span>' : '') +
-        '<span><i class="sw" style="background:var(--critical-700);border-radius:50%;"></i>Needs more than grows</span><span style="color:var(--ink-muted);">lb of energy (TDN) a day</span></div>' + sv;
+        '<span><i class="ln"></i>A beef cow’s needs (NRC), calving from ' + moStr(show) + '</span><span><i class="sw nurse-sw"></i>Cows nursing</span>' + (curRow ? '<span><i class="ln dash"></i>Your season</span>' : '') +
+        '<span><i class="sw" style="background:var(--critical-700);border-radius:50%;"></i>Needs more than grows</span><span style="color:var(--ink-muted);">lb of energy (TDN) per cow a day</span></div>' + sv;
       a11yHits(el, 'Energy your pastures grow each month against the cows’ needs calving from ' + moStr(show), function(m){
         var g = grown[m], d = sel.need[m];
-        return FEED.MONTHS[m] + ': pastures grow ' + fmt(g.tot) + ' lb of TDN a day; the cows need ' + fmt(d) + (g.tot >= d ? ', ' + fmt(g.tot - d) + ' extra' : ', ' + fmt(d - g.tot) + ' short');
+        var gp = g.tot/PC, dp = d/PC;
+        return FEED.MONTHS[m] + ': pastures grow ' + fmt(gp, 1) + ' lb of TDN per cow a day; a cow needs ' + fmt(dp, 1) + (gp >= dp ? ', ' + fmt(gp - dp, 1) + ' extra' : ', ' + fmt(dp - gp, 1) + ' short');
       });
       var tip = feedTip();
       el.querySelectorAll('.hit').forEach(function(hh){
-        function show2(){ var m = +hh.getAttribute('data-m'), g = grown[m], d = sel.need[m], b = hh.getBoundingClientRect(), diff = g.tot - d;
-          tip.innerHTML = '<div class="tt-val">' + FEED.MONTHS[m] + '</div><div>Grows ' + fmt(g.tot) + ' lb TDN/day' + (TYPES_G.length > 1 ? ' (' + TYPES_G.filter(function(t){ return g.by[t.k] > 0.5; }).map(function(t){ return t.l.toLowerCase() + ' ' + fmt(g.by[t.k]); }).join(', ') + ')' : '') + '</div>' +
-            '<div>Cows need ' + fmt(d) + ' lb/day calving from ' + FEED.MONTHS[show] + '</div><div class="tt-lbl">' + (diff >= 0 ? fmt(diff) + ' lb/day extra — leave it standing' : fmt(-diff) + ' lb/day short — from grass left standing, or bought') + '</div>';
+        function show2(){ var m = +hh.getAttribute('data-m'), g = grown[m], d = sel.need[m]/PC, b = hh.getBoundingClientRect(), diff = g.tot/PC - d;
+          tip.innerHTML = '<div class="tt-val">' + FEED.MONTHS[m] + '</div><div>Grass grows ' + fmt(g.tot/PC, 1) + ' lb TDN per cow a day' + (TYPES_G.length > 1 ? ' (' + TYPES_G.filter(function(t){ return g.by[t.k] > 0.5; }).map(function(t){ return t.l.toLowerCase() + ' ' + fmt(g.by[t.k]/PC, 1); }).join(', ') + ')' : '') + '</div>' +
+            '<div>A cow needs ' + fmt(d, 1) + ' lb/day calving from ' + FEED.MONTHS[show] + '</div><div class="tt-lbl">' + (diff >= 0 ? fmt(diff, 1) + ' lb extra per cow — leave it standing' : fmt(-diff, 1) + ' lb short per cow — from grass left standing, or bought') + '</div>';
           tip.style.left = (b.left + b.width/2) + 'px'; tip.style.top = (b.top + 10) + 'px'; tip.classList.add('show'); }
         hh.addEventListener('mouseenter', show2); hh.addEventListener('focus', show2);
         hh.addEventListener('mouseleave', function(){ tip.classList.remove('show'); }); hh.addEventListener('blur', function(){ tip.classList.remove('show'); });
