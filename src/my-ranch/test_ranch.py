@@ -156,7 +156,16 @@ with sync_playwright() as pw:
     page.fill('#fc_replRate','0'); page.wait_for_timeout(250)
     f0=page.evaluate("MyRanch.feed()")
     check('no replacements: no heifers, no culls', f0['econ']['heifersKept']==0 and f0['econ']['cullIncome']==0 and all(m['req']['heifer']['n']==0 for m in f0['months']))
+    c0=page.evaluate("MyRanch.feed().months.map(m=>m.req.cow.tdn)")
     page.fill('#fc_replRate','15'); page.wait_for_timeout(250)
+    c15=page.evaluate("MyRanch.feed().months.map(m=>m.req.cow.tdn)")
+    check('young cows milk less (NRC Eq. 19-23 age factor)', sum(c15)<sum(c0), (round(sum(c15),2), round(sum(c0),2)))
+    import subprocess, json as _json, os as _os
+    js = ("const fs=require('fs');eval(fs.readFileSync('feed.js','utf8').replace('var FEED =','global.FEED ='));"
+          "const o={breed:'angus',cowLb:1200,bcs:5,weatherAdj:true,region:'hp',windMph:10,coat:1,heat:1};const env=FEED.envFor(o,0);"
+          "console.log(JSON.stringify([FEED.calfDay(o,80,2,6,52,env,10).coldNE,FEED.calfDay(o,80,2,6,52,env).coldNE,FEED.calfDay(o,80,2,6,52,FEED.envFor(o,6),10).coldNE]))")
+    calf=_json.loads(subprocess.check_output(['node','-e',js], cwd=_os.path.dirname(_os.path.abspath(__file__))))
+    check('newborn calves feel the cold in January (NRC Eq. 19-8)', calf[0]>0 and calf[1]==0 and calf[2]==0, calf)
     before=page.evaluate("MyRanch.feed().months.map(m=>m.req.cow.tdn)")
     page.select_option('#fc_bcsWean','4'); page.wait_for_timeout(300)
     after=page.evaluate("MyRanch.feed().months.map(m=>m.req.cow.tdn)")
