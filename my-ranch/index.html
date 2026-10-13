@@ -1331,6 +1331,7 @@
             <summary>How this is calculated</summary>
             <div class="adv-body fc-method">
               <p><strong>Needs</strong> use the equations of the official NRC <em>Nutrient Requirements of Beef Cattle</em> model (8th ed., 2016; BCNRM software v1.0.37): maintenance (raised 20% while nursing for most breeds, adjusted for breed, body condition and terrain), milk (peak at 8.5 weeks; cows nursing their first calf give 74% and their second 88% of a mature cow's milk, with first- and second-calf cows taken from your replacement rate), pregnancy (breed calf birth weight; energy for the calf converted at the diet's own efficiency) and intake (higher in late pregnancy). TDN is shown the way extension tables show it: the diet TDN at which the predicted intake just covers the need. Checked against the BCNRM spreadsheet on 12 cow scenarios (nursing, pregnant, cold, wind, mud, heat): identical results.</p>
+              <p><strong>Short grass</strong>: when the forage standing on the pastures (what cattle can still graze plus the stubble left standing) drops below about 1,030 lb/acre and there is little of it per head, cattle cannot bite off a full day's intake, so hay makes up the rest (NRC 2016 grazing intake factor, as coded in the BCNRM software). On a ranch stocked to its capacity this only happens in a deep drought.</p>
               <p><strong>Weather</strong> (when on) follows the same model: cows adapt to the previous month's temperature (needing more after cold months, less after hot ones); below the lower critical temperature — which depends on wind, hair depth (winter vs. summer coat), hide, a wet or muddy coat and body condition — they burn extra energy to stay warm. Calves get the same check, with the thin body insulation of a young calf (a calf under a month old feels cold much sooner than its mother); milk usually covers that extra energy. Panting in hot months adds 7–18%. Temperatures are the monthly normals for your region, so a single blue norther or ice storm is harder than the average shown.</p>
               <p><strong>Calves</strong> grow at the rate that reaches your average weaning weight. Their mother's milk is counted first; only the rest comes from pasture. When you wean on a date, calves born earlier are older and heavier. During the weaning period they eat like growing calves and are sold at the end of it.</p>
               <p><strong>Pasture</strong> is each pasture's forage (soil survey × range condition, or your estimate; ponds, brush and bottomland adjusted) times your harvest efficiency, spread over the year with NRCS ecological-site growth curves for native range. Forage not eaten carries into the next month. Quality uses typical diet values by month, not a forage test.</p>
@@ -1998,20 +1999,21 @@
     }
     /* Pastures grouped by type; a pasture with a measured standing crop keeps its own entry so the measurement can reset its stock */
     function pastureSupply(pastures, he, regionKey){
-      var byType = {}, own = [];
+      var byType = {}, own = [], acres = {};
       pastures.forEach(function(p){
         if(!p.annualLb || !p.grazed) return;
         var t = p.type === 'range' ? 'range' : p.type;
         if(p.measured && p.measured.lbAc > 0 && p.measured.month != null){
           own.push({type:t, annual:p.annualLb*he, growth:pastureGrowth(p, he, regionKey), quality:QUALITY[t],
-                    measured:{month:p.measured.month, lb:p.measured.lbAc*(p.forageAcres || 0)*he}, name:p.name});
+                    measured:{month:p.measured.month, lb:p.measured.lbAc*(p.forageAcres || 0)*he}, name:p.name, acres:p.forageAcres || 0, he:he});
           return;
         }
         byType[t] = (byType[t] || 0) + p.annualLb*he;
+        acres[t] = (acres[t] || 0) + (p.forageAcres || 0);
       });
       return Object.keys(byType).map(function(t){
         var curve = curveFor(t, regionKey), tot = curve.reduce(function(a, b){ return a + b; }, 0);
-        return {type:t, annual:byType[t], growth:curve.map(function(p){ return byType[t]*p/tot; }), quality:QUALITY[t]};
+        return {type:t, annual:byType[t], growth:curve.map(function(p){ return byType[t]*p/tot; }), quality:QUALITY[t], acres:acres[t], he:he};
       }).concat(own);
     }
     /* Returns a copy of the supply with some months' growth cut (drought / failed small grains) */
@@ -2021,10 +2023,21 @@
         if(which === 'all' || which === g.type){
           for(var i = 0; i < months; i++){ var m = (fromMonth + i) % 12; growth[m] *= (1 - cutPct/100); }
         }
-        return {type:g.type, annual:g.annual, growth:growth, quality:g.quality, measured:g.measured, name:g.name};
+        return {type:g.type, annual:g.annual, growth:growth, quality:g.quality, measured:g.measured, name:g.name, acres:g.acres, he:g.he};
       });
     }
 
+    /* Grazing intake limited by forage mass (NRC 2016 Eq. 19-97 to 19-99, as coded in the BCNRM spreadsheet, Calc!D182:D184).
+       The book prints 0.000764 in Eq. 19-97; the software uses 0.000074, which reaches 1 at 1,150 kg/ha (the printed value
+       goes negative). FM = standing forage, kg DM/ha; guHa = ha per head; dop = days on the pasture; sbw kg; nm = diet NEma.
+       GI uses BCNRM's growing-cattle intake (yearling branch, its default age class, also for cows), g DM/kg SBW. */
+    function grazeFactor(fm, guHa, dop, sbw, nm){
+      if(!(fm > 0) || !(guHa > 0) || !(dop > 0) || fm > 1150) return 1;
+      var fora = fm*1000*guHa/(sbw*dop);
+      var gi = Math.max(Math.pow(sbw, 0.75)*(0.2435*nm - 0.0466*nm*nm - 0.0869)/(nm <= 1 ? 0.95 : nm), sbw*(1.2425 + 1.9218*nm - 0.7259*nm*nm)/100)*1000/sbw;
+      if(fora > 4*gi) return 1;
+      return Math.max(0, Math.min(1, (0.17*fm - 0.000074*fm*fm + 2.4)/100));
+    }
     function balance(o, supply, feeds){
       var ftdn = [];
       for(var m = 0; m < 12; m++){
@@ -2054,6 +2067,19 @@
           var bullCap = o.bullLb/100*pctD;
           var demand = (cows*(cowCap + r.calfDm + r.wcCap + r.hCap) + bulls*bullCap)*n;
           var f = demand > 0 ? Math.min(1, availTot/demand) : 1;
+          // forage mass on the grazed acres, lb/ac -> kg/ha: forage the cattle can still harvest plus the stubble left standing
+          // (take half, leave half: half of a year's growth stays standing; AgriLife "Stocking Rate"). It falls below 1,150 kg/ha
+          // only when a drought or overstocking leaves little grass, which is when the bite limit matters.
+          var acresTot = 0, massLb = 0;
+          supply.forEach(function(g, i){
+            if(!(g.acres > 0)) return;
+            var yearGrowth = g.growth.reduce(function(a, b){ return a + b; }, 0)/Math.max(0.05, g.he || 0.25);
+            acresTot += g.acres; massLb += avail[i] + 0.5*yearGrowth;
+          });
+          var heads = cows*(1 + r.hN + r.wcN) + bulls, fmKg = acresTot > 0 ? massLb/acresTot/LB*2.471054 : 0;
+          var graze = (o.grazeAdj === false || !(acresTot > 0) || !(heads > 0)) ? 1
+                    : grazeFactor(fmKg, acresTot/2.471054/heads, n, o.cowLb/LB*0.96, nemaOf(dTdn));
+          f = Math.min(f, graze);   // short grass limits what cattle can bite off; hay fills the rest
           var eaten = demand*f;
           supply.forEach(function(g, i){ var take = availTot > 0 ? eaten*avail[i]/availTot : 0; stock[i] = Math.max(0, avail[i] - take); });
           // protOnly: supplement covers the protein gap only; the energy still missing comes from body reserves (mature cows and bulls)
@@ -2085,7 +2111,7 @@
           var feedCost = hayLb/2000*feeds.hayPrice + supLb/2000*feeds.supPrice;
           var tripCost = trips*feeds.tripCost, distCost = (hayLb + supLb)/2000*feeds.distPerTon;
           months.push({
-            m:m, name:MONTHS[m], days:n, dietTdn:dTdn, dietCp:dCp, pastureShare:f,
+            m:m, name:MONTHS[m], days:n, dietTdn:dTdn, dietCp:dCp, pastureShare:f, graze:graze, forageKgHa:fmKg,
             forageAvailLb:availTot, forageDemandLb:demand, carryOutLb:stock.reduce(function(a, b){ return a + b; }, 0),
             req:{cow:{tdn:r.cowTdn, cp:r.cowCp, tdnNoWx:r.cowTdnNoWx}, bull:{tdn:r.bullTdn, cp:r.bullCp, tdnNoWx:r.bullTdnNoWx}, env:r.env,
                  calf:{tdn:r.calfTdn, cp:r.calfCp, dm:r.calfDm, nursing:r.calvesNursing},
@@ -2190,7 +2216,7 @@
             NAHMS:NAHMS, SOURCES:SOURCES, LOSS_DEFAULT:LOSS_DEFAULT, WEATHER_SHARE:WEATHER_SHARE,
             cowDay:cowDay, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
             intakePct:intakePct, doy:doy, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfOutcome:calfOutcome,
-            weatherFactor:weatherFactor, weatherLoss:weatherLoss, pregByBcs:pregByBcs, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
+            weatherFactor:weatherFactor, grazeFactor:grazeFactor, weatherLoss:weatherLoss, pregByBcs:pregByBcs, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
   })();
 
   /* ------------------------------------------------------------------ helpers */

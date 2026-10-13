@@ -19,6 +19,8 @@ with sync_playwright() as pw:
     check('example: no hay selling at weaning', pg.evaluate("MyRanch.feed().totals.hay") < 100)
     hk=pg.evaluate("MyRanch.netOf({weanPeriod:165}).totals.hay/2000")
     check('example: keeping calves 165 days needs ~89 t of hay (SAEA case)', 85 < hk < 93, round(hk,1))
+    g=pg.evaluate("(()=>{const a=MyRanch.netOf({cows:320},null,0.3),b=MyRanch.netOf({cows:320,grazeAdj:false},null,0.3),n=MyRanch.netOf({});return [Math.min(...a.months.map(m=>m.graze)),a.totals.hay,b.totals.hay,Math.min(...n.months.map(m=>m.graze))]})()")
+    check('short grass limits grazing intake (NRC Eq. 19-97): only in a deep drought with many cows, and hay fills the gap', g[0]<1 and g[1]>=g[2] and g[3]==1, g)
     check('file panel notice after example', 'loaded' in pg.inner_text('#fileNotice').lower())
     # second example replaces the first (dialog accepted)
     pg.click('#fileCard [data-example="rolling-plains-154-cows"]'); pg.wait_for_timeout(1800)

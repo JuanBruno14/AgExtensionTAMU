@@ -18,3 +18,8 @@ S.forEach(({case:c,b},i)=>{
   console.log(line);
 });
 console.log('WORST % diff vs BCNRM:',worst.toFixed(3));
+// Grazing intake factor (Eq. 19-97 to 19-99) vs. BCNRM Calc!D184, recalculated in LibreOffice (Imperial inputs: 2 ac/head, 30 days, 500/800/300 lb/ac)
+[[560.431370770208,0.809371223777384,0.744311672515257],[896.690193232332,0.809371223777384,0.953373884542078],[336.258822462125,0.202342805944346,0.511968201379737]]
+  .forEach(([fm,gu,x],i)=>{ const m=FEED.grazeFactor(fm,gu,30,480.95799691554,1.84276790612417), d=pct(m,x); worst=Math.max(worst,Math.abs(d));
+    console.log(`GRAZE #${i} FM ${fm.toFixed(0)} kg/ha: ${m.toFixed(4)}/${x.toFixed(4)} (${d.toFixed(3)}%)`); });
+console.log('WORST % diff vs BCNRM (incl. GRAZE):',worst.toFixed(3));
