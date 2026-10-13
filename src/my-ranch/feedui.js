@@ -780,10 +780,10 @@
     (function(){
       var el = $('dec_calvChart'), W = Math.round(Math.max(320, Math.min(720, el.clientWidth || 720))), H = W < 500 ? 240 : 270, ml = W < 500 ? 40 : 52, mr = 6, mt = 14, mb = 34, pw = W - ml - mr, ph = H - mt - mb, band = pw/12, bw = Math.min(40, band*0.62);
       var curRow = curM >= 0 && curM !== show ? rows[curM] : null;
-      // whole herd, lb of TDN a day; the axis is cut a little above the herd's peak, in short steps (about 8 of them)
-      var PC = 1, needMax = Math.max.apply(null, sel.need.concat(curRow ? curRow.need : []));
-      var step = (function(v){ var p = Math.pow(10, Math.floor(Math.log10(v))), n = v/p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10)*p; })(needMax*1.25/8);
-      var max = Math.ceil(needMax*1.25/step)*step, nT = Math.round(max/step);
+      // whole herd, lb of TDN a day; the axis reaches the tallest bar, in short steps (about 10 of them)
+      var PC = 1, needMax = Math.max.apply(null, sel.need.concat(curRow ? curRow.need : [])), topV = Math.max(needMax*1.1, Math.max.apply(null, grown.map(function(g){ return g.tot; })));
+      var step = (function(v){ var p = Math.pow(10, Math.floor(Math.log10(v))), n = v/p; return (n <= 1 ? 1 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 5 ? 5 : 10)*p; })(topV/10);
+      var max = Math.ceil(topV/step)*step, nT = Math.round(max/step);
       function Y(v){ return mt + ph - Math.min(v/PC, max)/max*ph; }
       var sv = '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><g class="grid">';
       function YT(v){ return mt + ph - v/max*ph; }
