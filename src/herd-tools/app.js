@@ -48,6 +48,34 @@
     return {gal:gal, row:row, flags:flags};
   }
 
+  /* Water quality, NASEM (2016) Nutrient Requirements of Beef Cattle, Ch. 9: Table 9-2 (total soluble salts), Table 9-4
+     (nitrate, mg/L as NO3), text on sulfate (<500 mg/L for calves, <1,000 for adult cattle; 2,000-2,500 causes diarrhea at first;
+     tolerated up to 2,500 for <90 d), Table 9-3 (hardness). level: 0 ok, 1 caution, 2 problem, 3 do not use. null = not tested. */
+  function waterQuality(o){
+    var out = [];
+    function v(x){ return x === '' || x == null || !isFinite(+x) ? null : +x; }
+    var tds = v(o.tds), no3 = v(o.no3), so4 = v(o.so4), hard = v(o.hard);
+    if(tds != null) out.push({item:'Total dissolved solids', val:tds,
+      level:tds < 3000 ? 0 : tds < 5000 ? 1 : tds < 7000 ? 2 : 3,
+      text:tds < 1000 ? 'Safe; should pose no health problems.' : tds < 3000 ? 'Generally safe, but may cause mild, temporary diarrhea in cattle not used to it.'
+         : tds < 5000 ? 'Cattle may refuse it at first or get temporary diarrhea; performance may suffer because they drink less.'
+         : tds < 7000 ? 'Avoid for pregnant or nursing cows; usable with reasonable safety for cattle where top performance is not needed.'
+         : 'Do not use: health problems and poor production will result.'});
+    if(no3 != null) out.push({item:'Nitrate (NO₃)', val:no3,
+      level:no3 <= 44 ? 0 : no3 <= 132 ? 1 : no3 <= 220 ? 2 : 3,
+      text:no3 <= 44 ? 'Safe for cattle.' : no3 <= 132 ? 'Generally safe if the feed is low in nitrate. Test hay too: feed and water nitrate add up.'
+         : no3 <= 220 ? 'Could be harmful if cattle drink it for a long time. Test the feed for nitrate as well.'
+         : no3 <= 660 ? 'Cattle at risk; deaths possible.' : 'Unsafe, deaths possible: do not use as a water source.'});
+    if(so4 != null) out.push({item:'Sulfate (SO₄)', val:so4,
+      level:so4 < 500 ? 0 : so4 < 1000 ? 1 : so4 < 2000 ? 2 : 3,
+      text:so4 < 500 ? 'Fine for calves and adult cattle.' : so4 < 1000 ? 'Fine for adult cattle; above the 500 ppm suggested for calves. Can lower copper status of cows.'
+         : so4 < 2000 ? 'Above the 1,000 ppm suggested for adult cattle: ask the lab which salt it is (sodium sulfate is the strongest laxative) and watch copper.'
+         : 'High: diarrhea at first, risk of polio (polioencephalomalacia) and lower feed and water intake. Cattle tolerate up to about 2,500 ppm only for short periods.'});
+    if(hard != null) out.push({item:'Hardness', val:hard, level:0,
+      text:(hard <= 60 ? 'Soft' : hard <= 120 ? 'Moderately hard' : hard <= 180 ? 'Hard' : 'Very hard') + ' water. Hardness itself is not a health problem for cattle; it matters for scale in pipes and waterers.'});
+    return out;
+  }
+
   /* Pearson square on a dry-matter basis: fraction of feed A so that a*x + b*(1-x) = target */
   function pearson(a, b, target){
     if(a === b) return null;
@@ -110,7 +138,7 @@
   /* ================================================================ STATE */
   var DEF = {
     tool:'water',
-    w_class:'lactating', w_lb:1200, w_head:100, w_temp:95, w_tank:3000,
+    w_class:'lactating', w_lb:1200, w_head:100, w_temp:95, w_tank:3000, w_tds:'', w_no3:'', w_so4:'', w_hard:'',
     r_nut:'cp', r_target:10, r_aName:'Grass hay', r_aCp:7, r_aTdn:52, r_aDm:90, r_aPrice:120,
     r_bName:'20% range cubes', r_bCp:22, r_bTdn:78, r_bDm:90, r_bPrice:392, r_dmi:26, r_bw:1200, r_head:100, r_days:90,
     d_prod:'ivm_inj', d_cDose:1, d_cPer:110, d_cWd:35, d_lb:600, d_head:100, d_bottle:500, d_date:'', d_sale:'',
@@ -143,6 +171,9 @@
     $('w_note').textContent = 'About ' + fmt(r.gal, 1) + ' gallons per head a day for ' + W_TABLE[S.w_class].label + ' weighing ' + fmt(S.w_lb) + ' lb at ' + fmt(S.w_temp) + '°F. ' + notes.join(' ');
     $('w_table').innerHTML = '<thead><tr><th>Temperature</th>' + W_TEMPS.map(function(t){ return '<th class="num">' + t + '°F</th>'; }).join('') + '</tr></thead><tbody><tr><td>Gal/head/day</td>' +
       r.row.map(function(v, i){ var on = Math.abs(Math.max(40, Math.min(90, S.w_temp)) - W_TEMPS[i]) < 5; return '<td class="num' + (on ? ' hl' : '') + '">' + fmt(v, 1) + '</td>'; }).join('') + '</tr></tbody>';
+    var q = waterQuality({tds:S.w_tds, no3:S.w_no3, so4:S.w_so4, hard:S.w_hard}), LV = ['ok','caution','problem','do not use'];
+    $('w_quality').innerHTML = q.length ? '<table class="plan" aria-label="Water test results"><thead><tr><th>Water test</th><th class="num">ppm</th><th>What it means</th></tr></thead><tbody>' +
+      q.map(function(x){ return '<tr><td>' + esc(x.item) + ' <span class="wq wq' + x.level + '">' + LV[x.level] + '</span></td><td class="num">' + fmt(x.val) + '</td><td>' + esc(x.text) + '</td></tr>'; }).join('') + '</tbody></table>' : '';
   }
 
   function renderRation(){
@@ -269,7 +300,9 @@
       el.value = S[k];
       var isNum = el.type === 'number';
       el.addEventListener(el.tagName === 'SELECT' || el.type === 'date' ? 'change' : 'input', function(){
-        if(isNum){ var v = num(el.value); if(v == null || v < +el.min || v > +el.max) return; S[k] = v; }
+        var optional = /^w_(tds|no3|so4|hard)$/.test(k);   // water-test fields may be left blank
+        if(isNum && optional && el.value.trim() === '') S[k] = '';
+        else if(isNum){ var v = num(el.value); if(v == null || v < +el.min || v > +el.max) return; S[k] = v; }
         else S[k] = el.value;
         if(k === 'd_prod'){ S.d_bottle = (DEWORMERS[S.d_prod] || {}).bottle || S.d_bottle; $('d_bottle').value = S.d_bottle; }
         if(k === 'r_nut'){ S.r_target = S.r_nut === 'cp' ? 10 : 55; $('r_target').value = S.r_target; }
@@ -283,6 +316,6 @@
     window.addEventListener('hashchange', function(){ var t = (location.hash || '').replace('#', ''); if(RENDER[t]) showTool(t, false); });
     renderAll();
   }
-  window.HerdTools = {water:water, pearson:pearson, dewormer:dewormer, gain:gain, spa:spa, DEWORMERS:DEWORMERS, state:function(){ return S; }};
+  window.HerdTools = {water:water, waterQuality:waterQuality, pearson:pearson, dewormer:dewormer, gain:gain, spa:spa, DEWORMERS:DEWORMERS, state:function(){ return S; }};
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

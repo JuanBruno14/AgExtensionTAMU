@@ -60,6 +60,11 @@
           <div class="field"><label for="w_head">Head</label><div class="input-wrap has-suffix"><input type="number" id="w_head" data-k="w_head" min="1" max="100000" step="1"><span class="suffix">head</span></div></div>
           <div class="field"><label for="w_temp">Hottest-day temperature</label><div class="input-wrap has-suffix"><input type="number" id="w_temp" data-k="w_temp" min="0" max="120" step="1"><span class="suffix">&deg;F</span></div><span class="hint">Size water for the hottest days, not the average</span></div>
           <div class="field"><label for="w_tank">Water stored (tanks, troughs)</label><div class="input-wrap has-suffix"><input type="number" id="w_tank" data-k="w_tank" min="0" max="10000000" step="50"><span class="suffix">gal</span></div><span class="hint">0 if you don&rsquo;t want this</span></div>
+          <div class="field" style="grid-column:1/-1;"><span class="hint"><strong>Water test (optional).</strong> Enter what your lab report shows; leave blank what wasn&rsquo;t tested.</span></div>
+          <div class="field"><label for="w_tds">Total dissolved solids (TDS)</label><div class="input-wrap has-suffix"><input type="number" id="w_tds" data-k="w_tds" min="0" max="50000" step="50"><span class="suffix">ppm</span></div></div>
+          <div class="field"><label for="w_no3">Nitrate (NO<sub>3</sub>)</label><div class="input-wrap has-suffix"><input type="number" id="w_no3" data-k="w_no3" min="0" max="5000" step="1"><span class="suffix">ppm</span></div><span class="hint">If the report gives nitrate-nitrogen (NO<sub>3</sub>-N), multiply by 4.4</span></div>
+          <div class="field"><label for="w_so4">Sulfate (SO<sub>4</sub>)</label><div class="input-wrap has-suffix"><input type="number" id="w_so4" data-k="w_so4" min="0" max="20000" step="10"><span class="suffix">ppm</span></div></div>
+          <div class="field"><label for="w_hard">Hardness (as CaCO<sub>3</sub>)</label><div class="input-wrap has-suffix"><input type="number" id="w_hard" data-k="w_hard" min="0" max="5000" step="1"><span class="suffix">ppm</span></div><span class="hint">Grains per gallon &times; 17.1</span></div>
         </div>
       </div>
     </div>
@@ -75,11 +80,12 @@
         </div>
         <p class="narrative" id="w_note"></p>
         <table class="plan" id="w_table" aria-label="Gallons per head per day by temperature"></table>
+        <div id="w_quality"></div>
         <ul class="tips">
-          <li>Aim for water with total dissolved solids (TDS) of <strong>3,000 ppm or less</strong>; never use water over 10,000 ppm.</li>
+          <li>Total dissolved solids under <strong>1,000 ppm</strong> are safe; up to 3,000 ppm is generally safe; avoid 5,000 ppm or more for pregnant or nursing cows; never use water at <strong>7,000 ppm or more</strong>.</li>
           <li>Keep water within about <strong>650&ndash;1,000 feet</strong> of every part of the pasture for even grazing.</li>
         </ul>
-        <p class="sources"><strong>Source:</strong> Mississippi State University Extension, <a href="https://extension.msstate.edu/sites/default/files/publications/P2490_web.pdf" target="_blank" rel="noopener">Beef Cattle Water Requirements and Source Management</a> (P2490, Karisch, Parish &amp; Rhinehart), tables adapted from NRC <em>Nutrient Requirements of Beef Cattle</em> (2000). The calculator interpolates between the published temperatures and weights.</p>
+        <p class="sources"><strong>Source:</strong> Mississippi State University Extension, <a href="https://extension.msstate.edu/sites/default/files/publications/P2490_web.pdf" target="_blank" rel="noopener">Beef Cattle Water Requirements and Source Management</a> (P2490, Karisch, Parish &amp; Rhinehart), tables adapted from NRC <em>Nutrient Requirements of Beef Cattle</em> (2000); the same Winchester &amp; Morris (1956) values are Table 9-1 of NASEM <em>Nutrient Requirements of Beef Cattle</em>, 8th rev. ed. (2016). The calculator interpolates between the published temperatures and weights. Water quality limits: NASEM (2016), Chapter 9, Tables 9-2 to 9-4 and text on sulfate.</p>
       </div>
     </div>
   </div>

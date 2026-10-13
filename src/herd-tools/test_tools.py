@@ -28,6 +28,9 @@ with sync_playwright() as pw:
     check('water interpolates 700 lb growing at 65F', abs(pg.evaluate(H+".water('growing',700,65).gal")-((6.5+7.9)/2+((7.8+9.2)/2-(6.5+7.9)/2)*0.5))<1e-9)
     check('water scales above table weight', abs(pg.evaluate(H+".water('lactating',1200,60).gal")-14.5*1200/900)<1e-9)
     check('nursing cows never less water when hotter', pg.evaluate(H+".water('lactating',900,90).gal")>=pg.evaluate(H+".water('lactating',900,80).gal"))
+    q=pg.evaluate(H+".waterQuality({tds:4000,no3:150,so4:'',hard:200})")
+    check('water quality: NASEM Tables 9-2 and 9-4 bands, blank skipped', len(q)==3 and q[0]['level']==1 and q[1]['level']==2 and 'Very hard' in q[2]['text'], q)
+    check('water quality: 7,000 ppm TDS = do not use', pg.evaluate(H+".waterQuality({tds:7000})[0].level")==3)
     check('dry cows above 70F extended', pg.evaluate(H+".water('pregnant',900,90).gal")>9.7)
     # --- pearson
     p=pg.evaluate(H+".pearson(7,22,10)")

@@ -23,3 +23,8 @@ console.log('WORST % diff vs BCNRM:',worst.toFixed(3));
   .forEach(([fm,gu,x],i)=>{ const m=FEED.grazeFactor(fm,gu,30,480.95799691554,1.84276790612417), d=pct(m,x); worst=Math.max(worst,Math.abs(d));
     console.log(`GRAZE #${i} FM ${fm.toFixed(0)} kg/ha: ${m.toFixed(4)}/${x.toFixed(4)} (${d.toFixed(3)}%)`); });
 console.log('WORST % diff vs BCNRM (incl. GRAZE):',worst.toFixed(3));
+// NASEM 2016 Table 20-2 (growing bulls, maintenance) and Table 13-5 (Mcal to change one BCS)
+{ const t=[[300,6.4,274],[500,9.4,402],[800,13.3,572]]; t.forEach(([sbw,nem,mp])=>{ const m=Math.pow(sbw,0.75), n=m*0.077*1.15, p=m*3.8;
+    const d=Math.max(Math.abs(n/nem-1),Math.abs(p/mp-1))*100; console.log(`Table 20-2 bull ${sbw} kg: NEm ${n.toFixed(2)}/${nem}, MP ${p.toFixed(0)}/${mp} (${d.toFixed(2)}% rounding)`); if(d>1) worst=Math.max(worst,d); }); }
+{ const sbw5=550, e=FEED.bodyEnergy(sbw5,5,5)-FEED.bodyEnergy(sbw5,5,4); console.log(`Table 13-5: 550 kg cow BCS 4->5 ${e.toFixed(0)} Mcal (book 228)`); if(Math.abs(e-228)>1.5) worst=Math.max(worst,100); }
+console.log('WORST % diff (incl. book tables):',worst.toFixed(3));
