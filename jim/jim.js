@@ -20,6 +20,22 @@
   var STORE_KEY = "tamuJimChat.v1";
   var MAX_HISTORY = 16;
 
+  var RANCH_KEY = "tamuDecisionAidsRanchBrief.v1";
+  /* The ranch the visitor saved on the My Ranch page (same browser). Never sent from the My Ranch page itself. */
+  function ranchBrief() {
+    if (/\/my-ranch\//.test(location.pathname)) return null;
+    try {
+      var b = JSON.parse(localStorage.getItem(RANCH_KEY) || "null");
+      if (!b || !b.text) return null;
+      if (Date.now() - (b.updated || 0) > 400 * 864e5) return null;
+      return b;
+    } catch (e) { return null; }
+  }
+  var RANCH_SUGGESTIONS = [
+    "How does my ranch look this year?",
+    "Which months am I short of grass on my ranch?",
+    "How could I cut feed costs on my ranch?"
+  ];
   var SUGGESTIONS = [
     "Which crop has the best gross margin per acre?",
     "What's the gross margin for dryland wheat?",
@@ -228,9 +244,11 @@
   function render() {
     log.innerHTML = "";
     botRow(md("Hi, I'm **Jim**. Ask me about the gross margins, costs and breakeven prices in the 2026 District 3 budgets — wheat, cotton, peanuts, sorghum, hay, cow-calf, stockers and more — or about anything in the decision-aid manuals on this site."));
+    var rb = ranchBrief();
+    if (rb) botRow(md("I can also see the ranch you saved in **My Ranch**" + (rb.name ? " (" + rb.name + ")" : "") + " on this computer, so you can ask me about it."));
     if (!state.messages.length) {
       var chips = el("div", "jim-chips");
-      SUGGESTIONS.forEach(function (s) {
+      (rb ? RANCH_SUGGESTIONS.concat(SUGGESTIONS.slice(0, 2)) : SUGGESTIONS).forEach(function (s) {
         var c = el("button", "jim-chip");
         c.type = "button";
         c.textContent = s;
@@ -337,6 +355,13 @@
     setBusy(true);
     var text = "", gotText = false, failed = null;
     var history = state.messages.slice(-MAX_HISTORY).map(function (m) { return { role: m.role, content: m.content }; });
+    var rb = ranchBrief();
+    if (rb && history.length && history[history.length - 1].role === "user") {
+      var lastQ = history[history.length - 1];
+      lastQ.content = "[The visitor's own ranch, saved in the site's My Ranch tool (" + new Date(rb.updated).toISOString().slice(0, 10) +
+        "). Figures are that tool's estimates (NRC 2016 requirements, NRCS forage). Use them when the question is about their ranch; say they come from My Ranch; do not repeat the whole summary.]\n" +
+        rb.text + "\n[End of ranch]\n\n" + lastQ.content;
+    }
 
     fetch(endpoint, {
       method: "POST",

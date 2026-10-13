@@ -275,6 +275,16 @@
     try{ localStorage.setItem(STORE_KEY, JSON.stringify(state)); saveFailed = false; }
     catch(e){ saveFailed = true; }
     renderSaveStatus();
+    clearTimeout(briefTimer); briefTimer = setTimeout(writeRanchBrief, 600);
+  }
+  /* A plain-text summary of the saved ranch for Jim on the other pages of the site (Jim is not shown on My Ranch). */
+  var BRIEF_KEY = 'tamuDecisionAidsRanchBrief.v1', briefTimer = null;
+  function writeRanchBrief(){
+    try{
+      if(!state.pastures.length && !(state.herd.cows > 0)){ localStorage.removeItem(BRIEF_KEY); return; }
+      if(state.herd.cows > 0 && typeof runFeed === 'function') runFeed();
+      localStorage.setItem(BRIEF_KEY, JSON.stringify({name:state.name || '', updated:Date.now(), text:ranchContext()}));
+    }catch(e){}
   }
   function renderSaveStatus(){
     var el = $('saveStatus'); if(!el) return;
@@ -1156,6 +1166,11 @@
       });
       var ec = fb.econ;
       lines.push('Calves: ' + fmt(ec.calvesSold, 1) + ' sold at ~' + fmt(ec.avgSaleLb) + ' lb, $' + fmt(ec.avgPrice) + '/cwt (market price slide) = ' + money(ec.calfIncome) + (ec.heifersKept > 0.05 ? '; keeps ' + fmt(ec.heifersKept, 1) + ' replacement heifers, sells ' + fmt(ec.cullsSold, 1) + ' cull cows and ' + fmt(ec.opensSold, 1) + ' open heifers (' + money(ec.cullIncome + ec.openIncome) + ')' : '') + '; prices adjusted to the sale month with the seasonal pattern (calves: USDA Oklahoma City 2016–2025); losses: ' + fmt(ec.deadWeather, 1) + ' weather, ' + fmt(ec.deadOther, 1) + ' other' + (h.nws === 'yes' ? ', ' + fmt(ec.deadNws, 1) + ' screwworm' : '') + '. Weaning period ' + h.weanPeriod + ' days at ' + h.postAdg + ' lb/day. Cattle sales minus feed & feeding costs: ' + money(ec.net) + ' (not profit).' + (+h.bcsWean > 0 && +h.bcsWean < +h.bcs ? ' Cows wean at BCS ' + h.bcsWean + ' and are fed back to ' + h.bcs + ' before calving.' : ''));
+      var bc = fb.bcs;
+      if(bc) lines.push('Cow body condition (protein-only supplement leaves energy gaps to body reserves): ' + fmt(bc.start, 1) + ' at calving, lowest ' + fmt(bc.low, 1) + ' in ' + FEED.MONTHS[bc.lowMonth] + ', ' + fmt(bc.breed, 1) + ' during breeding (about ' + fmt(bc.pregPct) + '% expected pregnant, Sprott 1985), ' + fmt(bc.end, 1) + ' a year later.');
+      var shortM = fb.months.filter(function(x){ return x.graze < 0.999; }).map(function(x){ return x.name; });
+      if(shortM.length) lines.push('Grass too short for a full bite (NRC 2016 grazing intake factor) in: ' + shortM.join(', ') + '.');
+      lines.push('Model settings: weather adjustments ' + (h.weatherAdj === 'off' ? 'off' : 'on') + '; walking allowance ' + (h.activity && h.activity !== 'none' ? h.activity : 'none (NRC 2016 default)') + '; supplement mode ' + (h.supMode === 'full' ? 'covers energy and protein' : 'protein only') + '; ' + (h.replRate || 0) + '% of cows replaced a year.');
       lines.push('Yearly purchased feed: ' + fmt(fb.totals.hay/2000, 1) + ' tons hay ($' + h.hayPrice + '/ton, ' + h.hayTdn + '% TDN, ' + h.hayCp + '% CP) + ' + fmt(fb.totals.sup/2000, 1) + ' tons supplement ($' + h.supPrice + '/ton, ' + h.supCp + '% CP) + feeding trips & delivery = ' + money(fb.totals.cost) + ' (' + money(fb.totals.cost/h.cows) + ' per cow).');
     }
     var d = state.drought;
