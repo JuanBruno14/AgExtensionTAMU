@@ -473,7 +473,7 @@
           <div class="field">
             <label for="rh_bredPrice">Bred heifer sale price</label>
             <span class="hint">Pre-filled from Market prices &amp; factors</span>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="rh_bredPrice" value="3884.78" min="0" step="10" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="rh_bredPrice" value="3625" min="0" step="10" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
           </div>
           <div class="field"></div>
         </div>
@@ -726,7 +726,7 @@
      load-order dependency on that file), rescaled the same way -- see rescaleSlideAt(). */
   var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
   var MP_FALLBACK = {
-    mp_heiferPrice:460.0, mp_cullBullPrice:190.0, mp_bredHeiferPrice:3884.78,
+    mp_heiferPrice:460.0, mp_cullBullPrice:190.0, mp_bredHeiferPrice:3625.00,
     mp_bullCost:4500, mp_bullLife:4, mp_bullSalvageWeight:1650.7, mp_bullDeathLoss:2, mp_perBull:25
   };
   function getMarketPrices(){
@@ -1146,7 +1146,7 @@
   var RH_DEFAULTS = {
     rh_head:100, rh_startDate:'2026-10-15', rh_birthDate:'2026-02-15', rh_weanWeight:500, rh_purchasePrice:473.51,
     rh_precullDate:'2027-02-25', rh_precullPct:2, rh_precullWeight:650, rh_precullPrice:427.04,
-    rh_breedDate:'2027-05-07', rh_seasonDays:60, rh_daysToDelivery:45, rh_pregPct:88, rh_bredPrice:3884.78,
+    rh_breedDate:'2027-05-07', rh_seasonDays:60, rh_daysToDelivery:45, rh_pregPct:88, rh_bredPrice:3625.00,
     rh_openDate:'2027-08-10', rh_openWeight:900, rh_openPrice:341.19,
     rh_preconDays:45, rh_preconRate:1.10, rh_winterDays:90, rh_winterRate:1.00, rh_springDays:176, rh_springRate:0.60, rh_otherGrazeDays:0, rh_otherGrazeRate:0,
     rh_processHealth:20, rh_pregTest:5, rh_prebreedHealth:12, rh_otherDirect:0,
