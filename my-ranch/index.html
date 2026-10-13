@@ -1928,7 +1928,7 @@
       for(var m = 0; m < 12; m++){
         envs.push(envFor(o, m));
         var bull = bullDay(o, envs[m]), bull0 = envs[m] ? bullDay(o, null) : bull;
-        out.push({cowTdn:0, cowCp:0, cowTdnNoWx:0, bcsTdn:0, lactFrac:0, calfTdn:0, calfCp:0, calfDm:0, calvesNursing:0,
+        out.push({cowTdn:0, cowCp:0, cowTdnNoWx:0, bcsTdn:0, lactFrac:0, typTdn:0, typCp:0, typLact:0, dmiA:0, dmiMilk:0, typA:0, typMilk:0, calfTdn:0, calfCp:0, calfDm:0, calvesNursing:0,
           wcN:0, wcTdn:0, wcCp:0, wcCap:0, wcBw:0, hN:0, hTdn:0, hCp:0, hCap:0, hBw:0, bullTdn:bull.tdnLb, bullCp:bull.cpLb, bullTdnNoWx:bull0.tdnLb, days:MONTH_DAYS[m], env:envs[m]});
       }
       var env, hmemo = {};
@@ -1947,9 +1947,18 @@
       var sbwKg = o.cowLb/LB*0.96, bcsW = o.bcsWean || o.bcs;
       var gainE = bcsW < o.bcs ? bodyEnergy(sbwKg, o.bcs, o.bcs) - bodyEnergy(sbwKg, o.bcs, bcsW) : 0;
       function cow0(dim, preg){ return mixAges(dim, preg, 0, null); }
+      /* the typical calving cow (middle of the calving season by share): her own needs, for body condition and breeding */
+      var cum = 0, typ = cs[0];
+      for(var ci = 0; ci < cs.length; ci++){ cum += cs[ci].share; if(cum >= 0.5){ typ = cs[ci]; break; } }
       for(var d = 0; d < 365; d++){
         var m = monthOfDay(d), acc = out[m];
         env = envs[m];
+        (function(){
+          var dsc = (d - typ.day + 365) % 365, nursing = dsc < typ.weanAge, preg = dsc >= conceive ? dsc - conceive : 0;
+          var t = cow(nursing ? dsc : 0, preg);
+          acc.typTdn += t.tdnLb; acc.typCp += t.cpLb; acc.typLact += nursing ? 1 : 0;
+          acc.typA += preg > 93 ? 0.04631 : 0.0384; acc.typMilk += t.milkKg || 0;
+        })();
         cs.forEach(function(c){
           var dsc = (d - c.day + 365) % 365, w = c.share;
           var nursing = dsc < c.weanAge;
@@ -1965,6 +1974,7 @@
           acc.cowTdn += w*(nurseFrac*a.tdnLb + (CR - nurseFrac)*b.tdnLb + (1 - CR)*e.tdnLb);
           acc.cowTdnNoWx += w*(nurseFrac*cow0(nursing ? dsc : 0, preg).tdnLb + (CR - nurseFrac)*cow0(0, preg).tdnLb + (1 - CR)*cow0(0, 0).tdnLb);
           acc.cowCp  += w*(nurseFrac*a.cpLb  + (CR - nurseFrac)*b.cpLb  + (1 - CR)*e.cpLb);
+          acc.dmiA += w*(CR*(preg > 93 ? 0.04631 : 0.0384) + (1 - CR)*0.0384); acc.dmiMilk += w*nurseFrac*(a.milkKg || 0);
           if(nursing){
             acc.lactFrac += w*nurseFrac;
             var bw = o.birthLb + co.preAdg*dsc;
@@ -1988,8 +1998,9 @@
           });
         });
       }
+      out.typ = typ;
       out.forEach(function(r){
-        ['cowTdn','cowCp','cowTdnNoWx','bcsTdn','lactFrac','calfTdn','calfCp','calfDm','calvesNursing','wcN','wcTdn','wcCp','wcCap','wcBw','hN','hTdn','hCp','hCap','hBw'].forEach(function(k){ r[k] /= r.days; });
+        ['cowTdn','cowCp','cowTdnNoWx','bcsTdn','lactFrac','typTdn','typCp','typLact','dmiA','dmiMilk','typA','typMilk','calfTdn','calfCp','calfDm','calvesNursing','wcN','wcTdn','wcCp','wcCap','wcBw','hN','hTdn','hCp','hCap','hBw'].forEach(function(k){ r[k] /= r.days; });
         r.wcBw = r.wcN > 0 ? r.wcBw/r.wcN : 0;
         r.hBw = r.hN > 0 ? r.hBw/r.hN : 0;
       });
@@ -2068,7 +2079,12 @@
           // (AgriLife ANSC-PU-085, McCollum: 1.6% of body weight at 5% CP vs. 2.3% at 7-8% CP; supplements raised intake 36% on average).
           var lowCp = dCp < 7;
           var pctL = lowCp ? Math.max(intakePct(dTdn, true), 2.5) : intakePct(dTdn, true), pctD = lowCp ? Math.max(intakePct(dTdn, false), 2.3) : intakePct(dTdn, false);
-          var cowCap = o.cowLb/100*(r.lactFrac*pctL + (1 - r.lactFrac)*pctD);
+          // cows: forage intake from the extension table (Lalman; NASEM Table 10-1), raised on low-protein forage when supplemented (McCollum).
+          // NRC 2016 Eq. 19-94 (o.cowIntake = 'nrc') was tested and left out: it called for 453 lb of cubes per cow in the Vanzandt
+          // wet-year case (they fed 285) and cows near BCS 3.5 — grazing cows on supplemented dormant forage eat more than it predicts.
+          var nmD = nemaOf(dTdn), tfD = dmiTempFactor(r.env), mbwC = Math.pow(o.cowLb/LB*0.96, 0.75);
+          var nrcDmi = function(a, milk){ return (mbwC*(a + 0.04997*nmD*nmD)/(nmD <= 1 ? 0.95 : nmD)*tfD + 0.2*milk)*LB; };
+          var cowCap = o.cowIntake !== 'nrc' ? o.cowLb/100*(r.lactFrac*pctL + (1 - r.lactFrac)*pctD) : nrcDmi(r.dmiA, r.dmiMilk);
           var bullCap = o.bullLb/100*pctD;
           var demand = (cows*(cowCap + r.calfDm + r.wcCap + r.hCap) + bulls*bullCap)*n;
           var f = demand > 0 ? Math.min(1, availTot/demand) : 1;
@@ -2098,8 +2114,12 @@
             return {forage:forage, hay:hay, sup:sup, eDef:eDef, pDef:pDef, protDriven:supP >= supE,
                     eLeft:Math.max(0, rTdn - tdnIn), eSur:Math.max(0, tdnIn - rTdn)};
           };
+          // typical calving cow: eats her own fill of the same pasture and gets the same hay and supplement per head as the herd
+          var typCap = o.cowIntake !== 'nrc' ? o.cowLb/100*(r.typLact*pctL + (1 - r.typLact)*pctD) : nrcDmi(r.typA, r.typMilk);
           var protOnly = o.supMode === 'protein';
           var cw = feedFor(cowCap, r.cowTdn, r.cowCp, protOnly);
+          var tIn = typCap*f*dTdn/100 + cw.hay*feeds.hayTdn/100 + cw.sup*feeds.supTdn/100;
+          var typ = {tdn:r.typTdn, eLeft:Math.max(0, r.typTdn - tIn), eSur:Math.max(0, tIn - r.typTdn), lact:r.typLact};
           var bl = feedFor(bullCap, r.bullTdn, r.bullCp, protOnly);
           var wcHead = r.wcN > 0 ? feedFor(r.wcCap/r.wcN, r.wcTdn/r.wcN, r.wcCp/r.wcN) : {forage:0, hay:0, sup:0};
           var hHead = r.hN > 0 ? feedFor(r.hCap/r.hN, r.hTdn/r.hN, r.hCp/r.hN) : {forage:0, hay:0, sup:0};
@@ -2127,7 +2147,7 @@
                      cowCp:cows*r.cowCp, bullCp:bulls*r.bullCp, calfCp:cows*r.calfCp, wcCp:cows*r.wcCp, hCp:cows*r.hCp},
             pasture:{tdn:cows*(cw.forage*dTdn/100 + calfTdnSup) + bulls*bl.forage*dTdn/100 + wcHeads*wcHead.forage*dTdn/100 + hHeads*hHead.forage*dTdn/100,
                      cp:cows*(cw.forage*dCp/100 + calfCpSup) + bulls*bl.forage*dCp/100 + wcHeads*wcHead.forage*dCp/100 + hHeads*hHead.forage*dCp/100},
-            cow:cw, bull:bl, wc:wcHead, wcHeads:wcHeads, heifer:hHead, heiferHeads:hHeads,
+            cow:cw, typCow:typ, bull:bl, wc:wcHead, wcHeads:wcHeads, heifer:hHead, heiferHeads:hHeads,
             calfShortTdn:Math.max(0, r.calfTdn - calfTdnSup), calfShortCp:Math.max(0, r.calfCp - calfCpSup),
             hayLb:hayLb, supLb:supLb, trips:trips, feedCost:feedCost, tripCost:tripCost, distCost:distCost,
             cost:feedCost + tripCost + distCost
@@ -2155,24 +2175,22 @@
       var calfInfo = {strategy:calfStrat, lbLostPerCalf:lbLost, creepLbPerCalf:creepPerCalf, shortTdnPerCalf:perCalfT, shortCpPerCalf:perCalfP,
                       creepLb:calfStrat === 'creep' ? creepPerCalf*co.weaned*o.cows : 0};
       calfInfo.creepCost = calfInfo.creepLb/2000*(o.creepPrice || 0);
-      // cow body condition through the year, starting at the calving-season month with the condition you set at calving.
+      // body condition of the typical calving cow (middle of the season) through the year, starting at her calving month with the condition you set at calving.
       // Energy short of need (TDN lb/day) is drawn from body reserves (NE from tissue at 0.8, NRC 2016); surplus ME is stored at 0.60 (Eq. 13-14).
       var sbwC = o.cowLb/LB*0.96, perBcs = bodyEnergy(sbwC, 5, 5) - bodyEnergy(sbwC, 5, 4);
-      var calvM = cs.reduce(function(a, c){ a[c.birthMonth] = (a[c.birthMonth] || 0) + c.share; return a; }, []);
-      var m0 = 0; calvM.forEach(function(v, m){ if(v > (calvM[m0] || 0)) m0 = m; });
+      var typC = req.typ || cs[0], m0 = typC.birthMonth;
       var bcsStart = +o.bcs || 5, b = bcsStart, bcsByMonth = [], lowB = b, lowM = m0;
       for(var k = 0; k < 12; k++){
         var mm = (m0 + k) % 12, x = months[mm], me = x.dietTdn/100*4.409*0.82, km = nemaOf(x.dietTdn)/me, kg = Math.max(0.05, negaOf(x.dietTdn))/me;
-        var mcalDay = (x.cow.eSur*0.60 - x.cow.eLeft*km/0.8)*1.64;  // tissue energy, Mcal/day (1 lb TDN = 1.64 Mcal ME); NRC 2016 Eq. 13-13/13-14: gain 0.60 x ME, loss 1 Mcal tissue = 0.80 Mcal NEm
+        var mcalDay = (x.typCow.eSur*0.60 - x.typCow.eLeft*km/0.8)*1.64;  // tissue energy, Mcal/day (1 lb TDN = 1.64 Mcal ME); NRC 2016 Eq. 13-13/13-14: gain 0.60 x ME, loss 1 Mcal tissue = 0.80 Mcal NEm
         var d = mcalDay*x.days/perBcs;
         d = Math.max(-1, Math.min(0.5, d));
         b = Math.max(1, Math.min(Math.max(bcsStart, 5), b + d));   // cows regain on good grass, but not past calving condition (5 if thinner)
         x.cowBcs = b; bcsByMonth[mm] = b;
         if(b < lowB){ lowB = b; lowM = mm; }
       }
-      // condition while the cows are being bred (about 82 days after each cohort calves, 365 - 283 days of gestation)
-      var brT = 0, brW = 0; cs.forEach(function(c){ brT += c.share; brW += c.share*bcsByMonth[monthOfDay(c.day + 82)]; });
-      var bcsBreed = brT > 0 ? brW/brT : bcsStart;
+      // condition while the typical cow is being bred (about 82 days after she calves, 365 - 283 days of gestation)
+      var bcsBreed = bcsByMonth[monthOfDay(typC.day + 82)];
       // condition not regained by the next calving has to be bought back: about 305 lb of shelled corn per score for an
       // 1,100-lb cow (Texas A&M AgriLife B-1526, Table 1), priced as your supplement's energy (corn 88% TDN)
       var bcsShort = Math.max(0, bcsStart - b);

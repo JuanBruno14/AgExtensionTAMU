@@ -71,6 +71,12 @@
       text:so4 < 500 ? 'Fine for calves and adult cattle.' : so4 < 1000 ? 'Fine for adult cattle; above the 500 ppm suggested for calves. Can lower copper status of cows.'
          : so4 < 2000 ? 'Above the 1,000 ppm suggested for adult cattle: ask the lab which salt it is (sodium sulfate is the strongest laxative) and watch copper.'
          : 'High: diarrhea at first, risk of polio (polioencephalomalacia) and lower feed and water intake. Cattle tolerate up to about 2,500 ppm only for short periods.'});
+    // Table 9-5: upper-limit guidelines (mg/L) for potentially toxic elements
+    var as = v(o.as), fl = v(o.f);
+    if(as != null) out.push({item:'Arsenic', val:as, dec:3, level:as <= 0.05 ? 0 : as <= 0.2 ? 2 : 3,
+      text:as <= 0.05 ? 'At or under the 0.05 ppm upper limit for cattle.' : 'Over the 0.05 ppm upper limit for cattle. Arsenic builds up over time: find another water source and talk to your veterinarian.'});
+    if(fl != null) out.push({item:'Fluoride', val:fl, dec:1, level:fl <= 2 ? 0 : fl <= 4 ? 1 : 2,
+      text:fl <= 2 ? 'At or under the 2 ppm upper limit for cattle.' : 'Over the 2 ppm upper limit. Years of high fluoride mottle and wear young cattle’s teeth (fluorosis); count fluoride in mineral and feed phosphate too.'});
     if(hard != null) out.push({item:'Hardness', val:hard, level:0,
       text:(hard <= 60 ? 'Soft' : hard <= 120 ? 'Moderately hard' : hard <= 180 ? 'Hard' : 'Very hard') + ' water. Hardness itself is not a health problem for cattle; it matters for scale in pipes and waterers.'});
     return out;
@@ -138,7 +144,7 @@
   /* ================================================================ STATE */
   var DEF = {
     tool:'water',
-    w_class:'lactating', w_lb:1200, w_head:100, w_temp:95, w_tank:3000, w_tds:'', w_no3:'', w_so4:'', w_hard:'',
+    w_class:'lactating', w_lb:1200, w_head:100, w_temp:95, w_tank:3000, w_tds:'', w_no3:'', w_so4:'', w_hard:'', w_as:'', w_f:'',
     r_nut:'cp', r_target:10, r_aName:'Grass hay', r_aCp:7, r_aTdn:52, r_aDm:90, r_aPrice:120,
     r_bName:'20% range cubes', r_bCp:22, r_bTdn:78, r_bDm:90, r_bPrice:392, r_dmi:26, r_bw:1200, r_head:100, r_days:90,
     d_prod:'ivm_inj', d_cDose:1, d_cPer:110, d_cWd:35, d_lb:600, d_head:100, d_bottle:500, d_date:'', d_sale:'',
@@ -171,9 +177,9 @@
     $('w_note').textContent = 'About ' + fmt(r.gal, 1) + ' gallons per head a day for ' + W_TABLE[S.w_class].label + ' weighing ' + fmt(S.w_lb) + ' lb at ' + fmt(S.w_temp) + '°F. ' + notes.join(' ');
     $('w_table').innerHTML = '<thead><tr><th>Temperature</th>' + W_TEMPS.map(function(t){ return '<th class="num">' + t + '°F</th>'; }).join('') + '</tr></thead><tbody><tr><td>Gal/head/day</td>' +
       r.row.map(function(v, i){ var on = Math.abs(Math.max(40, Math.min(90, S.w_temp)) - W_TEMPS[i]) < 5; return '<td class="num' + (on ? ' hl' : '') + '">' + fmt(v, 1) + '</td>'; }).join('') + '</tr></tbody>';
-    var q = waterQuality({tds:S.w_tds, no3:S.w_no3, so4:S.w_so4, hard:S.w_hard}), LV = ['ok','caution','problem','do not use'];
+    var q = waterQuality({tds:S.w_tds, no3:S.w_no3, so4:S.w_so4, hard:S.w_hard, as:S.w_as, f:S.w_f}), LV = ['ok','caution','problem','do not use'];
     $('w_quality').innerHTML = q.length ? '<table class="plan" aria-label="Water test results"><thead><tr><th>Water test</th><th class="num">ppm</th><th>What it means</th></tr></thead><tbody>' +
-      q.map(function(x){ return '<tr><td>' + esc(x.item) + ' <span class="wq wq' + x.level + '">' + LV[x.level] + '</span></td><td class="num">' + fmt(x.val) + '</td><td>' + esc(x.text) + '</td></tr>'; }).join('') + '</tbody></table>' : '';
+      q.map(function(x){ return '<tr><td>' + esc(x.item) + ' <span class="wq wq' + x.level + '">' + LV[x.level] + '</span></td><td class="num">' + fmt(x.val, x.dec || 0) + '</td><td>' + esc(x.text) + '</td></tr>'; }).join('') + '</tbody></table>' : '';
   }
 
   function renderRation(){
@@ -300,7 +306,7 @@
       el.value = S[k];
       var isNum = el.type === 'number';
       el.addEventListener(el.tagName === 'SELECT' || el.type === 'date' ? 'change' : 'input', function(){
-        var optional = /^w_(tds|no3|so4|hard)$/.test(k);   // water-test fields may be left blank
+        var optional = /^w_(tds|no3|so4|hard|as|f)$/.test(k);   // water-test fields may be left blank
         if(isNum && optional && el.value.trim() === '') S[k] = '';
         else if(isNum){ var v = num(el.value); if(v == null || v < +el.min || v > +el.max) return; S[k] = v; }
         else S[k] = el.value;

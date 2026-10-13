@@ -30,6 +30,8 @@ with sync_playwright() as pw:
     check('nursing cows never less water when hotter', pg.evaluate(H+".water('lactating',900,90).gal")>=pg.evaluate(H+".water('lactating',900,80).gal"))
     q=pg.evaluate(H+".waterQuality({tds:4000,no3:150,so4:'',hard:200})")
     check('water quality: NASEM Tables 9-2 and 9-4 bands, blank skipped', len(q)==3 and q[0]['level']==1 and q[1]['level']==2 and 'Very hard' in q[2]['text'], q)
+    q2=pg.evaluate(H+".waterQuality({as:0.08,f:1.5})")
+    check('water quality: arsenic over 0.05 ppm flagged, fluoride under 2 ppm ok (Table 9-5)', q2[0]['level']>=2 and q2[1]['level']==0, q2)
     check('water quality: 7,000 ppm TDS = do not use', pg.evaluate(H+".waterQuality({tds:7000})[0].level")==3)
     check('dry cows above 70F extended', pg.evaluate(H+".water('pregnant',900,90).gal")>9.7)
     # --- pearson
