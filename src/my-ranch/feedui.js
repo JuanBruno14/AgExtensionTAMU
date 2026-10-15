@@ -143,7 +143,7 @@
       tripCost:h.tripCost, supTrips:+h.supTrips, hayTrips:+h.hayTrips, distPerTon:h.distPerTon}, over || {});
   }
   function supplyNow(mult){
-    var past = state.pastures.map(function(p){ return {annualLb:annualLb(p), type:p.type, grazed:isGrazed(p), measured:p.measured || null, forageAcres:forageAcres(p), name:p.name}; });
+    var past = state.pastures.map(function(p){ return {annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair', grazed:isGrazed(p), measured:p.measured || null, forageAcres:forageAcres(p), name:p.name}; });
     var reg = regionKey(), he = state.settings.harvestEff/100;
     var sup = FEED.pastureSupply(past, he, reg);
     var t = totals(), mc = state.settings.manualCap;
@@ -251,7 +251,7 @@
     var k = 1, mc = state.settings.manualCap;
     if(mc > 0){ var have = list.reduce(function(a, p){ return a + annualLb(p)*he; }, 0); if(have > 0) k = mc*state.settings.intakeLb*365/have; }
     var P = list.map(function(p){
-      return {p:p, g:FEED.pastureGrowth({annualLb:annualLb(p), type:p.type}, he, reg).map(function(x){ return x*k; }),
+      return {p:p, g:FEED.pastureGrowth({annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair'}, he, reg).map(function(x){ return x*k; }),
               meas:p.measured && p.measured.lbAc > 0 ? {m:p.measured.month, lb:p.measured.lbAc*forageAcres(p)*he} : null,
               stock:0, day:[], sd:[], visits:0, grazed:0, fed:0};
     });

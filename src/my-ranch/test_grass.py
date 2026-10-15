@@ -60,6 +60,11 @@ with sync_playwright() as pw:
     m.click('[data-mapcolor="grass"]'); m.wait_for_timeout(300)
     check('phone: no horizontal scroll', m.evaluate('document.documentElement.scrollWidth')<=390, m.evaluate('document.documentElement.scrollWidth'))
     m.locator('#map').screenshot(path=os.path.join(OUT,'grass-mobile.png'))
+    g=pg.evaluate("""(()=>{const F=MyRanch.FEED,G=c=>F.pastureGrowth({annualLb:1000,type:'range',condition:c},1,'rp');
+      return {ex:G('excellent'),fa:G('fair'),po:G('poor'),sg:F.pastureGrowth({annualLb:1000,type:'smallgrain'},1,'rp')}})()""")
+    sm=lambda a: round(sum(a),6)
+    check('range condition picks NRCS community curve (R078CY096TX)', round(g['ex'][3])==150 and round(g['fa'][3])==80 and round(g['po'][3])==80 and round(g['fa'][6])==140 and sm(g['ex'])==sm(g['fa'])==1000, g)
+    check('small grains use NRCS TX2252 (fall-heavy)', round(g['sg'][9])==250 and round(g['sg'][5])==0, g['sg'])
     check('no JS errors', not errs, errs)
     b.close()
 print('\n%d failures' % len(fails)); sys.exit(1 if fails else 0)

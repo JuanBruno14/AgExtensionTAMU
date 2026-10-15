@@ -55,18 +55,26 @@
       hp: {label:'High Plains',                  curve:[0,3,5,8,23,25,12,5,10,5,3,1],  src:'TX0753 · High Lime 12-17" PZ (MLRA 77B)', station:'Amarillo',
            tmean:[38.6,41.8,49.8,57.5,66.8,76.1,79.6,78.1,70.9,59.2,47.4,38.8], tmin:[24.9,27.5,34.8,42.5,52.6,62.4,66.4,65.3,57.8,45.4,33.5,25.7]},
       rp: {label:'Rolling Plains',               curve:[0,1,5,15,25,20,5,5,15,8,1,0],  src:'TX2275 · Clay Loam 23-30" PZ (MLRA 78C)', station:'Abilene',
+           esd:'R078CY096TX', byCond:{excellent:[0,1,5,15,25,20,5,5,15,8,1,0], fair:[0,2,4,8,25,25,14,6,8,5,2,1], poor:[0,2,5,8,24,25,12,7,10,5,2,0]},
            tmean:[46.3,50.1,58.1,66.0,74.1,81.1,84.7,84.2,76.8,67.0,55.5,47.3], tmin:[33.7,37.4,45.3,52.8,61.9,69.5,73.1,72.4,65.0,54.7,43.3,35.2]},
       ep: {label:'Edwards Plateau & West Texas', curve:[3,5,5,9,13,13,11,9,12,11,5,4], src:'TX3254 · Clay Loam 14-19" PZ (MLRA 81A)', station:'San Angelo',
+           esd:'R081AY291TX', byCond:{excellent:[3,5,5,9,13,13,11,9,12,11,5,4], fair:[5,5,10,15,15,10,5,5,10,10,5,5], poor:[5,5,15,15,15,10,5,5,5,10,5,5]},
            tmean:[45.8,50.2,57.5,65.7,74.2,80.9,83.3,82.9,76.0,66.2,54.8,47.2], tmin:[31.5,36.0,43.2,51.0,60.8,68.6,70.6,70.4,63.7,52.7,41.4,33.5]},
-      st: {label:'South Texas',                  curve:[2,2,5,10,18,15,5,9,15,9,5,5],  src:'TX4525 · Western Clay Loam (MLRA 83A)', station:'Laredo',
+      st: {label:'South Texas',                  curve:[2,2,5,10,18,15,5,9,15,9,5,5],  src:'TX4525 · Western Clay Loam (MLRA 83A)', station:'Laredo', esd:'R083AY027TX',
            tmean:[57.6,61.9,69.6,76.6,82.8,87.6,88.7,89.1,83.7,74.8,66.0,58.5], tmin:[46.8,51.7,58.3,64.9,71.5,76.2,77.1,77.4,73.1,65.8,55.6,48.0]},
       ce: {label:'Central & East Texas',         curve:[2,2,8,10,20,23,5,3,10,10,5,2], src:'TX5510 · Sandy Loam 29-33" PZ (MLRA 84B)', station:'Waco',
            tmean:[47.4,51.6,58.8,66.2,74.3,81.9,85.6,85.5,78.7,68.4,57.2,49.2], tmin:[35.8,40.1,47.4,54.6,63.3,71.1,74.4,73.9,66.7,56.2,45.6,37.9]}
     };
+    /* Range growth curves are NRCS ecological-site curves (EDIT). byCond: the curve of the plant community that matches the range
+       condition (Rolling Plains R078CY096TX: excellent = 1.1 Midgrass Prairie TX2275, fair = Mid/Shortgrasses with Forbs TX2276,
+       poor = Shortgrasses/Mixed-Brush TX2277; Edwards Plateau R081AY291TX: TX3254 / TX3256 / TX3257). South Texas R083AY027TX gives
+       the same curve for every native community. High Plains TX0753 and Central & East TX5510 could not be checked: the current NRCS
+       descriptions for those sites publish no monthly curve. Pasture types: R078CY096TX TX2264 (warm-season pasture grasses, also
+       used for hay meadows) and TX2252 (small grains). */
     var CURVES = {
-      improved:   [0,0,2,8,20,25,20,13,8,4,0,0],
-      smallgrain: [4,5,25,30,12,0,0,0,0,8,11,5],
-      hay:        [0,0,2,8,20,25,20,13,8,4,0,0]
+      improved:   [1,2,5,12,25,20,5,5,14,8,2,1],
+      smallgrain: [5,5,10,10,5,0,0,0,20,25,15,5],
+      hay:        [1,2,5,12,25,20,5,5,14,8,2,1]
     };
     var QUALITY = {
       range:      [[48,4.5],[48,4.5],[50,6],[60,11],[62,12],[60,10],[56,8],[54,7],[55,7.5],[52,6],[50,5],[49,4.5]],
@@ -508,15 +516,19 @@
       return out;
     }
 
-    function curveFor(t, regionKey){ return t === 'range' ? (REGIONS[regionKey] || REGIONS.ce).curve : CURVES[t]; }
+    function curveFor(t, regionKey, cond){
+      if(t !== 'range') return CURVES[t];
+      var R = REGIONS[regionKey] || REGIONS.ce;
+      return (R.byCond && R.byCond[cond || 'fair']) || R.curve;
+    }
     /* One pasture's usable forage growth by month (lb) */
     function pastureGrowth(p, he, regionKey){
-      var t = p.type === 'range' ? 'range' : p.type, curve = curveFor(t, regionKey), tot = curve.reduce(function(a, b){ return a + b; }, 0);
+      var t = p.type === 'range' ? 'range' : p.type, curve = curveFor(t, regionKey, p.condition), tot = curve.reduce(function(a, b){ return a + b; }, 0);
       return curve.map(function(x){ return (p.annualLb || 0)*he*x/tot; });
     }
     /* Pastures grouped by type; a pasture with a measured standing crop keeps its own entry so the measurement can reset its stock */
     function pastureSupply(pastures, he, regionKey){
-      var byType = {}, own = [], acres = {};
+      var byType = {}, own = [], acres = {}, cond = {};
       pastures.forEach(function(p){
         if(!p.annualLb || !p.grazed) return;
         var t = p.type === 'range' ? 'range' : p.type;
@@ -525,12 +537,15 @@
                     measured:{month:p.measured.month, lb:p.measured.lbAc*(p.forageAcres || 0)*he}, name:p.name, acres:p.forageAcres || 0, he:he});
           return;
         }
-        byType[t] = (byType[t] || 0) + p.annualLb*he;
-        acres[t] = (acres[t] || 0) + (p.forageAcres || 0);
+        // native range is grouped by condition too: each condition has its own growth curve
+        var k = t === 'range' ? 'range|' + (p.condition || 'fair') : t;
+        byType[k] = (byType[k] || 0) + p.annualLb*he;
+        acres[k] = (acres[k] || 0) + (p.forageAcres || 0);
+        cond[k] = p.condition || 'fair';
       });
-      return Object.keys(byType).map(function(t){
-        var curve = curveFor(t, regionKey), tot = curve.reduce(function(a, b){ return a + b; }, 0);
-        return {type:t, annual:byType[t], growth:curve.map(function(p){ return byType[t]*p/tot; }), quality:QUALITY[t], acres:acres[t], he:he};
+      return Object.keys(byType).map(function(k){
+        var t = k.split('|')[0], curve = curveFor(t, regionKey, cond[k]), tot = curve.reduce(function(a, b){ return a + b; }, 0);
+        return {type:t, condition:t === 'range' ? cond[k] : undefined, annual:byType[k], growth:curve.map(function(p){ return byType[k]*p/tot; }), quality:QUALITY[t], acres:acres[k], he:he};
       }).concat(own);
     }
     /* Returns a copy of the supply with some months' growth cut (drought / failed small grains) */
