@@ -65,6 +65,12 @@ with sync_playwright() as pw:
     sm=lambda a: round(sum(a),6)
     check('range condition picks NRCS community curve (R078CY096TX)', round(g['ex'][3])==150 and round(g['fa'][3])==80 and round(g['po'][3])==80 and round(g['fa'][6])==140 and sm(g['ex'])==sm(g['fa'])==1000, g)
     check('small grains use NRCS TX2252 (fall-heavy)', round(g['sg'][9])==250 and round(g['sg'][5])==0, g['sg'])
+    y=pg.evaluate("""(()=>{const F=MyRanch.FEED,o={cowLb:1200,breed:'angus',bcs:5,peakMilkLb:18,activity:0};
+      const r=F.COW_AGE.map(c=>{const oo=Object.assign({},o,{milkAge:c.milk,wF0:c.f0,wF1:c.f1});const p=F.cowParams(oo,60,0,null);return [p.fbwKg*2.2046,p.neg,F.cowDay(oo,0,200,null).tdnLb]});
+      return {r:r,sh:F.cowAgeShares({replRate:15}),q:F.rangeQuality('b6124','rp'),t:F.rangeQuality('typical','rp')}})()""")
+    check('young cows: lighter, growing (BCNRM 80/92/96%), more TDN when pregnant', y['r'][0][0]<y['r'][1][0]<y['r'][2][0]<y['r'][3][0]==1200 and y['r'][0][1]>0 and y['r'][3][1]==0 and y['r'][0][2]>y['r'][3][2], y['r'])
+    check('age shares sum to 1', abs(sum(y['sh'])-1)<1e-9 and len(y['sh'])==4, y['sh'])
+    check('B-6124 range quality stretches to Rolling Plains CP 7-12%, digestibility 60-63%', min(q[1] for q in y['q'])==7 and max(q[1] for q in y['q'])==12 and min(q[0] for q in y['q'])==60 and max(q[0] for q in y['q'])==63 and y['t'][0]==[48,4.5], y['q'])
     check('no JS errors', not errs, errs)
     b.close()
 print('\n%d failures' % len(fails)); sys.exit(1 if fails else 0)

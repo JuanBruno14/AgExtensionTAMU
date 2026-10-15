@@ -1134,6 +1134,11 @@
             <select id="fc_region"></select>
             <span class="hint" id="fc_regionHint"></span>
           </div>
+          <div class="field">
+            <label for="fc_fq">Native range quality</label>
+            <select id="fc_fq" data-hs="fq"><option value="typical">Typical forage values</option><option value="b6124">What cattle select (AgriLife B-6124)</option></select>
+            <span class="hint">B-6124: diet protein and digestibility from fecal samples of grazing cattle in your region</span>
+          </div>
         </div>
         <p class="card-note fc-usnote" style="margin:10px 0 0;">U.S. average from USDA's NAHMS Beef 2017 survey: 55% of calves are born in February–April, with a smaller fall peak in September–November.</p>
         <p class="card-note" id="fc_weanNote" style="margin:10px 0 0;"></p>
@@ -1334,7 +1339,7 @@
               <p><strong>Short grass</strong>: when the forage standing on the pastures (what cattle can still graze plus the stubble left standing) drops below about 1,030 lb/acre and there is little of it per head, cattle cannot bite off a full day's intake, so hay makes up the rest (NRC 2016 grazing intake factor, as coded in the BCNRM software). On a ranch stocked to its capacity this only happens in a deep drought.</p>
               <p><strong>Weather</strong> (when on) follows the same model: cows adapt to the previous month's temperature (needing more after cold months, less after hot ones); below the lower critical temperature — which depends on wind, hair depth (winter vs. summer coat), hide, a wet or muddy coat and body condition — they burn extra energy to stay warm. Calves get the same check, with the thin body insulation of a young calf (a calf under a month old feels cold much sooner than its mother); milk usually covers that extra energy. Panting in hot months adds 7–18%. Temperatures are the monthly normals for your region, so a single blue norther or ice storm is harder than the average shown.</p>
               <p><strong>Calves</strong> grow at the rate that reaches your average weaning weight. Their mother's milk is counted first; only the rest comes from pasture. When you wean on a date, calves born earlier are older and heavier. During the weaning period they eat like growing calves and are sold at the end of it.</p>
-              <p><strong>Pasture</strong> is each pasture's forage (soil survey × range condition, or your estimate; ponds, brush and bottomland adjusted) times your harvest efficiency, spread over the year with NRCS ecological-site growth curves: for native range, the curve of the plant community that matches the range condition (Rolling Plains and Edwards Plateau); for improved pasture, hay meadows and small grains, the NRCS pasture and small-grain curves. Forage not eaten carries into the next month. Quality uses typical diet values by month, not a forage test.</p>
+              <p><strong>Pasture</strong> is each pasture's forage (soil survey × range condition, or your estimate; ponds, brush and bottomland adjusted) times your harvest efficiency, spread over the year with NRCS ecological-site growth curves: for native range, the curve of the plant community that matches the range condition (Rolling Plains and Edwards Plateau); for improved pasture, hay meadows and small grains, the NRCS pasture and small-grain curves. Forage not eaten carries into the next month. Quality uses typical diet values by month, not a forage test, or, if you choose it, what grazing cattle in your region select (AgriLife B-6124, fecal samples). Young cows are lighter and still growing (BCNRM targets: 80% of mature weight at first calving, 92% at second, 96% at third), and first-calf cows give 88% of mature milk; their share of the herd comes from the replacement rate.</p>
               <p><strong>Intake</strong> follows Mississippi State Extension's guide (1.8–2.7% of body weight depending on forage quality). When pasture runs out, hay fills the rest of the intake; the supplement covers whatever protein or energy is still missing.</p>
               <p><strong>Losses:</strong> calf death loss is split into weather-related (about 10% of all losses in USDA's NAHMS study, adjusted by how cold the nights are in the birth month for your region) and everything else. Screwworm risk rises with temperature (little fly activity below 59°F, most at 77–86°F, per AgriLife); there is no published loss rate yet, so you set it. Horn flies cut calf weaning weights 4–15% (UNL); the tool applies it to the share of nursing days in June–September.</p>
               <p><strong>Money:</strong> calves are sold at your market price slide (half steers, half heifers), cull cows at the cull-cow price, both from the site's shared market prices. By default it uses those prices as they are, like the other tools on this site. Turn on <em>Seasonal prices</em> to move them to the month you actually sell with a seasonal price pattern (calves: Oklahoma City 500–650 lb steers and 450–500 lb heifers, USDA 2016–2025, Feb–Apr about 3–4% above the year's average, October about 6% below; cull cows: Texas A&amp;M's San Angelo pattern, 1989–98). The result is cattle sales minus the feed you buy and the cost of feeding it — not profit: land, labor, vet, bull and other costs aren't in it.</p>
@@ -1490,8 +1495,9 @@
   };
   var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'none',
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535,
-    weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto',
+    weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto', fq:'typical',
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
+    // feed prices: Texas A&M AgriLife 2026 District 3 budgets, Prices sheet (hay $0.10/lb, supplement $0.196/lb = $9.80 per 50-lb bag, salt & mineral $0.45/lb)
     hayTdn:55, hayCp:10, hayDm:88, hayPrice:200, mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
     dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0},
@@ -1581,6 +1587,17 @@
       smallgrain: [[72,24],[72,24],[72,24],[72,22],[62,14],[50,6],[50,6],[50,6],[50,6],[72,25],[72,25],[72,24]],
       hay:        [[45,6],[45,6],[47,7],[60,13],[60,13],[60,12],[56,10],[56,10],[55,10],[53,9],[50,8],[48,7]]
     };
+    /* Diet quality of grazing cattle by region, Texas A&M B-6124 (Lyons, Machen & Stuth 2002), Table 1: average yearly high and low
+       of diet crude protein and digestibility (fecal NIRS, Grazingland Animal Nutrition Lab, 10 years of samples). The monthly shape
+       is the native-range pattern above, stretched to each region's average low and high; digestibility is used as TDN
+       (digestible organic matter is about equal to TDN). Central & East uses the Cross Timbers row (the growth-curve site is MLRA 84B). */
+    var B6124 = {hp:{cp:[7,11], dig:[59,66]}, rp:{cp:[7,12], dig:[60,63]}, ep:{cp:[7,11], dig:[58,63]}, st:{cp:[9,12], dig:[60,63]}, ce:{cp:[8,13], dig:[59,65]}};
+    function rangeQuality(mode, regionKey){
+      var b = mode === 'b6124' ? B6124[regionKey] : null, base = QUALITY.range;
+      if(!b) return base;
+      var t0 = 48, t1 = 62, c0 = 4.5, c1 = 12;
+      return base.map(function(q){ return [b.dig[0] + (q[0] - t0)/(t1 - t0)*(b.dig[1] - b.dig[0]), b.cp[0] + (q[1] - c0)/(c1 - c0)*(b.cp[1] - b.cp[0])]; });
+    }
     var ACTIVITY = {none:0, flat:0.10, rolling:0.20, rough:0.35, extensive:0.50};
     /* Protein sources (typical composition; price is what the producer pays) */
     var SOURCES = {
@@ -1660,11 +1677,12 @@
         if(lct > env.tc) cs = c.sa*(lct - env.tc)/ins*km;
         stress = cs > 0 ? cs : p.nemBase*(env.pant === 3 ? 0.18 : env.pant === 2 ? 0.07 : 0);
       }
-      return {dmi:dmi, supply:nm*dmi, need:p.nem + stress + p.nel + p.mey*km + (p.extra || 0), stress:stress, cold:cs, lct:lct, km:km};
+      var kgE = Math.max(0.05, negaOf(t))/me;   // growth of young cows: NEg needed, as NEm-equivalent at this diet (x km/kg)
+      return {dmi:dmi, supply:nm*dmi, need:p.nem + stress + p.nel + p.mey*km + (p.extra || 0) + (p.neg || 0)*km/kgE, stress:stress, cold:cs, lct:lct, km:km};
     }
     function solveTDN(p){
       var c = stressCtx(p), lo = 35, hi = 95;
-      for(var i = 0; i < 50; i++){ var mid = (lo+hi)/2, r = needAt(p, mid, c); if(r.supply < r.need) lo = mid; else hi = mid; }
+      for(var i = 0; i < 40; i++){ var mid = (lo+hi)/2, r = needAt(p, mid, c); if(r.supply < r.need) lo = mid; else hi = mid; }
       var t = (lo+hi)/2, f = needAt(p, t, c);
       return {tdnPct:t, dmiKg:f.dmi, tdnLb:t/100*f.dmi*LB, stressNE:f.stress, coldNE:f.cold};
     }
@@ -1678,13 +1696,27 @@
        0.88 from 24 to under 36, 1 after. Heifers here calve at 24 months (730 d), so a first-calf cow nurses at 24-34 months
        (0.88) and a second-calf cow at 36+ months (1). Classes: first calf, second calf, mature; shares from the replacement
        rate r (culls + deaths; steady herd, culling spread evenly over ages): r, r(1 - r), the rest. */
-    var MILK_AGE = [0.88, 1, 1];
+    var MILK_AGE = [0.88, 1, 1, 1];
+    /* Young cows are still growing. BCNRM 2016 target weights (Calc Table R5): first calving at 80% of mature shrunk weight,
+       second at 92%, third at 96%, mature at the fourth. A cow grows in a straight line from one calving to the next; her
+       maintenance, intake and cold stress use her own weight, and her gain costs NEg (NRC 2016 Eq. 12-6 inverse, 478-kg
+       reference) and MP (efficiency 0.492 above 300 kg EQSBW). BCNRM itself shows these targets but does not add the gain to a
+       cow's total; My Ranch does, as the NRC text asks for young cows. Classes: first, second, third calf, mature. */
+    var COW_AGE = [{milk:0.88, f0:0.80, f1:0.92}, {milk:1, f0:0.92, f1:0.96}, {milk:1, f0:0.96, f1:1}, {milk:1, f0:1, f1:1}];
     function cowAgeShares(o){
       var r = Math.max(0, Math.min(0.5, (o.replRate || 0)/100));
-      return [r, r*(1 - r), 1 - r - r*(1 - r)];
+      return [r, r*(1 - r), r*(1 - r)*(1 - r), 1 - r - r*(1 - r) - r*(1 - r)*(1 - r)];
     }
     function cowParams(o, dim, preg, env, extra){
-      var sbw = o.cowLb/LB*0.96, mbw = Math.pow(sbw, 0.75), br = BREEDS[o.breed] || BREEDS.angus;
+      var msbw = o.cowLb/LB*0.96, f0 = o.wF0 || 1, f1 = o.wF1 || f0;
+      var dsc = dim > 0 ? dim : preg > 0 ? preg + 82 : 0;                    // days since her last calving
+      var sbw = msbw*(f0 + (f1 - f0)*Math.min(365, dsc)/365), mbw = Math.pow(sbw, 0.75), br = BREEDS[o.breed] || BREEDS.angus;
+      var swg = msbw*(f1 - f0)/365, neg = 0, mpg = 0;
+      if(swg > 0){
+        var eqsbw = sbw*478/msbw;
+        neg = retainedEnergy(0.891*eqsbw, swg*0.956);
+        mpg = Math.max(0, swg*(268 - 29.4*neg/swg))/mpToNp(eqsbw);
+      }
       var comp = 0.8 + (o.bcs - 1)*0.05;
       var lact = dim > 0;
       var nemBase = mbw*(0.077*br.be*(lact ? br.l : 1)*comp + a2Of(env));
@@ -1696,8 +1728,8 @@
         mey = ney/0.13;                                   // NEm for pregnancy = MEy x diet km (BCNRM), not a fixed 0.6
         mpp = cbw*(0.001669 - 0.00000211*t)*Math.exp(0.0278*t - 0.0000176*t*t)*6.25/0.65;
       }
-      return {nem:nemBase*(1 + (o.activity||0)), nemBase:nemBase, nel:y*MILK_E, mey:mey, mbw:mbw, milk:y, dp:preg, env:env, extra:extra || 0,
-              fbwKg:o.cowLb/LB, bcs:o.bcs, mp:mbw*3.8 + y*MILK_PROT/100/0.65*1000 + mpp, lact:lact};
+      return {nem:nemBase*(1 + (o.activity||0)), nemBase:nemBase, nel:y*MILK_E, mey:mey, mbw:mbw, milk:y, dp:preg, env:env, extra:extra || 0, neg:neg,
+              fbwKg:sbw/0.96, bcs:o.bcs, mp:mbw*3.8 + y*MILK_PROT/100/0.65*1000 + mpp + mpg, lact:lact};
     }
     function cowDay(o, dim, preg, env, extra){
       var p = cowParams(o, dim, preg, env, extra), s = solveTDN(p);
@@ -1940,14 +1972,23 @@
           wcN:0, wcTdn:0, wcCp:0, wcCap:0, wcBw:0, hN:0, hTdn:0, hCp:0, hCap:0, hBw:0, bullTdn:bull.tdnLb, bullCp:bull.cpLb, bullTdnNoWx:bull0.tdnLb, days:MONTH_DAYS[m], env:envs[m]});
       }
       var env, hmemo = {};
-      var ages = cowAgeShares(o), oAge = MILK_AGE.map(function(f){ return Object.assign({}, o, {milkAge:f}); });
-      function cowAge(oo, dim, preg, extra, e){ var k = (e ? m : 'x') + '|' + oo.milkAge + '|' + dim + '|' + preg + '|' + (extra || 0); var mm = e ? memo : memo0; return mm[k] || (mm[k] = cowDay(oo, dim, preg, e, extra)); }
-      /* a nursing cow is the herd's mix of first-calf, second-calf and mature cows (milk differs); dry cows are the same at any age */
+      var ages = cowAgeShares(o), oAge = COW_AGE.map(function(c, i){ return Object.assign({}, o, {milkAge:c.milk, wF0:c.f0, wF1:c.f1, ageClass:i}); });
+      function cowAge(oo, dim, preg, extra, e){
+        // young-cow classes are solved on a 5-day grid (their monthly averages move by well under 0.1%); mature cows every day
+        if(oo.ageClass < 3){ if(dim > 0) dim = Math.max(1, Math.round(dim/5)*5); if(preg > 0) preg = Math.max(1, Math.round(preg/5)*5); }
+        var k = (e ? m : 'x') + '|' + oo.ageClass + '|' + dim + '|' + preg + '|' + (extra || 0); var mm = e ? memo : memo0; return mm[k] || (mm[k] = cowDay(oo, dim, preg, e, extra)); }
+      /* every cow is the herd's mix of first-, second-, third-calf and mature cows (milk, weight and growth differ) */
+      var mixMemo = {};
       function mixAges(dim, preg, extra, e){
-        if(!(dim > 0) || ages[0] <= 0) return cowAge(oAge[2], dim, preg, extra, e);
-        var r = {tdnLb:0, cpLb:0, milkKg:0, dmiLb:0, stressNE:0, coldNE:0, lact:true};
-        oAge.forEach(function(oo, i){ var x = cowAge(oo, dim, preg, extra, e); ['tdnLb','cpLb','milkKg','dmiLb','stressNE','coldNE'].forEach(function(k){ r[k] += ages[i]*x[k]; }); });
-        return r;
+        if(ages[0] <= 0) return cowAge(oAge[3], dim, preg, extra, e);
+        var mk = (e ? m : 'x') + '|' + dim + '|' + preg + '|' + (extra || 0);
+        if(mixMemo[mk]) return mixMemo[mk];
+        var r = {tdnLb:0, cpLb:0, milkKg:0, dmiLb:0, stressNE:0, coldNE:0, lact:dim > 0};
+        for(var i = 0; i < oAge.length; i++){
+          var x = cowAge(oAge[i], dim, preg, extra, e), w = ages[i];
+          r.tdnLb += w*x.tdnLb; r.cpLb += w*x.cpLb; r.milkKg += w*x.milkKg; r.dmiLb += w*x.dmiLb; r.stressNE += w*x.stressNE; r.coldNE += w*x.coldNE;
+        }
+        return (mixMemo[mk] = r);
       }
       function cow(dim, preg, extra){ return mixAges(dim, preg, extra, env); }
       function heifer(age, weanAge, weanLb){ var k = m + '|' + age + '|' + weanAge + '|' + Math.round(weanLb); return hmemo[k] || (hmemo[k] = heiferDay(o, age, weanAge, weanLb, env)); }
@@ -2026,13 +2067,14 @@
       return curve.map(function(x){ return (p.annualLb || 0)*he*x/tot; });
     }
     /* Pastures grouped by type; a pasture with a measured standing crop keeps its own entry so the measurement can reset its stock */
-    function pastureSupply(pastures, he, regionKey){
+    function pastureSupply(pastures, he, regionKey, qualityMode){
+      var qOf = function(t){ return t === 'range' ? rangeQuality(qualityMode, regionKey) : QUALITY[t]; };
       var byType = {}, own = [], acres = {}, cond = {};
       pastures.forEach(function(p){
         if(!p.annualLb || !p.grazed) return;
         var t = p.type === 'range' ? 'range' : p.type;
         if(p.measured && p.measured.lbAc > 0 && p.measured.month != null){
-          own.push({type:t, annual:p.annualLb*he, growth:pastureGrowth(p, he, regionKey), quality:QUALITY[t],
+          own.push({type:t, annual:p.annualLb*he, growth:pastureGrowth(p, he, regionKey), quality:qOf(t),
                     measured:{month:p.measured.month, lb:p.measured.lbAc*(p.forageAcres || 0)*he}, name:p.name, acres:p.forageAcres || 0, he:he});
           return;
         }
@@ -2044,7 +2086,7 @@
       });
       return Object.keys(byType).map(function(k){
         var t = k.split('|')[0], curve = curveFor(t, regionKey, cond[k]), tot = curve.reduce(function(a, b){ return a + b; }, 0);
-        return {type:t, condition:t === 'range' ? cond[k] : undefined, annual:byType[k], growth:curve.map(function(p){ return byType[k]*p/tot; }), quality:QUALITY[t], acres:acres[k], he:he};
+        return {type:t, condition:t === 'range' ? cond[k] : undefined, annual:byType[k], growth:curve.map(function(p){ return byType[k]*p/tot; }), quality:qOf(t), acres:acres[k], he:he};
       }).concat(own);
     }
     /* Returns a copy of the supply with some months' growth cut (drought / failed small grains) */
@@ -2252,8 +2294,8 @@
     }
     return {pastureGrowth:pastureGrowth, heiferDay:heiferDay, heiferState:heiferState, heifersKeptPerCow:heifersKeptPerCow, heiferAges:heiferAges, bodyEnergy:bodyEnergy, SEASON_CALF:SEASON_CALF, SEASON_CULL:SEASON_CULL, nemaOf:nemaOf, needAt:needAt, cowParams:cowParams, envFor:envFor, birthLb:birthLb, BREEDS:BREEDS, MILK:MILK, REGIONS:REGIONS, QUALITY:QUALITY, ACTIVITY:ACTIVITY, MONTHS:MONTHS, MONTH_DAYS:MONTH_DAYS, MONTH_START:MONTH_START,
             NAHMS:NAHMS, SOURCES:SOURCES, LOSS_DEFAULT:LOSS_DEFAULT, WEATHER_SHARE:WEATHER_SHARE,
-            cowDay:cowDay, retainedEnergy:retainedEnergy, mpToNp:mpToNp, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
-            intakePct:intakePct, doy:doy, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfOutcome:calfOutcome,
+            cowDay:cowDay, retainedEnergy:retainedEnergy, mpToNp:mpToNp, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, COW_AGE:COW_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
+            intakePct:intakePct, doy:doy, B6124:B6124, rangeQuality:rangeQuality, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfOutcome:calfOutcome,
             weatherFactor:weatherFactor, grazeFactor:grazeFactor, weatherLoss:weatherLoss, pregByBcs:pregByBcs, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
   })();
 
@@ -3495,13 +3537,13 @@
   function supplyNow(mult){
     var past = state.pastures.map(function(p){ return {annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair', grazed:isGrazed(p), measured:p.measured || null, forageAcres:forageAcres(p), name:p.name}; });
     var reg = regionKey(), he = state.settings.harvestEff/100;
-    var sup = FEED.pastureSupply(past, he, reg);
+    var sup = FEED.pastureSupply(past, he, reg, state.herd.fq);
     var t = totals(), mc = state.settings.manualCap;
     if(mc > 0){
       var target = mc*state.settings.intakeLb*365;            // lb/yr available to graze at the stated capacity
       var have = sup.reduce(function(a, g){ return a + g.annual; }, 0);
       if(have > 0) sup.forEach(function(g){ var k = target/have; g.annual *= k; g.growth = g.growth.map(function(x){ return x*k; }); });
-      else sup = FEED.pastureSupply([{annualLb:target/he, type:'range', grazed:true}], he, reg);
+      else sup = FEED.pastureSupply([{annualLb:target/he, type:'range', grazed:true}], he, reg, state.herd.fq);
     }
     if(mult && mult !== 1) sup.forEach(function(g){ g.annual *= mult; g.growth = g.growth.map(function(x){ return x*mult; }); });
     return sup;

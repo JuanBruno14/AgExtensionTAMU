@@ -145,13 +145,13 @@
   function supplyNow(mult){
     var past = state.pastures.map(function(p){ return {annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair', grazed:isGrazed(p), measured:p.measured || null, forageAcres:forageAcres(p), name:p.name}; });
     var reg = regionKey(), he = state.settings.harvestEff/100;
-    var sup = FEED.pastureSupply(past, he, reg);
+    var sup = FEED.pastureSupply(past, he, reg, state.herd.fq);
     var t = totals(), mc = state.settings.manualCap;
     if(mc > 0){
       var target = mc*state.settings.intakeLb*365;            // lb/yr available to graze at the stated capacity
       var have = sup.reduce(function(a, g){ return a + g.annual; }, 0);
       if(have > 0) sup.forEach(function(g){ var k = target/have; g.annual *= k; g.growth = g.growth.map(function(x){ return x*k; }); });
-      else sup = FEED.pastureSupply([{annualLb:target/he, type:'range', grazed:true}], he, reg);
+      else sup = FEED.pastureSupply([{annualLb:target/he, type:'range', grazed:true}], he, reg, state.herd.fq);
     }
     if(mult && mult !== 1) sup.forEach(function(g){ g.annual *= mult; g.growth = g.growth.map(function(x){ return x*mult; }); });
     return sup;

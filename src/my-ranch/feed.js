@@ -82,6 +82,17 @@
       smallgrain: [[72,24],[72,24],[72,24],[72,22],[62,14],[50,6],[50,6],[50,6],[50,6],[72,25],[72,25],[72,24]],
       hay:        [[45,6],[45,6],[47,7],[60,13],[60,13],[60,12],[56,10],[56,10],[55,10],[53,9],[50,8],[48,7]]
     };
+    /* Diet quality of grazing cattle by region, Texas A&M B-6124 (Lyons, Machen & Stuth 2002), Table 1: average yearly high and low
+       of diet crude protein and digestibility (fecal NIRS, Grazingland Animal Nutrition Lab, 10 years of samples). The monthly shape
+       is the native-range pattern above, stretched to each region's average low and high; digestibility is used as TDN
+       (digestible organic matter is about equal to TDN). Central & East uses the Cross Timbers row (the growth-curve site is MLRA 84B). */
+    var B6124 = {hp:{cp:[7,11], dig:[59,66]}, rp:{cp:[7,12], dig:[60,63]}, ep:{cp:[7,11], dig:[58,63]}, st:{cp:[9,12], dig:[60,63]}, ce:{cp:[8,13], dig:[59,65]}};
+    function rangeQuality(mode, regionKey){
+      var b = mode === 'b6124' ? B6124[regionKey] : null, base = QUALITY.range;
+      if(!b) return base;
+      var t0 = 48, t1 = 62, c0 = 4.5, c1 = 12;
+      return base.map(function(q){ return [b.dig[0] + (q[0] - t0)/(t1 - t0)*(b.dig[1] - b.dig[0]), b.cp[0] + (q[1] - c0)/(c1 - c0)*(b.cp[1] - b.cp[0])]; });
+    }
     var ACTIVITY = {none:0, flat:0.10, rolling:0.20, rough:0.35, extensive:0.50};
     /* Protein sources (typical composition; price is what the producer pays) */
     var SOURCES = {
@@ -161,11 +172,12 @@
         if(lct > env.tc) cs = c.sa*(lct - env.tc)/ins*km;
         stress = cs > 0 ? cs : p.nemBase*(env.pant === 3 ? 0.18 : env.pant === 2 ? 0.07 : 0);
       }
-      return {dmi:dmi, supply:nm*dmi, need:p.nem + stress + p.nel + p.mey*km + (p.extra || 0), stress:stress, cold:cs, lct:lct, km:km};
+      var kgE = Math.max(0.05, negaOf(t))/me;   // growth of young cows: NEg needed, as NEm-equivalent at this diet (x km/kg)
+      return {dmi:dmi, supply:nm*dmi, need:p.nem + stress + p.nel + p.mey*km + (p.extra || 0) + (p.neg || 0)*km/kgE, stress:stress, cold:cs, lct:lct, km:km};
     }
     function solveTDN(p){
       var c = stressCtx(p), lo = 35, hi = 95;
-      for(var i = 0; i < 50; i++){ var mid = (lo+hi)/2, r = needAt(p, mid, c); if(r.supply < r.need) lo = mid; else hi = mid; }
+      for(var i = 0; i < 40; i++){ var mid = (lo+hi)/2, r = needAt(p, mid, c); if(r.supply < r.need) lo = mid; else hi = mid; }
       var t = (lo+hi)/2, f = needAt(p, t, c);
       return {tdnPct:t, dmiKg:f.dmi, tdnLb:t/100*f.dmi*LB, stressNE:f.stress, coldNE:f.cold};
     }
@@ -179,13 +191,27 @@
        0.88 from 24 to under 36, 1 after. Heifers here calve at 24 months (730 d), so a first-calf cow nurses at 24-34 months
        (0.88) and a second-calf cow at 36+ months (1). Classes: first calf, second calf, mature; shares from the replacement
        rate r (culls + deaths; steady herd, culling spread evenly over ages): r, r(1 - r), the rest. */
-    var MILK_AGE = [0.88, 1, 1];
+    var MILK_AGE = [0.88, 1, 1, 1];
+    /* Young cows are still growing. BCNRM 2016 target weights (Calc Table R5): first calving at 80% of mature shrunk weight,
+       second at 92%, third at 96%, mature at the fourth. A cow grows in a straight line from one calving to the next; her
+       maintenance, intake and cold stress use her own weight, and her gain costs NEg (NRC 2016 Eq. 12-6 inverse, 478-kg
+       reference) and MP (efficiency 0.492 above 300 kg EQSBW). BCNRM itself shows these targets but does not add the gain to a
+       cow's total; My Ranch does, as the NRC text asks for young cows. Classes: first, second, third calf, mature. */
+    var COW_AGE = [{milk:0.88, f0:0.80, f1:0.92}, {milk:1, f0:0.92, f1:0.96}, {milk:1, f0:0.96, f1:1}, {milk:1, f0:1, f1:1}];
     function cowAgeShares(o){
       var r = Math.max(0, Math.min(0.5, (o.replRate || 0)/100));
-      return [r, r*(1 - r), 1 - r - r*(1 - r)];
+      return [r, r*(1 - r), r*(1 - r)*(1 - r), 1 - r - r*(1 - r) - r*(1 - r)*(1 - r)];
     }
     function cowParams(o, dim, preg, env, extra){
-      var sbw = o.cowLb/LB*0.96, mbw = Math.pow(sbw, 0.75), br = BREEDS[o.breed] || BREEDS.angus;
+      var msbw = o.cowLb/LB*0.96, f0 = o.wF0 || 1, f1 = o.wF1 || f0;
+      var dsc = dim > 0 ? dim : preg > 0 ? preg + 82 : 0;                    // days since her last calving
+      var sbw = msbw*(f0 + (f1 - f0)*Math.min(365, dsc)/365), mbw = Math.pow(sbw, 0.75), br = BREEDS[o.breed] || BREEDS.angus;
+      var swg = msbw*(f1 - f0)/365, neg = 0, mpg = 0;
+      if(swg > 0){
+        var eqsbw = sbw*478/msbw;
+        neg = retainedEnergy(0.891*eqsbw, swg*0.956);
+        mpg = Math.max(0, swg*(268 - 29.4*neg/swg))/mpToNp(eqsbw);
+      }
       var comp = 0.8 + (o.bcs - 1)*0.05;
       var lact = dim > 0;
       var nemBase = mbw*(0.077*br.be*(lact ? br.l : 1)*comp + a2Of(env));
@@ -197,8 +223,8 @@
         mey = ney/0.13;                                   // NEm for pregnancy = MEy x diet km (BCNRM), not a fixed 0.6
         mpp = cbw*(0.001669 - 0.00000211*t)*Math.exp(0.0278*t - 0.0000176*t*t)*6.25/0.65;
       }
-      return {nem:nemBase*(1 + (o.activity||0)), nemBase:nemBase, nel:y*MILK_E, mey:mey, mbw:mbw, milk:y, dp:preg, env:env, extra:extra || 0,
-              fbwKg:o.cowLb/LB, bcs:o.bcs, mp:mbw*3.8 + y*MILK_PROT/100/0.65*1000 + mpp, lact:lact};
+      return {nem:nemBase*(1 + (o.activity||0)), nemBase:nemBase, nel:y*MILK_E, mey:mey, mbw:mbw, milk:y, dp:preg, env:env, extra:extra || 0, neg:neg,
+              fbwKg:sbw/0.96, bcs:o.bcs, mp:mbw*3.8 + y*MILK_PROT/100/0.65*1000 + mpp + mpg, lact:lact};
     }
     function cowDay(o, dim, preg, env, extra){
       var p = cowParams(o, dim, preg, env, extra), s = solveTDN(p);
@@ -441,14 +467,23 @@
           wcN:0, wcTdn:0, wcCp:0, wcCap:0, wcBw:0, hN:0, hTdn:0, hCp:0, hCap:0, hBw:0, bullTdn:bull.tdnLb, bullCp:bull.cpLb, bullTdnNoWx:bull0.tdnLb, days:MONTH_DAYS[m], env:envs[m]});
       }
       var env, hmemo = {};
-      var ages = cowAgeShares(o), oAge = MILK_AGE.map(function(f){ return Object.assign({}, o, {milkAge:f}); });
-      function cowAge(oo, dim, preg, extra, e){ var k = (e ? m : 'x') + '|' + oo.milkAge + '|' + dim + '|' + preg + '|' + (extra || 0); var mm = e ? memo : memo0; return mm[k] || (mm[k] = cowDay(oo, dim, preg, e, extra)); }
-      /* a nursing cow is the herd's mix of first-calf, second-calf and mature cows (milk differs); dry cows are the same at any age */
+      var ages = cowAgeShares(o), oAge = COW_AGE.map(function(c, i){ return Object.assign({}, o, {milkAge:c.milk, wF0:c.f0, wF1:c.f1, ageClass:i}); });
+      function cowAge(oo, dim, preg, extra, e){
+        // young-cow classes are solved on a 5-day grid (their monthly averages move by well under 0.1%); mature cows every day
+        if(oo.ageClass < 3){ if(dim > 0) dim = Math.max(1, Math.round(dim/5)*5); if(preg > 0) preg = Math.max(1, Math.round(preg/5)*5); }
+        var k = (e ? m : 'x') + '|' + oo.ageClass + '|' + dim + '|' + preg + '|' + (extra || 0); var mm = e ? memo : memo0; return mm[k] || (mm[k] = cowDay(oo, dim, preg, e, extra)); }
+      /* every cow is the herd's mix of first-, second-, third-calf and mature cows (milk, weight and growth differ) */
+      var mixMemo = {};
       function mixAges(dim, preg, extra, e){
-        if(!(dim > 0) || ages[0] <= 0) return cowAge(oAge[2], dim, preg, extra, e);
-        var r = {tdnLb:0, cpLb:0, milkKg:0, dmiLb:0, stressNE:0, coldNE:0, lact:true};
-        oAge.forEach(function(oo, i){ var x = cowAge(oo, dim, preg, extra, e); ['tdnLb','cpLb','milkKg','dmiLb','stressNE','coldNE'].forEach(function(k){ r[k] += ages[i]*x[k]; }); });
-        return r;
+        if(ages[0] <= 0) return cowAge(oAge[3], dim, preg, extra, e);
+        var mk = (e ? m : 'x') + '|' + dim + '|' + preg + '|' + (extra || 0);
+        if(mixMemo[mk]) return mixMemo[mk];
+        var r = {tdnLb:0, cpLb:0, milkKg:0, dmiLb:0, stressNE:0, coldNE:0, lact:dim > 0};
+        for(var i = 0; i < oAge.length; i++){
+          var x = cowAge(oAge[i], dim, preg, extra, e), w = ages[i];
+          r.tdnLb += w*x.tdnLb; r.cpLb += w*x.cpLb; r.milkKg += w*x.milkKg; r.dmiLb += w*x.dmiLb; r.stressNE += w*x.stressNE; r.coldNE += w*x.coldNE;
+        }
+        return (mixMemo[mk] = r);
       }
       function cow(dim, preg, extra){ return mixAges(dim, preg, extra, env); }
       function heifer(age, weanAge, weanLb){ var k = m + '|' + age + '|' + weanAge + '|' + Math.round(weanLb); return hmemo[k] || (hmemo[k] = heiferDay(o, age, weanAge, weanLb, env)); }
@@ -527,13 +562,14 @@
       return curve.map(function(x){ return (p.annualLb || 0)*he*x/tot; });
     }
     /* Pastures grouped by type; a pasture with a measured standing crop keeps its own entry so the measurement can reset its stock */
-    function pastureSupply(pastures, he, regionKey){
+    function pastureSupply(pastures, he, regionKey, qualityMode){
+      var qOf = function(t){ return t === 'range' ? rangeQuality(qualityMode, regionKey) : QUALITY[t]; };
       var byType = {}, own = [], acres = {}, cond = {};
       pastures.forEach(function(p){
         if(!p.annualLb || !p.grazed) return;
         var t = p.type === 'range' ? 'range' : p.type;
         if(p.measured && p.measured.lbAc > 0 && p.measured.month != null){
-          own.push({type:t, annual:p.annualLb*he, growth:pastureGrowth(p, he, regionKey), quality:QUALITY[t],
+          own.push({type:t, annual:p.annualLb*he, growth:pastureGrowth(p, he, regionKey), quality:qOf(t),
                     measured:{month:p.measured.month, lb:p.measured.lbAc*(p.forageAcres || 0)*he}, name:p.name, acres:p.forageAcres || 0, he:he});
           return;
         }
@@ -545,7 +581,7 @@
       });
       return Object.keys(byType).map(function(k){
         var t = k.split('|')[0], curve = curveFor(t, regionKey, cond[k]), tot = curve.reduce(function(a, b){ return a + b; }, 0);
-        return {type:t, condition:t === 'range' ? cond[k] : undefined, annual:byType[k], growth:curve.map(function(p){ return byType[k]*p/tot; }), quality:QUALITY[t], acres:acres[k], he:he};
+        return {type:t, condition:t === 'range' ? cond[k] : undefined, annual:byType[k], growth:curve.map(function(p){ return byType[k]*p/tot; }), quality:qOf(t), acres:acres[k], he:he};
       }).concat(own);
     }
     /* Returns a copy of the supply with some months' growth cut (drought / failed small grains) */
@@ -753,7 +789,7 @@
     }
     return {pastureGrowth:pastureGrowth, heiferDay:heiferDay, heiferState:heiferState, heifersKeptPerCow:heifersKeptPerCow, heiferAges:heiferAges, bodyEnergy:bodyEnergy, SEASON_CALF:SEASON_CALF, SEASON_CULL:SEASON_CULL, nemaOf:nemaOf, needAt:needAt, cowParams:cowParams, envFor:envFor, birthLb:birthLb, BREEDS:BREEDS, MILK:MILK, REGIONS:REGIONS, QUALITY:QUALITY, ACTIVITY:ACTIVITY, MONTHS:MONTHS, MONTH_DAYS:MONTH_DAYS, MONTH_START:MONTH_START,
             NAHMS:NAHMS, SOURCES:SOURCES, LOSS_DEFAULT:LOSS_DEFAULT, WEATHER_SHARE:WEATHER_SHARE,
-            cowDay:cowDay, retainedEnergy:retainedEnergy, mpToNp:mpToNp, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
-            intakePct:intakePct, doy:doy, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfOutcome:calfOutcome,
+            cowDay:cowDay, retainedEnergy:retainedEnergy, mpToNp:mpToNp, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, COW_AGE:COW_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
+            intakePct:intakePct, doy:doy, B6124:B6124, rangeQuality:rangeQuality, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfOutcome:calfOutcome,
             weatherFactor:weatherFactor, grazeFactor:grazeFactor, weatherLoss:weatherLoss, pregByBcs:pregByBcs, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
   })();
