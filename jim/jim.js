@@ -21,8 +21,15 @@
   var MAX_HISTORY = 16;
 
   var RANCH_KEY = "tamuDecisionAidsRanchBrief.v1";
-  /* The ranch the visitor saved on the My Ranch page (same browser). Never sent from the My Ranch page itself. */
-  function ranchBrief() {
+  var SHARE_KEY = "tamuJimShareRanch.v1";   /* "off" = the visitor turned off sending their saved ranch to Jim */
+  var PRIVACY_URL = (function () {
+    try { return new URL("../privacy.html", (scriptTag && scriptTag.src) || location.href).href; } catch (e) { return "privacy.html"; }
+  })();
+  function shareRanch() { try { return localStorage.getItem(SHARE_KEY) !== "off"; } catch (e) { return false; } }
+  function setShareRanch(on) { try { localStorage.setItem(SHARE_KEY, on ? "on" : "off"); } catch (e) { /* ignore */ } }
+  /* The ranch the visitor saved on the My Ranch page (same browser), stored in the visitor's own browser only.
+     Never sent from the My Ranch page itself, and never sent when the visitor has turned sharing off. */
+  function savedRanch() {
     if (/\/my-ranch\//.test(location.pathname)) return null;
     try {
       var b = JSON.parse(localStorage.getItem(RANCH_KEY) || "null");
@@ -31,6 +38,7 @@
       return b;
     } catch (e) { return null; }
   }
+  function ranchBrief() { return shareRanch() ? savedRanch() : null; }
   var RANCH_SUGGESTIONS = [
     "How does my ranch look this year?",
     "Which months am I short of grass on my ranch?",
@@ -109,6 +117,9 @@
     ".jim-send:disabled{opacity:.45;cursor:default}",
     ".jim-send svg{width:20px;height:20px}",
     ".jim-note{margin:6px 2px 0;font-size:11.5px;color:var(--jim-muted);line-height:1.35}",
+    ".jim-note a{color:inherit;text-decoration:underline}",
+    ".jim-share{display:flex;align-items:center;gap:6px;margin-top:8px;font-size:13px;cursor:pointer}",
+    ".jim-share input{width:16px;height:16px;margin:0;accent-color:var(--jim-accent,#500000)}",
     "@media (max-width:520px){.jim-panel{right:0;bottom:0;width:100vw;height:100dvh;max-height:none;border-radius:0;border:0}",
     ".jim-launch{right:14px;bottom:14px}.jim-bubble{max-width:92%}}",
     "@media print{.jim-root{display:none}}"
@@ -162,7 +173,9 @@
     '<div class="jim-foot"><form class="jim-form"><label class="jim-sr" for="jimInput" style="position:absolute;left:-9999px">Your question for Jim</label>' +
     '<textarea id="jimInput" class="jim-input" rows="1" placeholder="Ask about margins, costs, prices…" maxlength="2000"></textarea>' +
     '<button type="submit" class="jim-send" aria-label="Send">' + ICON_SEND + '</button></form>' +
-    '<p class="jim-note">Jim is an AI assistant and can make mistakes. Budget figures are 2026 planning estimates for the Rolling Plains (District 3) — check them against your own numbers.</p></div>';
+    '<p class="jim-note">Jim is an AI assistant (Claude, by Anthropic) and can make mistakes. Budget figures are 2026 planning estimates for the Rolling Plains (District 3) — check them against your own numbers. ' +
+    'Your questions are sent to Anthropic to answer them; please don\'t type names, addresses, account numbers or other personal information. ' +
+    '<a href="' + esc(PRIVACY_URL) + '" target="_blank" rel="noopener">Privacy &amp; data</a></p></div>';
 
   root.appendChild(launch);
   root.appendChild(panel);
@@ -244,8 +257,19 @@
   function render() {
     log.innerHTML = "";
     botRow(md("Hi, I'm **Jim**. Ask me about the gross margins, costs and breakeven prices in the 2026 District 3 budgets — wheat, cotton, peanuts, sorghum, hay, cow-calf, stockers and more — or about anything in the decision-aid manuals on this site."));
-    var rb = ranchBrief();
-    if (rb) botRow(md("I can also see the ranch you saved in **My Ranch**" + (rb.name ? " (" + rb.name + ")" : "") + " on this computer, so you can ask me about it."));
+    var saved = savedRanch(), rb = ranchBrief();
+    if (saved) {
+      var rbub = botRow(md(rb
+        ? "I can also see the ranch you saved in **My Ranch**" + (saved.name ? " (" + saved.name + ")" : "") + " on this computer, so you can ask me about it. When it's on, a short summary of that ranch is sent with your questions."
+        : "You have a ranch saved in **My Ranch** on this computer. Turn on the switch below if you want me to use it in my answers."));
+      var lab = el("label", "jim-share");
+      var cb = el("input");
+      cb.type = "checkbox"; cb.checked = !!rb;
+      cb.addEventListener("change", function () { setShareRanch(cb.checked); render(); });
+      lab.appendChild(cb);
+      lab.appendChild(document.createTextNode(" Use my saved ranch in Jim's answers"));
+      rbub.appendChild(lab);
+    }
     if (!state.messages.length) {
       var chips = el("div", "jim-chips");
       (rb ? RANCH_SUGGESTIONS.concat(SUGGESTIONS.slice(0, 2)) : SUGGESTIONS).forEach(function (s) {

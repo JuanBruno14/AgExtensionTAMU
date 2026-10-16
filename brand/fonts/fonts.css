@@ -1,0 +1,38 @@
+/* Self-hosted web fonts (Latin subset, variable weight), so no page asks Google Fonts
+   for files and no visitor IP address is sent to a third party.
+   Files from Fontsource (@fontsource-variable/*); all are SIL Open Font License 1.1 — see LICENSE-*.txt. */
+@font-face {
+  font-family: 'Open Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 300 800;
+  src: url(open-sans-latin-wght-normal.woff2) format('woff2-variations'), url(open-sans-latin-wght-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Oswald';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 200 700;
+  src: url(oswald-latin-wght-normal.woff2) format('woff2-variations'), url(oswald-latin-wght-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Work Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(work-sans-latin-wght-normal.woff2) format('woff2-variations'), url(work-sans-latin-wght-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Public Sans';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(public-sans-latin-wght-normal.woff2) format('woff2-variations'), url(public-sans-latin-wght-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Fraunces';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(fraunces-latin-opsz-normal.woff2) format('woff2-variations'), url(fraunces-latin-opsz-normal.woff2) format('woff2');
+}

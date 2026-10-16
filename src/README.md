@@ -7,6 +7,8 @@
 | My Ranch | `src/my-ranch/` | `python3 src/my-ranch/build.py` → writes `my-ranch/index.html` |
 | Herd Calculators | `src/herd-tools/` | `python3 src/herd-tools/build.py` → writes `herd-tools/index.html` |
 
+Both builds end by running `tools/secure_pages.py` (Content-Security-Policy, referrer policy, required links). After hand-editing any other page, run `python3 tools/secure_pages.py` yourself; `python3 tools/test_security.py` checks the whole site. See `SECURITY.md`.
+
 Both builds take the shared page styles from `replacement-heifer/index.html` (the `<style>` block), add the page's own `extra.css`, then `body.html` and the script. The site brand stylesheet `brand/tamu-brand.css` is linked last.
 
 ## My Ranch files
@@ -25,7 +27,7 @@ Both builds take the shared page styles from `replacement-heifer/index.html` (th
 Browser tests use Python Playwright with Chromium; the CDN libraries are served from local copies.
 
 ```
-cd src/my-ranch && npm install          # local copies of Leaflet, Geoman, etc. (test only)
+cd src/my-ranch && npm install          # test helpers only; the site itself serves Leaflet, Geoman, etc. from vendor/
 pip install playwright && playwright install chromium
 python3 src/my-ranch/test_ranch.py      # map, soil, capacity, feed calendar, decisions, print
 python3 src/my-ranch/test_grass.py      # Grass today / where is the herd
@@ -36,6 +38,7 @@ python3 src/my-ranch/test_steps.py      # the four steps, summary strip, save pa
 python3 src/my-ranch/test_examples.py   # example ranches (my-ranch/examples), grazing system, Drought Monitor suggestion
 python3 src/my-ranch/test_jim_ranch.py   # Jim on other pages reads the ranch saved in My Ranch
 python3 src/herd-tools/test_tools.py    # Herd Calculators
+python3 tools/test_security.py          # CSP, required links, third-party hosts, Jim ranch switch, privacy delete
 cd src/my-ranch && node valbc.js        # nutrition vs. BCNRM
 ```
 

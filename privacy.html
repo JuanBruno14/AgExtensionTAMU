@@ -1,0 +1,251 @@
+
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-1JdJGzYSTRVWdTOErmtUJspLAfbAKOeNzxrHjQM5dCk=' 'sha256-3bgM+l9Z9nCFEJfLPOkUjDJ9PXcfbB2XJVS1NBoz5yM='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Privacy &amp; Data · Decision Making · Texas A&amp;M AgriLife Extension</title>
+<meta name="description" content="What the Decision Aids site stores, what it sends and to whom: browser-only storage, the Jim assistant, and the public map and soil services.">
+<link rel="stylesheet" href="brand/fonts/fonts.css">
+<style>
+  :root{
+    --maroon-900:#3a0000;
+    --maroon-800:#500000;
+    --maroon-700:#6b0f0f;
+    --maroon-100:#f7e9e6;
+    --wheat-500:#b8862f;
+    --wheat-100:#f4e9d6;
+    --good-700:#276749;
+    --good-100:#e3f1e9;
+    --critical-700:#9a3412;
+    --critical-100:#fbe9e1;
+    --accent:var(--maroon-800);
+    --bg:#f6f3ee;
+    --surface:#ffffff;
+    --surface-sunken:#f0ece4;
+    --border:#e2dbcf;
+    --ink:#241c19;
+    --ink-secondary:#5a4f48;
+    --ink-muted:#8a7d73;
+    --focus:#2f6fb3;
+    --shadow-card:0 1px 2px rgba(58,0,0,0.04), 0 4px 16px rgba(58,0,0,0.06);
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+      --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+      --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+      --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+      --wheat-100:#3a2d15; --wheat-500:#d9a44a;
+      --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+    --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+    --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+    --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+    --wheat-100:#3a2d15; --wheat-500:#d9a44a;
+    --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+  }
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:"Open Sans", ui-sans-serif, system-ui, sans-serif;font-variant-numeric:tabular-nums;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,.display{font-family:"Work Sans", "Open Sans", Arial, sans-serif;text-wrap:balance;letter-spacing:-0.01em;}
+  a{color:inherit;}
+
+  .topbar{background:linear-gradient(180deg, var(--maroon-800), var(--maroon-900));color:#fff;padding:18px clamp(16px,4vw,40px);display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+  .wordmark{display:flex;align-items:center;gap:14px;}
+  .wordmark .mark{width:44px;height:44px;border-radius:9px;background:rgba(255,255,255,0.12);border:1.5px solid rgba(255,255,255,0.55);display:flex;align-items:center;justify-content:center;font-family:"Work Sans",sans-serif;font-weight:700;font-size:20px;flex:none;}
+  .wordmark .text{line-height:1.15;}
+  .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
+  .wordmark .text .main{font-family:"Work Sans",sans-serif;font-size:19px;font-weight:600;}
+  .tool-title{font-family:"Work Sans",sans-serif;font-size:clamp(18px,2.4vw,26px);font-weight:600;margin:0;}
+  .header-right{display:flex;align-items:center;gap:10px;}
+  .theme-toggle{display:inline-flex;align-items:center;justify-content:center;width:30px;height:30px;border-radius:100px;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.4);color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0;}
+  .theme-toggle:hover{background:rgba(255,255,255,0.24);}
+  .theme-toggle:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+
+  .intro{position:relative;overflow:hidden;background:var(--surface);border-bottom:1px solid var(--border);}
+  .intro-inner{max-width:980px;margin:0 auto;padding:30px clamp(16px,4vw,40px) 26px;}
+  .intro h1{font-size:clamp(22px,2.8vw,30px);margin:0 0 8px;color:var(--ink);}
+  .intro p{margin:0;max-width:72ch;color:var(--ink-secondary);font-size:15px;line-height:1.55;}
+  .fence-line{position:absolute;left:0;right:0;bottom:0;height:10px;background-image:repeating-linear-gradient(90deg, var(--wheat-500) 0 26px, transparent 26px 52px);opacity:0.55;}
+
+  .layout{max-width:980px;margin:0 auto;padding:28px clamp(16px,4vw,40px) 64px;display:flex;flex-direction:column;gap:18px;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow-card);overflow:hidden;}
+  .card-head{background:var(--maroon-800);color:#fff;padding:13px 20px;display:flex;align-items:center;gap:10px;}
+  .card-head svg{flex:none;width:18px;height:18px;}
+  .card-head h2{font-size:15.5px;font-weight:600;margin:0;letter-spacing:0.01em;}
+  .card-body{padding:20px;}
+  .card-note{font-size:13px;color:var(--ink-secondary);margin:0 0 16px;line-height:1.55;}
+
+  table.ref{width:100%;border-collapse:collapse;font-size:13px;}
+  table.ref th{text-align:left;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.03em;color:var(--ink-muted);padding:0 10px 8px;border-bottom:1.5px solid var(--border);}
+  table.ref td{padding:10px 10px;border-bottom:1px solid var(--border);vertical-align:top;color:var(--ink-secondary);}
+  table.ref tr:last-child td{border-bottom:none;}
+  table.ref td.field{color:var(--ink);font-weight:700;}
+  table.ref td.value{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;}
+  table.ref td.value.nowrap{white-space:nowrap;}
+  table.ref td.used{font-size:12px;}
+  table.ref td.used a{color:var(--accent);font-weight:700;text-decoration:none;}
+  .table-scroll{overflow-x:auto;}
+
+  .tag{display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:0.02em;padding:2px 8px;border-radius:100px;margin:1px 3px 1px 0;}
+  .tag.fresh{background:var(--good-100);color:var(--good-700);}
+  .tag.stale{background:var(--critical-100);color:var(--critical-700);}
+
+  .disclosure{background:var(--wheat-100);border:1px solid var(--wheat-500);border-radius:10px;padding:12px 14px;font-size:12.5px;line-height:1.55;color:var(--ink-secondary);margin:0;}
+  .disclosure strong{color:var(--ink);}
+
+  footer{max-width:980px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 40px;color:var(--ink-muted);font-size:12px;line-height:1.6;}
+  footer a{text-decoration:underline;}
+  table.ref td{padding:8px 10px;border-bottom:1px solid var(--border);vertical-align:top;font-size:14px;}
+  .privacy-btn{font:inherit;font-weight:700;font-size:14px;padding:8px 14px;border-radius:8px;border:1.5px solid var(--maroon-800);background:transparent;color:var(--maroon-800);cursor:pointer;}
+  .privacy-btn:hover{background:var(--maroon-800);color:#fff;}
+  .privacy-btn:focus-visible{outline:3px solid var(--focus,#02233B);outline-offset:2px;}
+</style>
+<link rel="stylesheet" href="brand/tamu-brand.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wordmark">
+    <a href="index.html" style="display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;">
+      <span class="brand-logo"><img class="logo-horizontal" src="brand/agrilife-extension-agecon-horizontal-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="381" height="46"><img class="logo-stacked" src="brand/agrilife-extension-agecon-stacked-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="120" height="52"></span>
+      <div class="text">
+      <div class="main">Decision Aids &middot; Privacy &amp; Data</div>
+      </div>
+    </a>
+  </div>
+  <h1 class="tool-title">Privacy and your data</h1>
+  <div class="header-right">
+    <a href="index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
+    <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
+  </div>
+</header>
+
+<section class="intro">
+  <div class="intro-inner">
+    <h1>Your numbers stay on your computer</h1>
+    <p>This site has no accounts, no sign-in, no database and no tracking or advertising cookies. What you type into the tools is saved only in your own web browser, so it is there the next time you open the site on the same computer. Two things leave your browser: questions you choose to ask Jim, and the map lookups on the My Ranch page. Both are described below.</p>
+  </div>
+  <div class="fence-line"></div>
+</section>
+
+<div class="layout">
+
+  <div class="card">
+    <div class="card-head"><h2>What is stored, and where</h2></div>
+    <div class="card-body">
+      <p class="card-note">Everything below is kept in your browser's local storage on this device. Texas A&amp;M AgriLife does not receive it and cannot see it. Clearing your browser's site data, or the button at the end of this section, deletes it.</p>
+      <table class="ref">
+        <thead><tr><th>What</th><th>Why</th><th>Where it is kept</th></tr></thead>
+        <tbody>
+          <tr><td>Prices and factors you enter (market prices, operating costs, herd calculators)</td><td>So every tool starts from your numbers</td><td>Your browser only</td></tr>
+          <tr><td>Your ranch from My Ranch (pasture outlines, herd, feed plan) and a short text summary of it</td><td>So the ranch is still there next visit, and so other pages can use it</td><td>Your browser only</td></tr>
+          <tr><td>Your conversation with Jim</td><td>So the chat follows you from page to page</td><td>Your browser only, deleted when you close the tab</td></tr>
+          <tr><td>Light or dark theme, which My Ranch step you were on, whether Jim may use your ranch</td><td>Display preferences</td><td>Your browser only</td></tr>
+        </tbody>
+      </table>
+      <p style="margin-top:14px;"><button type="button" id="clearSiteData" class="privacy-btn">Delete everything this site saved on this computer</button> <span id="clearSiteDataMsg" role="status" style="margin-left:8px;"></span></p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Jim, the AI assistant</h2></div>
+    <div class="card-body">
+      <p>Jim runs on Claude, an AI model made by Anthropic. When you send Jim a question, the question, the earlier messages of the same chat and the title of the page you are on go through a small relay server run for this site to Anthropic, which writes the answer. If you saved a ranch in My Ranch and leave the &ldquo;Use my saved ranch&rdquo; switch on, a short summary of that ranch (acres, herd, forage and feed estimates, not the map outline) is sent with your question too. Turn the switch off in the chat window to stop that.</p>
+      <ul>
+        <li>The relay has no database: it passes your messages to Anthropic and streams the answer back.</li>
+        <li>Anthropic processes the messages to answer them under its <a href="https://www.anthropic.com/legal/commercial-terms" target="_blank" rel="noopener">commercial terms</a>; under those terms, API data is not used to train its models. See <a href="https://privacy.anthropic.com/" target="_blank" rel="noopener">Anthropic's privacy center</a>.</li>
+        <li>Please do not type names, addresses, phone numbers, account or tax numbers, or other personal information into the chat.</li>
+        <li>Jim gives general educational information from AgriLife Extension budgets and decision-aid manuals. It can be wrong. It is not financial, tax, legal or veterinary advice; check important decisions with your county Extension agent or a professional.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Public services the My Ranch map uses</h2></div>
+    <div class="card-body">
+      <p>When you draw or search on the My Ranch map, your browser asks these public services for information about that location. They receive the location you are looking at and, like any website, your IP address. No other data from this site is sent to them.</p>
+      <table class="ref">
+        <thead><tr><th>Service</th><th>What it is asked for</th></tr></thead>
+        <tbody>
+          <tr><td><a href="https://sdmdataaccess.sc.egov.usda.gov/" target="_blank" rel="noopener">USDA-NRCS Soil Data Access</a></td><td>Soils and range production inside your pasture outline</td></tr>
+          <tr><td><a href="https://droughtmonitor.unl.edu/" target="_blank" rel="noopener">U.S. Drought Monitor</a> (served through Esri ArcGIS)</td><td>This week's drought level at your ranch</td></tr>
+          <tr><td>Esri World Imagery and OpenStreetMap</td><td>Satellite and street map pictures for the map</td></tr>
+          <tr><td><a href="https://nominatim.org/" target="_blank" rel="noopener">OpenStreetMap Nominatim</a></td><td>The town or address you type in the map search box</td></tr>
+        </tbody>
+      </table>
+      <p class="card-note" style="margin-top:12px;">All the site's own code, map libraries and fonts are served from this site; no advertising, analytics or social-media scripts are loaded.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-head"><h2>Texas A&amp;M AgriLife policies</h2></div>
+    <div class="card-body">
+      <p>This site follows the Texas A&amp;M AgriLife <a href="https://agrilife.tamu.edu/required-links/privacy/">Privacy and Security</a> and <a href="https://agrilife.tamu.edu/accessibility/">Accessibility</a> policies. Questions about this site: Department of Agricultural Economics, Texas A&amp;M AgriLife Extension.</p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <a class="footer-brand" href="https://agrilifeextension.tamu.edu/" aria-label="Texas A&amp;M AgriLife Extension"><img class="logo-on-light" src="brand/agrilife-extension-agecon-horizontal-color.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="331" height="40"><img class="logo-on-dark" src="brand/agrilife-extension-agecon-horizontal-white.png" alt="" width="331" height="40"></a>
+  <p class="eeo-statement">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the County Commissioners Courts of Texas Cooperating.</p>
+<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Required links"><li><a href="privacy.html">Site privacy &amp; data</a></li><li><a href="https://agrilife.tamu.edu/required-links/compact/">Compact with Texans</a></li><li><a href="https://agrilife.tamu.edu/required-links/privacy/">Privacy and Security</a></li><li><a href="https://agrilife.tamu.edu/accessibility/">Accessibility Policy</a></li><li><a href="https://dir.texas.gov/resource-library-item/state-website-linking-and-privacy-policy">State Link Policy</a></li><li><a href="https://www.tsl.texas.gov/trail/index.html">Statewide Search</a></li><li><a href="https://veterans.tamu.edu/">Veterans Benefits</a></li><li><a href="https://fch.tamu.edu/programs/military-programs/">Military Families</a></li><li><a href="https://secure.ethicspoint.com/domain/en/report_custom.asp?clientid=19681">Risk, Fraud &amp; Misconduct Hotline</a></li><li><a href="https://gov.texas.gov/organization/hsgd">Texas Homeland Security</a></li><li><a href="https://veterans.portal.texas.gov/">Texas Veteran&rsquo;s Portal</a></li><li><a href="https://agrilifeas.tamu.edu/hr/equal-opportunity/affirmative-actionequal-opportunity-employment/">Equal Opportunity</a></li><li><a href="https://agrilife.tamu.edu/required-links/orpi/">Open Records/Public Information</a></li></ul><!-- required-links:end -->
+</footer>
+
+<script>
+(function(){
+  "use strict";
+  var btn = document.getElementById('clearSiteData'), msg = document.getElementById('clearSiteDataMsg');
+  if(!btn) return;
+  btn.addEventListener('click', function(){
+    if(!window.confirm('Delete every price, ranch and setting this site saved in this browser? This cannot be undone.')) return;
+    var n = 0;
+    [window.localStorage, window.sessionStorage].forEach(function(st){
+      try {
+        for(var i = st.length - 1; i >= 0; i--){ var k = st.key(i); if(k && k.indexOf('tamu') === 0){ st.removeItem(k); n++; } }
+      } catch(e){}
+    });
+    msg.textContent = n ? 'Done: ' + n + ' saved item' + (n === 1 ? '' : 's') + ' deleted.' : 'Nothing was saved in this browser.';
+  });
+})();
+</script>
+<script>
+(function(){
+  "use strict";
+  var STORAGE_KEY = 'tamuDecisionAidsTheme';
+  var toggle = document.getElementById('themeToggle');
+  if(!toggle) return;
+  var stored = null;
+  try { stored = window.localStorage.getItem(STORAGE_KEY); } catch(e){}
+  if(stored === 'light' || stored === 'dark'){ document.documentElement.setAttribute('data-theme', stored); }
+  function currentTheme(){
+    var attr = document.documentElement.getAttribute('data-theme');
+    if(attr === 'light' || attr === 'dark') return attr;
+    return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+  }
+  function updateButton(){
+    var dark = currentTheme() === 'dark';
+    toggle.textContent = dark ? '☀️' : '🌙';
+    var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+    toggle.setAttribute('aria-label', label);
+    toggle.setAttribute('title', label);
+  }
+  updateButton();
+  toggle.addEventListener('click', function(){
+    var next = currentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { window.localStorage.setItem(STORAGE_KEY, next); } catch(e){}
+    updateButton();
+  });
+})();
+</script>
+<script src="jim/jim.js" defer></script>
+</body>
+</html>

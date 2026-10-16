@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-eFsLhIxMyP7kTZpxxWgZPN+EGihsh0t/d6vZ8qY4S0Y='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Ranch · Decision Making · Texas A&amp;M AgriLife Extension</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Oswald:wght@400;500;600&family=Work+Sans:wght@400;500;600;700&display=swap">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.css">
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@geoman-io/leaflet-geoman-free@2.17.0/dist/leaflet-geoman.css">
+<link rel="stylesheet" href="../brand/fonts/fonts.css">
+<link rel="stylesheet" href="../vendor/leaflet-1.9.4/leaflet.css">
+<link rel="stylesheet" href="../vendor/leaflet-geoman-2.17.0/leaflet-geoman.css">
 <style>
   :root{
     --maroon-900:#3a0000;
@@ -1439,12 +1439,13 @@
   <a class="footer-brand" href="https://agrilifeextension.tamu.edu/" aria-label="Texas A&amp;M AgriLife Extension"><img class="logo-on-light" src="../brand/agrilife-extension-agecon-horizontal-color.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="331" height="40"><img class="logo-on-dark" src="../brand/agrilife-extension-agecon-horizontal-white.png" alt="" width="331" height="40"></a>
   Forage estimates: USDA-NRCS Soil Survey (SSURGO) through Soil Data Access, &ldquo;range production, normal year&rdquo; weighted by soil area and component share. Drought status: U.S. Drought Monitor (National Drought Mitigation Center, USDA, NOAA), current week. Stocking rate method: AgriLife Extension, <em>Stocking Rate: The Key Grazing Management Decision</em>. Budget benchmark: AgriLife Extension 2026 District 3 (Rolling Plains) cow-calf enterprise budget. Satellite imagery &copy; Esri and its partners; search &copy; OpenStreetMap contributors. These are planning estimates, not a range inspection &mdash; walk your pastures and check with your county agent or NRCS office before setting a stocking rate.
   <p class="eeo-statement" style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border);">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the County Commissioners Courts of Texas Cooperating.</p>
+<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Required links"><li><a href="../privacy.html">Site privacy &amp; data</a></li><li><a href="https://agrilife.tamu.edu/required-links/compact/">Compact with Texans</a></li><li><a href="https://agrilife.tamu.edu/required-links/privacy/">Privacy and Security</a></li><li><a href="https://agrilife.tamu.edu/accessibility/">Accessibility Policy</a></li><li><a href="https://dir.texas.gov/resource-library-item/state-website-linking-and-privacy-policy">State Link Policy</a></li><li><a href="https://www.tsl.texas.gov/trail/index.html">Statewide Search</a></li><li><a href="https://veterans.tamu.edu/">Veterans Benefits</a></li><li><a href="https://fch.tamu.edu/programs/military-programs/">Military Families</a></li><li><a href="https://secure.ethicspoint.com/domain/en/report_custom.asp?clientid=19681">Risk, Fraud &amp; Misconduct Hotline</a></li><li><a href="https://gov.texas.gov/organization/hsgd">Texas Homeland Security</a></li><li><a href="https://veterans.portal.texas.gov/">Texas Veteran&rsquo;s Portal</a></li><li><a href="https://agrilifeas.tamu.edu/hr/equal-opportunity/affirmative-actionequal-opportunity-employment/">Equal Opportunity</a></li><li><a href="https://agrilife.tamu.edu/required-links/orpi/">Open Records/Public Information</a></li></ul><!-- required-links:end -->
 </footer>
 <script src="../brand/a11y-scroll.js" defer></script>
 
-<script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@geoman-io/leaflet-geoman-free@2.17.0/dist/leaflet-geoman.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/polygon-clipping@0.15.7/dist/polygon-clipping.umd.min.js"></script>
+<script src="../vendor/leaflet-1.9.4/leaflet.js"></script>
+<script src="../vendor/leaflet-geoman-2.17.0/leaflet-geoman.min.js"></script>
+<script src="../vendor/polygon-clipping-0.15.7/polygon-clipping.umd.min.js"></script>
 <script>
 (function(){
   'use strict';
@@ -1457,9 +1458,9 @@
   var DROUGHT_URL = 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3/query';
   var GEOCODE_URL = 'https://nominatim.openstreetmap.org/search';
   var LIBS = {
-    toGeoJSON: 'https://cdn.jsdelivr.net/npm/@tmcw/togeojson@5.8.1/dist/togeojson.umd.js',
-    shp: 'https://cdn.jsdelivr.net/npm/shpjs@4.0.4/dist/shp.min.js',
-    JSZip: 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js'
+    toGeoJSON: '../vendor/togeojson-5.8.1/togeojson.umd.js',
+    shp: '../vendor/shpjs-4.0.4/shp.min.js',
+    JSZip: '../vendor/jszip-3.10.1/jszip.min.js'
   };
   var COLORS = ['#f6c343','#4fd1c5','#f687b3','#90cdf4','#fbad6b','#9ae6b4','#fc8181','#b794f4','#e2e8a0','#76e4f7'];
 

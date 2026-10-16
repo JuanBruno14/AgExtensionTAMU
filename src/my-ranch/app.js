@@ -9,9 +9,9 @@
   var DROUGHT_URL = 'https://services9.arcgis.com/RHVPKKiFTONKtxq3/arcgis/rest/services/US_Drought_Intensity_v1/FeatureServer/3/query';
   var GEOCODE_URL = 'https://nominatim.openstreetmap.org/search';
   var LIBS = {
-    toGeoJSON: 'https://cdn.jsdelivr.net/npm/@tmcw/togeojson@5.8.1/dist/togeojson.umd.js',
-    shp: 'https://cdn.jsdelivr.net/npm/shpjs@4.0.4/dist/shp.min.js',
-    JSZip: 'https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js'
+    toGeoJSON: '../vendor/togeojson-5.8.1/togeojson.umd.js',
+    shp: '../vendor/shpjs-4.0.4/shp.min.js',
+    JSZip: '../vendor/jszip-3.10.1/jszip.min.js'
   };
   var COLORS = ['#f6c343','#4fd1c5','#f687b3','#90cdf4','#fbad6b','#9ae6b4','#fc8181','#b794f4','#e2e8a0','#76e4f7'];
 
