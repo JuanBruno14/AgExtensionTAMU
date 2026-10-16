@@ -10,14 +10,14 @@ head='''<!doctype html>
 <title>My Ranch · Decision Making · Texas A&amp;M AgriLife Extension</title>
 <link rel="stylesheet" href="../brand/fonts/fonts.css">
 <link rel="stylesheet" href="../vendor/leaflet-1.9.4/leaflet.css">
-<link rel="stylesheet" href="../vendor/leaflet-geoman-2.17.0/leaflet-geoman.css">
+<link rel="stylesheet" href="../vendor/leaflet-geoman-2.20.2/leaflet-geoman.css">
 <style>'''+css+open(os.path.join(HERE,'extra.css')).read()+'''</style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
 </head>
 '''
 page=head+open(os.path.join(HERE,'body.html')).read()+'''
 <script src="../vendor/leaflet-1.9.4/leaflet.js"></script>
-<script src="../vendor/leaflet-geoman-2.17.0/leaflet-geoman.min.js"></script>
+<script src="../vendor/leaflet-geoman-2.20.2/leaflet-geoman.min.js"></script>
 <script src="../vendor/polygon-clipping-0.15.7/polygon-clipping.umd.min.js"></script>
 <script>
 '''+open(os.path.join(HERE,'app.js')).read().replace('/*@@FEED@@*/', open(os.path.join(HERE,'feed.js')).read()).replace('/*@@FEEDUI@@*/', open(os.path.join(HERE,'feedui.js')).read())+'''</script>

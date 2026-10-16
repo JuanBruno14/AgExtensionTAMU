@@ -47,6 +47,13 @@ Still to do outside the code:
 - [ ] Optional: deploy with wrangler to add the account-wide Rate Limiting binding.
 - [ ] Optional, if abuse appears: Cloudflare Turnstile (invisible bot check) in front of Jim.
 
+## Other checks
+
+- Accessibility: `tools/test_a11y.py` (axe-core, WCAG 2.1 A/AA) on every page, light and dark, desktop and phone, with Jim open: 0 violations on 2026-10-16. A manual keyboard and screen-reader review is still recommended.
+- Third-party libraries: inventory and `npm audit` procedure in `vendor/README.md` (0 known vulnerabilities on 2026-10-16).
+- All tests run on every push (`.github/workflows/tests.yml`).
+- Ownership, data flows and support: `OPERATIONS.md`.
+
 ## Needs the hosting platform (cannot be set from GitHub Pages)
 
 HTTP response headers: `Strict-Transport-Security`, `X-Content-Type-Options: nosniff`, `frame-ancestors` (clickjacking; not allowed in a `<meta>` CSP), `Permissions-Policy`. GitHub Pages already serves the site only over HTTPS.

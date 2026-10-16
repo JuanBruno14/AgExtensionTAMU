@@ -1,0 +1,75 @@
+name: Tests
+
+# Runs every automated check on each push and pull request, and once a week so a broken
+# outside dependency shows up even when nothing changed here.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "17 14 * * 3"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: tests-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install test tools
+        run: |
+          pip install playwright==1.56.0 pyshp==2.3.1
+          python -m playwright install --with-deps chromium
+          (cd src/my-ranch && npm install --no-audit --no-fund)
+          (cd tools && npm install --no-audit --no-fund axe-core@4.10.2)
+
+      - name: Built pages are up to date
+        run: |
+          python3 src/my-ranch/build.py
+          python3 src/herd-tools/build.py
+          git diff --exit-code -- my-ranch/index.html herd-tools/index.html
+
+      - name: Security pass is up to date (CSP hashes, required links)
+        run: python3 tools/secure_pages.py --check
+
+      - name: Jim Worker
+        run: node worker/test_worker.mjs
+
+      - name: Nutrition engine vs. BCNRM spreadsheet
+        run: cd src/my-ranch && node valbc.js
+
+      - name: Price updater
+        run: python3 tools/test_update_prices.py
+
+      - name: Security (CSP violations, third-party hosts, Jim ranch switch, privacy delete)
+        run: python3 tools/test_security.py
+
+      - name: Accessibility (axe-core, WCAG 2.1 AA)
+        run: python3 tools/test_a11y.py
+
+      - name: My Ranch and Herd Calculators
+        run: |
+          for t in test_ranch test_grass test_portal test_import test_supplement test_steps test_examples test_jim_ranch; do
+            echo "::group::$t"
+            python3 src/my-ranch/$t.py | tee /tmp/$t.log
+            echo "::endgroup::"
+            if grep -q '^FAIL' /tmp/$t.log; then echo "::error::$t has failures"; exit 1; fi
+          done
+          python3 src/herd-tools/test_tools.py | tee /tmp/herd.log
+          if grep -q '^FAIL' /tmp/herd.log; then echo "::error::test_tools has failures"; exit 1; fi

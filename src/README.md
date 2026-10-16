@@ -24,6 +24,8 @@ Both builds take the shared page styles from `replacement-heifer/index.html` (th
 
 ## Tests
 
+Every push runs all of these in GitHub Actions (`.github/workflows/tests.yml`).
+
 Browser tests use Python Playwright with Chromium; the CDN libraries are served from local copies.
 
 ```
@@ -39,6 +41,8 @@ python3 src/my-ranch/test_examples.py   # example ranches (my-ranch/examples), g
 python3 src/my-ranch/test_jim_ranch.py   # Jim on other pages reads the ranch saved in My Ranch
 python3 src/herd-tools/test_tools.py    # Herd Calculators
 python3 tools/test_security.py          # CSP, required links, third-party hosts, Jim ranch switch, privacy delete
+(cd tools && npm install axe-core@4.10.2) && python3 tools/test_a11y.py   # accessibility, WCAG 2.1 AA (axe-core)
+node worker/test_worker.mjs             # Jim relay
 cd src/my-ranch && node valbc.js        # nutrition vs. BCNRM
 ```
 
