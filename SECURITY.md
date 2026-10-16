@@ -40,8 +40,8 @@ error types, never message text or the key; responses are `no-store` and `nosnif
 
 Still to do outside the code:
 
-- [ ] Paste the current `worker/jim-worker.js` into Cloudflare and deploy.
-- [ ] Anthropic: a key used only by this site, with a monthly spend limit.
+- [x] Paste the current `worker/jim-worker.js` into Cloudflare and deploy (done 2026-10-16).
+- [x] Anthropic: a key used only by this site, with a monthly spend limit (done 2026-10-16).
 - [ ] Move the Worker and key to institutional accounts; set `ALLOWED_ORIGINS` to the production
       domain; update `JIM_ENDPOINT` in `jim/jim.js`, then run `python3 tools/secure_pages.py`.
 - [ ] Optional: deploy with wrangler to add the account-wide Rate Limiting binding.
