@@ -76,8 +76,9 @@
          : 'High: diarrhea at first, risk of polio (polioencephalomalacia) and lower feed and water intake. Cattle tolerate up to about 2,500 ppm only for short periods.'});
     // Table 9-5: upper-limit guidelines (mg/L) for potentially toxic elements
     var as = v(o.as), fl = v(o.f);
-    if(as != null) out.push({item:'Arsenic', val:as, dec:3, level:as <= 0.05 ? 0 : as <= 0.2 ? 2 : 3,
-      text:as <= 0.05 ? 'At or under the 0.05 ppm upper limit for cattle.' : 'Over the 0.05 ppm upper limit for cattle. Arsenic builds up over time: find another water source and talk to your veterinarian.'});
+    // Arsenic: 0.3 ppm, the cattle limit used by Argentine water labs (published guides range 0.05 NRC 2001, 0.2 NASEM 2021 dairy, 0.5 ANZECC)
+    if(as != null) out.push({item:'Arsenic', val:as, dec:3, level:as <= 0.3 ? 0 : as <= 0.5 ? 2 : 3,
+      text:as <= 0.3 ? 'At or under the 0.3 ppm upper limit for cattle.' : 'Over the 0.3 ppm upper limit for cattle. Arsenic builds up over time: find another water source or blend with cleaner water, and talk to your veterinarian.'});
     if(fl != null) out.push({item:'Fluoride', val:fl, dec:1, level:fl <= 2 ? 0 : fl <= 4 ? 1 : 2,
       text:fl <= 2 ? 'At or under the 2 ppm upper limit for cattle.' : 'Over the 2 ppm upper limit. Years of high fluoride mottle and wear young cattle’s teeth (fluorosis); count fluoride in mineral and feed phosphate too.'});
     var ph = v(o.ph), h2s = v(o.h2s), coli = v(o.coli);
