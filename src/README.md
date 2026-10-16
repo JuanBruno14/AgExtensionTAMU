@@ -49,3 +49,7 @@ External services (soil survey, drought, map tiles, search) are mocked in the te
 ## Data sources
 
 Every number the pages use is listed with its source on `data-sources.html` and in the My Ranch user manual.
+
+## Weekly USDA prices
+
+Three prices (bred cow, bred heifer, fed cattle) come from USDA AMS Market News and live in `data/market-prices.json`. The GitHub Action `.github/workflows/update-prices.yml` runs every Monday: `tools/update_prices.py fetch` asks the MyMarketNews API for newer editions of the same reports, and `tools/update_prices.py apply` writes the values into the page defaults and `data-sources.html`, then re-runs `secure_pages.py`. A price only changes when a newer report has a line of the exact same class and it moved less than 25%; anything else opens a GitHub issue. Needs the repository secret `AMS_API_KEY`. Tests: `python3 tools/test_update_prices.py` (offline). The workflow can also be run by hand from the Actions tab ("Run workflow").

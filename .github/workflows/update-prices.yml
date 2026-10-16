@@ -1,0 +1,73 @@
+name: Update USDA prices
+
+# Every Monday (~8:45 am Texas time) ask USDA MyMarketNews for newer editions of the three
+# reports in data/market-prices.json and, if a price changed, update the pages and commit.
+# Needs a repository secret AMS_API_KEY (free key from mymarketnews.ams.usda.gov).
+on:
+  schedule:
+    - cron: "47 13 * * 1"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  issues: write
+
+concurrency:
+  group: update-prices
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Ask USDA for newer reports
+        env:
+          AMS_API_KEY: ${{ secrets.AMS_API_KEY }}
+          AMS_DUMP_DIR: ams-raw
+        run: python3 tools/update_prices.py fetch
+
+      - name: Write prices into the pages
+        run: |
+          python3 tools/update_prices.py apply
+          python3 tools/test_update_prices.py
+          python3 tools/secure_pages.py --check
+
+      - name: Commit and push
+        run: |
+          cat price-update-report.md >> "$GITHUB_STEP_SUMMARY"
+          git add data/market-prices.json index.html cow-calf/index.html replacement-heifer/index.html \
+                  retained-ownership/index.html data-sources.html
+          if git diff --cached --quiet; then
+            echo "No price changes this week."
+            exit 0
+          fi
+          git config user.name "usda-price-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Weekly USDA price update $(date -u +%F)" -m "$(cat price-update-report.md)"
+          git push
+
+      - name: Flag anything that needs a person
+        if: always()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          [ -f price-update-report.md ] || echo "The price job failed before writing its report. See the run log: $GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" > price-update-report.md
+          if [ "${{ job.status }}" != "success" ] || grep -q -e ':warning:' -e 'API errors' -e 'could not be read' price-update-report.md; then
+            printf '\n\nRun: %s/%s/actions/runs/%s\n' "$GITHUB_SERVER_URL" "$GITHUB_REPOSITORY" "$GITHUB_RUN_ID" >> price-update-report.md
+            gh issue create --title "USDA price update needs a check ($(date -u +%F))" --body-file price-update-report.md
+          fi
+
+      - name: Keep the raw USDA answers (for checking the parser)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ams-raw
+          path: ams-raw/
+          retention-days: 30
+          if-no-files-found: ignore

@@ -148,29 +148,35 @@
       <h2>USDA AMS market reports</h2>
     </div>
     <div class="card-body">
-      <p class="card-note">Pulled directly from USDA's Agricultural Marketing Service weekly livestock auction and slaughter-cattle reports &mdash; the most direct, citable source used on this site.</p>
+      <p class="card-note">Pulled directly from USDA's Agricultural Marketing Service weekly livestock auction and slaughter-cattle reports &mdash; the most direct, citable source used on this site. These three rows update themselves: every Monday an automatic job on the site's GitHub repository asks USDA's MyMarketNews service for newer editions of the same reports and, when the same class of cattle has a new price, changes it here and as the default in every tool that uses it. A move of more than 25% in one week is never applied automatically; it is flagged for a person to check. Values a producer has typed and saved in their own browser are never changed.</p>
       <div class="table-scroll">
       <table class="ref">
         <thead><tr><th>Value</th><th>Used in</th><th>Source report</th><th>As of</th></tr></thead>
         <tbody>
+          <!-- price:bred_cow:start -->
           <tr>
             <td class="value nowrap">$2,828.62/hd</td>
             <td class="used">Bred cow purchase price &mdash; <a href="cow-calf/index.html">A1</a> "Bid price", <a href="cow-calf/index.html">A2</a> "Cost/head"</td>
             <td>Cattlemen's Livestock, Dalhart TX (<code>ams_1953.pdf</code>) &mdash; "BRED COWS, Medium &amp; Large 1" line, 17&nbsp;hd, 1,243&ndash;1,327&nbsp;lb, $2,800&ndash;$2,850/hd</td>
             <td><span class="tag fresh">Sep 3, 2026</span></td>
           </tr>
+          <!-- price:bred_cow:end -->
+          <!-- price:fed_cattle:start -->
           <tr>
             <td class="value nowrap">$220.11/cwt</td>
             <td class="used">Fed/finished cattle sale price &mdash; <a href="retained-ownership/index.html">Stockers</a> "Feedyard" paths (both sub-paths)</td>
             <td>USDA AMS "5&nbsp;Area Weekly Weighted Average Direct Slaughter Cattle" (<code>ams_2477.pdf</code>) &mdash; live FOB steers, Over 80% Choice, $218&ndash;$223/cwt, weighted avg, 1,606&nbsp;lb, 19,383&nbsp;hd</td>
             <td><span class="tag fresh">week ending Oct 11, 2026</span></td>
           </tr>
+          <!-- price:fed_cattle:end -->
+          <!-- price:bred_heifer:start -->
           <tr>
             <td class="value nowrap">$3,625.00/hd</td>
             <td class="used">Bred heifer sale price &mdash; shared store's <code>mp_bredHeiferPrice</code>, read by <a href="replacement-heifer/index.html">B1a</a> "Bred heifer sale price"</td>
             <td>USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "BRED HEIFERS, Medium &amp; Large 1": 20&nbsp;hd, under 2&nbsp;yr, 2nd trimester, avg 1,014&nbsp;lb, $3,625.00/hd (the only Medium &amp; Large 1 line that week)</td>
             <td><span class="tag fresh">Oct 9, 2026</span></td>
           </tr>
+          <!-- price:bred_heifer:end -->
         </tbody>
       </table>
       </div>
@@ -243,7 +249,7 @@
       <h2>Refreshing all of this later</h2>
     </div>
     <div class="card-body">
-      <p class="card-note" style="margin:0;">When it's time to update prices again: re-pull the three USDA AMS reports above for a current week, re-screenshot or re-pull a current "Local Texas Auction Data" report for the weight-class curves, then enter the new flat numbers once in the <a href="index.html#market-prices-calculator">home page's "Market prices &amp; factors" calculator</a> &mdash; every tool that reads the shared store picks the change up automatically (live in every open tab, and on next load elsewhere), with each weight-class curve rescaling itself the same rescale-to-anchor way rather than being replaced outright, so weight sliders keep behaving sensibly across their whole range, not just at the default point. The few fields that don't yet read from the shared store (see "Not yet sourced" above) still need a manual edit on their own page. Every place a number changes, it should get the same treatment as everything on this page: cited here, dated, and flagged on its own tool page.</p>
+      <p class="card-note" style="margin:0;">The three USDA AMS prices above refresh automatically each week (see that card). For everything else, when it's time to update prices again: re-screenshot or re-pull a current "Local Texas Auction Data" report for the weight-class curves, then enter the new flat numbers once in the <a href="index.html#market-prices-calculator">home page's "Market prices &amp; factors" calculator</a> &mdash; every tool that reads the shared store picks the change up automatically (live in every open tab, and on next load elsewhere), with each weight-class curve rescaling itself the same rescale-to-anchor way rather than being replaced outright, so weight sliders keep behaving sensibly across their whole range, not just at the default point. The few fields that don't yet read from the shared store (see "Not yet sourced" above) still need a manual edit on their own page. Every place a number changes, it should get the same treatment as everything on this page: cited here, dated, and flagged on its own tool page.</p>
     </div>
   </div>
 

@@ -1,0 +1,44 @@
+{
+  "_about": "Prices on this site that come from public USDA AMS Market News reports. Updated weekly by .github/workflows/update-prices.yml (tools/update_prices.py). Edit by hand only if you also run `python3 tools/update_prices.py apply`.",
+  "updated": "2026-10-13",
+  "prices": {
+    "bred_cow": {
+      "label": "Bred cow purchase price",
+      "value": 2828.62,
+      "unit": "$/hd",
+      "report_slug": "1953",
+      "report_name": "Cattlemen's Livestock, Dalhart TX weekly auction",
+      "rule": "BRED COWS, Medium & Large 1 (not 1-2), 2-4 yr, 2nd trimester; head-weighted average of matching lines",
+      "report_date": "2026-09-03",
+      "as_of_label": "Sep 3, 2026",
+      "detail_html": "Cattlemen's Livestock, Dalhart TX (<code>ams_1953.pdf</code>) &mdash; \"BRED COWS, Medium &amp; Large 1\" line, 17&nbsp;hd, 1,243&ndash;1,327&nbsp;lb, $2,800&ndash;$2,850/hd"
+    },
+    "fed_cattle": {
+      "label": "Fed/finished cattle sale price",
+      "value": 220.11,
+      "unit": "$/cwt",
+      "report_slug": "2477",
+      "report_name": "5 Area Weekly Weighted Average Direct Slaughter Cattle (LM_CT150)",
+      "rule": "Live FOB steers, Over 80% Choice, weighted average",
+      "report_date": "2026-10-12",
+      "as_of_label": "week ending Oct 11, 2026",
+      "detail_html": "USDA AMS \"5&nbsp;Area Weekly Weighted Average Direct Slaughter Cattle\" (<code>ams_2477.pdf</code>) &mdash; live FOB steers, Over 80% Choice, $218&ndash;$223/cwt, weighted avg, 1,606&nbsp;lb, 19,383&nbsp;hd"
+    },
+    "bred_heifer": {
+      "label": "Bred heifer sale price",
+      "value": 3625.0,
+      "unit": "$/hd",
+      "report_slug": "1955",
+      "report_name": "Texas Weekly Cattle Auction Summary",
+      "rule": "BRED HEIFERS, Medium & Large 1 (not 1-2), any age/stage; head-weighted average of matching lines",
+      "report_date": "2026-10-09",
+      "as_of_label": "Oct 9, 2026",
+      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"BRED HEIFERS, Medium &amp; Large 1\": 20&nbsp;hd, under 2&nbsp;yr, 2nd trimester, avg 1,014&nbsp;lb, $3,625.00/hd (the only Medium &amp; Large 1 line that week)"
+    }
+  },
+  "history": [
+    {"key": "bred_cow", "value": 2828.62, "report_date": "2026-09-03", "applied": "2026-10-13"},
+    {"key": "fed_cattle", "value": 220.11, "report_date": "2026-10-12", "applied": "2026-10-13"},
+    {"key": "bred_heifer", "value": 3625.0, "report_date": "2026-10-09", "applied": "2026-10-13"}
+  ]
+}
