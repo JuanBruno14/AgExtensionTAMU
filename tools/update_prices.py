@@ -252,8 +252,7 @@ def fmt_unit(p, v=None):
 # apply: write JSON values into the pages
 # ---------------------------------------------------------------------------------------------
 
-# (file, js object keys, input ids) per price. Only these files; retained-ownership-index.html
-# is an older page with its own unrelated defaults.
+# (file, js object keys, input ids) per price. Only these files.
 TARGETS = {
     'bred_cow': [('index.html', ['mp_bredCowPrice'], ['mp_bredCowPrice']),
                  ('cow-calf/index.html', ['mp_bredCowPrice', 'bidPrice', 'a2_cowCost'], ['bidPrice', 'a2_cowCost'])],
