@@ -26,18 +26,26 @@ A static website (HTML, CSS, JavaScript). No accounts, no sign-in, no database, 
 
 After editing any page: run the page's build (if it has one) and `python3 tools/secure_pages.py`; then `python3 tools/test_security.py`.
 
-## Jim relay (Cloudflare Worker) — checklist
+## Jim relay (Cloudflare Worker)
 
-The Worker code is not in this repository. Before launch on an AgriLife domain, confirm:
+Source and deploy steps: `worker/jim-worker.js`, `worker/README.md`; tests: `node worker/test_worker.mjs`.
 
-- [ ] Worker and API key moved to an institutional Cloudflare and Anthropic account (not a personal one); `JIM_ENDPOINT` in `jim/jim.js` updated, then `python3 tools/secure_pages.py` re-run.
-- [ ] `ALLOWED_ORIGINS` set to the production domain only.
-- [ ] Rate limit enforced outside the Worker's memory (Workers Rate Limiting binding, or a WAF rate-limiting rule on a custom domain), per IP.
-- [ ] Requests rejected above a size limit (body, number of messages, characters per message); roles limited to `user` / `assistant`.
-- [ ] Model, system prompt and `max_tokens` fixed on the server; nothing from the request can change them.
-- [ ] Message contents not written to logs (no `console.log` of bodies; Workers Logs off or sampled without bodies).
-- [ ] Monthly spend limit set in the Anthropic console, on an API key used only by this site.
-- [ ] Worker returns no stack traces or upstream error details to the browser.
+In the code: only listed origins answered (403 otherwise); JSON only (415); body capped at 64 KB (413);
+at most 16 messages, 6,000 characters each (the end, with the question, is kept) and 30,000 in total;
+only `user` / `assistant` roles; model, system prompt, tools, tool rounds and `max_tokens` fixed in the
+Worker; page title and path sanitized before reaching the prompt; per-IP limit (20 questions / 10 min)
+and per-instance limit (60 / min), plus an account-wide Rate Limiting binding when deployed with
+wrangler; 120-second upstream timeout; visitors see generic errors only; logs hold status codes and
+error types, never message text or the key; responses are `no-store` and `nosniff`.
+
+Still to do outside the code:
+
+- [ ] Paste the current `worker/jim-worker.js` into Cloudflare and deploy.
+- [ ] Anthropic: a key used only by this site, with a monthly spend limit.
+- [ ] Move the Worker and key to institutional accounts; set `ALLOWED_ORIGINS` to the production
+      domain; update `JIM_ENDPOINT` in `jim/jim.js`, then run `python3 tools/secure_pages.py`.
+- [ ] Optional: deploy with wrangler to add the account-wide Rate Limiting binding.
+- [ ] Optional, if abuse appears: Cloudflare Turnstile (invisible bot check) in front of Jim.
 
 ## Needs the hosting platform (cannot be set from GitHub Pages)
 

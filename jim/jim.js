@@ -384,7 +384,7 @@
       var lastQ = history[history.length - 1];
       lastQ.content = "[The visitor's own ranch, saved in the site's My Ranch tool (" + new Date(rb.updated).toISOString().slice(0, 10) +
         "). Figures are that tool's estimates (NRC 2016 requirements, NRCS forage). Use them when the question is about their ranch; say they come from My Ranch; do not repeat the whole summary.]\n" +
-        rb.text + "\n[End of ranch]\n\n" + lastQ.content;
+        String(rb.text).slice(0, 3500) + "\n[End of ranch]\n\n" + lastQ.content;
     }
 
     fetch(endpoint, {

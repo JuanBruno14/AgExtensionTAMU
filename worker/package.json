@@ -1,0 +1,1 @@
+{ "private": true, "type": "module", "description": "Jim Cloudflare Worker source and tests (node worker/test_worker.mjs)" }

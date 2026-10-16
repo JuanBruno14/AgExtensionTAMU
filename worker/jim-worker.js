@@ -9,6 +9,13 @@
  *   ALLOWED_ORIGINS    optional, comma-separated. Default: https://juanbruno14.github.io
  *   KB_URL             optional. Default: the kb.json published with the site
  *   MODEL              optional. Default: claude-sonnet-5
+ *   RATE_LIMITER       optional Workers Rate Limiting binding (only via wrangler; see worker/README.md).
+ *                      Without it, the per-instance limits below still apply.
+ *
+ * Security: the API key never leaves this Worker; only listed browser origins are answered;
+ * request size, message count and length are capped; model, system prompt, tools and
+ * max_tokens are fixed here; visitors' messages are never logged; errors sent to the browser
+ * are generic. The hard cost ceiling is the monthly spend limit in the Anthropic console.
  */
 
 const DEFAULTS = {
@@ -19,8 +26,13 @@ const DEFAULTS = {
 const MAX_TOKENS = 2500;
 const MAX_TOOL_ROUNDS = 4;
 const MAX_MESSAGES = 16;
-const MAX_MESSAGE_CHARS = 4000;
-const RATE_LIMIT = { windowMs: 10 * 60 * 1000, max: 30 }; // per visitor IP, per worker instance
+const MAX_MESSAGE_CHARS = 6000;          // per message (a question plus the saved-ranch summary)
+const MAX_TOTAL_CHARS = 30000;           // whole conversation sent in one request
+const MAX_BODY_BYTES = 64 * 1024;        // raw request size
+const MAX_QUERY_CHARS = 300;             // search_knowledge / get_budget input from the model
+const UPSTREAM_TIMEOUT_MS = 120 * 1000;  // one Anthropic call
+const RATE_LIMIT = { windowMs: 10 * 60 * 1000, max: 20 };          // per visitor IP, per worker instance
+const INSTANCE_LIMIT = { windowMs: 60 * 1000, max: 60 };            // all visitors, per worker instance
 
 const SITE = "https://juanbruno14.github.io/AgExtensionTAMU/";
 
@@ -181,7 +193,7 @@ async function loadKB(env) {
   if (KB && Date.now() - KB_LOADED_AT < KB_TTL_MS) return KB;
   const url = env.KB_URL || DEFAULTS.KB_URL;
   const res = await fetch(url, { cf: { cacheTtl: 3600, cacheEverything: true } });
-  if (!res.ok) throw new Error(`Could not load the knowledge base (${res.status}) from ${url}`);
+  if (!res.ok) throw new Error(`KB fetch failed with status ${res.status}`);
   const data = await res.json();
   KB = { index: buildIndex(data.chunks), chunks: data.chunks };
   KB_LOADED_AT = Date.now();
@@ -191,13 +203,13 @@ async function loadKB(env) {
 function runTool(kb, name, input) {
   if (name === "search_knowledge") {
     const k = Math.min(Math.max(parseInt(input.max_results, 10) || 5, 1), 8);
-    const hits = search(kb.index, String(input.query || ""), k);
+    const hits = search(kb.index, String(input.query || "").slice(0, MAX_QUERY_CHARS), k);
     if (!hits.length) return "No matching passages found. Try different English keywords.";
     return hits.map((h, i) => `[${i + 1}] Source: ${h.t}\n${h.x}`).join("\n\n---\n\n");
   }
   if (name === "get_budget") {
     const words = (x) => (x.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").match(/[a-z0-9]+/g) || []).map(stem);
-    const asked = String(input.name || "").trim().toLowerCase();
+    const asked = String(input.name || "").slice(0, MAX_QUERY_CHARS).trim().toLowerCase();
     const want = words(asked);
     const budgets = kb.chunks.filter((c) => c.t.startsWith("Budget: "));
     const titles = [...new Set(budgets.map((c) => c.t))];
@@ -219,13 +231,27 @@ function runTool(kb, name, input) {
 /* ------------------------------------------------------------------ */
 
 const hits = new Map();
-function rateLimited(ip) {
+let instanceHits = [];
+function localLimited(ip) {
   const now = Date.now();
+  instanceHits = instanceHits.filter((t) => now - t < INSTANCE_LIMIT.windowMs);
+  if (instanceHits.length >= INSTANCE_LIMIT.max) return true;
   const arr = (hits.get(ip) || []).filter((t) => now - t < RATE_LIMIT.windowMs);
+  if (arr.length >= RATE_LIMIT.max) { hits.set(ip, arr); return true; }
   arr.push(now);
   hits.set(ip, arr);
+  instanceHits.push(now);
   if (hits.size > 5000) hits.clear();
-  return arr.length > RATE_LIMIT.max;
+  return false;
+}
+async function rateLimited(ip, env) {
+  if (env.RATE_LIMITER && typeof env.RATE_LIMITER.limit === "function") {
+    try {
+      const { success } = await env.RATE_LIMITER.limit({ key: "ip:" + ip });
+      if (!success) return true;
+    } catch (_) { /* binding unavailable: fall back to the local limits */ }
+  }
+  return localLimited(ip);
 }
 
 function corsHeaders(origin, env) {
@@ -239,6 +265,9 @@ function corsHeaders(origin, env) {
       "Access-Control-Allow-Headers": "Content-Type",
       "Access-Control-Max-Age": "86400",
       Vary: "Origin",
+      "X-Content-Type-Options": "nosniff",
+      "Referrer-Policy": "no-referrer",
+      "Cache-Control": "no-store",
     },
   };
 }
@@ -251,8 +280,10 @@ function cleanMessages(raw) {
   if (!Array.isArray(raw) || !raw.length) throw new Error("No messages");
   const msgs = raw
     .filter((m) => m && (m.role === "user" || m.role === "assistant") && typeof m.content === "string" && m.content.trim())
-    .map((m) => ({ role: m.role, content: m.content.slice(0, MAX_MESSAGE_CHARS) }))
+    .map((m) => ({ role: m.role, content: m.content.length > MAX_MESSAGE_CHARS ? m.content.slice(-MAX_MESSAGE_CHARS) : m.content }))
     .slice(-MAX_MESSAGES);
+  // drop the oldest turns until the whole conversation fits
+  while (msgs.length > 1 && msgs.reduce((n, m) => n + m.content.length, 0) > MAX_TOTAL_CHARS) msgs.shift();
   while (msgs.length && msgs[0].role !== "user") msgs.shift();
   // merge accidental consecutive same-role messages
   const out = [];
@@ -264,34 +295,60 @@ function cleanMessages(raw) {
   return out;
 }
 
+/** Short, single-line text that is safe to place inside the system prompt. */
+function oneLine(v, max) {
+  return String(v == null ? "" : v).replace(/[\u0000-\u001f\u007f"`<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, max);
+}
+
+async function readJson(request) {
+  const len = Number(request.headers.get("Content-Length") || 0);
+  if (len > MAX_BODY_BYTES) throw new Error("too large");
+  const reader = request.body ? request.body.getReader() : null;
+  if (!reader) throw new Error("empty");
+  const parts = []; let size = 0;
+  for (;;) {
+    const { value, done } = await reader.read();
+    if (done) break;
+    size += value.byteLength;
+    if (size > MAX_BODY_BYTES) { try { reader.cancel(); } catch (_) {} throw new Error("too large"); }
+    parts.push(value);
+  }
+  const buf = new Uint8Array(size); let off = 0;
+  for (const p of parts) { buf.set(p, off); off += p.byteLength; }
+  return JSON.parse(new TextDecoder().decode(buf));
+}
+
 export default {
   async fetch(request, env, ctx) {
     const origin = request.headers.get("Origin") || "";
     const cors = corsHeaders(origin, env);
 
     if (request.method === "OPTIONS") return new Response(null, { status: 204, headers: cors.headers });
-    if (request.method === "GET") return json({ ok: true, name: "Jim", status: env.ANTHROPIC_API_KEY ? "ready" : "missing ANTHROPIC_API_KEY" }, 200, cors.headers);
+    if (request.method === "GET") return json({ ok: true, name: "Jim" }, 200, cors.headers);
     if (request.method !== "POST") return json({ error: "Method not allowed" }, 405, cors.headers);
     if (!cors.ok) return json({ error: "This site is not allowed to use Jim." }, 403, cors.headers);
-    if (!env.ANTHROPIC_API_KEY) return json({ error: "Jim is not configured yet (missing API key)." }, 500, cors.headers);
+    if (!/^application\/json\b/i.test(request.headers.get("Content-Type") || "")) return json({ error: "Unsupported request." }, 415, cors.headers);
+    if (!env.ANTHROPIC_API_KEY) { console.error("jim: ANTHROPIC_API_KEY is not set"); return json({ error: "Jim is not available right now." }, 503, cors.headers); }
 
     const ip = request.headers.get("CF-Connecting-IP") || "unknown";
-    if (rateLimited(ip)) return json({ error: "Too many questions in a short time. Please wait a few minutes." }, 429, cors.headers);
+    if (await rateLimited(ip, env)) return json({ error: "Too many questions in a short time. Please wait a few minutes." }, 429, { ...cors.headers, "Retry-After": "120" });
 
     let body, messages;
     try {
-      body = await request.json();
-      messages = cleanMessages(body.messages);
+      body = await readJson(request);
+      messages = cleanMessages(body && body.messages);
     } catch (e) {
-      return json({ error: "Bad request: " + e.message }, 400, cors.headers);
+      const big = e && e.message === "too large";
+      return json({ error: big ? "That message is too long." : "Jim couldn't read that request." }, big ? 413 : 400, cors.headers);
     }
 
     let kb;
     try { kb = await loadKB(env); }
-    catch (e) { return json({ error: e.message }, 502, cors.headers); }
+    catch (e) { console.error("jim: knowledge base unavailable:", e && e.message); return json({ error: "Jim is not available right now. Please try again later." }, 502, cors.headers); }
 
     const page = body.page && typeof body.page === "object" ? body.page : {};
-    const pageNote = `The producer is chatting from this page of the site: "${String(page.title || "").slice(0, 150)}" (${String(page.path || "").slice(0, 200)}).`;
+    const path = /^\/[A-Za-z0-9._\/-]{0,200}$/.test(String(page.path || "")) ? String(page.path) : "";
+    const pageNote = `The producer is chatting from this page of the site: "${oneLine(page.title, 150)}" (${path}).`;
 
     const { readable, writable } = new TransformStream();
     const writer = writable.getWriter();
@@ -315,7 +372,8 @@ export default {
         }
         await send("done", {});
       } catch (e) {
-        await send("error", { message: e.message || "Something went wrong." });
+        if (!(e && e.userFacing)) console.error("jim: request failed:", e && e.message);
+        await send("error", { message: e && e.userFacing ? e.message : "Something went wrong. Please try again." });
       } finally {
         await writer.close();
       }
@@ -325,7 +383,7 @@ export default {
     if (ctx && typeof ctx.waitUntil === "function") ctx.waitUntil(p);
 
     return new Response(readable, {
-      headers: { ...cors.headers, "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-cache" },
+      headers: { ...cors.headers, "Content-Type": "text/event-stream; charset=utf-8", "Cache-Control": "no-store" },
     });
   },
 };
@@ -358,13 +416,15 @@ async function callClaude(env, convo, pageNote, send, noTools) {
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify(payload),
+    signal: AbortSignal.timeout(UPSTREAM_TIMEOUT_MS),
   });
   if (!res.ok) {
-    let detail = "";
-    try { detail = (await res.json()).error?.message || ""; } catch (_) {}
-    if (res.status === 429 || res.status === 529) throw new Error("Jim is very busy right now. Please try again in a minute.");
-    if (res.status === 401) throw new Error("Jim's API key is not valid. The site owner needs to check it.");
-    throw new Error(`Jim could not answer (${res.status}${detail ? ": " + detail : ""}).`);
+    let type = "";
+    try { type = (await res.json()).error?.type || ""; } catch (_) {}
+    console.error("jim: Anthropic API error", res.status, type);   // status and error type only, never message contents
+    const userErr = (msg) => Object.assign(new Error(msg), { userFacing: true });
+    if (res.status === 429 || res.status === 529) throw userErr("Jim is very busy right now. Please try again in a minute.");
+    throw userErr("Jim couldn't answer just now. Please try again later.");
   }
 
   const reader = res.body.getReader();
@@ -399,7 +459,7 @@ async function callClaude(env, convo, pageNote, send, noTools) {
       } else if (ev.type === "message_delta") {
         stop_reason = ev.delta?.stop_reason || stop_reason;
       } else if (ev.type === "error") {
-        throw new Error(ev.error?.message || "Streaming error");
+        throw new Error("stream error: " + (ev.error?.type || "unknown"));
       }
     }
   }
@@ -422,5 +482,5 @@ async function callClaude(env, convo, pageNote, send, noTools) {
 }
 
 // exposed for automated tests only
-export const __test = { tokenize, buildIndex, search, runTool };
+export const __test = { tokenize, buildIndex, search, runTool, cleanMessages, oneLine };
 
