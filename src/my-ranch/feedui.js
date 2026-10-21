@@ -69,11 +69,19 @@
     return 'from ' + mmddText(h.start1) + ' for ' + h.len1 + ' days, weaned ' + mmddText(h.wean1);
   }
 
+  /* the site-wide hay price (home page, Market prices & factors): show it next to this ranch's own price */
+  function renderHayShared(){
+    var el = $('fc_hayShared'); if(!el) return;
+    var sp = sharedHayPrice(), mine = +state.herd.hayPrice;
+    $('fc_haySharedTxt').textContent = mine === sp ? 'Same as the site hay price (Market prices on the home page).' : 'Site hay price: ' + money(sp) + '/ton.';
+    $('fc_hayUseShared').hidden = mine === sp;
+  }
   function bindFeedValues(){
     var h = state.herd;
     document.querySelectorAll('[data-h]').forEach(function(el){ el.value = h[el.getAttribute('data-h')]; });
     document.querySelectorAll('[data-hs]').forEach(function(el){ if(el.options.length) el.value = String(h[el.getAttribute('data-hs')]); });
     document.querySelectorAll('[data-hd]').forEach(function(el){ el.value = mmddToDate(h[el.getAttribute('data-hd')]); });
+    renderHayShared();
     document.querySelectorAll('[data-dr]').forEach(function(el){ el.value = h.dr[el.getAttribute('data-dr')]; });
     document.querySelectorAll('[data-sl]').forEach(function(el){ el.value = (h.sell || {})[el.getAttribute('data-sl')]; });
     document.querySelectorAll('[data-drs]').forEach(function(el){ if(el.options.length) el.value = String(h.dr[el.getAttribute('data-drs')]); });
@@ -1133,7 +1141,10 @@
     $('fc_source').innerHTML = Object.keys(FEED.SOURCES).map(function(k){ var s = FEED.SOURCES[k]; return '<option value="' + k + '">' + esc(s.label) + (s.cp != null ? ' (' + s.cp + '% CP)' : '') + '</option>'; }).join('');
     $('dr_from').innerHTML = FEED.MONTHS.map(function(m, i){ return '<option value="' + i + '">' + m + '</option>'; }).join('');
     bindFeedValues();
-    function rerender(){ save(); renderSummary(); renderRotation(); renderFeed(); renderHerdNote(); }
+    function rerender(){ save(); renderHayShared(); renderSummary(); renderRotation(); renderFeed(); renderHerdNote(); }
+    var useHay = $('fc_hayUseShared');
+    if(useHay) useHay.addEventListener('click', function(){ state.herd.hayPrice = sharedHayPrice(); $('fc_hayPrice').value = state.herd.hayPrice; rerender(); });
+    window.addEventListener('storage', function(e){ if(e.key === 'tamuDecisionAidsMarketPrices') renderHayShared(); });
     document.querySelectorAll('[data-h]').forEach(function(el){
       var k = el.getAttribute('data-h'), mn = +el.min, mx = +el.max;
       el.addEventListener('input', function(){ var v = num(this.value); if(v != null && v >= mn && v <= mx){ state.herd[k] = v; rerender(); } });
@@ -1170,6 +1181,7 @@
     $('fc_reset').addEventListener('click', function(){
       var keep = {calving:1, start1:1, len1:1, start2:1, len2:1, share2:1, wean1:1, wean2:1, weanAge:1, region:1, dr:1, cows:1, cowLb:1, bulls:1, bullLb:1};
       Object.keys(DEFAULT_HERD).forEach(function(k){ if(!keep[k]) state.herd[k] = DEFAULT_HERD[k]; });
+      state.herd.hayPrice = sharedHayPrice();
       bindFeedValues(); rerender();
     });
     document.querySelectorAll('.seg-btn[data-nutrient]').forEach(function(b){

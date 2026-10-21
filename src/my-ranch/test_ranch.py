@@ -198,7 +198,7 @@ with sync_playwright() as pw:
     page.select_option('#fc_source','cube38'); page.wait_for_timeout(150)
     check('38% source preset', page.input_value('#fc_supCp')=='38' and '$' in page.inner_text('#fc_perLbCp'))
     page.click('#fc_reset'); page.wait_for_timeout(150)
-    check('reset details', page.input_value('#fc_hayPrice')=='200' and page.input_value('#fc_supCp')=='20')
+    check('reset details', page.input_value('#fc_hayPrice')=='210' and page.input_value('#fc_supCp')=='20')
     check('per-head table 12 rows', page.locator('#fc_perhead tbody tr').count()==12)
     check('AU note', 'animal units' in page.inner_text('#hd_auNote'))
     aup=page.evaluate("MyRanch.herdAUParts()")

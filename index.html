@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ow/2xbYotEPJR4hJz5Vd9H4IULNsS6mWcUWMRB4rYmY='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-sd3LujrU5GPuViQCKkNbn6aLIRqJcbEmFG3xGYxL+7Y='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -411,7 +411,7 @@
             <div class="field"><label for="bcu_landLeaseRate">Land grazing lease ($/mo)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_landLeaseRate" value="15" min="0"></div></div>
             <div class="field"><label for="bcu_landLeaseMonths">Grazing months</label><div class="input-wrap"><input type="number" id="bcu_landLeaseMonths" value="11" min="0" max="12"></div></div>
             <div class="field"><label for="bcu_hayRolls">Hay (rolls)</label><div class="input-wrap"><input type="number" id="bcu_hayRolls" value="1.5" min="0" step="0.1"></div></div>
-            <div class="field"><label for="bcu_hayPrice">Hay price ($/roll)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_hayPrice" value="105" min="0"></div></div>
+            <div class="field"><span class="hint" style="margin-top:0;">Hay price ($/roll)</span><strong id="bcuHay_roll">$105.00</strong><span class="hint" id="bcuHay_note">$210/ton &times; 1,000&nbsp;lb roll &mdash; set in &ldquo;Market prices &amp; factors&rdquo; below</span></div>
             <div class="field"><label for="bcu_saltLbs">Salt &amp; mineral (lb)</label><div class="input-wrap"><input type="number" id="bcu_saltLbs" value="90" min="0"></div></div>
             <div class="field"><label for="bcu_saltPrice">Salt/mineral price ($/lb)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_saltPrice" value="0.25" min="0" step="0.01"></div></div>
             <div class="field"><label for="bcu_laborMgmt">Labor &amp; management</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_laborMgmt" value="120" min="0"></div></div>
@@ -470,7 +470,7 @@
           <span class="status-pill live">Shared tool</span>
         </div>
         <h3>Market prices &amp; factors</h3>
-        <p>Steer, heifer, cull cow/bull, bred cow, bred heifer, fed-cattle and stocker sale prices, plus herd-bull cost and life &mdash; set them once here and every tool that uses one reads the same number (pre-filled, still editable per page if you want to try a different scenario just there).</p>
+        <p>Steer, heifer, cull cow/bull, bred cow, bred heifer, fed-cattle and stocker sale prices, plus herd-bull cost and life and the hay price &mdash; set them once here and every tool that uses one reads the same number (pre-filled, still editable per page if you want to try a different scenario just there).</p>
         <div class="bcu-preview">
           <span class="bcu-preview-value" id="mpHeaderValue" style="font-size:16px;">14 values</span>
           <span class="bcu-preview-label">&middot; <span id="mpSourceLabel">original defaults</span></span>
@@ -516,6 +516,15 @@
             <div class="field"><label for="mp_perBull">Females per bull</label><div class="input-wrap"><input type="number" id="mp_perBull" value="25" min="1"></div></div>
           </div>
           <p class="card-note" style="margin:10px 0 0;">Salvage value uses the cull bull price above. Used for the "Cow operating cost (BCU)" calculator's bull depreciation, and for Replacement Heifer Budgets' (B1a) bull investment section.</p>
+        </fieldset>
+
+        <fieldset style="margin-top:18px;">
+          <legend>Feed</legend>
+          <div class="field-grid cols-3">
+            <div class="field"><label for="mp_hayPrice">Hay price</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="mp_hayPrice" value="210" min="0" step="5"><span class="suffix">/ton</span></div></div>
+            <div class="field"><label for="mp_hayRollLb">Round bale weight</label><div class="input-wrap has-suffix"><input type="number" id="mp_hayRollLb" value="1000" min="100" step="50"><span class="suffix">lb</span></div></div>
+          </div>
+          <p class="card-note" style="margin:10px 0 0;">One hay price for the whole site: My Ranch starts its feed plan with it (per ton), and the &ldquo;Cow operating cost (BCU)&rdquo; calculator turns it into a price per roll with the bale weight ($210/ton &times; 1,000&nbsp;lb = $105/roll, the original BCU sheet&rsquo;s value; Texas A&amp;M AgriLife&rsquo;s 2026 District 3 budgets use $200/ton).</p>
         </fieldset>
 
         <div class="btn-row" style="padding:18px 0 0;">
@@ -590,7 +599,8 @@
     mp_steerPrice:530.0, mp_heiferPrice:460.0, mp_cullCowPrice:180.0, mp_cullBullPrice:190.0,
     mp_bredCowPrice:2828.62, mp_bredHeiferPrice:3625.00, mp_fedCattlePrice:220.11,
     mp_stocker700Price:380.0, mp_stocker800Price:360.0,
-    mp_bullCost:4500, mp_bullLife:4, mp_bullSalvageWeight:1650.7, mp_bullDeathLoss:2, mp_perBull:25
+    mp_bullCost:4500, mp_bullLife:4, mp_bullSalvageWeight:1650.7, mp_bullDeathLoss:2, mp_perBull:25,
+    mp_hayPrice:210, mp_hayRollLb:1000
   };
   function readMarketPrices(){
     try {
@@ -638,11 +648,11 @@
       box.hidden = !r;
       if(!r) return;
       $('bcuRanchText').innerHTML = '<strong>My Ranch feed plan'+(r.ranch ? ' ('+String(r.ranch).replace(/[<>&]/g,'')+')' : '')+':</strong> $'+fmtMoney2.format(r.total)+' per cow a year &mdash; hay $'+fmtMoney2.format(r.hay)+', supplement $'+fmtMoney2.format(r.supplement)+', feeding trips &amp; delivery $'+fmtMoney2.format(r.feeding)+'.';
-      ['bcu_hayRolls','bcu_hayPrice'].forEach(function(id){ var el=$(id); if(el){ el.disabled = on; el.closest('.field').style.opacity = on ? 0.5 : ''; } });
+      ['bcu_hayRolls'].forEach(function(id){ var el=$(id); if(el){ el.disabled = on; el.closest('.field').style.opacity = on ? 0.5 : ''; } });
     }
 
     var BCU_DEFAULTS = {
-      bcu_landLeaseRate:15, bcu_landLeaseMonths:11, bcu_hayRolls:1.5, bcu_hayPrice:105,
+      bcu_landLeaseRate:15, bcu_landLeaseMonths:11, bcu_hayRolls:1.5,
       bcu_saltLbs:90, bcu_saltPrice:0.25, bcu_laborMgmt:120, bcu_vetMed:35,
       bcu_repairMaint:16, bcu_fuelOil:5, bcu_utilities:10, bcu_adminGA:20, bcu_vehicleDepr:48
     };
@@ -707,8 +717,12 @@
       refreshBullReadout(mp);
 
       var landLease = num('bcu_landLeaseRate')*num('bcu_landLeaseMonths');
-      var hayCost = num('bcu_hayRolls')*num('bcu_hayPrice');
-      var proteinQty = num('bcu_hayRolls')*1000*0.2/100;
+      // Hay price per roll = shared $/ton x roll weight (same hay price My Ranch uses)
+      var rollLb = mp.mp_hayRollLb > 0 ? mp.mp_hayRollLb : 1000, hayRoll = mp.mp_hayPrice*rollLb/2000;
+      if($('bcuHay_roll')) $('bcuHay_roll').textContent = '$'+fmtMoney2.format(hayRoll);
+      if($('bcuHay_note')) $('bcuHay_note').innerHTML = '$'+fmtMoney0.format(mp.mp_hayPrice)+'/ton &times; '+fmtMoney0.format(rollLb)+'&nbsp;lb roll &mdash; set in &ldquo;Market prices &amp; factors&rdquo; below';
+      var hayCost = num('bcu_hayRolls')*hayRoll;
+      var proteinQty = num('bcu_hayRolls')*rollLb*0.2/100;
       var proteinCost = proteinQty*20; // protein price fixed at $20/cwt per original sheet
       // Optional: purchased feed per cow from the My Ranch feed calendar replaces the hay-roll rule of thumb
       var ranch = readRanchFeed(), useRanch = !!(ranch && $('bcu_useRanchFeed') && $('bcu_useRanchFeed').checked);

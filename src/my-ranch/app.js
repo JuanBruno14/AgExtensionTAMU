@@ -45,12 +45,17 @@
     brush:  {label:'Brush / woods', icon:'🌳', style:{color:'#d5f0c8', weight:1.5, dashArray:'4 3', fillColor:'#2f5d27', fillOpacity:0.55}},
     bottom: {label:'Bottomland', icon:'〰', style:{color:'#e6fff5', weight:1.5, fillColor:'#35c29a', fillOpacity:0.45}}
   };
+  /* One hay price for the whole site: the home page's "Market prices & factors" store (mp_hayPrice, $/ton), default $210/ton ($105 per 1,000-lb roll, the BCU sheet) */
+  function sharedHayPrice(){
+    try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); var v = mp && +mp.mp_hayPrice; if(v > 0) return v; }catch(e){}
+    return 210;
+  }
   var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'none',
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535,
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto', fq:'typical',
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
-    // feed prices: Texas A&M AgriLife 2026 District 3 budgets, Prices sheet (hay $0.10/lb, supplement $0.196/lb = $9.80 per 50-lb bag, salt & mineral $0.45/lb)
-    hayTdn:55, hayCp:10, hayDm:88, hayPrice:200, mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
+    // feed prices: Texas A&M AgriLife 2026 District 3 budgets, Prices sheet (supplement $0.196/lb = $9.80 per 50-lb bag, salt & mineral $0.45/lb)
+    hayTdn:55, hayCp:10, hayDm:88, hayPrice:sharedHayPrice(), mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
     dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0},
     sell:{rate:8, death:0.5}};
