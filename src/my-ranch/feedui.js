@@ -749,11 +749,9 @@
       var post = [1, 2, 3, 4].map(function(k){ return r.months[(s + k) % 12]; });
       var cov = post.map(function(x){ var t = x.herdReq.tdn > 0 ? x.pasture.tdn/x.herdReq.tdn : 1, c = x.herdReq.cp > 0 ? x.pasture.cp/x.herdReq.cp : 1; return Math.min(1, t, c); });
       var postFeed = post.reduce(function(a, x){ return a + x.hayLb + x.supLb; }, 0);
-      // the cows' own needs (with bulls and replacement heifers): what grass has to cover; calves on grass are left out so the
-      // line shows the cow's year — dry, late pregnancy, nursing
-      // the herd you entered (cows, bulls, replacement heifers; NRC 2016 beef requirements), calves on grass left out so the line
-      // shows the cows' year — dry, late pregnancy, nursing
-      var need = r.months.map(function(x){ return x.herdReq.tdn - x.herdReq.calfTdn - x.herdReq.wcTdn; }), needYr = 0, metYr = 0;
+      // what grass has to cover: the whole herd on the ranch (NRC 2016 beef requirements) — cows, bulls, replacement heifers,
+      // and the calves: grass they eat on top of milk while nursing, and weaned calves while they stay on the ranch
+      var need = r.months.map(function(x){ return x.herdReq.tdn; }), needYr = 0, metYr = 0;
       need.forEach(function(d, m){ var n = FEED.MONTH_DAYS[m]; needYr += d*n; metYr += Math.min(d, grown[m].tot)*n; });
       var gapM = [], surM = [];
       need.forEach(function(d, m){ if(d > grown[m].tot*1.02) gapM.push(m); else if(grown[m].tot > d*1.02) surM.push(m); });
@@ -816,7 +814,7 @@
       rows.forEach(function(r, m){ sv += '<rect class="hit" data-m="' + m + '" tabindex="0" x="' + (ml + band*m) + '" y="' + mt + '" width="' + band + '" height="' + (ph + mb) + '"/>'; });
       sv += '</svg>';
       el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;">' + TYPES_G.map(function(t){ return '<span><i class="sw" style="background:' + t.c + ';"></i>' + t.l + ' grows</span>'; }).join('') +
-        '<span><i class="ln"></i>Your herd’s needs (cows, bulls, heifers), calving from ' + moStr(show) + '</span><span><i class="sw nurse-sw"></i>Cows nursing</span>' + (curRow ? '<span><i class="ln dash"></i>Your season</span>' : '') +
+        '<span><i class="ln"></i>Your herd’s needs (cows, calves, bulls, heifers), calving from ' + moStr(show) + '</span><span><i class="sw nurse-sw"></i>Cows nursing</span>' + (curRow ? '<span><i class="ln dash"></i>Your season</span>' : '') +
         '<span><i class="sw" style="background:var(--critical-700);border-radius:50%;"></i>Needs more than grows</span><span style="color:var(--ink-muted);">lb of energy (TDN) a day, whole herd</span></div>' + sv;
       a11yHits(el, 'Energy your pastures grow each month against the cows’ needs calving from ' + moStr(show), function(m){
         var g = grown[m], d = sel.need[m];
@@ -844,11 +842,11 @@
     var peak = (function(r){ var mx = 0; r.need.forEach(function(d, m){ if(d > r.need[mx]) mx = m; }); return mx; })(bestCov);
     var b = bestCov, bb = buyText(b), structural = grownYr < b.needYr*0.98;
     var gMax = Math.max.apply(null, grown.map(function(g){ return g.tot; })), topM = grown.map(function(g, m){ return g.tot >= gMax*0.5 ? m : -1; }).filter(function(m){ return m >= 0; });
-    var txt = 'With what your pastures grow, the best time to calve is from <strong>' + moStr(b.m) + '</strong>. Cows need the most in the months after calving, nursing (' + monthList(b.nurseM.slice().sort(function(x, y){ return x - y; })) + '), and calving then puts those months on your grass growing most (' + monthList(topM) + '): grass growing in those same months covers <strong>' + fmt(b.match*100) + '%</strong> of what the cows need while they nurse (' + fmt(worstCov.match*100) + '% calving from ' + FEED.MONTHS[worstCov.m] + ', the worst). ';
+    var txt = 'With what your pastures grow, the best time to calve is from <strong>' + moStr(b.m) + '</strong>. Cows need the most in the months after calving, nursing (' + monthList(b.nurseM.slice().sort(function(x, y){ return x - y; })) + '), and calving then puts those months on your grass growing most (' + monthList(topM) + '): grass growing in those same months covers <strong>' + fmt(b.match*100) + '%</strong> of what the herd needs while the cows nurse (' + fmt(worstCov.match*100) + '% calving from ' + FEED.MONTHS[worstCov.m] + ', the worst). ';
     if(topMatch !== b && topMatch.match > b.match + 0.005) txt += 'Calving from ' + moStr(topMatch.m) + ' matches the grass a little better while nursing (' + fmt(topMatch.match*100) + '%), but cows come to breeding thinner (BCS ' + fmt(topMatch.bcsBreed, 1) + '), so fewer get pregnant: ' + fmt(topMatch.calvRate) + '% calve instead of ' + fmt(b.calvRate) + '%. ';
-    if(b.gapM.length) txt += (b.surM.length ? 'Grass grows more than the cows need in <strong>' + monthList(b.surM) + '</strong>: leave that extra standing, it is the feed for <strong>' + monthList(b.gapM) + '</strong>, when the cows need more than grows. ' : 'The cows need more than grows in <strong>' + monthList(b.gapM) + '</strong>. ');
-    else txt += 'Every month grows at least what the cows need. ';
-    if(structural) txt += '<strong>Over the year your pastures grow less energy than the cows need</strong> (' + fmt(grownYr/1000) + ' vs. ' + fmt(b.needYr/1000) + ' thousand lb of TDN): no calving month fixes that. Carry fewer cows, add forage (small grains for winter) or plan to buy ' + (bb.length ? bb.join(' and ') : 'feed') + '. ';
+    if(b.gapM.length) txt += (b.surM.length ? 'Grass grows more than the herd needs in <strong>' + monthList(b.surM) + '</strong>: leave that extra standing, it is the feed for <strong>' + monthList(b.gapM) + '</strong>, when the herd needs more than grows. ' : 'The herd needs more than grows in <strong>' + monthList(b.gapM) + '</strong>. ');
+    else txt += 'Every month grows at least what the herd needs. ';
+    if(structural) txt += '<strong>Over the year your pastures grow less energy than the herd needs</strong> (' + fmt(grownYr/1000) + ' vs. ' + fmt(b.needYr/1000) + ' thousand lb of TDN): no calving month fixes that. Carry fewer cows, add forage (small grains for winter) or plan to buy ' + (bb.length ? bb.join(' and ') : 'feed') + '. ';
     else if(b.hayT >= 0.5) txt += 'The grass left standing doesn’t last through the short months: <strong>buy ' + bb[0].replace('<strong>', '') + '. ' + (bb[1] ? 'Also ' + bb[1] + '. ' : '');
     else txt += 'The grass left standing covers those months: <strong>no hay to buy</strong>. ' + (bb.length ? (h.supMode === 'full' ? 'You still need ' + bb[0] + ' to keep the cows’ condition. ' : 'Dry winter grass is short of protein (under 7%), so the cows still need ' + bb[0] + ': that is protein, not energy. ') : 'Nothing else to buy. ');
     if(cur && cur !== b) txt += 'Your season (from ' + moStr(cur.m) + '): grass covers ' + fmt(cur.match*100) + '% while the cows nurse' + (buyText(cur).length ? '; you’d buy ' + buyText(cur).join(' and ') : ', nothing to buy') + '. ';
