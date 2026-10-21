@@ -28,7 +28,7 @@
     };
     var MILK = {low:11, moderate:18, high:25};
     var MILK_FAT = 4.0, MILK_PROT = 3.8, MILK_SOLIDS = 8.3;
-    var MILK_E = 0.092*MILK_FAT + 0.049*MILK_SOLIDS - 0.0569;
+    var MILK_E = 0.092*MILK_FAT + 0.049*MILK_SOLIDS - 0.0569, MILK_SOLIDS_ALL = MILK_FAT + MILK_SOLIDS;
 
     /* USDA APHIS NAHMS Beef 2017, Part I, Table B.2.a: % of calves born by month (U.S.) */
     var NAHMS = [5.7,12.3,22.4,20.9,8.9,3.1,2.0,3.0,6.2,6.0,5.4,4.0];
@@ -409,11 +409,53 @@
     /* Pregnancy rate by body condition during the breeding season (Sprott 1985, in Texas A&M AgriLife B-1526, Table 5:
        BCS 4 or less 58%, 5 85%, 6 or more 95% pregnant after 150 days); straight lines between */
     function pregByBcs(b){ return b <= 4 ? 58 : b <= 5 ? 58 + (b - 4)*27 : b <= 6 ? 85 + (b - 5)*10 : 95; }
+    /* Nursing calf growth predicted from what the calf takes in (no target weight). NRC 2016 has no intake equation for
+       nursing calves and points to NRC (1987) and Tedeschi & Fox (2009) (NASEM 2016, Ch. 10, p. 163). So:
+       - milk: the dam's yield, NRC 2016 Eq. 19-21 (Wood curve, peak at 8.5 wk, peak by the milk input), scaled by the
+         herd's cow-age mix (Eq. 19-23, as in requirements);
+       - grazed forage: NRC (1987) Predicting Feed Intake of Food-Producing Animals, Table 6-7 (Fox, after Le Du et al.
+         1976): forage OM (g/kg live weight) = a + b x milk OM (g/kg live weight), a and b by month of lactation; OM is
+         81.9% of forage DM and 92.9% of milk DM; milk DM 12.3% (4.0% fat + 8.3% solids-not-fat, as for milk energy);
+       - energy: maintenance NEm = 0.077 SBW^0.75 x breed (NRC 2016), forage NEm and NEg from its TDN (NRC 2016), milk NE
+         counted first at 85% (assumption, same as calfDay); retained energy turned into gain with the NRC 2016 growth
+         equation (EWG = 12.341 EQEBW^-0.6837 RE^0.9116, EQSBW scaled to the 478-kg reference by the dam's weight).
+       Month by month forage TDN = the pasture mix. Cold stress on calves is not in the growth curve (it is in their needs).
+       Checked against two SPA closeouts: Cowden 2025 (Panhandle, 200 d) 541 vs 563 lb; Vanzandt 2023 (Mobeetie, 170 d) 458 vs
+       426 lb. Known limit: the NRC growth equation is built for heavier cattle, so the first two months run fast (3-4 lb/day)
+       and the last two slow (~1 lb/day); to be replaced by Tedeschi & Fox (2018) RNS 13.1.2-13.1.3 (milk energy for calves). */
+    var T67 = [[35.6, -3.11], [26.7, -2.12], [24.1, -2.19], [17.9, -1.71], [22.8, -2.21], [22.4, -2.60], [22.4, -2.60]];
+    function calfForageDmKg(bwKg, milkKg, dim){
+      var milkOm = milkKg*MILK_SOLIDS_ALL/100*0.929*1000/bwKg, t = T67[Math.min(6, Math.floor(dim/30.4))];
+      return Math.max(0, t[0] + t[1]*milkOm)/0.819*bwKg/1000;
+    }
+    function milkMix(o){ var sh = cowAgeShares(o); return sh.reduce(function(a, x, i){ return a + x*COW_AGE[i].milk; }, 0); }
+    function calfCurve(o, c, ftdn){
+      var br = BREEDS[o.breed] || BREEDS.angus, mf = milkMix(o), msbw = o.cowLb/LB*0.96;
+      var bw = o.birthLb/LB, curve = {bw:[], adg:[], forDm:[], milk:[]};
+      for(var a = 0; a < c.weanAge; a++){
+        var tdn = ftdn[monthOfDay(c.day + a)], milk = milkKg(a + 1, o.peakMilkLb)*mf;
+        var sbw = bw*0.96, nem = Math.pow(sbw, 0.75)*0.077*br.be*(1 + (o.activity || 0)*0.5);
+        var nm = nemaOf(tdn), ng = Math.max(0.05, negaOf(tdn)), forDm = calfForageDmKg(bw, milk, a), milkNE = milk*MILK_E*0.85;
+        var re = milkNE >= nem ? milkNE - nem + forDm*ng : Math.max(0, forDm - (nem - milkNE)/nm)*ng;
+        var eqebw = 0.891*sbw*478/msbw, ewg = re > 0 ? 12.341*Math.pow(eqebw, -0.6837)*Math.pow(re, 0.9116) : 0, adg = ewg/0.9216;
+        curve.bw.push(bw*LB); curve.adg.push(adg*LB); curve.forDm.push(forDm*LB); curve.milk.push(milk);
+        bw += adg;
+      }
+      curve.wean = bw*LB;
+      return curve;
+    }
     /* Everything that happens to the calves: survival, weights, sale income. */
-    function calfOutcome(o, cs){
+    function calfOutcome(o, cs, ftdn){
       var avgAge = cs.reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
       var refAge = o.refWeanAge || avgAge;
       var preAdg = Math.max(0.3, (o.weanLb - o.birthLb)/refAge);
+      var nrc = o.calfGrowth !== 'target';
+      if(nrc){
+        ftdn = ftdn || QUALITY.range.map(function(q){ return q[0]; });
+        var gSum = 0, sSum = 0;
+        cs.forEach(function(c){ c.curve = calfCurve(o, c, ftdn); gSum += c.share*(c.curve.wean - o.birthLb)/Math.max(1, c.weanAge); sSum += c.share; });
+        preAdg = Math.max(0.3, gSum/Math.max(1e-9, sSum));
+      } else cs.forEach(function(c){ c.curve = null; });
       var base = o.calfLoss/100, ws = WEATHER_SHARE;
       // weather deaths follow the birth month at the national (NAHMS) rate; the rest of your own loss rate stays as entered.
       // o.ownWeather = the weather share of losses in your actual season, so trying other seasons keeps your other losses fixed.
@@ -427,7 +469,7 @@
         var surv = Math.max(0, 1 - lOther - lWeather - lNws);
         // horn flies: weight lost in proportion to nursing days inside the fly season
         var hfDays = 0; for(var k = 0; k < c.weanAge; k++) if(hornFlyWindow(c.day + k)) hfDays++;
-        var wWean = (o.birthLb + preAdg*c.weanAge)*(1 - (o.hornFly || 0)/100*hfDays/Math.max(1, c.weanAge)) - (o.weanPenaltyLb || 0)*c.weanAge/Math.max(1, avgAge);
+        var wWean = (c.curve ? c.curve.wean : o.birthLb + preAdg*c.weanAge)*(1 - (o.hornFly || 0)/100*hfDays/Math.max(1, c.weanAge)) - (o.weanPenaltyLb || 0)*c.weanAge/Math.max(1, avgAge);
         var wSale = wWean + (o.postAdg || 0)*(o.weanPeriod || 0);
         var saleM = monthOfDay(c.day + c.weanAge + (o.weanPeriod || 0));
         var sIdx = seasonIdx(o, SEASON_CALF, saleM);
@@ -451,6 +493,7 @@
         out.cohorts.push(c);
       });
       out.avgSaleLb = out.sold > 0 ? out.soldLb/out.sold : 0;
+      out.growth = nrc ? 'nrc' : 'target';
       out.avgWeanLb = out.weaned > 0 ? cs.reduce(function(a, c){ return a + c.weaned*c.wWean; }, 0)/out.weaned : 0;
       out.avgPrice = out.soldLb > 0 ? out.calfIncome/(out.soldLb/100) : 0;
       return out;
@@ -521,10 +564,12 @@
           acc.dmiA += w*(CR*(preg > 93 ? 0.04631 : 0.0384) + (1 - CR)*0.0384); acc.dmiMilk += w*nurseFrac*(a.milkKg || 0);
           if(nursing){
             acc.lactFrac += w*nurseFrac;
-            var bw = o.birthLb + co.preAdg*dsc;
-            var k = calfDay(o, bw, co.preAdg, a.milkKg, forageTdnByMonth[m], env, dsc);
-            // a nursing calf can only eat so much forage: little in the first month, rising to ~2% of body weight (less on poor grass)
-            var capDm = bw/100*calfIntakePct(forageTdnByMonth[m])*Math.max(0, Math.min(1, (dsc - 21)/60));
+            var cv = c.curve, ci = cv ? Math.min(cv.bw.length - 1, dsc) : 0;
+            var bw = cv ? cv.bw[ci] : o.birthLb + co.preAdg*dsc, cAdg = cv ? cv.adg[ci] : co.preAdg;
+            var k = calfDay(o, bw, cAdg, a.milkKg, forageTdnByMonth[m], env, dsc);
+            // forage a nursing calf eats: NRC (1987) Table 6-7 with the predicted growth; with a target weight (old mode) a cap of
+            // 2.5-3.5% of body weight reached at about 80 days (assumption, not NRC)
+            var capDm = cv ? cv.forDm[ci] : bw/100*calfIntakePct(forageTdnByMonth[m])*Math.max(0, Math.min(1, (dsc - 21)/60));
             var dmEat = Math.min(k.dmLb, capDm);
             acc.calfTdn += w*nurseFrac*k.tdnLb; acc.calfCp += w*nurseFrac*k.cpLb; acc.calfDm += w*nurseFrac*dmEat;
             acc.calvesNursing += w*nurseFrac;
@@ -613,7 +658,7 @@
         supply.forEach(function(g){ var a = g.growth[m] + g.annual/12; w += a; s += a*g.quality[m][0]; });
         ftdn.push(w > 0 ? s/w : QUALITY.range[m][0]);
       }
-      var cs = cohorts(o), co = calfOutcome(o, cs);
+      var cs = cohorts(o), co = calfOutcome(o, cs, ftdn);
       var req = requirements(o, cs, co, ftdn);
       var cows = o.cows*(1 - (o.cowLoss || 0)/200), bulls = o.bulls;
       var stock = supply.map(function(){ return 0; }), months = [];
@@ -700,7 +745,7 @@
             pasture:{tdn:cows*(cw.forage*dTdn/100 + calfTdnSup) + bulls*bl.forage*dTdn/100 + wcHeads*wcHead.forage*dTdn/100 + hHeads*hHead.forage*dTdn/100,
                      cp:cows*(cw.forage*dCp/100 + calfCpSup) + bulls*bl.forage*dCp/100 + wcHeads*wcHead.forage*dCp/100 + hHeads*hHead.forage*dCp/100},
             cow:cw, typCow:typ, bull:bl, wc:wcHead, wcHeads:wcHeads, heifer:hHead, heiferHeads:hHeads,
-            calfShortTdn:Math.max(0, r.calfTdn - calfTdnSup), calfShortCp:Math.max(0, r.calfCp - calfCpSup),
+            calfShortTdn:co.growth === 'nrc' ? 0 : Math.max(0, r.calfTdn - calfTdnSup), calfShortCp:co.growth === 'nrc' ? 0 : Math.max(0, r.calfCp - calfCpSup),
             hayLb:hayLb, supLb:supLb, trips:trips, feedCost:feedCost, tripCost:tripCost, distCost:distCost,
             cost:feedCost + tripCost + distCost
           });
@@ -718,11 +763,11 @@
       // calf still gains at least a quarter of its potential on milk, so weight lost in a month is capped at 75% of that month's gain
       var lostPerCow = 0;
       months.forEach(function(x){ lostPerCow += Math.min(x.calfShortTdn*x.days/mT, 0.75*co.preAdg*x.days*x.req.calf.nursing); });
-      var lbLost = Math.min(o.weanLb*0.6, co.weaned > 0 ? lostPerCow/co.weaned : 0);
+      var lbLost = o.calfShort === 'none' ? 0 : Math.min(o.weanLb*0.6, co.weaned > 0 ? lostPerCow/co.weaned : 0);   // 'none': weight taken as given (sensitivity runs)
       var creepPerCalf = lbLost*(o.creepConv || 8);   // lb of creep per lb of added gain: 5-10:1 when forage is short or poor (NDSU Extension)
       var calfStrat = o.calfShort === 'lighter' ? 'lighter' : 'creep';
       if(calfStrat === 'lighter' && lbLost > 0.5){
-        co = calfOutcome(Object.assign({}, o, {weanPenaltyLb:lbLost}), cs);
+        co = calfOutcome(Object.assign({}, o, {weanPenaltyLb:lbLost}), cs, ftdn);
       }
       var calfInfo = {strategy:calfStrat, lbLostPerCalf:lbLost, creepLbPerCalf:creepPerCalf, shortTdnPerCalf:perCalfT, shortCpPerCalf:perCalfP,
                       creepLb:calfStrat === 'creep' ? creepPerCalf*co.weaned*o.cows : 0};
@@ -790,6 +835,6 @@
     return {pastureGrowth:pastureGrowth, heiferDay:heiferDay, heiferState:heiferState, heifersKeptPerCow:heifersKeptPerCow, heiferAges:heiferAges, bodyEnergy:bodyEnergy, SEASON_CALF:SEASON_CALF, SEASON_CULL:SEASON_CULL, nemaOf:nemaOf, needAt:needAt, cowParams:cowParams, envFor:envFor, birthLb:birthLb, BREEDS:BREEDS, MILK:MILK, REGIONS:REGIONS, QUALITY:QUALITY, ACTIVITY:ACTIVITY, MONTHS:MONTHS, MONTH_DAYS:MONTH_DAYS, MONTH_START:MONTH_START,
             NAHMS:NAHMS, SOURCES:SOURCES, LOSS_DEFAULT:LOSS_DEFAULT, WEATHER_SHARE:WEATHER_SHARE,
             cowDay:cowDay, retainedEnergy:retainedEnergy, mpToNp:mpToNp, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, COW_AGE:COW_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
-            intakePct:intakePct, doy:doy, B6124:B6124, rangeQuality:rangeQuality, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfOutcome:calfOutcome,
+            intakePct:intakePct, doy:doy, B6124:B6124, rangeQuality:rangeQuality, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfCurve:calfCurve, calfForageDmKg:calfForageDmKg, T67:T67, calfOutcome:calfOutcome,
             weatherFactor:weatherFactor, grazeFactor:grazeFactor, weatherLoss:weatherLoss, pregByBcs:pregByBcs, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
   })();

@@ -132,7 +132,7 @@
     var o = {cows:h.cows, bulls:bullCount(), cowLb:h.cowLb, bullLb:h.bullLb, breed:h.breed, bcs:+h.bcs, peakMilkLb:FEED.MILK[h.milk] || 18,
       activity:FEED.ACTIVITY[h.activity] || 0, calving:h.calving, start1:FEED.doy(h.start1), len1:h.len1, start2:FEED.doy(h.start2), len2:h.len2, share2:h.share2,
       weanMode:h.calving === 'us' ? 'age' : 'date', weanAge:h.weanAge, weanDoy1:FEED.doy(h.wean1), weanDoy2:FEED.doy(h.wean2),
-      weanLb:h.weanLb, birthLb:FEED.birthLb({breed:h.breed}), weanPeriod:h.weanPeriod, postAdg:h.postAdg,
+      weanLb:h.weanLb, calfGrowth:h.calfGrowth === 'target' ? 'target' : 'nrc', birthLb:FEED.birthLb({breed:h.breed}), weanPeriod:h.weanPeriod, postAdg:h.postAdg,
       calvingRate:h.calvingRate, calfLoss:h.calfLoss, cowLoss:h.cowLoss, region:regionKey(),
       replRate:+h.replRate || 0, heiferPreg:+h.heiferPreg || 85, cullPrice:cullPrice(over && over.priceMult), bcsWean:+h.bcsWean || +h.bcs,
       seasonal:h.seasonal !== 'off', nowMonth:new Date().getMonth(),
@@ -580,7 +580,13 @@
 
     var ages = co.cohorts.map(function(c){ return c.weanAge; }), minA = Math.min.apply(null, ages), maxA = Math.max.apply(null, ages);
     $('fc_weanNote').textContent = h.calving === 'us' ? '' : 'Calves will be ' + (minA === maxA ? minA : minA + '–' + maxA) + ' days old at weaning (average ' + fmt(co.avgAge) + ').';
-    $('fc_weanLbHint').textContent = 'Growth ' + fmt(co.preAdg, 2) + ' lb/day from birth; sale weight after the weaning period ≈ ' + fmt(ec.avgSaleLb) + ' lb';
+    var predicted = co.growth === 'nrc';
+    $('fc_calfShortSet').hidden = predicted;
+    $('fc_weanLbLabel').textContent = predicted ? 'Your actual weaning weight (to compare)' : 'Average weaning weight';
+    $('fc_calfGrowthHint').innerHTML = predicted ? 'About <strong>' + fmt(ec.avgWeanLb) + ' lb</strong> at ' + fmt(co.avgAge) + ' days (' + fmt(co.preAdg, 2) + ' lb/day): the cows’ milk (NRC 2016) and the grass calves eat beside it (NRC 1987)' : 'Creep feed or lighter calves when milk and grass fall short';
+    $('fc_weanLbHint').textContent = predicted
+      ? (h.weanLb > 0 ? 'Your records vs. predicted: ' + (h.weanLb >= ec.avgWeanLb ? '+' : '−') + fmt(Math.abs(h.weanLb/ec.avgWeanLb - 1)*100) + '%. Not used in the numbers; switch to “I enter it” to use it.' : '')
+      : 'Growth ' + fmt(co.preAdg, 2) + ' lb/day from birth; sale weight after the weaning period ≈ ' + fmt(ec.avgSaleLb) + ' lb';
     $('fc_replNote').innerHTML = ec.heifersKept > 0.05
       ? 'Each year: keep <strong>' + fmt(ec.heifersKept) + ' heifer calves</strong>, sell ' + fmt(ec.opensSold, 1) + ' open at pregnancy check and ' + fmt(ec.cullsSold) + ' cull cows (' + money(ec.cullIncome + ec.openIncome) + '). About ' + fmt(res.months.reduce(function(a, x){ return a + x.heiferHeads; }, 0)/12) + ' heifers are on the ranch on an average day.'
       : 'Replacements aren’t raised here: no heifers kept and no culls sold.';
@@ -1110,7 +1116,7 @@
     var tests = [
       {label:'Pasture forage', lo:'−25%', hi:'+25%', a:function(){ return netOf({}, {}, 0.75); }, b:function(){ return netOf({}, {}, 1.25); }},
       {label:'Calf prices', lo:'−10%', hi:'+10%', a:function(){ return netOf({priceMult:0.9}); }, b:function(){ return netOf({priceMult:1.1}); }},
-      {label:'Weaning weight', lo:'−10%', hi:'+10%', a:function(){ return netOf({weanLb:h.weanLb*0.9}); }, b:function(){ return netOf({weanLb:h.weanLb*1.1}); }},
+      {label:'Weaning weight', lo:'−10%', hi:'+10%', a:function(){ var w = feedLast.econ.avgWeanLb; return netOf({calfGrowth:'target', weanLb:w*0.9, calfShort:'none'}); }, b:function(){ var w = feedLast.econ.avgWeanLb; return netOf({calfGrowth:'target', weanLb:w*1.1, calfShort:'none'}); }},
       {label:'Hay price', lo:'+25%', hi:'−25%', a:function(){ return netOf({}, {hayPrice:h.hayPrice*1.25}); }, b:function(){ return netOf({}, {hayPrice:h.hayPrice*0.75}); }},
       {label:'Supplement price', lo:'+25%', hi:'−25%', a:function(){ return netOf({}, {supPrice:h.supPrice*1.25}); }, b:function(){ return netOf({}, {supPrice:h.supPrice*0.75}); }},
       {label:'Calf death loss', lo:'+3 pts', hi:'−3 pts', a:function(){ return netOf({calfLoss:h.calfLoss + 3}); }, b:function(){ return netOf({calfLoss:Math.max(0, h.calfLoss - 3)}); }},

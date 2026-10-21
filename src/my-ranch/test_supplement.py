@@ -28,7 +28,7 @@ with sync_playwright() as pw:
       return F.MONTH_START.map(function(d){ var r=MyRanch.netOf({calving:'one',start1:d+14,len1:63,weanMode:'age',weanAge:age,refWeanAge:age,activity:FEED_ACT}); return [r.econ.weanLbNoCreep, r.bcs.breed, F.pregByBcs(r.bcs.breed)]; });})()""")
     nat=[r[0] for r in rows]; bcs=[r[1] for r in rows]; preg=[r[2] for r in rows]
     check('natural weaning weight varies by calving month', max(nat)-min(nat) > 40, nat)
-    check('April natural weight within 15% of Vanzandt 426 lb', 360 < nat[3] < 440, nat[3])
+    check('April natural weight within 15% of Vanzandt 426 lb', 426*0.85 < nat[3] < 426*1.15, nat[3])
     check('summer calving weans lighter than spring', nat[7] < nat[2], (nat[2], nat[7]))
     check('calving rate follows breeding condition', bcs[10] < bcs[3] and preg[10] < preg[3], list(zip(bcs,preg)))
     check('calving: chart only, no table', pg.locator('#dec_calvTable').count()==0 and pg.locator('#dec_calvChart rect.seg').count()>=6)

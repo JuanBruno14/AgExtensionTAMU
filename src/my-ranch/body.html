@@ -333,9 +333,10 @@
                 <div class="field"><label for="fc_activity">Terrain &amp; walking</label>
                   <select id="fc_activity" data-hs="activity"><option value="none">No adjustment (NRC 2016 model)</option><option value="flat">Flat, plenty of grass (+10%)</option><option value="rolling">Rolling or moderate grass (+20%)</option><option value="rough">Rough or sparse range (+35%)</option><option value="extensive">Big range, long walks to water (+50%)</option></select><span class="hint">The NRC 2016 model adds nothing for walking: cows used to their range spend little extra. Pick a terrain only if your cows travel far for feed or water (CSIRO figures)</span></div>
                 <div class="field"><label for="fc_calvingRate">Calving rate</label><div class="input-wrap has-suffix"><input type="number" id="fc_calvingRate" data-h="calvingRate" min="30" max="100" step="1"><span class="suffix">%</span></div></div>
-                <div class="field"><label for="fc_weanLb">Average weaning weight</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanLb" data-h="weanLb" min="250" max="900" step="5"><span class="suffix">lb</span></div><span class="hint" id="fc_weanLbHint"></span></div>
+                <div class="field"><label for="fc_calfGrowth">Weaning weight</label><select id="fc_calfGrowth" data-hs="calfGrowth"><option value="nrc">Predicted from milk and grass (NRC)</option><option value="target">I enter it</option></select><span class="hint" id="fc_calfGrowthHint"></span></div>
+                <div class="field"><label for="fc_weanLb" id="fc_weanLbLabel">Average weaning weight</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanLb" data-h="weanLb" min="250" max="900" step="5"><span class="suffix">lb</span></div><span class="hint" id="fc_weanLbHint"></span></div>
               </div>
-              <fieldset style="margin-top:18px;">
+              <fieldset style="margin-top:18px;" id="fc_calfShortSet">
                 <legend>When milk and grass can’t grow the calves to that weight</legend>
                 <div class="field-grid cols-3">
                   <div class="field" style="grid-column:span 2;"><label for="fc_calfShort">What you do</label>
