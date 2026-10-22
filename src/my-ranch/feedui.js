@@ -896,10 +896,11 @@
     var ec = res.econ, oc = otherCosts(), total = ec.costs + oc.total, weanedCwt = (ec.calvesSold + ec.heifersKept)*ec.avgWeanLb/100;
     return {other:oc, total:total, net:ec.income - total, perCow:total/Math.max(1, state.herd.cows), breakeven:weanedCwt > 0 ? (total - ec.cullIncome - ec.openIncome)/weanedCwt : null};
   }
+  function ocFlash(msg){ renderOcNote(); var el = $('oc_note'); if(el) el.innerHTML = '<strong>' + esc(msg) + '</strong> ' + el.innerHTML; }
   function renderOcNote(){
     var el = $('oc_note'); if(!el) return;
     var oc = otherCosts();
-    el.innerHTML = 'Bull depreciation: ' + money(bullDeprPerBull()) + ' per bull a year × ' + bullCount() + ' bulls = ' + money(oc.bullTotal) + '. All other costs: <strong>' + money(oc.perCow) + ' per cow</strong> (' + money(oc.total) + ' a year).';
+    el.innerHTML = 'Bull depreciation: ' + money(bullDeprPerBull()) + ' per bull a year × ' + bullCount() + ' bulls = ' + money(oc.bullTotal) + '. All other costs: <strong>' + money(oc.perCow) + ' per cow</strong> (' + money(oc.total) + ' a year). Net return in the bar at the top and in the year plan.';
   }
 
   /* ---- Texas A&M Cow-Calf SPA Worksheets (.xlsx): read the cached values of the "Data Entry" and "SPASum" sheets with JSZip
@@ -1360,11 +1361,17 @@
     $('oc_fromBcu').addEventListener('click', function(){
       var b = null; try{ b = JSON.parse(localStorage.getItem(BCU_KEY) || 'null'); }catch(e){}
       if(!b || !isFinite(b.bcu_laborMgmt)){ $('oc_note').innerHTML = 'No saved numbers in the home page’s “Cow operating cost (BCU)” calculator on this browser yet — open it on the home page, or type your own here.'; return; }
+      var before = Object.assign({}, state.herd.oc);
       state.herd.oc = {land:(+b.bcu_landLeaseRate || 0)*(+b.bcu_landLeaseMonths || 0), labor:+b.bcu_laborMgmt || 0, vet:+b.bcu_vetMed || 0, repairs:+b.bcu_repairMaint || 0, fuel:+b.bcu_fuelOil || 0,
                        utilities:+b.bcu_utilities || 0, admin:+b.bcu_adminGA || 0, vehicle:+b.bcu_vehicleDepr || 0, other:0};
-      bindFeedValues(); rerender();
+      var same = OC_KEYS.every(function(k){ return +before[k] === +state.herd.oc[k]; });
+      bindFeedValues(); rerender(); ocFlash(same ? 'The home page’s cow-cost numbers are the same as these — nothing to change. Edit them in “Cow operating cost (BCU)” on the home page, or type your own here.' : 'Copied from the home page’s “Cow operating cost (BCU)”.');
     });
-    $('oc_reset').addEventListener('click', function(){ state.herd.oc = Object.assign({}, DEFAULT_HERD.oc); bindFeedValues(); rerender(); });
+    $('oc_reset').addEventListener('click', function(){
+      var before = Object.assign({}, state.herd.oc), same = OC_KEYS.every(function(k){ return +before[k] === +DEFAULT_HERD.oc[k]; });
+      state.herd.oc = Object.assign({}, DEFAULT_HERD.oc); bindFeedValues(); rerender();
+      ocFlash(same ? 'These already are the BCU sheet’s values.' : 'Back to the BCU sheet’s values.');
+    });
     $('spaBtn').addEventListener('click', function(){ $('spaInput').click(); });
     $('spaInput').addEventListener('change', function(){
       var f = this.files && this.files[0]; this.value = ''; if(!f) return;

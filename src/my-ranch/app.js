@@ -1690,7 +1690,7 @@
       if(hay >= 0.05) parts.push(fmt(hay, hay < 10 ? 1 : 0) + ' t hay');
       if(sup >= 0.05) parts.push(fmt(sup, sup < 10 ? 1 : 0) + ' t ' + (f.bcs && f.bcs.mode === 'full' ? 'suppl.' : 'protein'));
       $('st_feed').textContent = parts.length ? parts.join(' + ') : 'None';
-      $('st_net').textContent = money(f.econ.net); $('st_net').className = f.econ.net >= 0 ? '' : 'bad';
+      var ea = econAll(f); $('st_net').textContent = money(ea.net); $('st_net').className = ea.net >= 0 ? '' : 'bad';
     } else { $('st_feed').textContent = '—'; $('st_net').textContent = '—'; $('st_net').className = ''; }
     markSteps();
   }
