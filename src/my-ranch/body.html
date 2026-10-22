@@ -241,6 +241,9 @@
       <h2>Your herd</h2>
     </div>
     <div class="card-body">
+      <div class="spa-load"><button type="button" class="tool-btn" id="spaBtn">📄 Fill in from my SPA worksheet (.xlsx)</button>
+        <input type="file" id="spaInput" accept=".xlsx" hidden>
+        <span class="hint" id="spaNote">Texas A&amp;M Cow-Calf SPA Worksheets: fills cows, calving, weaning, calf crop, losses, replacements and costs, and shows your records next to My Ranch’s numbers.</span></div>
       <div class="field-grid cols-4">
           <div class="field">
             <label for="hd_cows">Cows</label>
@@ -443,6 +446,25 @@
               <div class="btn-row" style="padding:14px 0 0;"><button type="button" class="tool-btn" id="fc_reset">Reset herd &amp; feed details</button></div>
             </div>
           </details>
+          <details class="advanced" style="margin-top:12px;" id="ocDetails">
+            <summary>Other costs per cow (land, labor, vet, equipment)</summary>
+            <div class="adv-body">
+              <p class="card-note" style="margin:0 0 12px;">Everything that isn’t feed, per cow a year. Starting values are the home page’s “Cow operating cost (BCU)” sheet; bull depreciation comes from “Market prices &amp; factors”. With them the year plan shows the net return and the calf price you need to break even.</p>
+              <div class="field-grid cols-3">
+                <div class="field"><label for="oc_land">Land lease or grazing</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_land" data-oc="land" min="0" max="5000" step="1"></div><span class="hint">BCU sheet: $15 a month × 11 months</span></div>
+                <div class="field"><label for="oc_labor">Labor &amp; management</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_labor" data-oc="labor" min="0" max="5000" step="1"></div></div>
+                <div class="field"><label for="oc_vet">Veterinarian &amp; medicine</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_vet" data-oc="vet" min="0" max="2000" step="1"></div></div>
+                <div class="field"><label for="oc_repairs">Repairs &amp; maintenance</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_repairs" data-oc="repairs" min="0" max="2000" step="1"></div></div>
+                <div class="field"><label for="oc_fuel">Fuel &amp; oil</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_fuel" data-oc="fuel" min="0" max="2000" step="1"></div><span class="hint">Feeding trips are already in the feed cost</span></div>
+                <div class="field"><label for="oc_utilities">Utilities</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_utilities" data-oc="utilities" min="0" max="2000" step="1"></div></div>
+                <div class="field"><label for="oc_admin">Office, insurance &amp; overhead</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_admin" data-oc="admin" min="0" max="2000" step="1"></div></div>
+                <div class="field"><label for="oc_vehicle">Vehicle &amp; equipment depreciation</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_vehicle" data-oc="vehicle" min="0" max="2000" step="1"></div></div>
+                <div class="field"><label for="oc_other">Other</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_other" data-oc="other" min="0" max="10000" step="1"></div></div>
+              </div>
+              <p class="card-note" id="oc_note" style="margin:10px 0 0;"></p>
+              <div class="btn-row" style="padding:12px 0 0;gap:8px;flex-wrap:wrap;"><button type="button" class="tool-btn" id="oc_fromBcu">Use the home page’s cow-cost numbers</button><button type="button" class="tool-btn" id="oc_reset">Back to the BCU sheet’s values</button></div>
+            </div>
+          </details>
     </div>
   </div>
   <div class="mr-next"><button type="button" class="tool-btn" data-go="ranch">← 1 · Ranch</button><button type="button" class="tool-btn primary" data-go="plan">3 · Year plan →</button></div>
@@ -461,6 +483,7 @@
           <div class="stat-tiles fc-tiles" id="fc_tiles"></div>
           <div class="btn-row" style="padding:12px 0 0;gap:8px;flex-wrap:wrap;"><button type="button" class="tool-btn" id="fc_planBtn">🗒 Print a one-page year plan for this herd</button><button type="button" class="tool-btn" id="fc_bcuBtn">➜ Use this feed cost in Cow operating cost</button></div>
           <p class="card-note" id="fc_bcuNote" style="margin:8px 0 0;"></p>
+          <div id="fc_spa" hidden></div>
           <div class="plan-grid">
             <div class="plan-col">
               <h3 class="sub-h" style="margin-top:0;">What the herd needs vs. what the grass gives</h3>

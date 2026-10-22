@@ -58,7 +58,9 @@
     hayTdn:55, hayCp:10, hayDm:88, hayPrice:sharedHayPrice(), mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
     dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0},
-    sell:{rate:8, death:0.5}};
+    sell:{rate:8, death:0.5},
+    // other (non-feed) costs, $ per cow a year: the home page's "Cow operating cost (BCU)" sheet defaults (land lease $15 x 11 months)
+    oc:{land:165, labor:120, vet:35, repairs:16, fuel:5, utilities:10, admin:20, vehicle:48, other:0}};
 
 /*@@FEED@@*/
   /* ------------------------------------------------------------------ helpers */
@@ -143,7 +145,7 @@
   }
 
   /* ------------------------------------------------------------------ state */
-  function blankState(){ return {v:1, name:'', pastures:[], points:[], zones:[], settings:Object.assign({}, DEFAULT_SETTINGS), herd:Object.assign({}, DEFAULT_HERD, {dr:Object.assign({}, DEFAULT_HERD.dr), sell:Object.assign({}, DEFAULT_HERD.sell)}), drought:null, view:null, summary:null, herdNow:null}; }
+  function blankState(){ return {v:1, name:'', pastures:[], points:[], zones:[], settings:Object.assign({}, DEFAULT_SETTINGS), herd:Object.assign({}, DEFAULT_HERD, {dr:Object.assign({}, DEFAULT_HERD.dr), sell:Object.assign({}, DEFAULT_HERD.sell), oc:Object.assign({}, DEFAULT_HERD.oc)}), drought:null, view:null, summary:null, herdNow:null}; }
   function loadState(){
     try{
       var s = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
@@ -155,6 +157,7 @@
         s.settings.zoneF = Object.assign({}, DEFAULT_SETTINGS.zoneF, s.settings.zoneF || {});
         s.herd.dr = Object.assign({}, DEFAULT_HERD.dr, s.herd.dr || {});
         s.herd.sell = Object.assign({}, DEFAULT_HERD.sell, s.herd.sell || {});
+        s.herd.oc = Object.assign({}, DEFAULT_HERD.oc, s.herd.oc || {});
         s.zones = (s.zones || []).filter(function(z){ return z && z.geometry && z.geometry.type === 'Polygon' && ZONE_TYPES[z.type]; });
         s.pastures.forEach(function(p){ if(!CONDITIONS[p.condition]) p.condition = 'fair'; });
         delete s.settings.herdAU;
@@ -1178,6 +1181,8 @@
       if(shortM.length) lines.push('Grass too short for a full bite (NRC 2016 grazing intake factor) in: ' + shortM.join(', ') + '.');
       lines.push('Model settings: weather adjustments ' + (h.weatherAdj === 'off' ? 'off' : 'on') + '; walking allowance ' + (h.activity && h.activity !== 'none' ? h.activity : 'none (NRC 2016 default)') + '; supplement mode ' + (h.supMode === 'full' ? 'covers energy and protein' : 'protein only') + '; ' + (h.replRate || 0) + '% of cows replaced a year.');
       lines.push('Yearly purchased feed: ' + fmt(fb.totals.hay/2000, 1) + ' tons hay ($' + h.hayPrice + '/ton, ' + h.hayTdn + '% TDN, ' + h.hayCp + '% CP) + ' + fmt(fb.totals.sup/2000, 1) + ' tons supplement ($' + h.supPrice + '/ton, ' + h.supCp + '% CP) + feeding trips & delivery = ' + money(fb.totals.cost) + ' (' + money(fb.totals.cost/h.cows) + ' per cow).');
+      if(fb.econ && typeof econAll === 'function'){ var ea = econAll(fb); lines.push('Weaning weight ' + (fb.calves && fb.calves.growth === 'nrc' ? 'predicted from milk and grass (NRC 2016 milk, NRC 1987 Table 6-7 calf forage): ' : 'entered: ') + fmt(fb.econ.avgWeanLb) + ' lb. Other (non-feed) costs ' + money(ea.other.perCow) + ' per cow; net return ' + money(ea.net) + ' (' + money(ea.net/Math.max(1, h.cows)) + ' per cow); break-even calf price ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : 'n/a') + '.'); }
+      if(state.spa){ var sp = state.spa; lines.push('SPA records loaded (fiscal year ' + (sp.year || '?') + '): ' + fmt(sp.exposed) + ' exposed females, ' + fmt(sp.weaned) + ' calves weaned at ' + fmt(sp.weanLb) + ' lb, ' + fmt((sp.protLb || 0)/Math.max(1, sp.exposed || 1)) + ' lb protein supplement per cow, total cost $' + fmt(sp.costCow) + ' per breeding cow.'); }
     }
     var d = state.drought;
     if(d && d.status === 'ok') lines.push('U.S. Drought Monitor at the ranch: ' + (d.dm < 0 ? 'no drought mapped' : DM_LABELS[Math.min(d.dm,4)].code + ' ' + DM_LABELS[Math.min(d.dm,4)].name) + (d.date ? ' (week of ' + new Date(d.date).toISOString().slice(0,10) + ')' : '') + '.');
@@ -1281,6 +1286,8 @@
         state.herd = Object.assign({}, DEFAULT_HERD, mr.herd);
         state.herd.dr = Object.assign({}, DEFAULT_HERD.dr, mr.herd.dr || {});
         state.herd.sell = Object.assign({}, DEFAULT_HERD.sell, mr.herd.sell || {});
+        state.herd.oc = Object.assign({}, DEFAULT_HERD.oc, mr.herd.oc || {});
+        state.spa = mr.spa && typeof mr.spa === 'object' ? mr.spa : null;
         herdLoaded = true;
       }
       if(mr.settings && typeof mr.settings === 'object'){
@@ -1363,7 +1370,7 @@
     }));
     var st = state.settings;
     return {type:'FeatureCollection', name:state.name || 'My Ranch', features:feats,
-            my_ranch:{version:1, name:state.name || '', herd:state.herd, herdNow:state.herdNow || null,
+            my_ranch:{version:1, name:state.name || '', herd:state.herd, herdNow:state.herdNow || null, spa:state.spa || null,
                       settings:{harvestEff:st.harvestEff, intakeLb:st.intakeLb, manualCap:st.manualCap, maxGraze:st.maxGraze, cond:st.cond, zoneF:st.zoneF}}};
   }
   function xml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]; }); }

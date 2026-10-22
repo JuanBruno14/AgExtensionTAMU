@@ -34,7 +34,7 @@ jobs:
 
       - name: Install test tools
         run: |
-          pip install playwright==1.56.0 pyshp==2.3.1
+          pip install playwright==1.56.0 pyshp==2.3.1 openpyxl==3.1.5
           python -m playwright install --with-deps chromium
           (cd src/my-ranch && npm install --no-audit --no-fund)
           (cd tools && npm install --no-audit --no-fund axe-core@4.10.2)
@@ -65,7 +65,7 @@ jobs:
 
       - name: My Ranch and Herd Calculators
         run: |
-          for t in test_ranch test_grass test_portal test_import test_supplement test_steps test_examples test_jim_ranch; do
+          for t in test_ranch test_grass test_portal test_import test_supplement test_steps test_examples test_jim_ranch test_spa; do
             echo "::group::$t"
             python3 src/my-ranch/$t.py | tee /tmp/$t.log
             echo "::endgroup::"

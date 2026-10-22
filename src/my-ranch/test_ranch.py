@@ -128,7 +128,7 @@ with sync_playwright() as pw:
     check('feed monthly totals add up', abs(sum(m['hayLb'] for m in fl['months'])-fl['totals']['hay'])<1e-6 and abs(sum(m['cost'] for m in fl['months'])-fl['totals']['cost'])<1e-6)
     check('no hay when pasture covers the month', all(m['hayLb']<1e-6 for m in fl['months'] if m['pastureShare']>=0.999999))
     check('pasture share within 0..1', all(0<=m['pastureShare']<=1 for m in fl['months']))
-    check('tiles show cattle sales', 'cattle sales' in page.inner_text('#fc_tiles').lower() and 'minus feed' in page.inner_text('#fc_tiles').lower())
+    check('tiles show cattle sales and net return', 'cattle sales' in page.inner_text('#fc_tiles').lower() and 'net return' in page.inner_text('#fc_tiles').lower())
     check('US calving default hides dates', not page.is_visible('#fc_start1'))
     page.select_option('#fc_calving','one'); page.wait_for_timeout(200)
     check('one season shows dates', page.is_visible('#fc_start1') and not page.is_visible('#fc_start2'))
