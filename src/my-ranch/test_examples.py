@@ -62,6 +62,8 @@ with sync_playwright() as pw:
     pg.evaluate("document.querySelector('[data-example=central-texas-1600ac]').click()"); pg.wait_for_timeout(2000)
     pg.evaluate("MyRanch.go('decide')"); pg.click('.seg-btn[data-dec="drought"]'); pg.wait_for_timeout(2500)
     check('drought grid: 3 severities x 4 lengths', pg.locator('#dec_drGrid td.dg').count()==12)
+    dt=pg.inner_text('#dec_drOptions')
+    check('drought: selling cows counts the vet & medicine they take with them', 'Other costs saved' in dt and '× $35' in dt, dt[:400])
     pg.fill('#dr_hayPrice','350'); pg.wait_for_timeout(3000)
     bt=pg.inner_text('#dec_drBreak')
     check('drought breakpoints: how long before selling pays, and the hay price', 'pays once the drought lasts' in bt and 'hay costs more than' in bt, bt)

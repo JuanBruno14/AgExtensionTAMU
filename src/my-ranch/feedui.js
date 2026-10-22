@@ -916,7 +916,7 @@
         var sheets = {}, jobs = [];
         Array.prototype.forEach.call(wb.getElementsByTagName('sheet'), function(sh){
           var name = sh.getAttribute('name'), rid = sh.getAttribute('r:id') || sh.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships', 'id');
-          if(!/^(Data Entry|SPASum)$/.test(name) || !targets[rid]) return;
+          if(!/^(Data Entry|SPASum|ISData)$/.test(name) || !targets[rid]) return;
           var path = targets[rid].replace(/^\/?(xl\/)?/, 'xl/');
           jobs.push(txt(path).then(function(x){
             var rows = {};
@@ -966,7 +966,12 @@
   function readSpa(file){
     if(!/\.xlsx$/i.test(file.name)) return Promise.reject(new Error('Use the SPA worksheet saved as .xlsx.'));
     return readAs(file, 'buffer').then(xlsxSheets).then(function(sh){
-      var D = sh['Data Entry'], S = sh['SPASum'] || {};
+      var D = sh['Data Entry'], S = sh['SPASum'] || {}, I = sh['ISData'] || {};
+      // income statement: the cow-calf column of feed expense lines (two columns right of the total column)
+      var isCol = (function(){ var k = Object.keys(I).filter(function(r){ return (I[r] || []).some(function(c){ return typeof c.v === 'string' && /^\s*Total Operating Expenses/.test(c.v); }); })[0];
+        if(!k) return null; var n = (I[k] || []).filter(function(c){ return typeof c.v === 'number'; }).sort(function(a, b){ return a.col - b.col; })[0]; return n ? n.col + 2 : null; })();
+      function isCC(re){ if(isCol == null) return null; var k = Object.keys(I).filter(function(r){ return (I[r] || []).some(function(c){ return typeof c.v === 'string' && re.test(c.v); }); })[0];
+        if(!k) return null; var c = (I[k] || []).filter(function(x){ return x.col === isCol && typeof x.v === 'number'; })[0]; return c ? c.v : 0; }
       if(!D) throw new Error('No “Data Entry” sheet found — is this the Texas A&M Cow-Calf SPA Worksheets file?');
       var calv = spaFind(D, /^\s*\(c\)\s*Calving\s*$/, 0, true), wean = spaFind(D, /^\s*\(d\)\s*Weaning\s*$/, 0, true);
       var tot = spaFind(D, /^\s*\(e\)\s*Total\s*$/, 0, true);
@@ -989,7 +994,7 @@
         roughLb:rough, protLb:prot, acres:(function(n){ return n[1] > 0 ? n[1] : n[0] || null; })(spaFind(D, /^\s*Total Land Used/, 0, true)), leased:spaFind(D, /^\s*Total Land Leased/),
         feedCow:spaFind(S, /Raised\/Purchased Feed Cost per cow/), grazeCow:spaFind(S, /^Grazing Cost per cow/),
         costCow:spaFind(S, /Total Cost Before Non Calf Revenue Adjusted per cow/), costCwt:spaFind(S, /Total Cost Noncalf Revenue Adjusted per cwt/),
-        netCow:spaFind(S, /Net Income After Withdrawal per cow/), file:file.name, loaded:new Date().toISOString().slice(0, 10)};
+        netCow:spaFind(S, /Net Income After Withdrawal per cow/), feedProt$:isCC(/^\s*-\s*Protein\s*$/), feedMin$:isCC(/^\s*-\s*Mineral & Additives/), feedAll$:isCC(/^\s*Feed Purchase\s*$/), file:file.name, loaded:new Date().toISOString().slice(0, 10)};
       if(!(spa.exposed > 0) && !(spa.herdCows > 0)) throw new Error('No herd numbers found in that worksheet.');
       return spa;
     });
@@ -1026,6 +1031,20 @@
     save();
     $('spaNote').innerHTML = 'Filled in from <strong>' + esc(s.file) + '</strong>' + (s.year ? ' (fiscal year ' + s.year + ')' : '') + ': ' + fmt(cows) + ' exposed females, calving from ' + esc(h.start1 || '') + ', weaning ' + esc(h.wean1 || '') + '. Non-feed costs went into “Other costs” as one number; split them there if you like. Your records are compared in the year plan.';
   }
+  /* what the ranch paid per ton of protein supplement: income statement protein $ (or all purchased feed when not split, less
+     mineral if given) over the purchased protein pounds */
+  function spaSupPrice(s){
+    if(!(s && s.protLb > 0)) return null;
+    var prot = s['feedProt$'], min = s['feedMin$'] || 0, all = s['feedAll$'], withMin = false, d;
+    if(prot > 0) d = prot;
+    else if(all > 0){
+      withMin = !(min > 0);
+      // mineral not split out: take off what the herd's mineral would cost (oz per cow a day x price), as My Ranch counts it apart
+      var h = state.herd, estMin = withMin ? (s.herdCows || s.exposed || 0)*(h.mineralOz == null ? 4 : +h.mineralOz)/16*365*(h.mineralPrice == null ? 0.45 : +h.mineralPrice) : min;
+      d = all - estMin;
+    } else return null;
+    return d > 0 ? {price:d/(s.protLb/2000), withMineral:withMin} : null;
+  }
   function renderSpaCompare(res){
     var el = $('fc_spa'), s = state.spa; if(!el) return;
     if(!s || !res || !res.hasSupply){ el.hidden = true; el.innerHTML = ''; return; }
@@ -1041,6 +1060,7 @@
       row('Weaning weight, lb', d(s.weanLb) + (s.weighed && s.weaned && s.weighed < s.weaned ? '<br><small>' + d(s.weighed) + ' calves weighed</small>' : ''), d(ec.avgWeanLb)) +
       row('Protein supplement, lb per cow', d(s.protLb/ex), d(t.sup/cows)) +
       row('Hay, tons', d(s.roughLb/2000, 1), d(t.hay/2000, 1)) +
+      (function(){ var p = spaSupPrice(s); return p ? row('Protein supplement price, $ per ton', '$' + d(p.price) + (p.withMineral ? '<br><small>feed bill less estimated mineral</small>' : ''), '$' + d(h.supPrice) + (Math.abs(p.price/h.supPrice - 1) > 0.15 ? '<br><button type="button" class="link-btn" id="spaUsePrice">Use $' + d(p.price) + '</button>' : '')) : ''; })() +
       row('Feed cost, $ per cow', s.feedCow != null ? '$' + d(per(s.feedCow)) : '—', '$' + d(ec.costs/cows)) +
       row('All costs, $ per cow', s.costCow != null ? '$' + d(per(s.costCow)) : '—', '$' + d(ea.perCow)) +
       row('Cost per cwt of calves, after cull sales', s.costCwt != null ? '$' + d(s.costCwt) : '—', ea.breakeven != null ? '$' + d(ea.breakeven) : '—') +
@@ -1050,6 +1070,7 @@
       (function(){ var ac = totals().acres; return s.acres > 0 && ac > 0 && Math.abs(ac/s.acres - 1) > 0.2 ? '<div class="notice caution" style="margin-top:8px;">The map has <strong>' + fmt(ac) + ' acres</strong> and the worksheet <strong>' + fmt(s.acres) + '</strong>: draw all the land the herd uses, or My Ranch’s feed and costs won’t match the records.</div>' : ''; })() +
       '<div class="btn-row" style="padding:8px 0 0;"><button type="button" class="tool-btn" id="spaClear">Remove the SPA records</button></div>';
     $('spaClear').onclick = function(){ state.spa = null; save(); renderFeed(); };
+    var up = $('spaUsePrice'); if(up) up.onclick = function(){ var p = spaSupPrice(s); if(p){ state.herd.supPrice = Math.round(p.price); bindFeedValues(); save(); renderAll(true); } };
   }
 
   function bredCowPrice(){
@@ -1059,7 +1080,7 @@
   }
   // the 10-year rebuild comparison (keep / buy back / raise heifers / stay smaller) is switched off for now; window.__MR_DRLONG turns it on
   var DR_LONG = !!window.__MR_DRLONG;
-  var DR_DEFAULTS = {cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0};
+  var DR_DEFAULTS = {ocSaved:null, cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0};
   /* Drought Monitor -> a starting point for "forage lost": the soil survey's own unfavorable year
      (how much less these soils grow in a dry year) scaled by this week's category. A rough start, not a forecast. */
   var DM_SCALE = [0.25, 0.5, 1, 1.5, 2];
@@ -1118,7 +1139,10 @@
       var Dr = nSell <= 0 ? A : dr.sellWhen === 'weaning' ? A : netOf({cows:keepCows, bulls:Math.max(1, Math.round(bulls*(1 - X)))}, hayO, 1, cutF);
       var o = [{key:'A', r:A, extra:0, onHand:cows}, {key:'B', r:B, extra:0, onHand:cows}, {key:'C', r:C, extra:0, onHand:cows}];
       if(nSell > 0) o.push({key:'D', r:Dr, extra:nSell*cullHd, onHand:keepCows, sellM:sellM, cullHd:cullHd});
-      o.forEach(function(x){ x.net = x.r.econ.net + x.extra; x.val = x.net + x.onHand*cullNow; });
+      // costs that leave with the cows sold (vet & medicine by default), for the part of the year they are gone; feed is already in r
+      if(nSell > 0){ var vc = dr.ocSaved != null && dr.ocSaved !== '' ? +dr.ocSaved : +((h.oc || {}).vet) || 0, gone = dr.sellWhen === 'weaning' ? Math.max(0, 12 - (sellM - +dr.from + 12) % 12)/12 : 1;
+        o[3].saved = nSell*vc*gone; }
+      o.forEach(function(x){ x.saved = x.saved || 0; x.net = x.r.econ.net + x.extra + x.saved; x.val = x.net + x.onHand*cullNow; });
       var best = o.reduce(function(a, x){ return x.val > a.val ? x : a; }, o[0]);
       return {o:o, best:best, A:A};
     }
@@ -1177,8 +1201,9 @@
       ['Hay bought', function(o){ return fmt(o.r.totals.hay/2000, 1) + ' t'; }],
       ['Supplement bought', function(o){ return fmt(o.r.totals.sup/2000, 1) + ' t'; }],
       ['Feed &amp; feeding cost', function(o){ return money(o.r.econ.costs); }],
+      ['Other costs saved', function(o){ return o.saved ? money(o.saved) + '<br><small>' + fmt(nSell) + ' cows × ' + money(o.saved/Math.max(1, nSell)) + '</small>' : '—'; }],
       ['Cows going into next year', function(o){ return fmt(o.onHand) + ' · BCS ' + fmt(o.r.bcs.breed, 1) + ' at breeding'; }],
-      ['Income − feed (this year)', function(o){ return money(o.net); }],
+      ['Income − feed + costs saved (this year)', function(o){ return money(o.net); }],
       ['Cows still owned, at cull value', function(o){ return money(o.onHand*cullNow); }]
     ];
     $('dec_drOptions').innerHTML = '<div class="table-scroll"><table class="plan dec-drtable"><thead><tr><th></th>' + opts.map(function(o){
@@ -1290,6 +1315,7 @@
         '<td class="num">' + money(s.total) + '</td><td class="num"><strong>' + money(s.pv) + '</strong></td></tr>'; }).join('') + '</tbody>';
     var bp = $('dr_buyPrice'); if(bp) bp.placeholder = fmt(bredCowPrice());
     var hp = $('dr_hayPrice'); if(hp) hp.placeholder = fmt(h.hayPrice);
+    var os = $('dr_ocSaved'); if(os) os.placeholder = fmt(+((h.oc || {}).vet) || 0);
   }
 
   function renderWhatIf(){
@@ -1345,7 +1371,7 @@
     });
     document.querySelectorAll('[data-dr]').forEach(function(el){
       var k = el.getAttribute('data-dr'), mn = +el.min, mx = +el.max;
-      el.addEventListener('input', function(){ var v = num(this.value); if(this.value === '' && (k === 'buyPrice' || k === 'hayPrice')){ state.herd.dr[k] = null; save(); scheduleDecisions(); return; } if(v != null && v >= mn && v <= mx){ state.herd.dr[k] = v; save(); scheduleDecisions(); } });
+      el.addEventListener('input', function(){ var v = num(this.value); if(this.value === '' && (k === 'buyPrice' || k === 'hayPrice' || k === 'ocSaved')){ state.herd.dr[k] = null; save(); scheduleDecisions(); return; } if(v != null && v >= mn && v <= mx){ state.herd.dr[k] = v; save(); scheduleDecisions(); } });
       el.addEventListener('blur', function(){ this.value = state.herd.dr[k] == null ? '' : state.herd.dr[k]; });
     });
     document.querySelectorAll('[data-sl]').forEach(function(el){

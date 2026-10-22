@@ -28,6 +28,9 @@ for r,vals in rows:
 S=wb.create_sheet('SPASum')
 for i,(k,v) in enumerate([('Average Weaning Weight',500),('Raised/Purchased Feed Cost per cow',150),('Grazing Cost per cow',0),('Total Cost Before Non Calf Revenue Adjusted per cow',900),('Total Cost Noncalf Revenue Adjusted per cwt',210),('Net Income After Withdrawal per cow',400)]):
     S.cell(10+i,1,k); S.cell(10+i,2,v)
+I=wb.create_sheet('ISData')
+for r,vals in [(20,['Feed Purchase',30000,100,30000]),(24,['   - Protein',25000,100,25000]),(25,['   - Mineral & Additives',5000,100,5000]),(90,['Total Operating Expenses',180000,180000])]:
+    for i,v in enumerate(vals): I.cell(r,1+i,v)
 tmp=os.path.join(tempfile.mkdtemp(),'Test-SPA.xlsx'); wb.save(tmp)
 
 with sync_playwright() as pw:
@@ -65,6 +68,9 @@ with sync_playwright() as pw:
     t=pg.inner_text('#fc_spa')
     check('year plan compares SPA records with My Ranch', pg.is_visible('#fc_spa') and 'SPA records (2025)' in t and 'Calves weaned' in t and '168' in t and 'Protein supplement' in t and '250' in t, t[:300])
     check('worksheet checks flag breeding cows vs exposed, unweighed calves, $0 grazing on leased land', 'differ by more than 10%' in t and 'Only 150 of 168' in t and 'Grazing cost is $0' in t, t)
+    check('records show the protein price paid ($25,000 for 25 t = $1,000/t) and offer to use it', 'Protein supplement price' in t and '$1,000' in t, t)
+    pg.evaluate("document.getElementById('spaUsePrice').click()"); pg.wait_for_timeout(1200)
+    check('use the price paid sets the supplement price', pg.evaluate("MyRanch.herd().supPrice")==1000)
     st=pg.evaluate("MyRanch.state().spa")
     check('SPA records saved with the ranch', st and st['weaned']==168 and st['protLb']==50000 and st['roughLb']==20000)
     pg.click('#spaClear'); pg.wait_for_timeout(500)
