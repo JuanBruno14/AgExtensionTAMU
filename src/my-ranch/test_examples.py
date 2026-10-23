@@ -26,6 +26,13 @@ with sync_playwright() as pw:
     pg.click('#fileCard [data-example="rolling-plains-154-cows"]'); pg.wait_for_timeout(1800)
     st=pg.evaluate("MyRanch.state()")
     check('rolling plains example replaces the ranch', len(st['pastures'])==3 and st['herd']['cows']==154 and st['herd']['region']=='rp', (len(st['pastures']), st['herd']['cows']))
+    # distance to water (Holechek 1988): ground 1-2 mi out counts at half, over 2 mi not at all
+    capW=pg.evaluate("MyRanch.totals().cap"); zt=pg.evaluate("[...document.querySelectorAll('#pastureList .p-zones')].map(e=>e.textContent).join(' | ')")
+    pg.evaluate("const c=document.getElementById('la_water'); c.checked=false; c.dispatchEvent(new Event('change'))"); pg.wait_for_timeout(400)
+    capN=pg.evaluate("MyRanch.totals().cap")
+    check('far-from-water ground counts less (Holechek), and the pasture row says so', capN*0.93 < capW < capN*0.99 and 'over 1 mi from water' in zt, (round(capW,1), round(capN,1), zt[:160]))
+    pg.evaluate("const c=document.getElementById('la_water'); c.checked=true; c.dispatchEvent(new Event('change'))"); pg.wait_for_timeout(400)
+    check('turning it back on restores it', abs(pg.evaluate("MyRanch.totals().cap")-capW) < 0.01)
     # calving season: forage grown (by type) vs. herd needs, and the decision from what the ranch has
     pg.evaluate("MyRanch.go('decide')"); pg.click('.seg-btn[data-dec="calving"]'); pg.wait_for_timeout(1800)
     t=pg.inner_text('#dec_calvText')

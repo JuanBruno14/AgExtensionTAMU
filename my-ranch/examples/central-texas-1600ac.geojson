@@ -193,6 +193,62 @@
     "name": "Pens",
     "point_type": "pen"
    }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "North trough",
+    "point_type": "water"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -97.566688,
+     31.475752
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "East trough",
+    "point_type": "water"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -97.553313,
+     31.475752
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "South trough",
+    "point_type": "water"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -97.553313,
+     31.464249
+    ]
+   }
+  },
+  {
+   "type": "Feature",
+   "properties": {
+    "name": "West trough",
+    "point_type": "water"
+   },
+   "geometry": {
+    "type": "Point",
+    "coordinates": [
+     -97.566688,
+     31.464249
+    ]
+   }
   }
  ],
  "my_ranch": {

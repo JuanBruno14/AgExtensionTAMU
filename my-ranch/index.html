@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-16QTl2JW4KxuP2toRmcyWAxn2fP41adZy2sI4FHUMYg='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9EAZtUM7+LXuIDAt5iEn/VjQpVIlEtuVY2V2IYnkMBI='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Ranch · Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -985,6 +985,7 @@
               <div class="field"><label for="la_brush">Brush / woods</label><div class="input-wrap has-suffix"><input type="number" id="la_brush" min="0" max="100" step="5"><span class="suffix">%</span></div><span class="hint">NRCS: grass under heavy brush ≈ 25% of open prairie</span></div>
               <div class="field"><label for="la_bottom">Bottomland</label><div class="input-wrap has-suffix"><input type="number" id="la_bottom" min="50" max="400" step="10"><span class="suffix">%</span></div><span class="hint">NRCS: bottomland ≈ 2.5× upland (5,000 vs. 2,040 lb/ac)</span></div>
             </div>
+            <label class="check-line" style="display:flex;gap:8px;align-items:flex-start;margin-top:10px;"><input type="checkbox" id="la_water"> <span>Count less forage far from water: ground 1–2 mi from the nearest water at half, over 2 mi not at all (Holechek 1988, in Vallentine, <em>Grazing Management</em>, 2001). Needs 💧 water points or ponds on the map.</span></label>
           </div>
         </details>
       </div>
@@ -1515,7 +1516,7 @@
   ];
   /* AgriLife Extension 2026 D03 Budgets, sheet 'CowCalf' (Rolling Plains cow-calf), all per animal unit. */
   var D03 = {revenue:2189.26, variable:438.35, grossMargin:1750.91, fixed:500.34, netReturn:1250.58, acresPerAU:11.25, rentPerAcre:15};
-  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:90}, zoneF:{brush:25, bottom:200}};
+  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:90}, zoneF:{brush:25, bottom:200}, waterAdj:true};
   var CONDITIONS = {poor:'Poor', fair:'Fair', excellent:'Excellent'};
   var ZONE_TYPES = {
     water:  {label:'Pond / lake', icon:'💧', style:{color:'#bfe3ff', weight:1.5, fillColor:'#2b7fd6', fillOpacity:0.6}},
@@ -2532,10 +2533,42 @@
     }
     return inside;
   }
-  /* forage-weighted acres: open ground x1, brush and bottomland by their factors, ponds x0 */
+  /* Share of a pasture 1-2 mi and over 2 mi from the nearest water (water points and ponds), sampled on a grid.
+     Holechek (1988), in Vallentine, Grazing Management 2nd ed. (2001) p. 403: cattle use acreage 1-2 mi from drinking
+     water at half, and acreage over 2 mi not at all. null when no water is drawn. */
+  var waterCache = {};
+  function waterSources(){
+    return state.points.filter(function(pt){ return pt.type === 'water'; }).map(function(w){ return {lat:w.lat, lng:w.lng}; })
+      .concat(state.zones.filter(function(z){ return z.type === 'water'; }).map(function(z){ return centroid(z.geometry); }));
+  }
+  function waterBands(p){
+    var ws = waterSources();
+    if(!ws.length) return null;
+    var ring = p.geometry.coordinates[0];
+    var key = JSON.stringify(ring) + '|' + JSON.stringify(ws);
+    if(waterCache[p.id] && waterCache[p.id].key === key) return waterCache[p.id].v;
+    var x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity;
+    ring.forEach(function(c){ x0 = Math.min(x0, c[0]); x1 = Math.max(x1, c[0]); y0 = Math.min(y0, c[1]); y1 = Math.max(y1, c[1]); });
+    var N = 30, n = 0, near = 0, mid = 0, far = 0;
+    for(var i = 0; i < N; i++) for(var j = 0; j < N; j++){
+      var pt = {lng:x0 + (i + 0.5)/N*(x1 - x0), lat:y0 + (j + 0.5)/N*(y1 - y0)};
+      if(!pointInRing(pt, ring)) continue;
+      var d = Infinity; ws.forEach(function(w){ var m = milesBetween(pt, w); if(m < d) d = m; });
+      n++; if(d > 2) far++; else if(d > 1) mid++; else near++;
+    }
+    var v = n ? {mid:mid/n, far:far/n} : {mid:0, far:0};
+    waterCache[p.id] = {key:key, v:v};
+    return v;
+  }
+  function waterFactor(p){
+    if(state.settings.waterAdj === false) return 1;
+    var b = waterBands(p);
+    return b ? Math.max(0, 1 - 0.5*b.mid - b.far) : 1;
+  }
+  /* forage-weighted acres: open ground x1, brush and bottomland by their factors, ponds x0; then less far from water */
   function forageAcres(p){
     var z = zoneAcres(p), f = state.settings.zoneF;
-    return Math.max(0, p.acres - z.water - z.brush - z.bottom) + z.brush*f.brush/100 + z.bottom*f.bottom/100;
+    return (Math.max(0, p.acres - z.water - z.brush - z.bottom) + z.brush*f.brush/100 + z.bottom*f.bottom/100)*waterFactor(p);
   }
   function grazeableAcres(p){ return Math.max(0, p.acres - zoneAcres(p).water); }
   function annualLb(p){ var lb = forageLb(p); return lb == null ? null : forageAcres(p)*lb; }
@@ -3258,6 +3291,8 @@
     if(z.water > 0.05) parts.push('💧 ' + fmt(z.water, z.water < 10 ? 1 : 0) + ' ac pond/lake (not grazed)');
     if(z.brush > 0.05) parts.push('🌳 ' + fmt(z.brush, z.brush < 10 ? 1 : 0) + ' ac brush (' + f.brush + '% forage)');
     if(z.bottom > 0.05) parts.push('〰 ' + fmt(z.bottom, z.bottom < 10 ? 1 : 0) + ' ac bottomland (' + f.bottom + '% forage)');
+    var wb = state.settings.waterAdj === false ? null : waterBands(p);
+    if(wb && wb.mid + wb.far >= 0.005) parts.push('🚶 ' + fmt((wb.mid + wb.far)*100) + '% over 1 mi from water' + (wb.far >= 0.005 ? ' (' + fmt(wb.far*100) + '% over 2 mi, not counted)' : '') + ': counts ' + fmt((1 - waterFactor(p))*100) + '% less forage');
     var ov = overlaps(p).map(function(o){ return fmt(o.ac, o.ac < 10 ? 1 : 0) + ' ac with “' + esc(o.p.name) + '”'; });
     return (parts.length ? '<div class="p-zones">Inside this pasture: ' + parts.join(' · ') + '</div>' : '') +
       (ov.length ? '<div class="p-zones p-overlap">⚠ Overlaps ' + ov.join(', ') + ' — those acres are counted twice. If it’s a pond, brush or bottomland, delete it and draw it with 💧 🌳 〰 instead.</div>' : '');
@@ -4923,7 +4958,7 @@
     var lines = [];
     lines.push('[My ranch, from the "My Ranch" map page' + (state.name ? ' — ' + state.name : '') + ']');
     lines.push('Pastures: ' + t.pastures + ', total ' + fmt(t.acres) + ' acres (' + fmt(t.grazedAcres) + ' grazed).');
-    lines.push('Assumptions: harvest efficiency ' + s.harvestEff + '%, ' + s.intakeLb + ' lb forage per AU per day.');
+    lines.push('Assumptions: harvest efficiency ' + s.harvestEff + '%, ' + s.intakeLb + ' lb forage per AU per day' + (s.waterAdj === false ? '.' : '; ground 1-2 mi from water counts at half and over 2 mi not at all (Holechek 1988).'));
     lines.push('Estimated yearlong carrying capacity: ' + (t.cap > 0 ? fmt(t.cap, 1) + ' AU (' + fmt(t.acresPerAU, 1) + ' acres/AU)' : 'not yet estimated') +
       (t.lowCap != null ? '; unfavorable-year estimate ' + fmt(t.lowCap, 1) + ' AU' : '') + '.');
     var h = state.herd;
@@ -5055,6 +5090,7 @@
         ['harvestEff', 'intakeLb', 'manualCap', 'maxGraze'].forEach(function(k){ if(mr.settings[k] === null || isFinite(+mr.settings[k])) state.settings[k] = mr.settings[k] === null ? null : +mr.settings[k]; });
         if(mr.settings.cond) state.settings.cond = Object.assign({}, DEFAULT_SETTINGS.cond, mr.settings.cond);
         if(mr.settings.zoneF) state.settings.zoneF = Object.assign({}, DEFAULT_SETTINGS.zoneF, mr.settings.zoneF);
+        if(typeof mr.settings.waterAdj === 'boolean') state.settings.waterAdj = mr.settings.waterAdj;
       }
       if(typeof mr.name === 'string' && mr.name) state.name = mr.name.slice(0, 60);
       if(mr.herdNow && mr.herdNow.since) state.herdNow = null;   // pasture ids change on import
@@ -5132,7 +5168,7 @@
     var st = state.settings;
     return {type:'FeatureCollection', name:state.name || 'My Ranch', features:feats,
             my_ranch:{version:1, name:state.name || '', herd:state.herd, herdNow:state.herdNow || null, spa:state.spa || null,
-                      settings:{harvestEff:st.harvestEff, intakeLb:st.intakeLb, manualCap:st.manualCap, maxGraze:st.maxGraze, cond:st.cond, zoneF:st.zoneF}}};
+                      settings:{harvestEff:st.harvestEff, intakeLb:st.intakeLb, manualCap:st.manualCap, maxGraze:st.maxGraze, cond:st.cond, zoneF:st.zoneF, waterAdj:st.waterAdj !== false}}};
   }
   function xml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]; }); }
   function toKml(){
@@ -5333,6 +5369,8 @@
       el.addEventListener('input', function(){ var v = num(this.value); if(v != null && v >= f[3] && v <= f[4]){ state.settings[f[1]][f[2]] = v; zoneCache = {}; renderAll(true); } });
       el.addEventListener('blur', function(){ this.value = state.settings[f[1]][f[2]]; });
     });
+    $('la_water').checked = state.settings.waterAdj !== false;
+    $('la_water').addEventListener('change', function(){ state.settings.waterAdj = this.checked; renderAll(true); });
     $('editBtn').addEventListener('click', function(){ toggleEdit(); });
     $('cancelDrawBtn').addEventListener('click', function(){ setDrawMode(null); });
     $('finishBtn').addEventListener('click', function(){
@@ -5388,7 +5426,7 @@
     $('ranchName').value = state.name || ''; bindHerdValues();
     $('manualCap').value = state.settings.manualCap > 0 ? state.settings.manualCap : '';
     ['la_poor','la_fair','la_excellent'].forEach(function(id){ $(id).value = state.settings.cond[id.slice(3)]; });
-    $('la_brush').value = state.settings.zoneF.brush; $('la_bottom').value = state.settings.zoneF.bottom;
+    $('la_brush').value = state.settings.zoneF.brush; $('la_bottom').value = state.settings.zoneF.bottom; $('la_water').checked = state.settings.waterAdj !== false;
     $('harvestEff').value = state.settings.harvestEff; $('intakeLb').value = state.settings.intakeLb; syncGrazeSys();
   }
 
