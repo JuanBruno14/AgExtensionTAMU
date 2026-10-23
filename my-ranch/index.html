@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-O/pZZK5FGdt1eldyba2HZlann65BI46gR6tPNMkUI0g='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-F/jz9YGkWn94AmtHjXd8ojnFCx+MvInawJA99HljeWo='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Ranch · Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -4111,8 +4111,8 @@
       : 'Screwworm was confirmed in 17 South and West Texas counties in 2026 (TAHC). Choose “In or near my area” to add its risk to the calving-season comparison.';
     var protDriven = res.months.filter(function(x){ return x.cow.sup > 0.05; }).every(function(x){ return x.cow.protDriven; });
     $('fc_tripNote').textContent = (+h.supTrips < 7 && res.totals.sup > 100 && !protDriven)
-      ? 'Heads up: some months need supplement for energy, not just protein. Energy supplements (grain, high-starch feeds) should be fed daily; protein cubes can go 2–3 times a week.'
-      : 'Protein cubes can usually be fed 2–3 times a week with the same total amount; each trip costs you fuel and time.';
+      ? 'Heads up: some months need supplement for energy, not just protein. Energy supplements (grain, high-starch feeds) should be fed daily — fed every other day they gave cows half the gain in a Montana trial; protein cubes can go 2–3 times a week (Vallentine, Grazing Management, 2001).'
+      : 'Protein cubes fed every 3 days or even once a week, same total amount, perform about like daily feeding and save 40–60% of the labor (Vallentine, Grazing Management, 2001); each trip costs you fuel and time.';
 
     renderFeedChart(res, feedNutrient, $('fc_chart'), true);
     renderFeedChart(res, 'tdn', $('fc_chart_p_tdn'), false);

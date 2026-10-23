@@ -601,8 +601,8 @@
       : 'Screwworm was confirmed in 17 South and West Texas counties in 2026 (TAHC). Choose “In or near my area” to add its risk to the calving-season comparison.';
     var protDriven = res.months.filter(function(x){ return x.cow.sup > 0.05; }).every(function(x){ return x.cow.protDriven; });
     $('fc_tripNote').textContent = (+h.supTrips < 7 && res.totals.sup > 100 && !protDriven)
-      ? 'Heads up: some months need supplement for energy, not just protein. Energy supplements (grain, high-starch feeds) should be fed daily; protein cubes can go 2–3 times a week.'
-      : 'Protein cubes can usually be fed 2–3 times a week with the same total amount; each trip costs you fuel and time.';
+      ? 'Heads up: some months need supplement for energy, not just protein. Energy supplements (grain, high-starch feeds) should be fed daily — fed every other day they gave cows half the gain in a Montana trial; protein cubes can go 2–3 times a week (Vallentine, Grazing Management, 2001).'
+      : 'Protein cubes fed every 3 days or even once a week, same total amount, perform about like daily feeding and save 40–60% of the labor (Vallentine, Grazing Management, 2001); each trip costs you fuel and time.';
 
     renderFeedChart(res, feedNutrient, $('fc_chart'), true);
     renderFeedChart(res, 'tdn', $('fc_chart_p_tdn'), false);
