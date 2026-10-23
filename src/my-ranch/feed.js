@@ -29,6 +29,9 @@
     var MILK = {low:11, moderate:18, high:25};
     var MILK_FAT = 4.0, MILK_PROT = 3.8, MILK_SOLIDS = 8.3;
     var MILK_E = 0.092*MILK_FAT + 0.049*MILK_SOLIDS - 0.0569, MILK_SOLIDS_ALL = MILK_FAT + MILK_SOLIDS;
+    /* Milk as the calf's feed, Tedeschi & Fox (2018) The Ruminant Nutrition System, 2nd ed., Table 13.6: ME = GE x 0.97 x 0.96,
+       NEm = ME x 0.86, NEg = ME x 0.69 (Mcal/kg as fed); milk MP = milk protein x 0.93. */
+    var MILK_ME = MILK_E*0.97*0.96, MILK_NEM = MILK_ME*0.86, MILK_NEG = MILK_ME*0.69, MILK_MP_EFF = 0.93;
 
     /* USDA APHIS NAHMS Beef 2017, Part I, Table B.2.a: % of calves born by month (U.S.) */
     var NAHMS = [5.7,12.3,22.4,20.9,8.9,3.1,2.0,3.0,6.2,6.0,5.4,4.0];
@@ -77,7 +80,7 @@
       hay:        [1,2,5,12,25,20,5,5,14,8,2,1]
     };
     var QUALITY = {
-      range:      [[48,4.5],[48,4.5],[50,6],[60,11],[62,12],[60,10],[56,8],[54,7],[55,7.5],[52,6],[50,5],[49,4.5]],
+      range:      [[48,4.5],[48,4.5],[50,6],[65,11],[67,12],[65,10],[61,8],[59,7],[60,7.5],[57,6],[50,5],[49,4.5]],
       improved:   [[45,6],[45,6],[47,7],[60,13],[60,13],[60,12],[56,10],[56,10],[55,10],[53,9],[50,8],[48,7]],
       smallgrain: [[72,24],[72,24],[72,24],[72,22],[62,14],[50,6],[50,6],[50,6],[50,6],[72,25],[72,25],[72,24]],
       hay:        [[45,6],[45,6],[47,7],[60,13],[60,13],[60,12],[56,10],[56,10],[55,10],[53,9],[50,8],[48,7]]
@@ -86,10 +89,14 @@
        of diet crude protein and digestibility (fecal NIRS, Grazingland Animal Nutrition Lab, 10 years of samples). The monthly shape
        is the native-range pattern above, stretched to each region's average low and high; digestibility is used as TDN
        (digestible organic matter is about equal to TDN). Central & East uses the Cross Timbers row (the growth-curve site is MLRA 84B). */
+    /* "typical" native range: winter (Nov-Mar) as before; April-October digestibility raised 5 points (2026-10-23), because
+       grazing cattle select a better diet than the standing crop (Vallentine 2001, Ch. 2.III) and the earlier values sat
+       below Texas A&M B-6124 diet samples in every region. Crude protein unchanged, so winter supplement is the same. */
+    var RANGE_SHAPE = [[48,4.5],[48,4.5],[50,6],[60,11],[62,12],[60,10],[56,8],[54,7],[55,7.5],[52,6],[50,5],[49,4.5]];
     var B6124 = {hp:{cp:[7,11], dig:[59,66]}, rp:{cp:[7,12], dig:[60,63]}, ep:{cp:[7,11], dig:[58,63]}, st:{cp:[9,12], dig:[60,63]}, ce:{cp:[8,13], dig:[59,65]}};
     function rangeQuality(mode, regionKey){
-      var b = mode === 'b6124' ? B6124[regionKey] : null, base = QUALITY.range;
-      if(!b) return base;
+      var b = mode === 'b6124' ? B6124[regionKey] : null, base = RANGE_SHAPE;
+      if(!b) return QUALITY.range;
       var t0 = 48, t1 = 62, c0 = 4.5, c1 = 12;
       return base.map(function(q){ return [b.dig[0] + (q[0] - t0)/(t1 - t0)*(b.dig[1] - b.dig[0]), b.cp[0] + (q[1] - c0)/(c1 - c0)*(b.cp[1] - b.cp[0])]; });
     }
@@ -248,14 +255,15 @@
       var re = Math.pow(ewg/(12.341*Math.pow(eqebw, -0.6837)), 1/0.9116);
       var mpg = swg*(268 - 29.4*re/swg)/mpToNp(eqsbw);
       var mp = mbw*3.8 + Math.max(0, mpg);
-      var milkNE = milk*MILK_E*0.85, milkMP = milk*MILK_PROT/100*1000*0.85;
+      var milkMP = milk*MILK_PROT/100*1000*MILK_MP_EFF;
       var nm = nemaOf(forTdn), ng = Math.max(0.05, negaOf(forTdn)), me = forTdn/100*4.409*0.82, km = nm/me;
       var c = (env && ageD != null) ? stressCtx({env:env, bcs:5, fbwKg:bwKg}) : null;
       if(c) c.ti = tissueIns(ageD, 5);
       var st = {stress:0, cold:0}, dmKg = 0, nem = nem0;
       for(var it = 0; it < (c ? 4 : 1); it++){
         nem = nem0 + st.stress;
-        var nemLeft = Math.max(0, nem - milkNE), extra = Math.max(0, milkNE - nem);
+        // milk meets maintenance first (its NEm); milk left over goes to gain at its NEg (RNS Table 13.6)
+        var milkNem = milk*MILK_NEM, nemLeft = Math.max(0, nem - milkNem), extra = milkNem > nem ? (milk - nem/MILK_NEM)*MILK_NEG : 0;
         var negLeft = Math.max(0, re - extra);
         dmKg = nemLeft/nm + negLeft/ng;
         if(c) st = stressNE(env, c, Math.max(0, dmKg*me + milk*MILK_E - re), km, nemBase);
@@ -410,19 +418,30 @@
        BCS 4 or less 58%, 5 85%, 6 or more 95% pregnant after 150 days); straight lines between */
     function pregByBcs(b){ return b <= 4 ? 58 : b <= 5 ? 58 + (b - 4)*27 : b <= 6 ? 85 + (b - 5)*10 : 95; }
     /* Nursing calf growth predicted from what the calf takes in (no target weight). NRC 2016 has no intake equation for
-       nursing calves and points to NRC (1987) and Tedeschi & Fox (2009) (NASEM 2016, Ch. 10, p. 163). So:
+       nursing calves and points to Tedeschi & Fox (NASEM 2016, Ch. 10, p. 163). Following Tedeschi & Fox (2018) The Ruminant
+       Nutrition System, 2nd ed., Section 13.1.2-13.1.3:
        - milk: the dam's yield, NRC 2016 Eq. 19-21 (Wood curve, peak at 8.5 wk, peak by the milk input), scaled by the
-         herd's cow-age mix (Eq. 19-23, as in requirements);
-       - grazed forage: NRC (1987) Predicting Feed Intake of Food-Producing Animals, Table 6-7 (Fox, after Le Du et al.
-         1976): forage OM (g/kg live weight) = a + b x milk OM (g/kg live weight), a and b by month of lactation; OM is
-         81.9% of forage DM and 92.9% of milk DM; milk DM 12.3% (4.0% fat + 8.3% solids-not-fat, as for milk energy);
-       - energy: maintenance NEm = 0.077 SBW^0.75 x breed (NRC 2016), forage NEm and NEg from its TDN (NRC 2016), milk NE
-         counted first at 85% (assumption, same as calfDay); retained energy turned into gain with the NRC 2016 growth
-         equation (EWG = 12.341 EQEBW^-0.6837 RE^0.9116, EQSBW scaled to the 478-kg reference by the dam's weight).
+         herd's cow-age mix (Eq. 19-23, as in requirements); its energy from RNS Table 13.6 (NEm 0.58, NEg 0.46 Mcal/kg);
+       - grazed forage: RNS Eq. 13.20 (Tedeschi & Fox 2009, from Abdelsamei et al. 2005), forage DM intake from calf weight,
+         diet DE (TDN x 4.409/100) and the dam's peak milk; checked against RNS Table 13.5 (RMSE 0.003 kg/d);
+       - energy: maintenance NEm = 0.077 SBW^0.75 x breed (NRC 2016); milk covers maintenance first and the rest goes to gain
+         at milk NEg, then forage at its NEm/NEg (NRC 2016 from TDN); retained energy turned into gain with the NRC 2016 growth
+         equation (EWG = 12.341 EQEBW^-0.6837 RE^0.9116, = RNS Eq. 15.10; EQSBW scaled to the 478-kg reference by the dam's weight).
+       Checked against Fox et al. (1988), RNS Table 13.2 (frame-5 cow, 8.17 kg peak, 69% TDN): within about 10% each month.
+       The SPA closeouts weigh more than predicted at moderate milk (Cowden 2025: 563 lb; Vanzandt 2023: 426 lb), so the
+       milk level can be matched to the ranch's own weaning weight (feedui: "Match my weaning weight").
        Month by month forage TDN = the pasture mix. Cold stress on calves is not in the growth curve (it is in their needs).
-       Checked against two SPA closeouts: Cowden 2025 (Panhandle, 200 d) 541 vs 563 lb; Vanzandt 2023 (Mobeetie, 170 d) 458 vs
-       426 lb. Known limit: the NRC growth equation is built for heavier cattle, so the first two months run fast (3-4 lb/day)
-       and the last two slow (~1 lb/day); to be replaced by Tedeschi & Fox (2018) RNS 13.1.2-13.1.3 (milk energy for calves). */
+       The earlier version used NRC (1987) Table 6-7 for calf forage (T67, kept below for reference); against Table 13.2 it ran
+       about 40% high. */
+    function calfForageTF(bwKg, tdn, peakKg){
+      var BW = bwKg, DE = tdn/100*4.409, P = peakKg, ex = Math.exp, pw = Math.pow;
+      var pre = pw(BW, -0.3895 - 0.0197*P*P)*ex(BW*(-0.00244 - 0.00337*P) - 1.3594*P);
+      var t1 = pw(BW, 0.4477*P)*(-32.5704 + (27.9016 - 7.66732*DE)*DE)*ex((0.0588 + 0.00018*BW)*P*P);
+      var e2 = ex(BW*(0.00244 + 0.00337*P) + 1.3594*P);
+      var t2 = pw(BW, 1.3895 + 0.0197*P*P)*e2*(0.4738 + DE*(-0.4059 + DE*(0.11154 - 0.003273*P) + 0.01191*P) - 0.0139046*P);
+      var t3 = pw(BW, 0.3895 + 0.0197*P*P)*e2*(-10.3049 + DE*(8.82778 + DE*(-2.42586 + 0.362681*P) - 1.31981*P) + 1.54065*P);
+      return Math.max(0, pre*(t1 + t2 + t3)/(DE*DE));
+    }
     var T67 = [[35.6, -3.11], [26.7, -2.12], [24.1, -2.19], [17.9, -1.71], [22.8, -2.21], [22.4, -2.60], [22.4, -2.60]];
     function calfForageDmKg(bwKg, milkKg, dim){
       var milkOm = milkKg*MILK_SOLIDS_ALL/100*0.929*1000/bwKg, t = T67[Math.min(6, Math.floor(dim/30.4))];
@@ -435,8 +454,8 @@
       for(var a = 0; a < c.weanAge; a++){
         var tdn = ftdn[monthOfDay(c.day + a)], milk = milkKg(a + 1, o.peakMilkLb)*mf;
         var sbw = bw*0.96, nem = Math.pow(sbw, 0.75)*0.077*br.be*(1 + (o.activity || 0)*0.5);
-        var nm = nemaOf(tdn), ng = Math.max(0.05, negaOf(tdn)), forDm = calfForageDmKg(bw, milk, a), milkNE = milk*MILK_E*0.85;
-        var re = milkNE >= nem ? milkNE - nem + forDm*ng : Math.max(0, forDm - (nem - milkNE)/nm)*ng;
+        var nm = nemaOf(tdn), ng = Math.max(0.05, negaOf(tdn)), forDm = calfForageTF(bw, tdn, o.peakMilkLb/LB*mf), milkNem = milk*MILK_NEM;
+        var re = milkNem >= nem ? (milk - nem/MILK_NEM)*MILK_NEG + forDm*ng : Math.max(0, forDm - (nem - milkNem)/nm)*ng;
         var eqebw = 0.891*sbw*478/msbw, ewg = re > 0 ? 12.341*Math.pow(eqebw, -0.6837)*Math.pow(re, 0.9116) : 0, adg = ewg/0.9216;
         curve.bw.push(bw*LB); curve.adg.push(adg*LB); curve.forDm.push(forDm*LB); curve.milk.push(milk);
         bw += adg;
@@ -835,6 +854,6 @@
     return {pastureGrowth:pastureGrowth, heiferDay:heiferDay, heiferState:heiferState, heifersKeptPerCow:heifersKeptPerCow, heiferAges:heiferAges, bodyEnergy:bodyEnergy, SEASON_CALF:SEASON_CALF, SEASON_CULL:SEASON_CULL, nemaOf:nemaOf, needAt:needAt, cowParams:cowParams, envFor:envFor, birthLb:birthLb, BREEDS:BREEDS, MILK:MILK, REGIONS:REGIONS, QUALITY:QUALITY, ACTIVITY:ACTIVITY, MONTHS:MONTHS, MONTH_DAYS:MONTH_DAYS, MONTH_START:MONTH_START,
             NAHMS:NAHMS, SOURCES:SOURCES, LOSS_DEFAULT:LOSS_DEFAULT, WEATHER_SHARE:WEATHER_SHARE,
             cowDay:cowDay, retainedEnergy:retainedEnergy, mpToNp:mpToNp, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, COW_AGE:COW_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
-            intakePct:intakePct, doy:doy, B6124:B6124, rangeQuality:rangeQuality, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfCurve:calfCurve, calfForageDmKg:calfForageDmKg, T67:T67, calfOutcome:calfOutcome,
+            intakePct:intakePct, doy:doy, B6124:B6124, rangeQuality:rangeQuality, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, solveTDN:solveTDN, cohorts:cohorts, calfCurve:calfCurve, calfForageDmKg:calfForageDmKg, calfForageTF:calfForageTF, T67:T67, RANGE_SHAPE:RANGE_SHAPE, calfOutcome:calfOutcome,
             weatherFactor:weatherFactor, grazeFactor:grazeFactor, weatherLoss:weatherLoss, pregByBcs:pregByBcs, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
   })();

@@ -79,6 +79,7 @@
   function bindFeedValues(){
     var h = state.herd;
     document.querySelectorAll('[data-h]').forEach(function(el){ el.value = h[el.getAttribute('data-h')]; });
+    syncMilkOpt();
     document.querySelectorAll('[data-hs]').forEach(function(el){ if(el.options.length) el.value = String(h[el.getAttribute('data-hs')]); });
     document.querySelectorAll('[data-hd]').forEach(function(el){ el.value = mmddToDate(h[el.getAttribute('data-hd')]); });
     renderHayShared();
@@ -128,10 +129,32 @@
     $('fc_regionHint').textContent = (cur === 'auto' ? 'Picked ' + a.why + '. ' : '') + 'Growth curve: NRCS ' + R.src + '. Weather: ' + R.station + ' normals.';
   }
 
+  var matchMsg = '', matchKey = '';
+  /* peak milk, lb/day: the menu level, or the level matched to the ranch's own weaning weight */
+  function milkLbOf(h){ return h.milk === 'custom' && +h.milkLb > 0 ? +h.milkLb : FEED.MILK[h.milk] || 18; }
+  function syncMilkOpt(){
+    var h = state.herd, sel = $('fc_milk'); if(!sel) return;
+    var op = sel.querySelector('option[value="custom"]');
+    if(+h.milkLb > 0){
+      if(!op){ op = document.createElement('option'); op.value = 'custom'; sel.appendChild(op); }
+      op.textContent = 'Matched to my weaning weight (' + fmt(+h.milkLb, 1) + ' lb at peak)';
+    } else if(op) op.remove();
+    if(h.milk === 'custom' && !(+h.milkLb > 0)) h.milk = 'moderate';
+  }
+  /* the peak milk at which the predicted weaning weight equals the one entered (bisection, 5-40 lb) */
+  function matchMilk(){
+    var target = +state.herd.weanLb; if(!(target > 0)) return null;
+    var lo = 5, hi = 40, at = function(x){ return netOf({peakMilkLb:x}).econ.avgWeanLb; };
+    if(at(hi) < target) return {lb:hi, short:true};
+    if(at(lo) > target) return {lb:lo, over:true};
+    for(var i = 0; i < 16; i++){ var mid = (lo + hi)/2; if(at(mid) < target) lo = mid; else hi = mid; }
+    return {lb:Math.round((lo + hi)/2*10)/10};
+  }
+
   /* ---- inputs to the engine */
   function feedOptions(over){
     var h = state.herd, sl = slides(over && over.priceMult);
-    var o = {cows:h.cows, bulls:bullCount(), cowLb:h.cowLb, bullLb:h.bullLb, breed:h.breed, bcs:+h.bcs, peakMilkLb:FEED.MILK[h.milk] || 18,
+    var o = {cows:h.cows, bulls:bullCount(), cowLb:h.cowLb, bullLb:h.bullLb, breed:h.breed, bcs:+h.bcs, peakMilkLb:milkLbOf(h),
       activity:FEED.ACTIVITY[h.activity] || 0, calving:h.calving, start1:FEED.doy(h.start1), len1:h.len1, start2:FEED.doy(h.start2), len2:h.len2, share2:h.share2,
       weanMode:h.calving === 'us' ? 'age' : 'date', weanAge:h.weanAge, weanDoy1:FEED.doy(h.wean1), weanDoy2:FEED.doy(h.wean2),
       weanLb:h.weanLb, calfGrowth:h.calfGrowth === 'target' ? 'target' : 'nrc', birthLb:FEED.birthLb({breed:h.breed}), weanPeriod:h.weanPeriod, postAdg:h.postAdg,
@@ -585,10 +608,21 @@
     var predicted = co.growth === 'nrc';
     $('fc_calfShortSet').hidden = predicted;
     $('fc_weanLbLabel').textContent = predicted ? 'Your actual weaning weight (to compare)' : 'Average weaning weight';
-    $('fc_calfGrowthHint').innerHTML = predicted ? 'About <strong>' + fmt(ec.avgWeanLb) + ' lb</strong> at ' + fmt(co.avgAge) + ' days (' + fmt(co.preAdg, 2) + ' lb/day): the cows’ milk (NRC 2016) and the grass calves eat beside it (NRC 1987)' : 'Creep feed or lighter calves when milk and grass fall short';
-    $('fc_weanLbHint').textContent = predicted
-      ? (h.weanLb > 0 ? 'Your records vs. predicted: ' + (h.weanLb >= ec.avgWeanLb ? '+' : '−') + fmt(Math.abs(h.weanLb/ec.avgWeanLb - 1)*100) + '%. Not used in the numbers; switch to “I enter it” to use it.' : '')
+    $('fc_calfGrowthHint').innerHTML = predicted ? 'About <strong>' + fmt(ec.avgWeanLb) + ' lb</strong> at ' + fmt(co.avgAge) + ' days (' + fmt(co.preAdg, 2) + ' lb/day): the cows’ milk (NRC 2016) and the grass calves eat beside it (Tedeschi & Fox, The Ruminant Nutrition System)' : 'Creep feed or lighter calves when milk and grass fall short';
+    var gap = h.weanLb > 0 && ec.avgWeanLb > 0 ? h.weanLb/ec.avgWeanLb - 1 : 0;
+    $('fc_weanLbHint').innerHTML = predicted
+      ? (h.weanLb > 0 ? 'Your records vs. predicted: ' + (Math.abs(gap) < 0.005 ? 'the same.' : (gap >= 0 ? '+' : '−') + fmt(Math.abs(gap)*100) + '%.') +
+          (Math.abs(gap) > 0.03 ? ' <button type="button" class="link-btn" id="fc_matchMilk">Match it</button> (sets the cows’ milk so the prediction gives your weight; your calves’ genetics and grass show up as milk).' : ' Close to the prediction.') +
+          (matchMsg && matchKey === h.weanLb + '|' + h.milkLb + '|' + h.milk ? ' <strong>' + esc(matchMsg) + '</strong>' : '') : '')
       : 'Growth ' + fmt(co.preAdg, 2) + ' lb/day from birth; sale weight after the weaning period ≈ ' + fmt(ec.avgSaleLb) + ' lb';
+    var mb = $('fc_matchMilk');
+    if(mb) mb.onclick = function(){
+      var m = matchMilk(); if(!m) return;
+      state.herd.milkLb = m.lb; state.herd.milk = 'custom';
+      matchMsg = m.short ? 'Even at 40 lb of milk at peak the prediction stays under your weight: check the weight, calving dates and pasture quality.' : m.over ? 'Even at 5 lb of milk the prediction is over your weight: check the weight, calving dates and pasture quality.' : 'Milk set to ' + fmt(m.lb, 1) + ' lb at peak.';
+      matchKey = state.herd.weanLb + '|' + state.herd.milkLb + '|' + state.herd.milk;
+      bindFeedValues(); save(); renderAll(true);
+    };
     $('fc_replNote').innerHTML = ec.heifersKept > 0.05
       ? 'Each year: keep <strong>' + fmt(ec.heifersKept) + ' heifer calves</strong>, sell ' + fmt(ec.opensSold, 1) + ' open at pregnancy check and ' + fmt(ec.cullsSold) + ' cull cows (' + money(ec.cullIncome + ec.openIncome) + '). About ' + fmt(res.months.reduce(function(a, x){ return a + x.heiferHeads; }, 0)/12) + ' heifers are on the ranch on an average day.'
       : 'Replacements aren’t raised here: no heifers kept and no culls sold.';
