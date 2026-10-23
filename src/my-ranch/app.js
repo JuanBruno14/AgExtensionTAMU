@@ -1109,7 +1109,8 @@
           '<div class="meter-scale">' + ticks.map(function(k){ return '<span style="left:' + pos(k) + '%">' + fmt(k) + '</span>'; }).join('') + '</div>' +
         '<div class="meter-labels"><span>' + fmt(herd, herd < 10 ? 1 : 0) + ' AU planned</span><span>capacity ' + fmt(t.cap, t.cap < 10 ? 1 : 0) + ' AU</span></div>' +
         '<p class="meter-note">' + (over || warn ? 'At this capacity the ranch carries about <strong>' + fmt(fitCows) + ' cows</strong> with their bulls and calves.' : 'Room for about <strong>' + fmt(Math.max(0, fitCows - (state.herd.cows || 0))) + ' more cows</strong> at this capacity.') + '</p></div>' +
-        (t.lowCap != null && herd > t.lowCap && !over ? '<p class="narrative" style="margin:10px 0 0;font-size:12.5px;">In an unfavorable year the soil survey’s lower forage numbers put capacity near <strong>' + fmt(t.lowCap) + ' AU</strong> — have a destocking or feeding plan ready.</p>' : '') +
+        (warn ? '<p class="narrative" style="margin:10px 0 0;font-size:12.5px;">Range research suggests holding the breeding herd at 80–90% of capacity in a normal year. In Martin’s analysis of Santa Rita (Arizona) records, stocking steadily at 90% of average capacity earned about the same as changing numbers with the forage, with less risk of overstocking; at 80% the risk fell further (Martin 1975; Holechek 1988; in Vallentine, <em>Grazing Management</em>, 2001).</p>' : '') +
+        (t.lowCap != null && herd > t.lowCap && !over ?'<p class="narrative" style="margin:10px 0 0;font-size:12.5px;">In an unfavorable year the soil survey’s lower forage numbers put capacity near <strong>' + fmt(t.lowCap) + ' AU</strong> — have a destocking or feeding plan ready.</p>' : '') +
         '</div>';
     } else if(t.cap > 0){
       html += '<p class="narrative" style="margin:14px 0 0;font-size:13px;">Enter your <strong>number of cows</strong> under <em>Herd &amp; grazing assumptions</em> to compare it with this capacity.</p>';
