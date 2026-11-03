@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-JzfxodMvojnUENn1OeArmxlGv6I7z8Smm+9QDOJz9NE='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-DZlgCSOO4Kx98TXfJKyp5nE9njebxaTi73/ZTgeuu6Y='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -642,6 +642,8 @@
           <div class="stat-tile">
             <span class="label">IRR <a href="understanding-irr.html" style="font-weight:600;text-decoration:underline;color:inherit;">(what's this?)</a></span>
             <span class="value" id="irrValue">0%</span>
+            <span class="sub" id="irrBasis">on your down payment</span>
+            <span class="sub" id="irrNoLoan">Whole cow, no loan: —</span>
           </div>
           <div class="stat-tile">
             <span class="label">Payback</span>
@@ -1768,6 +1770,14 @@
     var irr = IRR_solve(row51, irrGuess);
     var irrPct = round(irr*100,1);
 
+    // Same cow bought outright, no loan: year 0 = the full bid price, then each year's
+    // net above operating cost plus the cull sale, not discounted (a standard IRR).
+    // Shown next to the spreadsheet's IRR, which is a return on the down payment only.
+    var noLoanFlows = [-p.bidPrice];
+    for(i=0;i<7;i++){ noLoanFlows.push(netAboveOpCost[i] + cullSalvage[i]); }
+    var irrNoLoan = IRR_solve(noLoanFlows, 0.1);
+    var irrNoLoanPct = round(irrNoLoan*100,1);
+
     // feasibility: first year (1-6) with negative net cash flow; replicate the original's
     // "year 7" check, which actually re-tests year 4 instead of year 7.
     var feasKey = null;
@@ -1775,7 +1785,7 @@
     if(feasKey===null && netCashFlow[3]<0){ feasKey=7; } // replicated quirk (tests year 4 again)
 
     return {
-      npvTotal:npvTotal, irrPct:irrPct, paybackYear:paybackYear, feasKey:feasKey,
+      npvTotal:npvTotal, irrPct:irrPct, irrNoLoanPct:irrNoLoanPct, equityAmount:equityAmount, paybackYear:paybackYear, feasKey:feasKey,
       netCashFlow:netCashFlow, cullSalvage:cullSalvage, year0:year0
     };
   }
@@ -1873,13 +1883,18 @@
     $('npvTile').className = 'stat-tile wide '+(verdictGood?'good':'critical');
     $('npvValue').textContent = (npvTotal<0?'-':'')+'$'+fmtMoney2.format(Math.abs(npvTotal));
     $('irrValue').textContent = (isFinite(irrPct)?irrPct.toFixed(1):'—')+'%';
+    var noLoanTxt = isFinite(fin.irrNoLoanPct) ? fin.irrNoLoanPct.toFixed(1)+'%' : '—';
+    $('irrBasis').textContent = loanTerm>0 ? 'on your '+equityPct+'% down payment' : 'on the full bid price';
+    $('irrNoLoan').textContent = loanTerm>0 ? 'Whole cow, no loan: '+noLoanTxt : '';
     $('paybackValue').textContent = paybackYear ? paybackYear+(paybackYear===1?' year':' years') : 'No payback';
 
     $('narrativeNpv').innerHTML = npvTotal<0
       ? 'The negative net present value indicates that the price of <strong>$'+fmtMoney0.format(bidPrice)+'</strong> per head is too high.'
       : 'The positive net present value indicates this is an economically feasible investment.';
     $('narrativeIrr').innerHTML = isFinite(irrPct)
-      ? 'This investment has an internal rate of return of <strong>'+irrPct.toFixed(1)+'%</strong>.'
+      ? 'This investment has an internal rate of return of <strong>'+irrPct.toFixed(1)+'%</strong>'+(loanTerm>0
+          ? ' on the $'+fmtMoney0.format(fin.equityAmount)+' down payment ('+equityPct+'% of the bid price; the loan pays for the rest). Borrowing makes this number much larger than the return on the cow itself: bought outright with no loan, the same cow returns <strong>'+(isFinite(fin.irrNoLoanPct)?fin.irrNoLoanPct.toFixed(1)+'%':'—')+'</strong> a year. Both assume today\'s calf prices hold for every year of the plan.'
+          : ' on the full bid price. It assumes today\'s calf prices hold for every year of the plan.')
       : 'A stable IRR could not be found for these assumptions.';
     $('narrativePayback').innerHTML = paybackYear
       ? 'This investment has a payback period of <strong>'+yearWords[paybackYear]+' ('+paybackYear+')</strong> years.'
