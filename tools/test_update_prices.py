@@ -11,10 +11,18 @@ import update_prices as up
 REPO = up.REPO
 BASE = json.load(open(up.DATA, encoding='utf-8'))
 
+def pin_dates(d):
+    """The weekly job keeps moving the live dates; tests that feed "newer" reports need old ones."""
+    d['prices']['bred_cow']['report_date'] = '2026-09-03'
+    d['prices']['fed_cattle']['report_date'] = '2026-10-12'
+    return d
+
 def fetch_base():
-    """The live JSON, with the bred heifer price pinned to a known value for the fetch tests."""
-    d = copy.deepcopy(BASE)
+    """The live JSON, with known values and dates for the fetch tests (independent of the weekly job)."""
+    d = pin_dates(copy.deepcopy(BASE))
     d['prices']['bred_heifer'].update(value=3625.0, report_date='2026-10-09')
+    d['prices']['bred_cow']['value'] = 2828.62
+    d['prices']['fed_cattle']['value'] = 220.11
     return d
 TODAY = dt.date(2026, 10, 19)
 
@@ -49,6 +57,10 @@ check('bred cow >8 yr rejected', not up.match_bred_cow(auction(**{'class': 'Bred
 check('bred cow T3 rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'age': '2-4', 'pregnancy_stage': 'T3'})))
 check('bred cow per cwt rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'age': '2-4', 'pregnancy_stage': 'T2', 'price_unit': 'Per Cwt'})))
 check('bred heifer M&L 1 matches', up.match_bred_heifer(auction(**{'class': 'Bred Heifers'})))
+check('API "Per Unit" counts as per head', up.match_bred_heifer(auction(**{'class': 'Bred Heifers', 'price_unit': 'Per Unit'})))
+check('API bred cow row matches', up.match_bred_cow(auction(**{'class': 'Bred Cows', 'price_unit': 'Per Unit', 'age': 'Young (2-4 yrs)', 'pregnancy_stage': '2nd Stage (4-6 mo)'})))
+check('API 2nd/3rd stage rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'price_unit': 'Per Unit', 'age': 'Young (2-4 yrs)', 'pregnancy_stage': '2nd/3rd Stage (4-9 mo)'})))
+check('API 3rd stage rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'price_unit': 'Per Unit', 'age': 'Young (2-4 yrs)', 'pregnancy_stage': '3rd Stage (7-9 mo)'})))
 check('bred heifer M&L 1-2 rejected', not up.match_bred_heifer(auction(**{'class': 'Bred Heifers', 'muscle_grade': '1-2'})))
 check('fed steers live FOB over 80% matches', up.match_fed_cattle(fed()))
 check('dressed basis rejected', not up.match_fed_cattle(fed(selling_basis_description='DRESSED DELIVERED')))
@@ -90,6 +102,8 @@ check('Boner high dressing rejected', not up.match_cull_cow(slaughter(dressing='
 check('Lean cow rejected', not up.match_cull_cow(slaughter(grade='Lean 85-90%')))
 check('bred cow not a cull cow', not up.match_cull_cow(slaughter(**{'class': 'Bred Cows', 'price_unit': 'Per Head'})))
 check('bull 1-2 average matches', up.match_cull_bull(slaughter(**{'class': 'Bulls', 'grade': '1-2'})))
+check('bull 1-2 in yield_grade matches', up.match_cull_bull(slaughter(**{'class': 'Bulls', 'grade': None, 'yield_grade': '1-2'})))
+check('feeder bull rejected', not up.match_cull_bull(slaughter(**{'class': 'Bulls', 'commodity': 'Feeder Cattle', 'muscle_grade': '1-2'})))
 check('bull 1 rejected', not up.match_cull_bull(slaughter(**{'class': 'Bulls', 'grade': '1'})))
 check('bull low dressing rejected', not up.match_cull_bull(slaughter(**{'class': 'Bulls', 'grade': '1-2', 'dressing': 'Low'})))
 
@@ -141,7 +155,7 @@ try:
         os.makedirs(os.path.join(tmp, os.path.dirname(f)), exist_ok=True)
         shutil.copy(os.path.join(REPO, f), os.path.join(tmp, f))
     check('apply with current JSON changes nothing', up.apply(copy.deepcopy(BASE), repo=tmp) == [])
-    data = copy.deepcopy(BASE)
+    data = pin_dates(copy.deepcopy(BASE))
     up.fetch(data, payloads, TODAY)
     files = up.apply(data, repo=tmp)
     check('apply edits the four tools and data-sources', sorted(files) == sorted(

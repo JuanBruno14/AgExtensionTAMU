@@ -115,8 +115,9 @@ def grade_is_1(row):
     return bool(re.search(r'large\s*1(?![\s-]*\d)', t))
 
 def per_head(row):
+    """USDA writes per-head prices as "Per Unit" in the API ("Per Head" in some reports)."""
     u = field(row, 'price_unit', 'unit', 'priceUnit')
-    return u is None or 'head' in str(u).lower()
+    return u is None or 'head' in str(u).lower() or 'unit' in str(u).lower()
 
 def is_class(row, word):
     c = field(row, 'class', 'class_description', 'commodity_class')
@@ -127,7 +128,10 @@ def match_bred_cow(row):
         return False
     age = str(field(row, 'age', 'age_description') or text(row)).lower()
     stage = str(field(row, 'pregnancy_stage', 'stage', 'trimester', 'pregnancyStage') or text(row)).lower()
-    return bool(re.search(r'\b2\s*-\s*4\b', age)) and bool(re.search(r'\bt2\b|2nd|second|\bt\s*2\b', stage))
+    # API stages look like "2nd Stage (4-6 mo)"; combined lines ("2nd/3rd Stage (4-9 mo)") are not 2nd trimester
+    second = bool(re.search(r'\bt2\b|2nd|second|\bt\s*2\b', stage))
+    other = bool(re.search(r'1st|3rd|first|third|\bt[13]\b|t2\s*-\s*3|/', stage))
+    return bool(re.search(r'\b2\s*-\s*4\b', age)) and second and not other
 
 def match_bred_heifer(row):
     return is_class(row, 'bred heifer') and grade_is_1(row) and per_head(row)
@@ -180,10 +184,11 @@ def average_dressing(row):
     return 'average' in t and not re.search(r'\b(high|low)\b', t)
 
 def grade_is_12(row):
-    g = field(row, 'muscle_grade', 'grade', 'muscleGrade')
-    if g is not None:
-        return re.sub(r'\s', '', str(g)) == '1-2'
-    return bool(re.search(r'\b1\s*-\s*2\b', text(row)))
+    for name in ('muscle_grade', 'yield_grade', 'quality_grade_name', 'grade', 'muscleGrade'):
+        g = field(row, name)
+        if g is not None and re.sub(r'\s', '', str(g)).endswith('1-2'):
+            return True
+    return False
 
 def match_steer(row):
     return feeder_line(row, 'steer', 500, 550)
@@ -203,7 +208,10 @@ def match_cull_cow(row):
             and per_cwt(row) and plain(row) and average_dressing(row))
 
 def match_cull_bull(row):
-    return ('bull' in klass(row) and grade_is_12(row) and per_cwt(row) and plain(row) and average_dressing(row))
+    c = field(row, 'commodity', 'commodity_desc')
+    slaughter = c is None or 'slaughter' in str(c).lower()
+    return ('bull' in klass(row) and slaughter and grade_is_12(row) and per_cwt(row) and plain(row)
+            and average_dressing(row))
 
 HINT = {'bred_cow': 'bred cow', 'bred_heifer': 'bred heifer', 'cull_bull': 'bull', 'cull_cow': 'boner',
         'steer': 'steer', 'heifer': 'heifer', 'stocker_700': 'steer', 'stocker_800': 'steer', 'fed_cattle': 'live'}
@@ -241,7 +249,7 @@ def pick(key, rows, since):
     Returns (date, value, detail_html, lines) or None."""
     by_date = {}
     for r in rows:
-        d = parse_date(field(r, 'report_date', 'report_end_date', 'published_date', 'reportDate'))
+        d = parse_date(field(r, 'published_date', 'report_date', 'report_end_date', 'reportDate'))
         if d and d > since and RULES[key](r) and number(r, *PRICE):
             by_date.setdefault(d, []).append(r)
     if not by_date:
@@ -338,7 +346,8 @@ def fetch(data, payloads, today):
                      else ':warning: no line matched this rule at all')
             if not seen:   # show a couple of rows that look like this class, to fix the rule from
                 word = HINT.get(key)
-                like = [r for r in rows if word and word in text(r)][:2]
+                like = [r for r in rows if word and word in text(r)]
+                like = ([r for r in like if 'slaughter' in text(r)] or like)[:2] if key == 'cull_bull' else like[:2]
                 for r in like:
                     found += '\n  - sample row: `%s`' % json.dumps(r, default=str)[:900]
             notes.append('- %s: no newer matching line in report %s (%d rows read; %s); kept %s from %s.'
