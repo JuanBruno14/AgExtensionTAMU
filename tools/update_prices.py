@@ -42,6 +42,7 @@ REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.realpath(__file__)),
 DATA = os.path.join(REPO, 'data', 'market-prices.json')
 REPORT = os.path.join(REPO, 'price-update-report.md')
 API = 'https://marsapi.ams.usda.gov/services/v1.2/reports/'
+MPR = 'https://mpr.datamart.ams.usda.gov/services/v1.1/reports/'
 LOOKBACK_DAYS = 21
 MAX_CHANGE = 0.25          # 25% week-to-week move is treated as "check by hand"
 SANE = {'bred_cow': (800, 8000), 'bred_heifer': (800, 9000), 'fed_cattle': (100, 400),
@@ -204,6 +205,9 @@ def match_cull_cow(row):
 def match_cull_bull(row):
     return ('bull' in klass(row) and grade_is_12(row) and per_cwt(row) and plain(row) and average_dressing(row))
 
+HINT = {'bred_cow': 'bred cow', 'bred_heifer': 'bred heifer', 'cull_bull': 'bull', 'cull_cow': 'boner',
+        'steer': 'steer', 'heifer': 'heifer', 'stocker_700': 'steer', 'stocker_800': 'steer', 'fed_cattle': 'live'}
+
 PRICE = ('avg_price', 'weighted_avg_price', 'wtd_avg_price', 'weighted_average_price', 'weighted_average', 'avg')
 HEAD = ('head_count', 'heads', 'head', 'number_of_head')
 WEIGHT = ('avg_weight', 'weighted_avg_weight', 'average_weight', 'wtd_avg_weight')
@@ -300,6 +304,9 @@ def api_get(slug, key, today):
     q = urllib.parse.quote('report_begin_date=%s:%s' % (start, end), safe='=:/')
     tries = ['%s%s?q=%s&allSections=true' % (API, slug, q), '%s%s?q=%s' % (API, slug, q),
              '%s%s?allSections=true' % (API, slug), '%s%s' % (API, slug)]
+    # Mandatory price reports (LM_*, e.g. 2477) live on the LMPR datamart, not on MyMarketNews.
+    mq = urllib.parse.quote('report_date=%s:%s' % (start, end), safe='=:/')
+    tries += ['%s%s?q=%s&allSections=true' % (MPR, slug, mq), '%s%s?allSections=true' % (MPR, slug), '%s%s' % (MPR, slug)]
     last = None
     for url in tries:
         req = urllib.request.Request(url, headers={
@@ -329,6 +336,11 @@ def fetch(data, payloads, today):
             seen = pick(key, rows, dt.date.min)   # say what the rule did find, so a broken rule shows up
             found = ('latest matching line %s, %s' % (seen[0], fmt_unit(p, seen[1])) if seen
                      else ':warning: no line matched this rule at all')
+            if not seen:   # show a couple of rows that look like this class, to fix the rule from
+                word = HINT.get(key)
+                like = [r for r in rows if word and word in text(r)][:2]
+                for r in like:
+                    found += '\n  - sample row: `%s`' % json.dumps(r, default=str)[:900]
             notes.append('- %s: no newer matching line in report %s (%d rows read; %s); kept %s from %s.'
                          % (p['label'], p['report_slug'], len(rows), found, fmt_unit(p), p['report_date']))
             continue
