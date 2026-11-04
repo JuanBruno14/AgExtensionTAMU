@@ -52,7 +52,7 @@ No accounts, cookies, analytics, databases or personal-information forms.
 
 | What | When | How | Who |
 | --- | --- | --- | --- |
-| USDA AMS prices (bred cow, bred heifer, fed cattle) | Weekly, automatic (Mon) | `update-prices.yml`; moves over 25% or missing classes open an issue instead | Automatic; developer checks issues |
+| USDA AMS prices (bred cow, bred heifer, fed cattle, steer, heifer, stocker 700/800 lb, cull cow, cull bull) | Weekly, automatic (Mon); needs the `AMS_API_KEY` repository secret | `update-prices.yml`; moves over 25% or missing classes open an issue instead | Automatic; developer checks issues |
 | D03 budgets in Jim | When a new D03 workbook is published (yearly) | Update `BUDGET_SUMMARY` in `worker/jim-worker.js` and redeploy; replace `jim/kb.json` | Developer, numbers approved by program owner |
 | Knowledge base `jim/kb.json` | When manuals or site tools change | Edit or regenerate the chunks; the Worker reloads it within 6 hours | Developer |
 | Third-party libraries | Every few months or on an advisory | `vendor/README.md` | Developer |

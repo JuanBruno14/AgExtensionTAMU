@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ESEwB5V3BrRT72uqD6KyWlyMVxokRJWrh3OGqyMTVMI='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-cgKVmX9zBg9TBxPihew4RgEYi94JXrgcLyoe2DDmTCo='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sell or Keep to Upgrade · Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -465,6 +465,7 @@
   .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
 </style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
+<script src="../brand/market-store.js"></script>
 </head>
 <body>
 <header class="topbar">
@@ -533,7 +534,7 @@
           <div class="field">
             <label for="d1_priceSold">Sale price</label>
             <span class="hint">Pre-filled from Market prices &amp; factors</span>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_priceSold" value="180" min="0" step="0.5" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-suffix"><input type="number" id="d1_priceSold" value="126.24" min="0" step="0.5" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field">
             <label for="d1_commissionSold">Commission</label>
@@ -805,7 +806,7 @@
         <div class="field">
           <label for="sk_calfPrice">Calf purchase price</label>
           <span class="hint">Pre-filled from Market prices &amp; factors</span>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_calfPrice" value="530" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator's steer price. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_calfPrice" value="407.31" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator's steer price. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
         </div>
         <div class="field">
           <label for="sk_calfWeight">Calf purchase weight</label>
@@ -814,12 +815,12 @@
         <div class="field">
           <label for="sk_price700">Sale price — 700&nbsp;lb path</label>
           <span class="hint">Pre-filled from Market prices &amp; factors</span>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_price700" value="380" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_price700" value="334.67" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
         </div>
         <div class="field">
           <label for="sk_price800">Sale price — 800&nbsp;lb path</label>
           <span class="hint">Pre-filled from Market prices &amp; factors</span>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_price800" value="360" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_price800" value="326.3" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div>
         </div>
         <div class="field">
           <label for="sk_grazingCost">Grazing cost</label>
@@ -1213,7 +1214,7 @@
      exactly. Applied once at load (see D1_DEFAULTS/STOCKERS_DEFAULTS below) -- these
      stay plain, freely-editable fields afterward, same as before this change. */
   var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
-  var MP_FALLBACK = { mp_cullCowPrice:180.0, mp_fedCattlePrice:220.11, mp_stocker700Price:380.0, mp_stocker800Price:360.0, mp_steerPrice:530.0 };
+  var MP_FALLBACK = { mp_cullCowPrice:126.24, mp_fedCattlePrice:220.11, mp_stocker700Price:334.67, mp_stocker800Price:326.30, mp_steerPrice:407.31 };
   function getMarketPrices(){
     try {
       var raw = window.localStorage.getItem(MP_STORAGE_KEY);
@@ -1416,7 +1417,7 @@
      slider at this exact weight (see 2026-09-16 nineteenth-round verification).
      Not fabricated: sourced, disclosed, and consistent with the rest of the site. */
   var D1_DEFAULTS = {
-    d1_headCulled:50, d1_weightAtCulling:1100, d1_shrinkSold:3, d1_priceSold:180,
+    d1_headCulled:50, d1_weightAtCulling:1100, d1_shrinkSold:3, d1_priceSold:126.24,
     d1_commissionSold:3, d1_freightSold:7, d1_perHeadSold:1,
     d1_outWeight:1300, d1_adg:2.25, d1_manualDays:0, d1_shrinkOut:3, d1_priceOut:179.71,
     d1_commissionOut:3, d1_freightOut:7, d1_perHeadOut:1, d1_deathLoss:0.5,
@@ -1634,7 +1635,7 @@
      ================================================================ */
 
   var STOCKERS_DEFAULTS = {
-    sk_heads:100, sk_calfPrice:530, sk_calfWeight:475, sk_price700:380, sk_price800:360, sk_grazingCost:0.65,
+    sk_heads:100, sk_calfPrice:407.31, sk_calfWeight:475, sk_price700:334.67, sk_price800:326.30, sk_grazingCost:0.65,
     sk_earlyStart:'2019-10-01', sk_pullOff700:'2020-03-15', sk_pullOff800:'2020-05-01',
     sk_earlyADG:1.3, sk_lateADG:2.3, sk_interestRate:7,
     sk_shrink700:0, sk_shrink800:0, sk_deathLoss700:1, sk_deathLoss800:1,

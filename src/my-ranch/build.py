@@ -13,6 +13,7 @@ head='''<!doctype html>
 <link rel="stylesheet" href="../vendor/leaflet-geoman-2.20.2/leaflet-geoman.css">
 <style>'''+css+open(os.path.join(HERE,'extra.css')).read()+'''</style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
+<script src="../brand/market-store.js"></script>
 </head>
 '''
 page=head+open(os.path.join(HERE,'body.html')).read()+'''

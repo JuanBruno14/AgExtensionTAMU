@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-iDBqPYzFkaYM5wcx9xz7QWrr6qiEM8H2oAvwtUZORBc='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PLP2BkGjATWR85v0OkWfwgBmifMzoylNLvRpm+yMwiw='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Ranch · Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -824,6 +824,7 @@
 #fc_spa{margin-top:16px;}
 </style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
+<script src="../brand/market-store.js"></script>
 </head>
 <body>
 <header class="topbar">
@@ -3660,14 +3661,18 @@
   /* Market price slides (same data and anchors as the Cow-Calf tools), rescaled to the shared market store */
   var STEER_SLIDE_BASE = [{w:397.0,p:629.0},{w:463.8,p:565.3},{w:516.4,p:530.0},{w:654.7,p:441.5},{w:762.3,p:437.9},{w:835.5,p:420.8},{w:962.3,p:392.1},{w:1140.0,p:318.2}];
   var HEIFER_SLIDE_BASE = [{w:337.0,p:554.1},{w:455.1,p:492.9},{w:531.3,p:460.0},{w:654.1,p:425.9},{w:765.6,p:395.8},{w:862.6,p:374.5},{w:922.0,p:321.6}];
+  // Defaults used when the visitor has no saved shared prices. Written by tools/update_prices.py apply
+  // from data/market-prices.json (USDA AMS Texas weekly auction). The slide anchors above (530 / 460)
+  // are the curves' own points and must stay as they are.
+  var MP_DEFAULT = {mp_steerPrice:407.31, mp_heiferPrice:379.18, mp_cullCowPrice:126.24, mp_cullBullPrice:162.73};
   function cullPrice(mult){
-    var v = 180;
+    var v = MP_DEFAULT.mp_cullCowPrice;
     try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); if(mp && +mp.mp_cullCowPrice > 0) v = +mp.mp_cullCowPrice; }catch(e){}
     return v*(mult || 1);
   }
   function slides(mult){
     var mp = {}; try{ mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null') || {}; }catch(e){}
-    var rs = (+mp.mp_steerPrice > 0 ? +mp.mp_steerPrice : 530)/530*(mult || 1), rh = (+mp.mp_heiferPrice > 0 ? +mp.mp_heiferPrice : 460)/460*(mult || 1);
+    var rs = (+mp.mp_steerPrice > 0 ? +mp.mp_steerPrice : MP_DEFAULT.mp_steerPrice)/530*(mult || 1), rh = (+mp.mp_heiferPrice > 0 ? +mp.mp_heiferPrice : MP_DEFAULT.mp_heiferPrice)/460*(mult || 1);
     return {steer:STEER_SLIDE_BASE.map(function(p){ return {w:p.w, p:p.p*rs}; }), heifer:HEIFER_SLIDE_BASE.map(function(p){ return {w:p.w, p:p.p*rh}; })};
   }
 
@@ -4576,7 +4581,7 @@
   // bull depreciation per bull a year, the same way the home page's BCU sheet does it (cost minus salvage after death loss, over its life)
   function bullDeprPerBull(){
     var mp = mpStore(), g = function(k, d){ return +mp[k] > 0 || mp[k] === 0 ? +mp[k] : d; };
-    var cost = g('mp_bullCost', 4500), life = Math.max(1, g('mp_bullLife', 4)), lb = g('mp_bullSalvageWeight', 1650.7), pr = g('mp_cullBullPrice', 190), dl = g('mp_bullDeathLoss', 2);
+    var cost = g('mp_bullCost', 4500), life = Math.max(1, g('mp_bullLife', 4)), lb = g('mp_bullSalvageWeight', 1650.7), pr = g('mp_cullBullPrice', MP_DEFAULT.mp_cullBullPrice), dl = g('mp_bullDeathLoss', 2);
     return (cost - lb*pr/100*(100 - dl)/100)/life;
   }
   function otherCosts(){

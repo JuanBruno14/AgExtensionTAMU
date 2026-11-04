@@ -148,7 +148,7 @@
       <h2>USDA AMS market reports</h2>
     </div>
     <div class="card-body">
-      <p class="card-note">Pulled directly from USDA's Agricultural Marketing Service weekly livestock auction and slaughter-cattle reports &mdash; the most direct, citable source used on this site. These three rows update themselves: every Monday an automatic job on the site's GitHub repository asks USDA's MyMarketNews service for newer editions of the same reports and, when the same class of cattle has a new price, changes it here and as the default in every tool that uses it. A move of more than 25% in one week is never applied automatically; it is flagged for a person to check. Values a producer has typed and saved in their own browser are never changed.</p>
+      <p class="card-note">Pulled directly from USDA's Agricultural Marketing Service weekly livestock auction and slaughter-cattle reports &mdash; the most direct, citable source used on this site. These rows update themselves: every Monday an automatic job on the site's GitHub repository asks USDA's MyMarketNews service for newer editions of the same reports and, when the same class of cattle has a new price, changes it here and as the default in every tool that uses it. Steer, heifer, stocker and cull prices count only plain lots (lines USDA marks Fancy, Full, Fleshy, Thin Fleshed, Unweaned or Value Added, or Light Weight, High or Low dressing, are left out). If a week has no line for a class, the last price stays. A move of more than 25% in one week is never applied automatically; it is flagged for a person to check. Values a producer has typed and saved in their own browser are never changed.</p>
       <div class="table-scroll">
       <table class="ref">
         <thead><tr><th>Value</th><th>Used in</th><th>Source report</th><th>As of</th></tr></thead>
@@ -171,12 +171,60 @@
           <!-- price:fed_cattle:end -->
           <!-- price:bred_heifer:start -->
           <tr>
-            <td class="value nowrap">$3,625.00/hd</td>
+            <td class="value nowrap">$3,465.01/hd</td>
             <td class="used">Bred heifer sale price &mdash; shared store's <code>mp_bredHeiferPrice</code>, read by <a href="replacement-heifer/index.html">B1a</a> "Bred heifer sale price"</td>
-            <td>USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "BRED HEIFERS, Medium &amp; Large 1": 20&nbsp;hd, under 2&nbsp;yr, 2nd trimester, avg 1,014&nbsp;lb, $3,625.00/hd (the only Medium &amp; Large 1 line that week)</td>
-            <td><span class="tag fresh">Oct 9, 2026</span></td>
+            <td>USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "BRED HEIFERS, Medium &amp; Large 1" (3 lines, head-weighted average): 58&nbsp;hd, 812&ndash;1,330&nbsp;lb, $2,600&ndash;$3,700/hd, average $3,465.01/hd</td>
+            <td><span class="tag fresh">Oct 30, 2026</span></td>
           </tr>
           <!-- price:bred_heifer:end -->
+          <!-- price:steer:start -->
+          <tr>
+            <td class="value nowrap">$407.31/cwt</td>
+            <td class="used">Steer price (516.4&nbsp;lb reference) &mdash; shared store's <code>mp_steerPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a>, <a href="retained-ownership/index.html">Stockers</a>' calf purchase price and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>STEER_PRICE_SLIDE</code></td>
+            <td>USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "FEEDER STEERS, Medium &amp; Large 1, 500&ndash;549&nbsp;lb", plain lots only (1 line): 144&nbsp;hd, 500&ndash;549&nbsp;lb, $360.00&ndash;$450.00/cwt, average $407.31/cwt</td>
+            <td><span class="tag fresh">Oct 30, 2026</span></td>
+          </tr>
+          <!-- price:steer:end -->
+          <!-- price:heifer:start -->
+          <tr>
+            <td class="value nowrap">$379.18/cwt</td>
+            <td class="used">Heifer price (531.3&nbsp;lb reference) &mdash; shared store's <code>mp_heiferPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a>, <a href="replacement-heifer/index.html">B1a</a> and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>HEIFER_PRICE_SLIDE</code></td>
+            <td>USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "FEEDER HEIFERS, Medium &amp; Large 1, 500&ndash;549&nbsp;lb", plain lots only (1 line): 131&nbsp;hd, 500&ndash;545&nbsp;lb, $333.00&ndash;$395.00/cwt, average $379.18/cwt</td>
+            <td><span class="tag fresh">Oct 30, 2026</span></td>
+          </tr>
+          <!-- price:heifer:end -->
+          <!-- price:stocker_700:start -->
+          <tr>
+            <td class="value nowrap">$334.67/cwt</td>
+            <td class="used">700&nbsp;lb path sale price &mdash; shared store's <code>mp_stocker700Price</code>, read by <a href="retained-ownership/index.html">Stockers</a></td>
+            <td>USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "FEEDER STEERS, Medium &amp; Large 1, 700&ndash;749&nbsp;lb", plain lots only (1 line): 23&nbsp;hd, 700&ndash;740&nbsp;lb, $320.00&ndash;$365.00/cwt, average $334.67/cwt</td>
+            <td><span class="tag fresh">Oct 30, 2026</span></td>
+          </tr>
+          <!-- price:stocker_700:end -->
+          <!-- price:stocker_800:start -->
+          <tr>
+            <td class="value nowrap">$326.30/cwt</td>
+            <td class="used">800&nbsp;lb path sale price &mdash; shared store's <code>mp_stocker800Price</code>, read by <a href="retained-ownership/index.html">Stockers</a></td>
+            <td>USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) had no plain "FEEDER STEERS, Medium &amp; Large 1, 800&ndash;849&nbsp;lb" line on Oct 30, 2026. Set to the 700&ndash;749&nbsp;lb price that week ($334.67/cwt) times the steer weight curve's 800&nbsp;lb &divide; 700&nbsp;lb ratio (0.975). The weekly job replaces it with the first real 800&ndash;849&nbsp;lb line.</td>
+            <td><span class="tag fresh">Oct 30, 2026 (estimate)</span></td>
+          </tr>
+          <!-- price:stocker_800:end -->
+          <!-- price:cull_cow:start -->
+          <tr>
+            <td class="value nowrap">$126.24/cwt</td>
+            <td class="used">Cull cow price (1,279.4&nbsp;lb Boner reference) &mdash; shared store's <code>mp_cullCowPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a>, <a href="retained-ownership/index.html">D1</a> and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>CULL_COW_PRICE_SLIDE</code></td>
+            <td>USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "SLAUGHTER COWS, Boner 80&ndash;85%, average dressing", plain lots only (1 line): 34&nbsp;hd, 1,015&ndash;1,305&nbsp;lb, $114.00&ndash;$133.00/cwt, average $126.24/cwt</td>
+            <td><span class="tag fresh">Oct 30, 2026</span></td>
+          </tr>
+          <!-- price:cull_cow:end -->
+          <!-- price:cull_bull:start -->
+          <tr>
+            <td class="value nowrap">$162.73/cwt</td>
+            <td class="used">Cull bull price &mdash; shared store's <code>mp_cullBullPrice</code>, read by <a href="cow-calf/index.html">A2</a>, <a href="replacement-heifer/index.html">B1a</a> and <a href="my-ranch/index.html">My Ranch</a> (bull salvage)</td>
+            <td>USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "SLAUGHTER BULLS, 1&ndash;2, average dressing", plain lots only (1 line): 27&nbsp;hd, 1,045&ndash;2,265&nbsp;lb, $145.00&ndash;$176.00/cwt, average $162.73/cwt</td>
+            <td><span class="tag fresh">Oct 30, 2026</span></td>
+          </tr>
+          <!-- price:cull_bull:end -->
         </tbody>
       </table>
       </div>
@@ -189,18 +237,12 @@
       <h2>"2026 D03 Budgets" reference workbook</h2>
     </div>
     <div class="card-body">
-      <p class="card-note">A budgeting workbook shared directly by the user (<code>2026 D03 Budgets 3-10-26 1.xlsm</code>), used as the flat, authoritative current price for these classes.</p>
+      <p class="card-note">A budgeting workbook shared directly by the user (<code>2026 D03 Budgets 3-10-26 1.xlsm</code>), used as the flat, authoritative current price for these classes. Until 2026-11-04 it also set the steer ($530), heifer ($460), cull cow ($180), cull bull ($190) and stocker 700/800&nbsp;lb ($380/$360) prices; those now come from the weekly USDA Texas auction summary above. The weight curves below keep the D03 numbers as their anchor points, so the live curve is the D03 shape scaled by (USDA price &divide; D03 price).</p>
       <div class="table-scroll">
       <table class="ref">
         <thead><tr><th>Value</th><th>Used in</th><th>Note</th></tr></thead>
         <tbody>
-          <tr><td class="value nowrap">$530/cwt</td><td class="used">Steer price (516.4&nbsp;lb reference) &mdash; shared store's <code>mp_steerPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a> and <a href="retained-ownership/index.html">Stockers</a>' calf purchase price (unified 2026-09-22)</td><td>Also the anchor for <code>STEER_PRICE_SLIDE</code>, see below</td></tr>
-          <tr><td class="value nowrap">$460/cwt</td><td class="used">Heifer price (531.3&nbsp;lb reference) &mdash; shared store's <code>mp_heiferPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a> and <a href="replacement-heifer/index.html">B1a</a>'s weaned/pre-breed-cull/open-cull prices</td><td>Anchor for <code>HEIFER_PRICE_SLIDE</code>, see below</td></tr>
-          <tr><td class="value nowrap">$180/cwt</td><td class="used">Cull cow price (1,279.4&nbsp;lb Boner reference) &mdash; shared store's <code>mp_cullCowPrice</code>, read by <a href="cow-calf/index.html">A2</a> and <a href="retained-ownership/index.html">D1</a>'s sale &amp; upgraded-sale prices</td><td>Anchor for <code>CULL_COW_PRICE_SLIDE</code>, see below</td></tr>
-          <tr><td class="value nowrap">$190/cwt</td><td class="used">Cull bull price &mdash; shared store's <code>mp_cullBullPrice</code>, read by <a href="cow-calf/index.html">A2</a> and now also <a href="replacement-heifer/index.html">B1a</a>'s bull salvage price (unified 2026-09-21, see the shared-store card above &mdash; this used to be a mismatched $80/cwt on B1a alone)</td><td>Only one weight class reported, so no curve to anchor</td></tr>
           <tr><td class="value nowrap">$220.11/cwt</td><td class="used">Fed/finished cattle sale price &mdash; shared store's <code>mp_fedCattlePrice</code>, read by <a href="retained-ownership/index.html">Stockers</a> "Feedyard" paths (both sub-paths)</td><td>Same USDA AMS figure as the market-reports card above, now centralized</td></tr>
-          <tr><td class="value nowrap">$380/cwt</td><td class="used">700&nbsp;lb path sale price &mdash; shared store's <code>mp_stocker700Price</code>, read by <a href="retained-ownership/index.html">Stockers</a></td><td>Flat, no equivalent auction-data weight class existed to cross-check</td></tr>
-          <tr><td class="value nowrap">$360/cwt</td><td class="used">800&nbsp;lb path sale price &mdash; shared store's <code>mp_stocker800Price</code>, read by <a href="retained-ownership/index.html">Stockers</a></td><td>Flat, same as above</td></tr>
           <tr><td class="value nowrap">$2,828.62/hd</td><td class="used">Bred cow purchase price &mdash; shared store's <code>mp_bredCowPrice</code>, read by <a href="cow-calf/index.html">A1</a> "Bid price" and <a href="cow-calf/index.html">A2</a> "Cost/head"</td><td>Same USDA AMS figure as the market-reports card above, now centralized</td></tr>
           <tr><td class="value">$4,500/hd, 4&nbsp;yr life, 1,650.7&nbsp;lb salvage wt, 2% death loss, 25 cows/bull</td><td class="used">Herd bull economics &mdash; shared store's <code>mp_bullCost</code>/<code>mp_bullLife</code>/<code>mp_bullSalvageWeight</code>/<code>mp_bullDeathLoss</code>/<code>mp_perBull</code>, read directly from the <a href="index.html#market-prices-calculator">"Market prices &amp; factors" calculator</a> itself, feeding the home page's own <a href="index.html#bcu-calculator">"Cow operating cost (BCU)"</a> calculator's read-only bull-economics readout, plus <a href="cow-calf/index.html">A2</a>'s "Herd bull" card and <a href="replacement-heifer/index.html">B1a</a>'s "Bull investment" card</td><td>The $4,500/hd figure and 1,650.7&nbsp;lb reference weight are the original BCU-calculator's assumption (never independently re-sourced); see the shared-store card above for why this is now the single number used everywhere instead of three drifting ones</td></tr>
           <tr><td class="value">$210/ton, 1,000&nbsp;lb round bale</td><td class="used">Hay price &mdash; shared store's <code>mp_hayPrice</code>/<code>mp_hayRollLb</code> (unified 2026-10-21), read by the home page's "Cow operating cost (BCU)" calculator as $/roll (price &times; bale weight, $105/roll by default) and by <a href="my-ranch/index.html">My Ranch</a> as the starting hay price of a new ranch (each ranch can still set its own, with a one-click "Use it" back to the site price)</td><td>$105/roll is the original BCU sheet's value; Texas A&amp;M AgriLife's 2026 District 3 budgets use $200/ton ($0.10/lb)</td></tr>
@@ -250,7 +292,7 @@
       <h2>Refreshing all of this later</h2>
     </div>
     <div class="card-body">
-      <p class="card-note" style="margin:0;">The three USDA AMS prices above refresh automatically each week (see that card). For everything else, when it's time to update prices again: re-screenshot or re-pull a current "Local Texas Auction Data" report for the weight-class curves, then enter the new flat numbers once in the <a href="index.html#market-prices-calculator">home page's "Market prices &amp; factors" calculator</a> &mdash; every tool that reads the shared store picks the change up automatically (live in every open tab, and on next load elsewhere), with each weight-class curve rescaling itself the same rescale-to-anchor way rather than being replaced outright, so weight sliders keep behaving sensibly across their whole range, not just at the default point. The few fields that don't yet read from the shared store (see "Not yet sourced" above) still need a manual edit on their own page. Every place a number changes, it should get the same treatment as everything on this page: cited here, dated, and flagged on its own tool page.</p>
+      <p class="card-note" style="margin:0;">The USDA AMS prices above refresh automatically each week (see that card). For everything else, when it's time to update prices again: re-screenshot or re-pull a current "Local Texas Auction Data" report for the weight-class curves, then enter the new flat numbers once in the <a href="index.html#market-prices-calculator">home page's "Market prices &amp; factors" calculator</a> &mdash; every tool that reads the shared store picks the change up automatically (live in every open tab, and on next load elsewhere), with each weight-class curve rescaling itself the same rescale-to-anchor way rather than being replaced outright, so weight sliders keep behaving sensibly across their whole range, not just at the default point. The few fields that don't yet read from the shared store (see "Not yet sourced" above) still need a manual edit on their own page. Every place a number changes, it should get the same treatment as everything on this page: cited here, dated, and flagged on its own tool page.</p>
     </div>
   </div>
 

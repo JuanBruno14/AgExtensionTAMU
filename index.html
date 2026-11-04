@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-sd3LujrU5GPuViQCKkNbn6aLIRqJcbEmFG3xGYxL+7Y='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-9ymD/OzSblWCQskcMZvJVFqvZw9ueKHcvVoetLmej2k='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -325,6 +325,7 @@
   .bcu-ranch-toggle{display:flex;align-items:center;gap:8px;margin-top:8px;font-weight:700;cursor:pointer;}
 </style>
 <link rel="stylesheet" href="brand/tamu-brand.css">
+<script src="brand/market-store.js"></script>
 </head>
 <body>
 
@@ -487,10 +488,10 @@
         <fieldset style="margin-bottom:18px;">
           <legend>Weight-class prices (steer/heifer/cull, at their reference weight)</legend>
           <div class="field-grid cols-3">
-            <div class="field"><label for="mp_steerPrice">Steer, at 516.4&nbsp;lb</label><div class="input-wrap has-suffix"><input type="number" id="mp_steerPrice" value="530.0" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_heiferPrice">Heifer, at 531.3&nbsp;lb</label><div class="input-wrap has-suffix"><input type="number" id="mp_heiferPrice" value="460.0" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_cullCowPrice">Cull cow, at 1,279.4&nbsp;lb (Boner)</label><div class="input-wrap has-suffix"><input type="number" id="mp_cullCowPrice" value="180.0" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_cullBullPrice">Cull bull</label><div class="input-wrap has-suffix"><input type="number" id="mp_cullBullPrice" value="190.0" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_steerPrice">Steer, at 516.4&nbsp;lb</label><div class="input-wrap has-suffix"><input type="number" id="mp_steerPrice" value="407.31" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_heiferPrice">Heifer, at 531.3&nbsp;lb</label><div class="input-wrap has-suffix"><input type="number" id="mp_heiferPrice" value="379.18" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_cullCowPrice">Cull cow, at 1,279.4&nbsp;lb (Boner)</label><div class="input-wrap has-suffix"><input type="number" id="mp_cullCowPrice" value="126.24" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_cullBullPrice">Cull bull</label><div class="input-wrap has-suffix"><input type="number" id="mp_cullBullPrice" value="162.73" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
           </div>
           <p class="card-note" style="margin:10px 0 0;">Each tool keeps its own weight-vs-price curve (the real shape of how price changes with weight, digitized from actual auction data) and rescales it to match these numbers at the reference weight above &mdash; so dragging a weight slider on any tool page still interpolates sensibly, not just the default point.</p>
         </fieldset>
@@ -499,10 +500,10 @@
           <legend>Flat prices</legend>
           <div class="field-grid cols-3">
             <div class="field"><label for="mp_bredCowPrice">Bred cow</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="mp_bredCowPrice" value="2828.62" min="0" step="1"></div></div>
-            <div class="field"><label for="mp_bredHeiferPrice">Bred heifer</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="mp_bredHeiferPrice" value="3625" min="0" step="1"></div></div>
+            <div class="field"><label for="mp_bredHeiferPrice">Bred heifer</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="mp_bredHeiferPrice" value="3465.01" min="0" step="1"></div></div>
             <div class="field"><label for="mp_fedCattlePrice">Fed/finished cattle</label><div class="input-wrap has-suffix"><input type="number" id="mp_fedCattlePrice" value="220.11" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_stocker700Price">Stocker sale, 700&nbsp;lb path</label><div class="input-wrap has-suffix"><input type="number" id="mp_stocker700Price" value="380.0" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_stocker800Price">Stocker sale, 800&nbsp;lb path</label><div class="input-wrap has-suffix"><input type="number" id="mp_stocker800Price" value="360.0" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_stocker700Price">Stocker sale, 700&nbsp;lb path</label><div class="input-wrap has-suffix"><input type="number" id="mp_stocker700Price" value="334.67" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_stocker800Price">Stocker sale, 800&nbsp;lb path</label><div class="input-wrap has-suffix"><input type="number" id="mp_stocker800Price" value="326.3" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
           </div>
         </fieldset>
 
@@ -596,9 +597,9 @@
      index.html all read this same localStorage key. */
   var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
   var MP_DEFAULTS = {
-    mp_steerPrice:530.0, mp_heiferPrice:460.0, mp_cullCowPrice:180.0, mp_cullBullPrice:190.0,
-    mp_bredCowPrice:2828.62, mp_bredHeiferPrice:3625.00, mp_fedCattlePrice:220.11,
-    mp_stocker700Price:380.0, mp_stocker800Price:360.0,
+    mp_steerPrice:407.31, mp_heiferPrice:379.18, mp_cullCowPrice:126.24, mp_cullBullPrice:162.73,
+    mp_bredCowPrice:2828.62, mp_bredHeiferPrice:3465.01, mp_fedCattlePrice:220.11,
+    mp_stocker700Price:334.67, mp_stocker800Price:326.30,
     mp_bullCost:4500, mp_bullLife:4, mp_bullSalvageWeight:1650.7, mp_bullDeathLoss:2, mp_perBull:25,
     mp_hayPrice:210, mp_hayRollLb:1000
   };
@@ -824,8 +825,14 @@
     var customized = false;
 
     function persist(){
-      var payload = { savedAt: new Date().toISOString() };
-      Object.keys(MP_DEFAULTS).forEach(function(id){ payload[id] = num(id); });
+      // Only the numbers the visitor changed are saved (v:2). Everything else falls back to the
+      // defaults above, which the weekly USDA price job keeps current; saving every value froze
+      // returning visitors on old prices (see brand/market-store.js).
+      var payload = { savedAt: new Date().toISOString(), v: 2 };
+      Object.keys(MP_DEFAULTS).forEach(function(id){
+        var v = num(id);
+        if(Math.abs(v - MP_DEFAULTS[id]) > 1e-9) payload[id] = v;
+      });
       try { window.localStorage.setItem(MP_STORAGE_KEY, JSON.stringify(payload)); }
       catch(e){ /* private mode / blocked storage -- this session's values just won't persist or be shared */ }
 
@@ -844,10 +851,11 @@
         if(!raw) return false;
         var data = JSON.parse(raw);
         if(!data) return false;
+        var any = false;
         Object.keys(MP_DEFAULTS).forEach(function(id){
-          if(isFinite(data[id])){ var el = $(id); if(el) el.value = data[id]; }
+          if(isFinite(data[id])){ var el = $(id); if(el){ el.value = data[id]; any = true; } }
         });
-        return true;
+        return any;
       } catch(e){ return false; }
     }
 

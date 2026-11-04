@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-DZlgCSOO4Kx98TXfJKyp5nE9njebxaTi73/ZTgeuu6Y='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-eU+GmB2b4uwxaLcB/iexlmZxaJ1jF7H9agSDOKi967s='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -458,6 +458,7 @@
   .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);}
 </style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
+<script src="../brand/market-store.js"></script>
 </head>
 <body>
 <header class="topbar">
@@ -672,6 +673,7 @@
           </div>
           <p class="card-note" style="margin-top:8px;">Shocks steer, heifer &amp; cull cow sale prices together across all years, ±10% from what's entered above; operating cost, bid price, and financing stay at today's values.</p>
         </div>
+        <p class="card-note" style="margin-top:12px;">Differences from the A1 spreadsheet: four formula errors are fixed here. The IRR is solved on undiscounted cash flows (<a href="understanding-irr.html" style="color:inherit;">why</a>); the year-6 loan payment is no longer dropped on 6-year plans; a 1-year plan is no longer discounted twice in the NPV; and a negative year-7 cash flow is now flagged. With the spreadsheet's own inputs, NPV is unchanged and the IRR is &minus;1.7% instead of &minus;6.4%.</p>
 
         <div class="btn-row" style="padding:10px 0 0;">
           <button class="btn secondary" id="resetBtn" type="button">Reset A1 defaults</button>
@@ -754,7 +756,7 @@
           </div>
           <div class="field">
             <label for="a2_steerPrice">Steer price</label>
-            <div class="input-wrap has-suffix auto"><input type="number" id="a2_steerPrice" value="530.0" min="0"><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-suffix auto"><input type="number" id="a2_steerPrice" value="407.31" min="0"><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field"></div>
           <div class="field">
@@ -764,7 +766,7 @@
           </div>
           <div class="field">
             <label for="a2_heiferPrice">Heifer price</label>
-            <div class="input-wrap has-suffix auto"><input type="number" id="a2_heiferPrice" value="460.0" min="0"><span class="suffix">$/cwt</span></div>
+            <div class="input-wrap has-suffix auto"><input type="number" id="a2_heiferPrice" value="379.18" min="0"><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field"></div>
         </div>
@@ -890,7 +892,7 @@
             <div class="field"><label for="a2_cowLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowLife" value="7" min="1"><span class="suffix">yrs</span></div></div>
             <div class="field"><label for="a2_cowDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
             <div class="field"><label for="a2_cullCowWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1279.4" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullCowWtRange" class="weight-slide" min="1100" max="1550" step="50" value="1279.4" aria-label="Cull cow weight — drag to auto-fill the matching auction price"></div>
-            <div class="field"><label for="a2_cullCowPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullCowPrice" value="180.0" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="a2_cullCowPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullCowPrice" value="126.24" min="0"><span class="suffix">$/cwt</span></div></div>
             <div class="field"></div>
           </div>
         </fieldset>
@@ -902,7 +904,7 @@
             <div class="field"><span class="hint" style="margin-top:0;">Productive life</span><strong id="a2Bull_life">0 yrs</strong></div>
             <div class="field"><span class="hint" style="margin-top:0;">Death loss</span><strong id="a2Bull_deathLoss">0%</strong></div>
             <div class="field"><label for="a2_cullBullWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullWt" value="1650.7" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullBullWtRange" class="weight-slide" min="1300" max="2000" step="50" value="1650.7" aria-label="Bull weight — auto-fills the cull bull price (only one grade reported, so the price stays constant)"></div>
-            <div class="field"><label for="a2_cullBullPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullBullPrice" value="190.0" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="a2_cullBullPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullBullPrice" value="162.73" min="0"><span class="suffix">$/cwt</span></div></div>
             <div class="field"><span class="hint" style="margin-top:0;">Cows per bull</span><strong id="a2Bull_perBull">0</strong></div>
           </div>
         </fieldset>
@@ -1430,9 +1432,9 @@
      declaration and the Reset button can never drift apart (they used to be
      two separate hardcoded copies - see 2026-09-11 project notes). */
   var CALFCROP_DEFAULT   = [95,88,88,88,88,88,88];
-  var STEER_PRICE_DEFAULT  = [530.0,530.0,530.0,530.0,530.0,530.0,530.0];
-  var HEIFER_PRICE_DEFAULT = [460.0,460.0,460.0,460.0,460.0,460.0,460.0];
-  var CULL_PRICE_DEFAULT   = [180.0,180.0,180.0,180.0,180.0,180.0,180.0];
+  var STEER_PRICE_DEFAULT  = [407.31,407.31,407.31,407.31,407.31,407.31,407.31];
+  var HEIFER_PRICE_DEFAULT = [379.18,379.18,379.18,379.18,379.18,379.18,379.18];
+  var CULL_PRICE_DEFAULT   = [126.24,126.24,126.24,126.24,126.24,126.24,126.24];
   var OPCOST_DEFAULT       = [690,700,710,720,730,740,750];
 
   /* Texas Auction Data price slide (Local Texas Auction Data, Sept 4, 2026 -
@@ -1528,7 +1530,7 @@
      own price at its reference weight) -- see rescaleSlide(). */
   var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
   var MP_FALLBACK = {
-    mp_steerPrice:530.0, mp_heiferPrice:460.0, mp_cullCowPrice:180.0, mp_cullBullPrice:190.0,
+    mp_steerPrice:407.31, mp_heiferPrice:379.18, mp_cullCowPrice:126.24, mp_cullBullPrice:162.73,
     mp_bredCowPrice:2828.62, mp_bullCost:4500, mp_bullLife:4, mp_bullDeathLoss:2, mp_perBull:25
   };
   function getMarketPrices(){
@@ -1737,8 +1739,10 @@
     }
     for(i=0;i<7;i++){
       k=i+1;
-      var gate = (k<=5) ? (p.nper>=k) : (p.nper>=7); // replicate original off-by-one on years 6-7 gating
-      debtService[i] = gate ? (interestPay[i]+principalPay[i]) : 0;
+      // 2026-11-04: the spreadsheet's year-6 cell (H34) tested "7 calving years" instead of 6, which
+      // dropped the year-6 loan payment on a 6-year plan with a 6-year note. Fixed: every year k
+      // carries its payment when the plan runs at least k years.
+      debtService[i] = (p.nper>=k) ? (interestPay[i]+principalPay[i]) : 0;
       netCashFlow[i] = netAboveOpCost[i] - debtService[i];
       cullSalvage[i] = (p.nper===k) ? round(p.cullPrice[i]*p.cullWeight/100,2) : 0;
       npvComponent[i] = (netCashFlow[i]+cullSalvage[i]) / Math.pow(1+discountRate, k);
@@ -1746,15 +1750,11 @@
 
     var year0 = (p.loanTerm===0) ? -p.bidPrice : -equityAmount;
 
-    // the original sheet's final NPV sum uses cullSalvage[0] (Year-1 salvage, almost always 0)
-    // as the divisor rate instead of the discount rate -- replicated faithfully below.
-    var pseudoRate = cullSalvage[0]*0.01/100;
-    var pv72 = [year0];
-    for(i=0;i<7;i++){
-      k=i+1;
-      pv72.push( k===1 ? npvComponent[0] : npvComponent[i]/Math.pow(1+pseudoRate,k) );
-    }
-    var npvTotal = pv72.reduce(function(a,b){return a+b;},0);
+    // NPV = year 0 + each year's cash flow already discounted at the discount rate.
+    // 2026-11-04: the spreadsheet's sum (row 72) divided years 2-7 a second time by a "rate" taken
+    // from the year-1 cull salvage cell (C44). That cell is 0 unless the plan is 1 year long, so it
+    // only bit on 1-year plans; it is gone here.
+    var npvTotal = year0 + npvComponent.reduce(function(a,b){return a+b;},0);
 
     // payback (based on the sheet's row51-style series: year0 + npvComponent)
     var row51 = [year0].concat(npvComponent);
@@ -1765,24 +1765,30 @@
       if(cum>0){ paybackYear=i; break; }
     }
 
+    // IRR on the cash the buyer actually puts in and gets back: year 0 (down payment, or the whole
+    // bid price with no loan) and each year's net cash flow after debt service plus the cull sale,
+    // NOT discounted. 2026-11-04: the spreadsheet (B64) ran IRR() on row 51, flows already
+    // discounted at the discount rate, which understates the IRR; fixed.
+    var irrFlows = [year0];
+    for(i=0;i<7;i++){ irrFlows.push(netCashFlow[i] + cullSalvage[i]); }
     var irrGuessDenom = p.bidPrice || 1;
     var irrGuess = npvComponent.reduce(function(a,b){return a+b;},0)/irrGuessDenom;
-    var irr = IRR_solve(row51, irrGuess);
+    var irr = IRR_solve(irrFlows, irrGuess);
     var irrPct = round(irr*100,1);
 
     // Same cow bought outright, no loan: year 0 = the full bid price, then each year's
-    // net above operating cost plus the cull sale, not discounted (a standard IRR).
-    // Shown next to the spreadsheet's IRR, which is a return on the down payment only.
+    // net above operating cost plus the cull sale (same method as the IRR above).
+    // Shown next to it, because with a loan the IRR is a return on the down payment only.
     var noLoanFlows = [-p.bidPrice];
     for(i=0;i<7;i++){ noLoanFlows.push(netAboveOpCost[i] + cullSalvage[i]); }
     var irrNoLoan = IRR_solve(noLoanFlows, 0.1);
     var irrNoLoanPct = round(irrNoLoan*100,1);
 
-    // feasibility: first year (1-6) with negative net cash flow; replicate the original's
-    // "year 7" check, which actually re-tests year 4 instead of year 7.
+    // feasibility: first year with negative net cash flow. 2026-11-04: the spreadsheet's "year 7"
+    // test (B66) re-checked year 4 (F41) instead of year 7 (I41), so a negative year 7 was never
+    // flagged; fixed.
     var feasKey = null;
-    for(i=0;i<6;i++){ if(netCashFlow[i]<0){ feasKey=i+1; break; } }
-    if(feasKey===null && netCashFlow[3]<0){ feasKey=7; } // replicated quirk (tests year 4 again)
+    for(i=0;i<7;i++){ if(netCashFlow[i]<0){ feasKey=i+1; break; } }
 
     return {
       npvTotal:npvTotal, irrPct:irrPct, irrNoLoanPct:irrNoLoanPct, equityAmount:equityAmount, paybackYear:paybackYear, feasKey:feasKey,
@@ -1871,9 +1877,9 @@
     var sensDown = calcA1Scenario(baseParams, 0.9);
     var sensUp = calcA1Scenario(baseParams, 1.1);
     $('sensDownNPV').textContent = (sensDown.npvTotal<0?'-':'')+'$'+fmtMoney2.format(Math.abs(sensDown.npvTotal));
-    $('sensDownIRR').textContent = 'IRR '+(isFinite(sensDown.irrPct)?sensDown.irrPct.toFixed(1):'—')+'%';
+    $('sensDownIRR').textContent = 'IRR '+(isFinite(sensDown.irrPct)?sensDown.irrPct.toFixed(1)+'%':'—');
     $('sensUpNPV').textContent = (sensUp.npvTotal<0?'-':'')+'$'+fmtMoney2.format(Math.abs(sensUp.npvTotal));
-    $('sensUpIRR').textContent = 'IRR '+(isFinite(sensUp.irrPct)?sensUp.irrPct.toFixed(1):'—')+'%';
+    $('sensUpIRR').textContent = 'IRR '+(isFinite(sensUp.irrPct)?sensUp.irrPct.toFixed(1)+'%':'—');
 
     // -------- render results --------
     var verdictGood = npvTotal>0;
@@ -1882,7 +1888,7 @@
 
     $('npvTile').className = 'stat-tile wide '+(verdictGood?'good':'critical');
     $('npvValue').textContent = (npvTotal<0?'-':'')+'$'+fmtMoney2.format(Math.abs(npvTotal));
-    $('irrValue').textContent = (isFinite(irrPct)?irrPct.toFixed(1):'—')+'%';
+    $('irrValue').textContent = isFinite(irrPct) ? irrPct.toFixed(1)+'%' : '—';
     var noLoanTxt = isFinite(fin.irrNoLoanPct) ? fin.irrNoLoanPct.toFixed(1)+'%' : '—';
     $('irrBasis').textContent = loanTerm>0 ? 'on your '+equityPct+'% down payment' : 'on the full bid price';
     $('irrNoLoan').textContent = loanTerm>0 ? 'Whole cow, no loan: '+noLoanTxt : '';
@@ -2107,15 +2113,15 @@
 
   /* ---------------- A2 defaults ---------------- */
   var A2_DEFAULTS = {
-    a2_bcu:400, a2_weanPct:85, a2_premium:80, a2_steerWt:516.4, a2_steerPrice:530.0, a2_heiferWt:531.3, a2_heiferPrice:460.0,
+    a2_bcu:400, a2_weanPct:85, a2_premium:80, a2_steerWt:516.4, a2_steerPrice:407.31, a2_heiferWt:531.3, a2_heiferPrice:379.18,
     a2_leasedAcresPerBCU:20, a2_leasedRatePerAcre:12,
     a2_landInvestAcresPerBCU:12, a2_landMarketValuePerAcre:850,
     a2_hayRolls:0, a2_hayPrice:0, a2_proteinQty:5, a2_proteinPrice:20, a2_saltLbs:30, a2_saltPrice:0.45,
     a2_otherFeed1Qty:0, a2_otherFeed1Price:0,
     a2_hiredLabor:50, a2_ownerLabor:150, a2_vetMed:35, a2_vaccination:40, a2_otherDirect:0,
     a2_fuelLube:35, a2_utilities:10, a2_adminGA:25, a2_otherIndirect1:0, a2_financeCost:0,
-    a2_cowCost:2828.62, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:180.0, // sourced bred-cow price, see DEFAULTS.bidPrice comment above
-    a2_cullBullWt:1650.7, a2_cullBullPrice:190.0,
+    a2_cowCost:2828.62, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:126.24, // sourced bred-cow price, see DEFAULTS.bidPrice comment above
+    a2_cullBullWt:1650.7, a2_cullBullPrice:162.73,
     // a2_bullCost/a2_bullLife/a2_bullDeathLoss/a2_cowsPerBull removed 2026-09-21: these now
     // come from the shared "Market prices & factors" store (see refreshPriceSlides() /
     // getMarketPrices() above) instead of being their own editable copy here.

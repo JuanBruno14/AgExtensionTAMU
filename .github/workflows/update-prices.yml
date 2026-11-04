@@ -1,6 +1,6 @@
 name: Update USDA prices
 
-# Every Monday (~8:45 am Texas time) ask USDA MyMarketNews for newer editions of the three
+# Every Monday (~8:45 am Texas time) ask USDA MyMarketNews for newer editions of the
 # reports in data/market-prices.json and, if a price changed, update the pages and commit.
 # Needs a repository secret AMS_API_KEY (free key from mymarketnews.ams.usda.gov).
 on:
@@ -42,7 +42,7 @@ jobs:
         run: |
           cat price-update-report.md >> "$GITHUB_STEP_SUMMARY"
           git add data/market-prices.json index.html cow-calf/index.html replacement-heifer/index.html \
-                  retained-ownership/index.html data-sources.html
+                  retained-ownership/index.html data-sources.html src/my-ranch/feedui.js my-ranch/index.html
           if git diff --cached --quiet; then
             echo "No price changes this week."
             exit 0

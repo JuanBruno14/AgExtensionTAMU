@@ -12,7 +12,12 @@ with sync_playwright() as pw:
     pg.goto(f'http://127.0.0.1:{PORT}/index.html'); pg.wait_for_timeout(400)
     t=pg.inner_text('#myRanchPreview') if pg.is_visible('#myRanchPreview') else ''
     check('preview shows saved ranch', 'North place' in t and '256 acres' in t, t)
-    check('BCU calculator still computes', '$673.26' in pg.inner_text('#bcuHeaderValue'))
+    # default BCU total: $673.26 with the $190/cwt cull bull it was written for; the bull salvage part
+    # follows the site's current default cull bull price (weekly USDA job), so work it out from that.
+    bull_cwt = float(pg.input_value('#mp_cullBullPrice'))
+    bcu0 = round(673.26 + (1650.7*190/100*0.98 - 1650.7*bull_cwt/100*0.98)/4/25, 2)
+    bcu_now = lambda: float(pg.inner_text('#bcuHeaderValue').replace('$','').replace(',',''))
+    check('BCU calculator still computes', abs(bcu_now()-bcu0) < 0.015, [bcu0, bcu_now()])
     check('no My Ranch feed box before sending', not pg.is_visible('#bcuRanch'))
     pg.evaluate("localStorage.setItem('tamuDecisionAidsRanchFeed', JSON.stringify({hay:100,supplement:20,feeding:10,total:130,ranch:'North place',cows:90}))")
     pg.reload(); pg.wait_for_timeout(400)
@@ -21,11 +26,11 @@ with sync_playwright() as pw:
     pg.check('#bcu_useRanchFeed'); pg.wait_for_timeout(200)
     # default BCU: hay 1.5*105=157.5 + protein 1.5*1000*0.2/100*20=60 -> replaced by 130
     v=float(pg.inner_text('#bcuHeaderValue').replace('$','').replace(',',''))
-    check('BCU uses My Ranch feed', abs(v-(673.26-157.5-60+130))<0.02, v)
+    check('BCU uses My Ranch feed', abs(v-(bcu0-157.5-60+130))<0.025, v)
     pg.reload(); pg.wait_for_timeout(300)
     check('choice persists', pg.is_checked('#bcu_useRanchFeed') and abs(float(pg.inner_text('#bcuHeaderValue').replace('$','').replace(',',''))-v)<0.01)
     pg.evaluate("document.getElementById('bcuToggleBtn').click()"); pg.wait_for_timeout(100); pg.click('#bcu_resetBtn'); pg.wait_for_timeout(200)
-    check('reset returns to default', '$673.26' in pg.inner_text('#bcuHeaderValue') and not pg.is_checked('#bcu_useRanchFeed'))
+    check('reset returns to default', abs(bcu_now()-bcu0) < 0.015 and not pg.is_checked('#bcu_useRanchFeed'))
     pg.screenshot(path=os.path.join(OUT,'portal.png'))
     pg.click('#my-ranch-link a'); pg.wait_for_timeout(400)
     check('card links to My Ranch', pg.url.endswith('/my-ranch/index.html'))

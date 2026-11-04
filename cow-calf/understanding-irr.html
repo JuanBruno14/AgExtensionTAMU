@@ -231,9 +231,9 @@
     <div class="compare">
       <div class="tile"><span class="k">Discount rate</span><div class="v">5.0%</div></div>
       <span class="vs">VS</span>
-      <div class="tile critical"><span class="k">IRR</span><div class="v">−6.4%</div></div>
+      <div class="tile critical"><span class="k">IRR</span><div class="v">−1.7%</div></div>
     </div>
-    <p class="compare-verdict">Using the spreadsheet's own default numbers ($1,300 bid price): IRR sits well below the 5% discount rate, so the tool reports <strong>"Bid too high."</strong></p>
+    <p class="compare-verdict">Using the spreadsheet's own default numbers ($1,300 bid price): IRR sits well below the 5% discount rate, so the tool reports <strong>"Bid too high."</strong> (The spreadsheet itself shows −6.4%; see "One thing worth knowing" below for why the web tool gives −1.7%.)</p>
   </section>
 
   <section>
@@ -259,7 +259,7 @@
           In the web tool
         </div>
         <div class="locator-body">
-          <div class="cell-row"><span class="cell-ref">Result panel</span><span class="cell-desc">"IRR" stat tile, next to NPV and Payback</span></div>
+          <div class="cell-row"><span class="cell-ref">Result panel</span><span class="cell-desc">"IRR" stat tile, next to NPV and Payback, with the no-loan IRR under it</span></div>
           <div class="cell-row"><span class="cell-ref">Live</span><span class="cell-desc">Recalculates instantly as you move the bid price or any other input</span></div>
           <div class="cell-row"><span class="cell-ref">Narrative</span><span class="cell-desc">Same sentence as B55, written out below the tiles</span></div>
         </div>
@@ -270,8 +270,12 @@
   <section>
     <h2>One thing worth knowing</h2>
     <div class="callout">
-      <span class="callout-label">Spreadsheet quirk, kept as-is</span>
-      The cash flow series the Excel feeds into <code>IRR()</code> (B51:I51) has already been discounted by the discount rate earlier in the sheet, rather than being the raw, undiscounted cash flows an IRR calculation would normally use. That's an unusual modeling choice built into the original AgriLife spreadsheet — not something introduced in the web version. Since this project is being rebuilt with full fidelity to the source file, the web tool reproduces this exact same calculation rather than "fixing" it.
+      <span class="callout-label">Spreadsheet error, fixed in the web tool</span>
+      The cash flow series the Excel feeds into <code>IRR()</code> (B51:I51) has already been discounted by the discount rate earlier in the sheet. An IRR has to be solved on the raw, undiscounted cash flows, so the spreadsheet's IRR comes out too low (−6.4% instead of −1.7% with its own numbers). Since November 4, 2026 the web tool solves the IRR on the undiscounted flows: the down payment in year 0 (or the whole bid price with no loan), then each year's net cash flow after the loan payment, plus the cull cow sale in the last year.
+    </div>
+    <div class="callout">
+      <span class="callout-label">With a loan, the IRR is a return on the down payment</span>
+      When part of the cow is financed, year 0 is only your down payment (20% by default), and the loan payments come out of the later years. So the IRR measures the return on the cash you put in, not on the cow. A cheap loan makes it look much higher than the cow's own return. That's why the tool also shows the IRR of buying the same cow outright, with no loan.
     </div>
   </section>
 

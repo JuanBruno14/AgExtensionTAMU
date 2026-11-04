@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 """Weekly USDA AMS price update for the Decision Aids site.
 
-Three prices on this site come from public USDA AMS Market News reports:
+These prices on this site come from public USDA AMS Market News reports:
 
     bred_cow     AMS 1953  Cattlemen's Livestock, Dalhart TX     BRED COWS M&L 1, 2-4 yr, 2nd trimester  ($/hd)
     bred_heifer  AMS 1955  Texas Weekly Cattle Auction Summary   BRED HEIFERS M&L 1                      ($/hd)
     fed_cattle   AMS 2477  5 Area Weekly Direct Slaughter Cattle Live FOB steers, Over 80% Choice        ($/cwt)
+    steer        AMS 1955  Texas Weekly Cattle Auction Summary   FEEDER STEERS M&L 1, 500-549 lb         ($/cwt)
+    heifer       AMS 1955  Texas Weekly Cattle Auction Summary   FEEDER HEIFERS M&L 1, 500-549 lb        ($/cwt)
+    stocker_700  AMS 1955  Texas Weekly Cattle Auction Summary   FEEDER STEERS M&L 1, 700-749 lb         ($/cwt)
+    stocker_800  AMS 1955  Texas Weekly Cattle Auction Summary   FEEDER STEERS M&L 1, 800-849 lb         ($/cwt)
+    cull_cow     AMS 1955  Texas Weekly Cattle Auction Summary   SLAUGHTER COWS Boner 80-85%, Average    ($/cwt)
+    cull_bull    AMS 1955  Texas Weekly Cattle Auction Summary   SLAUGHTER BULLS 1-2, Average            ($/cwt)
+
+Feeder lines only count when they are plain lots: lines the report marks Fancy, Full,
+Fleshy, Thin Fleshed, Unweaned, Value Added or Gaunt are left out, and so are slaughter
+lines marked Light Weight, High or Low dressing.
 
 `data/market-prices.json` is the single source of truth for them. This script has two steps:
 
@@ -34,7 +44,9 @@ REPORT = os.path.join(REPO, 'price-update-report.md')
 API = 'https://marsapi.ams.usda.gov/services/v1.2/reports/'
 LOOKBACK_DAYS = 21
 MAX_CHANGE = 0.25          # 25% week-to-week move is treated as "check by hand"
-SANE = {'bred_cow': (800, 8000), 'bred_heifer': (800, 9000), 'fed_cattle': (100, 400)}
+SANE = {'bred_cow': (800, 8000), 'bred_heifer': (800, 9000), 'fed_cattle': (100, 400),
+        'steer': (100, 1000), 'heifer': (100, 1000), 'stocker_700': (100, 800), 'stocker_800': (100, 800),
+        'cull_cow': (40, 400), 'cull_bull': (40, 400)}
 
 # ---------------------------------------------------------------------------------------------
 # Reading API rows. MyMarketNews field names differ between reports, so rows are read
@@ -127,6 +139,71 @@ def match_fed_cattle(row):
     return ('live' in basis and 'fob' in basis and 'steer' in klass and 'heifer' not in klass
             and 'mixed' not in klass and 'over 80' in grade)
 
+SPECIAL = re.compile(r'\b(fancy|full|fleshy|thin|unweaned|value[ -]?added|gaunt|light ?weight)\b')
+
+def per_cwt(row):
+    u = field(row, 'price_unit', 'unit', 'priceUnit')
+    return u is None or 'cwt' in str(u).lower()
+
+def klass(row):
+    c = field(row, 'class', 'class_description', 'commodity_class')
+    return str(c).lower() if c is not None else text(row)
+
+def plain(row):
+    """No lot note (Fancy, Unweaned, Light Weight, ...) anywhere on the line."""
+    return not SPECIAL.search(text(row))
+
+def feeder(row):
+    c = field(row, 'commodity', 'commodity_desc', 'market_type_category')
+    return c is None or 'feeder' in str(c).lower()
+
+def in_band(row, lo, hi):
+    """Average weight in [lo, hi) and, when given, the whole weight range inside it too."""
+    a = number(row, *WEIGHT)
+    mn, mx = number(row, *WLOW), number(row, *WHIGH)
+    if a is None:
+        return False
+    return lo <= a < hi and (mn is None or mn >= lo) and (mx is None or mx < hi)
+
+def feeder_line(row, sex, lo, hi):
+    k = klass(row)
+    other = 'heifer' if sex == 'steer' else 'steer'
+    return (sex in k and other not in k and 'bred' not in k and feeder(row) and grade_is_1(row)
+            and per_cwt(row) and plain(row) and in_band(row, lo, hi))
+
+def average_dressing(row):
+    d = field(row, 'dressing', 'dressing_desc', 'dressing_description', 'yield_desc')
+    if d is not None:
+        return str(d).strip().lower() == 'average'
+    t = text(row)
+    return 'average' in t and not re.search(r'\b(high|low)\b', t)
+
+def grade_is_12(row):
+    g = field(row, 'muscle_grade', 'grade', 'muscleGrade')
+    if g is not None:
+        return re.sub(r'\s', '', str(g)) == '1-2'
+    return bool(re.search(r'\b1\s*-\s*2\b', text(row)))
+
+def match_steer(row):
+    return feeder_line(row, 'steer', 500, 550)
+
+def match_heifer(row):
+    return feeder_line(row, 'heifer', 500, 550)
+
+def match_stocker_700(row):
+    return feeder_line(row, 'steer', 700, 750)
+
+def match_stocker_800(row):
+    return feeder_line(row, 'steer', 800, 850)
+
+def match_cull_cow(row):
+    k = klass(row)
+    return ('cow' in k and 'bred' not in k and 'pair' not in k and 'boner' in text(row)
+            and per_cwt(row) and plain(row) and average_dressing(row))
+
+def match_cull_bull(row):
+    return ('bull' in klass(row) and grade_is_12(row) and per_cwt(row) and plain(row) and average_dressing(row))
+
 PRICE = ('avg_price', 'weighted_avg_price', 'wtd_avg_price', 'weighted_average_price', 'weighted_average', 'avg')
 HEAD = ('head_count', 'heads', 'head', 'number_of_head')
 WEIGHT = ('avg_weight', 'weighted_avg_weight', 'average_weight', 'wtd_avg_weight')
@@ -135,7 +212,19 @@ HIGH = ('avg_price_max', 'price_high', 'price_range_high', 'high_price', 'price_
 WLOW = ('avg_weight_min', 'weight_min', 'weight_range_low')
 WHIGH = ('avg_weight_max', 'weight_max', 'weight_range_high')
 
-RULES = {'bred_cow': match_bred_cow, 'bred_heifer': match_bred_heifer, 'fed_cattle': match_fed_cattle}
+RULES = {'bred_cow': match_bred_cow, 'bred_heifer': match_bred_heifer, 'fed_cattle': match_fed_cattle,
+         'steer': match_steer, 'heifer': match_heifer, 'stocker_700': match_stocker_700,
+         'stocker_800': match_stocker_800, 'cull_cow': match_cull_cow, 'cull_bull': match_cull_bull}
+
+# How each 1955 per-cwt class is named in data-sources.html.
+CWT_LINE = {
+    'steer': 'FEEDER STEERS, Medium &amp; Large 1, 500&ndash;549&nbsp;lb',
+    'heifer': 'FEEDER HEIFERS, Medium &amp; Large 1, 500&ndash;549&nbsp;lb',
+    'stocker_700': 'FEEDER STEERS, Medium &amp; Large 1, 700&ndash;749&nbsp;lb',
+    'stocker_800': 'FEEDER STEERS, Medium &amp; Large 1, 800&ndash;849&nbsp;lb',
+    'cull_cow': 'SLAUGHTER COWS, Boner 80&ndash;85%, average dressing',
+    'cull_bull': 'SLAUGHTER BULLS, 1&ndash;2, average dressing',
+}
 
 def money(v, dec=2):
     return ('${:,.%df}' % dec).format(v)
@@ -182,6 +271,11 @@ def detail_for(key, lines, value, heads):
             bits.insert(0, '$%s&ndash;$%s/cwt' % ('{:,.0f}'.format(min(lo)), '{:,.0f}'.format(max(hi))))
         return ('USDA AMS "5&nbsp;Area Weekly Weighted Average Direct Slaughter Cattle" (<code>ams_2477.pdf</code>) '
                 '&mdash; live FOB steers, Over 80%% Choice, %s, weighted avg %s/cwt' % (', '.join(bits), money(value)))
+    if key in CWT_LINE:
+        if lo and hi:
+            bits.append('$%s&ndash;$%s/cwt' % ('{:,.2f}'.format(min(lo)), '{:,.2f}'.format(max(hi))))
+        return ('USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "%s", plain lots only '
+                '(%s): %s, average %s/cwt' % (CWT_LINE[key], linewords, ', '.join(bits), money(value)))
     if lo and hi:
         bits.append('$%s&ndash;$%s/hd' % ('{:,.0f}'.format(min(lo)), '{:,.0f}'.format(max(hi))))
     if key == 'bred_cow':
@@ -252,7 +346,9 @@ def fmt_unit(p, v=None):
 # apply: write JSON values into the pages
 # ---------------------------------------------------------------------------------------------
 
-# (file, js object keys, input ids) per price. Only these files.
+# (file, js object keys, input ids[, year-grid arrays]) per price. Only these files.
+# The weight-curve anchors (STEER_ANCHOR p:530 etc.) are the curves' own points: never edited here.
+FEEDUI = 'src/my-ranch/feedui.js'
 TARGETS = {
     'bred_cow': [('index.html', ['mp_bredCowPrice'], ['mp_bredCowPrice']),
                  ('cow-calf/index.html', ['mp_bredCowPrice', 'bidPrice', 'a2_cowCost'], ['bidPrice', 'a2_cowCost'])],
@@ -261,12 +357,38 @@ TARGETS = {
     'fed_cattle': [('index.html', ['mp_fedCattlePrice'], ['mp_fedCattlePrice']),
                    ('retained-ownership/index.html', ['mp_fedCattlePrice', 'skfy7_salePrice', 'skfy8_salePrice'],
                     ['skfy7_salePrice', 'skfy8_salePrice'])],
+    'steer': [('index.html', ['mp_steerPrice'], ['mp_steerPrice']),
+              ('cow-calf/index.html', ['mp_steerPrice', 'a2_steerPrice'], ['a2_steerPrice'], ['STEER_PRICE_DEFAULT']),
+              ('retained-ownership/index.html', ['mp_steerPrice', 'sk_calfPrice'], ['sk_calfPrice']),
+              (FEEDUI, ['mp_steerPrice'], [])],
+    'heifer': [('index.html', ['mp_heiferPrice'], ['mp_heiferPrice']),
+               ('cow-calf/index.html', ['mp_heiferPrice', 'a2_heiferPrice'], ['a2_heiferPrice'], ['HEIFER_PRICE_DEFAULT']),
+               ('replacement-heifer/index.html', ['mp_heiferPrice'], []),
+               (FEEDUI, ['mp_heiferPrice'], [])],
+    'stocker_700': [('index.html', ['mp_stocker700Price'], ['mp_stocker700Price']),
+                    ('retained-ownership/index.html', ['mp_stocker700Price', 'sk_price700'], ['sk_price700'])],
+    'stocker_800': [('index.html', ['mp_stocker800Price'], ['mp_stocker800Price']),
+                    ('retained-ownership/index.html', ['mp_stocker800Price', 'sk_price800'], ['sk_price800'])],
+    'cull_cow': [('index.html', ['mp_cullCowPrice'], ['mp_cullCowPrice']),
+                 ('cow-calf/index.html', ['mp_cullCowPrice', 'a2_cullCowPrice'], ['a2_cullCowPrice'], ['CULL_PRICE_DEFAULT']),
+                 ('retained-ownership/index.html', ['mp_cullCowPrice', 'd1_priceSold'], ['d1_priceSold']),
+                 (FEEDUI, ['mp_cullCowPrice'], [])],
+    'cull_bull': [('index.html', ['mp_cullBullPrice'], ['mp_cullBullPrice']),
+                  ('cow-calf/index.html', ['mp_cullBullPrice', 'a2_cullBullPrice'], ['a2_cullBullPrice']),
+                  ('replacement-heifer/index.html', ['mp_cullBullPrice'], []),
+                  (FEEDUI, ['mp_cullBullPrice'], [])],
 }
 
 USED = {
     'bred_cow': 'Bred cow purchase price &mdash; <a href="cow-calf/index.html">A1</a> "Bid price", <a href="cow-calf/index.html">A2</a> "Cost/head"',
     'fed_cattle': 'Fed/finished cattle sale price &mdash; <a href="retained-ownership/index.html">Stockers</a> "Feedyard" paths (both sub-paths)',
     'bred_heifer': 'Bred heifer sale price &mdash; shared store\'s <code>mp_bredHeiferPrice</code>, read by <a href="replacement-heifer/index.html">B1a</a> "Bred heifer sale price"',
+    'steer': 'Steer price (516.4&nbsp;lb reference) &mdash; shared store\'s <code>mp_steerPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a>, <a href="retained-ownership/index.html">Stockers</a>\' calf purchase price and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>STEER_PRICE_SLIDE</code>',
+    'heifer': 'Heifer price (531.3&nbsp;lb reference) &mdash; shared store\'s <code>mp_heiferPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a>, <a href="replacement-heifer/index.html">B1a</a> and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>HEIFER_PRICE_SLIDE</code>',
+    'stocker_700': '700&nbsp;lb path sale price &mdash; shared store\'s <code>mp_stocker700Price</code>, read by <a href="retained-ownership/index.html">Stockers</a>',
+    'stocker_800': '800&nbsp;lb path sale price &mdash; shared store\'s <code>mp_stocker800Price</code>, read by <a href="retained-ownership/index.html">Stockers</a>',
+    'cull_cow': 'Cull cow price (1,279.4&nbsp;lb Boner reference) &mdash; shared store\'s <code>mp_cullCowPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a>, <a href="retained-ownership/index.html">D1</a> and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>CULL_COW_PRICE_SLIDE</code>',
+    'cull_bull': 'Cull bull price &mdash; shared store\'s <code>mp_cullBullPrice</code>, read by <a href="cow-calf/index.html">A2</a>, <a href="replacement-heifer/index.html">B1a</a> and <a href="my-ranch/index.html">My Ranch</a> (bull salvage)',
 }
 CENTRAL = {'bred_cow': 'Bred cow purchase price', 'fed_cattle': 'Fed/finished cattle sale price'}
 
@@ -292,8 +414,15 @@ def apply(data, repo=REPO):
         return edits[f]
     for key, targets in TARGETS.items():
         v = data['prices'][key]['value']
-        for f, objkeys, ids in targets:
+        for t in targets:
+            f, objkeys, ids = t[:3]
+            arrays = t[3] if len(t) > 3 else []
             html = load(f)
+            for a in arrays:   # year-grid defaults: every year starts at today's price
+                html, n = re.subn(r'(\b%s\s*=\s*\[)[^\]]*(\])' % re.escape(a),
+                                  lambda m: m.group(1) + ','.join([js_num(v)] * 7) + m.group(2), html)
+                if n != 1:
+                    raise SystemExit('apply: %s: expected one array %s, found %d' % (f, a, n))
             for k in objkeys:
                 html, n = re.subn(r'(\b%s\s*:\s*)[0-9]+(?:\.[0-9]+)?' % re.escape(k), lambda m: m.group(1) + js_num(v), html)
                 if n == 0:
@@ -321,6 +450,10 @@ def apply(data, repo=REPO):
         if open(path, encoding='utf-8').read() != html:
             open(path, 'w', encoding='utf-8').write(html)
             changed.append(f)
+    if FEEDUI in changed:   # My Ranch is built from src/my-ranch
+        subprocess.run([sys.executable, os.path.join(repo, 'src', 'my-ranch', 'build.py')], check=True,
+                       stdout=subprocess.DEVNULL)
+        changed.append('my-ranch/index.html')
     if changed:   # inline-script hashes in the CSP must follow the edit
         subprocess.run([sys.executable, os.path.join(repo, 'tools', 'secure_pages.py')], check=True,
                        stdout=subprocess.DEVNULL)
