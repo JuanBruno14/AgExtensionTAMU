@@ -342,13 +342,17 @@ def fetch(data, payloads, today):
         got = pick(key, rows, since)
         if not got:
             seen = pick(key, rows, dt.date.min)   # say what the rule did find, so a broken rule shows up
-            found = ('latest matching line %s, %s' % (seen[0], fmt_unit(p, seen[1])) if seen
-                     else ':warning: no line matched this rule at all')
-            if not seen:   # show a couple of rows that look like this class, to fix the rule from
-                word = HINT.get(key)
-                like = [r for r in rows if word and word in text(r)]
-                like = ([r for r in like if 'slaughter' in text(r)] or like)[:2] if key == 'cull_bull' else like[:2]
-                for r in like:
+            word = HINT.get(key)
+            like = [r for r in rows if word and word in text(r)]
+            if key == 'cull_bull':
+                like = [r for r in like if 'slaughter' in text(r)]
+            if seen:
+                found = 'latest matching line %s, %s' % (seen[0], fmt_unit(p, seen[1]))
+            elif like:   # the class is in the report, just not this exact age/stage/weight this period
+                found = 'no line fits the rule in this period, %d other %s lines seen' % (len(like), word)
+            else:        # nothing of the class at all: the report format may have changed
+                found = ':warning: no line of this class at all, check the rule against the report'
+                for r in [r for r in rows if word and word.split()[0] in text(r)][:2]:
                     found += '\n  - sample row: `%s`' % json.dumps(r, default=str)[:900]
             notes.append('- %s: no newer matching line in report %s (%d rows read; %s); kept %s from %s.'
                          % (p['label'], p['report_slug'], len(rows), found, fmt_unit(p), p['report_date']))
