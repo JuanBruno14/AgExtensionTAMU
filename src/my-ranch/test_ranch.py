@@ -156,10 +156,11 @@ with sync_playwright() as pw:
     page.fill('#fc_replRate','0'); page.wait_for_timeout(250)
     f0=page.evaluate("MyRanch.feed()")
     check('no replacements: no heifers, no culls', f0['econ']['heifersKept']==0 and f0['econ']['cullIncome']==0 and all(m['req']['heifer']['n']==0 for m in f0['months']))
-    c0=page.evaluate("MyRanch.feed().months.map(m=>m.req.cow.tdn)")
     page.fill('#fc_replRate','15'); page.wait_for_timeout(250)
-    c15=page.evaluate("MyRanch.feed().months.map(m=>m.req.cow.tdn)")
-    check('young cows milk less (NRC Eq. 19-23 age factor)', sum(c15)<sum(c0), (round(sum(c15),2), round(sum(c0),2)))
+    # first-calf cows give 88% of the milk (NRC Eq. 19-23) but also grow (NEg at the month's diet), so the age effect is
+    # checked on milk and growth directly rather than on the herd's total energy
+    yc=page.evaluate("(()=>{const F=MyRanch.FEED, o={cowLb:1200,breed:'angus',bcs:5,peakMilkLb:18,activity:0,birthLb:68}; const m=F.cowParams(o,60,0,null), y=F.cowParams(Object.assign({},o,{milkAge:0.88,wF0:0.8,wF1:0.92}),60,0,null); return [m.milk,y.milk,m.neg,y.neg]})()")
+    check('young cows milk less (NRC Eq. 19-23 age factor) and pay for their growth', yc[1] < yc[0] and yc[3] > 0 and yc[2] == 0, yc)
     import subprocess, json as _json, os as _os
     js = ("const fs=require('fs');eval(fs.readFileSync('feed.js','utf8').replace('var FEED =','global.FEED ='));"
           "const o={breed:'angus',cowLb:1200,bcs:5,weatherAdj:true,region:'hp',windMph:10,coat:1,heat:1};const env=FEED.envFor(o,0);"
@@ -210,7 +211,7 @@ with sync_playwright() as pw:
     cap_fair=page.evaluate("MyRanch.totals().cap")
     page.select_option('.pasture-row >> nth=0 >> .p-condition','excellent'); page.wait_for_timeout(200)
     cap_exc=page.evaluate("MyRanch.totals().cap")
-    check('condition excellent = 90/75 of fair', abs(cap_exc/cap_fair-0.9/0.75)<1e-6, (cap_fair,cap_exc))
+    check('condition excellent = 100/75 of fair', abs(cap_exc/cap_fair-1.0/0.75)<1e-6, (cap_fair,cap_exc))
     page.select_option('.pasture-row >> nth=0 >> .p-condition','fair'); page.wait_for_timeout(150)
     zone_js = """(t)=>{const p=MyRanch.state().pastures[0];const r=p.geometry.coordinates[0];let xs=r.map(c=>c[0]),ys=r.map(c=>c[1]);
       const cx=(Math.min(...xs)+Math.max(...xs))/2, cy=(Math.min(...ys)+Math.max(...ys))/2, dx=(Math.max(...xs)-Math.min(...xs))*0.1, dy=(Math.max(...ys)-Math.min(...ys))*0.1;
@@ -327,6 +328,11 @@ with sync_playwright() as pw:
     st=page.evaluate("MyRanch.state()")
     check('water point added', len(st['points'])==1 and st['points'][0]['type']=='water')
     check('distance to water shown', 'from water' in page.inner_text('#pastureList'))
+    # soils: non-producing miscellaneous areas count as zero, slope cuts capacity (Holechek Table 8.11)
+    ss=page.evaluate("""MyRanch.summarizeSoil([['mukey','area_m2','muname','cokey','compname','compkind','comppct_r','slope_r','rsprod_l','rsprod_r','rsprod_h','ecoclassid','ecoclassname'],
+      ['1','100000','Clay loam','a','Clayloam','Series','85','5','1500','2000','2500','R078CY096TX','Clay Loam'],
+      ['1','100000','Clay loam','b','Rock outcrop','Miscellaneous area','15','70',null,null,null,null,null]])""")
+    check('rock outcrop counts as 0 lb and steep ground as ungrazable', abs(ss['normal']-1700)<1e-6 and abs(ss['slopeFactor']-0.85)<1e-6 and abs(ss['coverage']-1)<1e-6, (ss['normal'], ss['slopeFactor'], ss['coverage']))
 
     # rectangle
     page.locator('#map').scroll_into_view_if_needed(); rb=page.locator('#map').bounding_box()

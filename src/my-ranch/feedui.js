@@ -126,14 +126,19 @@
     if(sel.innerHTML !== html) sel.innerHTML = html;
     sel.value = FEED.REGIONS[cur] ? cur : 'auto';
     var k = regionKey(), R = FEED.REGIONS[k];
-    $('fc_regionHint').textContent = (cur === 'auto' ? 'Picked ' + a.why + '. ' : '') + 'Growth curve: NRCS ' + R.src + '. Weather: ' + R.station + ' normals.';
+    var c = ranchCenter(), out = c && !FEED.inTexas(c);
+    $('fc_regionHint').textContent = (out ? 'Your ranch is outside Texas: growth curves, forage quality and weather come from the closest Texas region, so treat the feed calendar as a rough guide. ' : '') +
+      (cur === 'auto' ? 'Picked ' + a.why + '. ' : '') + 'Growth curve: NRCS ' + R.src + '. Weather: ' + R.station + ' normals.';
   }
 
   var matchMsg = '', matchKey = '';
   /* peak milk, lb/day: the menu level, or the level matched to the ranch's own weaning weight */
-  function milkLbOf(h){ return h.milk === 'custom' && +h.milkLb > 0 ? +h.milkLb : FEED.MILK[h.milk] || 18; }
+  /* low / moderate / high scale the breed's own peak (BCNRM breed table): a Simmental at "moderate" peaks at 26.5 lb, an Angus at 17.6 */
+  function milkLbOf(h){ return h.milk === 'custom' && +h.milkLb > 0 ? +h.milkLb : FEED.peakLbOf(h.breed, h.milk); }
   function syncMilkOpt(){
     var h = state.herd, sel = $('fc_milk'); if(!sel) return;
+    var names = {low:'Low', moderate:'Moderate, breed average', high:'High'};
+    Object.keys(names).forEach(function(k){ var o2 = sel.querySelector('option[value="' + k + '"]'); if(o2) o2.textContent = names[k] + ' (' + fmt(FEED.peakLbOf(h.breed, k), 0) + ' lb at peak)'; });
     var op = sel.querySelector('option[value="custom"]');
     if(+h.milkLb > 0){
       if(!op){ op = document.createElement('option'); op.value = 'custom'; sel.appendChild(op); }
@@ -172,11 +177,12 @@
   }
   function feedsFor(over){
     var h = state.herd;
-    return Object.assign({hayTdn:h.hayTdn, hayCp:h.hayCp, hayDm:+h.hayDm || 88, hayPrice:h.hayPrice, supTdn:h.supTdn, supCp:h.supCp, supPrice:h.supPrice,
+    return Object.assign({hayTdn:h.hayTdn, hayCp:h.hayCp, hayDm:+h.hayDm || 88, hayPrice:h.hayPrice, hayWaste:h.hayWaste == null ? 15 : +h.hayWaste,
+      ownHayLb:ownHayDmLb(), ownHayCost:h.ownHayCost == null ? 60 : +h.ownHayCost, supTdn:h.supTdn, supCp:h.supCp, supPrice:h.supPrice,
       tripCost:h.tripCost, supTrips:+h.supTrips, hayTrips:+h.hayTrips, distPerTon:h.distPerTon}, over || {});
   }
   function supplyNow(mult){
-    var past = state.pastures.map(function(p){ return {annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair', grazed:isGrazed(p), measured:p.measured || null, forageAcres:forageAcres(p), name:p.name}; });
+    var past = state.pastures.map(function(p){ return {annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair', grazed:isGrazed(p) && !isHayMeadow(p), measured:p.measured || null, forageAcres:forageAcres(p), name:p.name, he:heOf(p)/100}; });
     var reg = regionKey(), he = state.settings.harvestEff/100;
     var sup = FEED.pastureSupply(past, he, reg, state.herd.fq);
     var t = totals(), mc = state.settings.manualCap;
@@ -235,7 +241,7 @@
         kv('Sell', fmt(ec.calvesSold) + ' calves × ' + fmt(ec.avgSaleLb) + ' lb' + (ec.cullsSold > 0.05 ? ' · ' + fmt(ec.cullsSold) + ' culls' : '')) +
       '</div>' +
       (res.hasSupply ? '<div class="ps-grid ps-money">' +
-        kv('Hay to buy', tot.hay >= 100 ? fmt(tot.hay/2000, 1) + ' t · ' + money(tot.hay/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'None') +
+        kv('Hay to buy', tot.hayBuy >= 100 ? fmt(tot.hayBuy/2000, 1) + ' t · ' + money(tot.hayBuy/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'None') + (tot.hayOwn >= 100 ? kv('Your own hay fed', fmt(tot.hayOwn/2000, 1) + ' t') : '') +
         kv('Supplement', tot.sup >= 100 ? fmt(tot.sup/2000, 1) + ' t · ' + money(tot.sup/2000*h.supPrice) + ' · ' + monthList(supM) : 'None') +
         kv('Cattle sales', money(ec.income)) +
         (function(){ var ea = econAll(res); return kv('Other costs', money(ea.other.total) + ' (' + money(ea.other.perCow) + '/cow)') + kv('Net return', money(ea.net) + ' (' + money(ea.net/h.cows) + '/cow) · break-even ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : '—')); })() +
@@ -256,7 +262,7 @@
   function sendFeedToBcu(){
     var h = state.herd; if(!(h.cows > 0)) return;
     var res = runFeed(), t = res.totals, per = function(v){ return Math.round(v/h.cows*100)/100; };
-    var payload = {hay:per(t.hay/2000*h.hayPrice), supplement:per(t.sup/2000*h.supPrice), feeding:per(t.tripCost + t.dist),
+    var payload = {hay:per(t.hayBuy/2000*h.hayPrice + t.hayOwn/2000*(h.ownHayCost == null ? 60 : h.ownHayCost)), supplement:per(t.sup/2000*h.supPrice), feeding:per(t.tripCost + t.dist),
                    hayTons:Math.round(t.hay/2000*10)/10, supTons:Math.round(t.sup/2000*10)/10, cows:h.cows, ranch:state.name || '', savedAt:new Date().toISOString()};
     payload.total = Math.round((payload.hay + payload.supplement + payload.feeding)*100)/100;
     var ok = true; try{ localStorage.setItem(RANCH_FEED_KEY, JSON.stringify(payload)); }catch(e){ ok = false; }
@@ -278,7 +284,7 @@
   /* ---- grazing calendar: one herd moved through the pastures in your order */
   function grazingPlan(){
     if(!(state.herd.cows > 0)) return null;
-    var list = state.pastures.filter(function(p){ return isGrazed(p) && annualLb(p) != null; });
+    var list = state.pastures.filter(function(p){ return isGrazed(p) && !isHayMeadow(p) && annualLb(p) != null; });
     if(!list.length) return null;
     var res = runFeed(), reg = regionKey(), he = state.settings.harvestEff/100;
     var k = 1, mc = state.settings.manualCap;
@@ -673,8 +679,8 @@
       (function(){ var ea = econAll(res); return '<div class="stat-tile ' + (ea.net >= 0 ? 'good' : 'critical') + '"><span class="label">Net return</span><span class="value small">' + money(ea.net) + '</span><span class="sub">' + money(ea.net/h.cows) + ' per cow after feed and ' + money(ea.other.perCow) + '/cow of other costs · break-even calf price ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : '—') + '</span></div>'; })()
       : '';
     $('fc_tiles2').innerHTML = res.hasSupply ?
-      '<div class="stat-tile"><span class="label">Hay to buy</span><span class="value small">' + (t.hay >= 100 ? fmt(t.hay/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.hay >= 100 ? money(t.hay/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'standing forage lasts all year') + '</span></div>' +
-      '<div class="stat-tile"><span class="label">Protein supplement</span><span class="value small">' + (t.sup >= 100 ? fmt(t.sup/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.sup >= 100 ? money(t.sup/2000*h.supPrice) + ' · ' + monthList(supM) : 'not needed') + '</span></div>' +
+      '<div class="stat-tile"><span class="label">Hay to buy</span><span class="value small">' + (t.hayBuy >= 100 ? fmt(t.hayBuy/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.hay >= 100 ? (t.hayBuy >= 100 ? money(t.hayBuy/2000*h.hayPrice) + ' · ' : '') + monthList(hayM) + (t.hayOwn >= 100 ? ' · ' + fmt(t.hayOwn/2000, 1) + ' t of your own hay used' : '') + (t.hayOwnSurplus >= 100 ? ' · ' + fmt(t.hayOwnSurplus/2000, 1) + ' t of your hay to spare' : '') + ' · counts ' + fmt(h.hayWaste == null ? 15 : h.hayWaste) + '% storage &amp; feeding loss' : 'standing forage lasts all year' + (t.hayOwnSurplus >= 100 ? ' · ' + fmt(t.hayOwnSurplus/2000, 1) + ' t of your hay to spare' : '')) + '</span></div>' +
+      '<div class="stat-tile"><span class="label">Protein supplement</span><span class="value small">' + (t.sup >= 100 ? fmt(t.sup/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.sup >= 100 ? money(t.sup/2000*h.supPrice) + ' · ' + monthList(supM) : 'not needed') + (t.rdpMonths && t.rdpMonths.length ? ' · rumen may run short of degradable protein in ' + t.rdpMonths.map(function(m){ return FEED.MONTHS[m]; }).join(', ') + ' (about 10% of TDN eaten): a supplement high in degradable protein helps' : '') + '</span></div>' +
       bcsTile(res.bcs) + calfTile(res) +
       '<div class="stat-tile"><span class="label">Feeding trips &amp; delivery</span><span class="value small">' + money(t.tripCost + t.dist) + '</span><span class="sub">' + fmt(t.trips) + ' trips' + (ec.nwsCare > 0 ? ' · screwworm care ' + money(ec.nwsCare) : '') + (ec.bcsRestore > 0.5 ? ' · condition feed ' + money(ec.bcsRestore) : '') + '</span></div>'
       : '';
@@ -1397,7 +1403,7 @@
     });
     document.querySelectorAll('[data-hs]').forEach(function(el){
       var k = el.getAttribute('data-hs');
-      el.addEventListener('change', function(){ state.herd[k] = el.hasAttribute('data-num') ? +this.value : this.value; syncFields(); rerender(); });
+      el.addEventListener('change', function(){ state.herd[k] = el.hasAttribute('data-num') ? +this.value : this.value; if(k === 'breed') syncMilkOpt(); syncFields(); rerender(); });
     });
     document.querySelectorAll('[data-hd]').forEach(function(el){
       var k = el.getAttribute('data-hd');

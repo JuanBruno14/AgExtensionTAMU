@@ -38,7 +38,12 @@
   ];
   /* AgriLife Extension 2026 D03 Budgets, sheet 'CowCalf' (Rolling Plains cow-calf), all per animal unit. */
   var D03 = {revenue:2189.26, variable:438.35, grossMargin:1750.91, fixed:500.34, netReturn:1250.58, acresPerAU:11.25, rentPerAcre:15};
-  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:90}, zoneF:{brush:25, bottom:200}, waterAdj:true};
+  /* Harvest efficiency by kind of pasture: native range uses the grazing-system value (harvestEff); improved pasture and small
+     grains at least heType (Holechek, Range Management Ch. 8: 25% recommended on rangeland, 35% for moderate use in arid and
+     semiarid areas, 50% for annual grasslands and humid areas). Hay meadows are baled: hayRecovery % of what grows reaches the bale.
+     Range condition: excellent = 100% of the soil survey's normal-year production (the reference plant community). */
+  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:100}, zoneF:{brush:25, bottom:200}, waterAdj:true,
+    slopeAdj:true, heType:{improved:40, smallgrain:50}, hayRecovery:80};
   var CONDITIONS = {poor:'Poor', fair:'Fair', excellent:'Excellent'};
   var ZONE_TYPES = {
     water:  {label:'Pond / lake', icon:'💧', style:{color:'#bfe3ff', weight:1.5, fillColor:'#2b7fd6', fillOpacity:0.6}},
@@ -55,7 +60,7 @@
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto', fq:'typical',
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
     // feed prices: Texas A&M AgriLife 2026 District 3 budgets, Prices sheet (supplement $0.196/lb = $9.80 per 50-lb bag, salt & mineral $0.45/lb)
-    hayTdn:55, hayCp:10, hayDm:88, hayPrice:sharedHayPrice(), mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
+    hayTdn:55, hayCp:10, hayDm:88, hayWaste:15, ownHayCost:60, hayPrice:sharedHayPrice(), mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
     dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0},
     sell:{rate:8, death:0.5},
@@ -145,7 +150,7 @@
   }
 
   /* ------------------------------------------------------------------ state */
-  function blankState(){ return {v:1, name:'', pastures:[], points:[], zones:[], settings:Object.assign({}, DEFAULT_SETTINGS), herd:Object.assign({}, DEFAULT_HERD, {dr:Object.assign({}, DEFAULT_HERD.dr), sell:Object.assign({}, DEFAULT_HERD.sell), oc:Object.assign({}, DEFAULT_HERD.oc)}), drought:null, view:null, summary:null, herdNow:null}; }
+  function blankState(){ return {v:1, name:'', pastures:[], points:[], zones:[], settings:Object.assign({}, DEFAULT_SETTINGS, {heType:Object.assign({}, DEFAULT_SETTINGS.heType), cond:Object.assign({}, DEFAULT_SETTINGS.cond), zoneF:Object.assign({}, DEFAULT_SETTINGS.zoneF)}), herd:Object.assign({}, DEFAULT_HERD, {dr:Object.assign({}, DEFAULT_HERD.dr), sell:Object.assign({}, DEFAULT_HERD.sell), oc:Object.assign({}, DEFAULT_HERD.oc)}), drought:null, view:null, summary:null, herdNow:null}; }
   function loadState(){
     try{
       var s = JSON.parse(localStorage.getItem(STORE_KEY) || 'null');
@@ -155,6 +160,7 @@
         s.settings = Object.assign({}, DEFAULT_SETTINGS, s.settings || {});
         s.settings.cond = Object.assign({}, DEFAULT_SETTINGS.cond, s.settings.cond || {});
         s.settings.zoneF = Object.assign({}, DEFAULT_SETTINGS.zoneF, s.settings.zoneF || {});
+        s.settings.heType = Object.assign({}, DEFAULT_SETTINGS.heType, s.settings.heType || {});
         s.herd.dr = Object.assign({}, DEFAULT_HERD.dr, s.herd.dr || {});
         s.herd.sell = Object.assign({}, DEFAULT_HERD.sell, s.herd.sell || {});
         s.herd.oc = Object.assign({}, DEFAULT_HERD.oc, s.herd.oc || {});
@@ -163,7 +169,8 @@
         delete s.settings.herdAU;
         s.pastures = (s.pastures || []).filter(function(p){ return p && p.geometry && p.geometry.type === 'Polygon'; });
         s.points = s.points || [];
-        s.pastures.forEach(function(p){ if(p.soil && p.soil.status === 'loading') p.soil = null; });
+        // soil results saved before slope and miscellaneous areas were read are looked up again
+        s.pastures.forEach(function(p){ if(p.soil && (p.soil.status === 'loading' || (p.soil.status === 'ok' && !('slopeFactor' in p.soil)))) p.soil = null; });
         if(s.drought && s.drought.status === 'loading') s.drought = null;
         return s;
       }
@@ -179,6 +186,21 @@
   /* ------------------------------------------------------------------ forage math */
   function annualDemandLb(){ return state.settings.intakeLb * 365; }
   function isGrazed(p){ return !!(TYPES[p.type] && TYPES[p.type].grazed); }
+  /* hay meadows are cut and baled: their growth is stored hay, not grazing */
+  function isHayMeadow(p){ return p.type === 'hay'; }
+  function heOf(p){
+    var s = state.settings, he = s.harvestEff, ht = s.heType || DEFAULT_SETTINGS.heType;
+    if(p.type === 'improved') return Math.max(he, ht.improved || he);
+    if(p.type === 'smallgrain') return Math.max(he, ht.smallgrain || he);
+    return he;
+  }
+  /* slope (Holechek, Range Management Table 8.11): from the soil survey's representative slope of each component */
+  function slopeFactor(p){ return state.settings.slopeAdj !== false && p.soil && p.soil.status === 'ok' && p.soil.slopeFactor != null ? p.soil.slopeFactor : 1; }
+  /* dry matter of hay baled a year on the hay meadows */
+  function ownHayDmLb(){
+    var rec = (state.settings.hayRecovery == null ? 80 : state.settings.hayRecovery)/100;
+    return state.pastures.reduce(function(a, p){ if(!isHayMeadow(p)) return a; var lb = annualLb(p); return a + (lb != null ? lb*rec : 0); }, 0);
+  }
   function condFactor(p){ return (state.settings.cond[p.condition || 'fair'] || 75)/100; }
   /* forage per acre (lb/ac/yr) for the open part of the pasture; soil-survey numbers are scaled by range condition */
   function forageLb(p){
@@ -219,12 +241,29 @@
      Holechek (1988), in Vallentine, Grazing Management 2nd ed. (2001) p. 403: cattle use acreage 1-2 mi from drinking
      water at half, and acreage over 2 mi not at all. null when no water is drawn. */
   var waterCache = {};
-  function waterSources(){
-    return state.points.filter(function(pt){ return pt.type === 'water'; }).map(function(w){ return {lat:w.lat, lng:w.lng}; })
-      .concat(state.zones.filter(function(z){ return z.type === 'water'; }).map(function(z){ return centroid(z.geometry); }));
+  /* Water the cattle in this pasture can reach: water points inside it or on its fence line (within about 50 m, a trough
+     shared by two pastures), and ponds that reach into it. Water behind a fence in another pasture does not count. */
+  var FENCE_MI = 0.03;
+  function milesToRing(pt, ring){
+    var k = Math.PI/180, cx = Math.cos(pt.lat*k)*69.172, best = Infinity;
+    for(var i = 0; i < ring.length - 1; i++){
+      var ax = (ring[i][0] - pt.lng)*cx, ay = (ring[i][1] - pt.lat)*69.0, bx = (ring[i+1][0] - pt.lng)*cx, by = (ring[i+1][1] - pt.lat)*69.0;
+      var dx = bx - ax, dy = by - ay, L = dx*dx + dy*dy, t = L > 0 ? Math.max(0, Math.min(1, -(ax*dx + ay*dy)/L)) : 0;
+      var x = ax + t*dx, y = ay + t*dy; best = Math.min(best, Math.sqrt(x*x + y*y));
+    }
+    return best;
   }
+  function reachable(pt, ring){ return pointInRing(pt, ring) || milesToRing(pt, ring) <= FENCE_MI; }
+  function waterSources(p){
+    var ring = p.geometry.coordinates[0];
+    return state.points.filter(function(pt){ return pt.type === 'water' && reachable({lat:pt.lat, lng:pt.lng}, ring); }).map(function(w){ return {lat:w.lat, lng:w.lng}; })
+      .concat(state.zones.filter(function(z){ return z.type === 'water' && (reachable(centroid(z.geometry), ring) || z.geometry.coordinates[0].some(function(c){ return reachable({lat:c[1], lng:c[0]}, ring); })); })
+        .map(function(z){ return centroid(z.geometry); }));
+  }
+  /* any water drawn on the ranch at all (when none is drawn, no distance adjustment is made anywhere) */
+  function ranchHasWater(){ return state.points.some(function(pt){ return pt.type === 'water'; }) || state.zones.some(function(z){ return z.type === 'water'; }); }
   function waterBands(p){
-    var ws = waterSources();
+    var ws = waterSources(p);
     if(!ws.length) return null;
     var ring = p.geometry.coordinates[0];
     var key = JSON.stringify(ring) + '|' + JSON.stringify(ws);
@@ -250,29 +289,30 @@
   /* forage-weighted acres: open ground x1, brush and bottomland by their factors, ponds x0; then less far from water */
   function forageAcres(p){
     var z = zoneAcres(p), f = state.settings.zoneF;
-    return (Math.max(0, p.acres - z.water - z.brush - z.bottom) + z.brush*f.brush/100 + z.bottom*f.bottom/100)*waterFactor(p);
+    return (Math.max(0, p.acres - z.water - z.brush - z.bottom) + z.brush*f.brush/100 + z.bottom*f.bottom/100)*waterFactor(p)*slopeFactor(p);
   }
   function grazeableAcres(p){ return Math.max(0, p.acres - zoneAcres(p).water); }
   function annualLb(p){ var lb = forageLb(p); return lb == null ? null : forageAcres(p)*lb; }
   function capacityAU(p){
     var lb = annualLb(p);
     if(lb == null || !(annualDemandLb() > 0)) return null;
-    return lb * (state.settings.harvestEff/100) / annualDemandLb();
+    return lb * (heOf(p)/100) / annualDemandLb();
   }
   function lowCapacityAU(p){
     if(p.mode !== 'soil' || !p.soil || p.soil.status !== 'ok' || p.soil.low == null) return null;
-    return forageAcres(p) * p.soil.low * condFactor(p) * (state.settings.harvestEff/100) / annualDemandLb();
+    return forageAcres(p) * p.soil.low * condFactor(p) * (heOf(p)/100) / annualDemandLb();
   }
   function grazingDays(p, herd){
     var lb = annualLb(p);
     if(lb == null || !(herd > 0) || !(state.settings.intakeLb > 0)) return null;
-    return lb * (state.settings.harvestEff/100) / (herd * state.settings.intakeLb);
+    return lb * (heOf(p)/100) / (herd * state.settings.intakeLb);
   }
   function totals(){
-    var t = {pastures:state.pastures.length, acres:0, grazedAcres:0, estAcres:0, cap:0, missing:0, soilCap:0, soilLow:0, lowAvailable:false, water:0};
+    var t = {pastures:state.pastures.length, acres:0, grazedAcres:0, estAcres:0, cap:0, missing:0, soilCap:0, soilLow:0, lowAvailable:false, water:0, hayAcres:0, hayLb:0};
     state.pastures.forEach(function(p){
       t.acres += p.acres;
       if(!isGrazed(p)) return;
+      if(isHayMeadow(p)){ var hl = annualLb(p); t.hayAcres += p.acres; t.hayLb += hl != null ? hl*(state.settings.hayRecovery == null ? 80 : state.settings.hayRecovery)/100 : 0; return; }
       t.water += zoneAcres(p).water;
       t.grazedAcres += grazeableAcres(p);
       var c = capacityAU(p);
@@ -299,9 +339,15 @@
     state.pastures.forEach(function(p){ var c = centroid(p.geometry), a = Math.max(p.acres, 0.01); x += c.lng*a; y += c.lat*a; w += a; });
     return {lng:x/w, lat:y/w};
   }
-  function nearestWaterMiles(p){
-    var waters = state.points.filter(function(pt){ return pt.type === 'water'; })
-      .concat(state.zones.filter(function(z){ return z.type === 'water'; }).map(function(z){ return centroid(z.geometry); }));
+  function waterText(p){
+    var water = nearestWaterMiles(p);
+    if(water != null) return '💧 Middle of pasture is ' + (water < 0.1 ? 'under 0.1' : fmt(water, 1)) + ' mi from water';
+    var any = ranchHasWater() ? nearestWaterMiles(p, true) : null;
+    if(any != null) return '💧 Middle of pasture is ' + (any < 0.1 ? 'under 0.1' : fmt(any, 1)) + ' mi from water in another pasture: none inside this one or on its fence';
+    return 'Add a 💧 water point to see distance to water';
+  }
+  function nearestWaterMiles(p, anyPasture){
+    var waters = anyPasture ? state.points.filter(function(pt){ return pt.type === 'water'; }).concat(state.zones.filter(function(z){ return z.type === 'water'; }).map(function(z){ return centroid(z.geometry); })) : waterSources(p);
     if(!waters.length) return null;
     var c = centroid(p.geometry), best = Infinity;
     waters.forEach(function(w){ var d = milesBetween(c, {lat:w.lat, lng:w.lng}); if(d < best) best = d; });
@@ -785,7 +831,7 @@
       '~DeclareIdGeogTable(@clippedGeog)~',
       '~GetGeogFromGeomWgs84(@clipped,@clippedGeog)~',
       'select id as mukey, sum(geog.STArea()) as area_m2 into #aoiarea from @clippedGeog group by id;',
-      'select a.mukey, a.area_m2, mu.muname, c.cokey, c.compname, c.comppct_r, c.rsprod_l, c.rsprod_r, c.rsprod_h,',
+      'select a.mukey, a.area_m2, mu.muname, c.cokey, c.compname, c.compkind, c.comppct_r, c.slope_r, c.rsprod_l, c.rsprod_r, c.rsprod_h,',
       "(select top 1 e.ecoclassid from coecoclass e where e.cokey = c.cokey order by case when e.ecoclasstypename like 'NRCS Rangeland%' then 0 else 1 end, e.ecoclassid) as ecoclassid,",
       "(select top 1 e.ecoclassname from coecoclass e where e.cokey = c.cokey order by case when e.ecoclasstypename like 'NRCS Rangeland%' then 0 else 1 end, e.ecoclassid) as ecoclassname",
       'from #aoiarea a inner join mapunit mu on mu.mukey = a.mukey',
@@ -805,18 +851,24 @@
       if(row[ix('cokey')] != null) mus[mukey].comps.push({
         pct: num(row[ix('comppct_r')]) || 0,
         l: num(row[ix('rsprod_l')]), r: num(row[ix('rsprod_r')]), h: num(row[ix('rsprod_h')]),
+        kind: ix('compkind') >= 0 ? row[ix('compkind')] : null, slope: ix('slope_r') >= 0 ? num(row[ix('slope_r')]) : null,
         eco: ix('ecoclassid') >= 0 ? row[ix('ecoclassid')] : null, ecoName: ix('ecoclassname') >= 0 ? row[ix('ecoclassname')] : null
       });
     }
     var total = 0; order.forEach(function(k){ total += mus[k].area; });
     if(!(total > 0)) return {status:'nodata', soils:[], coverage:0};
-    var wData = 0, sR = 0, sL = 0, sH = 0, mlraW = {};
+    var wData = 0, sR = 0, sL = 0, sH = 0, mlraW = {}, wSl = 0, sSl = 0;
+    // Holechek, Range Management Table 8.11: cattle grazing capacity 0-10% slope full, 11-30% -30%, 31-60% -60%, over 60% none
+    var slopeKeep = function(x){ return x <= 10 ? 1 : x <= 30 ? 0.7 : x <= 60 ? 0.4 : 0; };
     var soils = order.map(function(k){
       var mu = mus[k], mw = 0, mr = 0, site = null, sitePct = 0;
       mu.comps.forEach(function(c){
         var mm = c.eco && String(c.eco).match(/^[RF](\d{3}[A-Z]?)/);
         if(mm){ mlraW[mm[1]] = (mlraW[mm[1]] || 0) + mu.area * c.pct / 100; }
         if(c.ecoName && c.pct > sitePct){ site = c.ecoName; sitePct = c.pct; }
+        if(c.slope != null && c.pct > 0){ wSl += mu.area*c.pct/100; sSl += mu.area*c.pct/100*slopeKeep(c.slope); }
+        // miscellaneous areas (rock outcrop, water, urban land, pits) grow no forage: they count as 0 lb, not as missing data
+        if(c.r == null && c.pct > 0 && c.kind && /miscellaneous/i.test(c.kind)) c = Object.assign({}, c, {r:0, l:0, h:0});
         if(c.r == null || !(c.pct > 0)) return;
         var w = mu.area * c.pct / 100;
         wData += w; sR += w * c.r;
@@ -828,7 +880,7 @@
     });
     var mlra = null, best = 0; Object.keys(mlraW).forEach(function(k){ if(mlraW[k] > best){ best = mlraW[k]; mlra = k; } });
     if(!(wData > 0)) return {status:'nodata', soils:soils, coverage:0, mlra:mlra, at:Date.now()};
-    return {status:'ok', normal:sR/wData, low:sL/wData, high:sH/wData, coverage:wData/total, soils:soils, mlra:mlra, at:Date.now()};
+    return {status:'ok', normal:sR/wData, low:sL/wData, high:sH/wData, coverage:wData/total, slopeFactor:wSl > 0 ? sSl/wSl : null, soils:soils, mlra:mlra, at:Date.now()};
   }
   function fetchSoil(geom){
     var ctrl = window.AbortController ? new AbortController() : null;
@@ -956,7 +1008,7 @@
       return '<tr><td>' + esc(x.name) + (x.site ? '<div style="font-size:11px;color:var(--ink-muted);">' + esc(x.site) + '</div>' : '') + '</td><td class="num">' + fmt(x.share*100) + '%</td><td class="num">' + (x.prod != null ? fmt(x.prod) + ' lb' : '—') + '</td></tr>';
     }).join('');
     var more = s.soils.length > 5 ? '<tr><td colspan="3" style="color:var(--ink-muted);">+ ' + (s.soils.length - 5) + ' more soil' + (s.soils.length - 5 > 1 ? 's' : '') + '</td></tr>' : '';
-    var cov = s.coverage < 0.8 ? '<div style="margin-top:6px;"><span class="tag warn">Partial data</span> Only ' + fmt(s.coverage*100) + '% of this pasture has a soil-survey forage estimate; the average is applied to the whole pasture.</div>' : '';
+    var cov = s.coverage < 0.95 ? '<div style="margin-top:6px;"><span class="tag warn">Partial data</span> Only ' + fmt(s.coverage*100) + '% of this pasture has a soil-survey forage estimate; the average is applied to the whole pasture.</div>' : '';
     var cf = condFactor(p);
     return '<div class="p-soil">Soil survey: <strong>' + fmt(s.normal) + ' lb/ac</strong> in a normal year (' + fmt(s.low) + ' unfavorable · ' + fmt(s.high) + ' favorable) for the site in top condition. At ' + CONDITIONS[p.condition || 'fair'].toLowerCase() + ' condition this tool uses <strong>' + fmt(s.normal*cf) + ' lb/ac</strong>.' + cov +
       '<div class="table-scroll"><table><thead><tr><th>Soil</th><th class="num">Of pasture</th><th class="num">Normal year</th></tr></thead><tbody>' + rows + more + '</tbody></table></div></div>';
@@ -965,6 +1017,8 @@
   function capBlock(p){
     var c = capacityAU(p);
     if(!isGrazed(p)) return '<div class="big">—</div><div class="sub">not grazed</div>';
+    if(isHayMeadow(p)){ var hl = annualLb(p); return hl == null ? '<div class="big">—</div><div class="sub">enter what it grows</div>'
+      : '<div class="big">' + fmt(hl*(state.settings.hayRecovery == null ? 80 : state.settings.hayRecovery)/100/2000, 1) + ' t</div><div class="sub">hay a year (dry matter) · baled, not grazed</div>'; }
     if(c == null) return '<div class="big">—</div><div class="sub">' + (p.mode === 'soil' ? 'waiting on forage' : 'enter a forage estimate') + '</div>';
     return '<div class="big">' + fmt(c, c < 10 ? 1 : 0) + ' AU</div><div class="sub">' + fmt(grazeableAcres(p) / c, 1) + ' ac per AU · yearlong</div>';
   }
@@ -974,6 +1028,8 @@
     if(z.brush > 0.05) parts.push('🌳 ' + fmt(z.brush, z.brush < 10 ? 1 : 0) + ' ac brush (' + f.brush + '% forage)');
     if(z.bottom > 0.05) parts.push('〰 ' + fmt(z.bottom, z.bottom < 10 ? 1 : 0) + ' ac bottomland (' + f.bottom + '% forage)');
     var wb = state.settings.waterAdj === false ? null : waterBands(p);
+    if(!wb && ranchHasWater() && isGrazed(p) && !isHayMeadow(p)) parts.push('⚠️ no water drawn inside this pasture or on its fence: its forage is counted as if water were close');
+    var sf = slopeFactor(p); if(sf < 0.995) parts.push('⛰ slopes: counts ' + fmt((1 - sf)*100) + '% less forage (Holechek)');
     if(wb && wb.mid + wb.far >= 0.005) parts.push('🚶 ' + fmt((wb.mid + wb.far)*100) + '% over 1 mi from water' + (wb.far >= 0.005 ? ' (' + fmt(wb.far*100) + '% over 2 mi, not counted)' : '') + ': counts ' + fmt((1 - waterFactor(p))*100) + '% less forage');
     var ov = overlaps(p).map(function(o){ return fmt(o.ac, o.ac < 10 ? 1 : 0) + ' ac with “' + esc(o.p.name) + '”'; });
     return (parts.length ? '<div class="p-zones">Inside this pasture: ' + parts.join(' · ') + '</div>' : '') +
@@ -1005,8 +1061,7 @@
       var typeOpts = Object.keys(TYPES).map(function(k){ return '<option value="' + k + '"' + (p.type === k ? ' selected' : '') + '>' + esc(TYPES[k].label) + '</option>'; }).join('');
       var grazed = isGrazed(p);
       var water = nearestWaterMiles(p);
-      var waterTxt = water == null ? (state.points.some(function(x){ return x.type === 'water'; }) ? '' : 'Add a 💧 water point to see distance to water')
-                                   : '💧 Middle of pasture is ' + (water < 0.1 ? 'under 0.1' : fmt(water, 1)) + ' mi from water';
+      var waterTxt = waterText(p);
       return '<div class="pasture-row' + (p.id === selectedId ? ' selected' : '') + '" data-id="' + p.id + '">' +
         '<div class="p-head"><span class="p-swatch" style="background:' + colorFor(p) + ';"></span>' +
           '<input type="text" class="p-name" value="' + esc(p.name) + '" maxlength="60" aria-label="Pasture name">' +
@@ -1039,9 +1094,7 @@
       var ac = row.querySelector('.p-acres'); if(ac) ac.textContent = fmt(p.acres, p.acres < 10 ? 1 : 0) + ' ac';
       var w = row.querySelector('.p-foot .water');
       if(w){
-        var water = nearestWaterMiles(p);
-        w.textContent = water == null ? (state.points.some(function(x){ return x.type === 'water'; }) ? '' : 'Add a 💧 water point to see distance to water')
-                                      : '💧 Middle of pasture is ' + (water < 0.1 ? 'under 0.1' : fmt(water, 1)) + ' mi from water';
+        w.textContent = waterText(p);
       }
     });
   }
@@ -1211,6 +1264,7 @@
       var ec = fb.econ;
       lines.push('Calves: ' + fmt(ec.calvesSold, 1) + ' sold at ~' + fmt(ec.avgSaleLb) + ' lb, $' + fmt(ec.avgPrice) + '/cwt (market price slide) = ' + money(ec.calfIncome) + (ec.heifersKept > 0.05 ? '; keeps ' + fmt(ec.heifersKept, 1) + ' replacement heifers, sells ' + fmt(ec.cullsSold, 1) + ' cull cows and ' + fmt(ec.opensSold, 1) + ' open heifers (' + money(ec.cullIncome + ec.openIncome) + ')' : '') + '; prices adjusted to the sale month with the seasonal pattern (calves: USDA Oklahoma City 2016–2025); losses: ' + fmt(ec.deadWeather, 1) + ' weather, ' + fmt(ec.deadOther, 1) + ' other' + (h.nws === 'yes' ? ', ' + fmt(ec.deadNws, 1) + ' screwworm' : '') + '. Weaning period ' + h.weanPeriod + ' days at ' + h.postAdg + ' lb/day. Cattle sales minus feed & feeding costs: ' + money(ec.net) + ' (not profit).' + (+h.bcsWean > 0 && +h.bcsWean < +h.bcs ? ' Cows wean at BCS ' + h.bcsWean + ' and are fed back to ' + h.bcs + ' before calving.' : ''));
       var bc = fb.bcs;
+      if(fb.totals && fb.totals.rdpMonths && fb.totals.rdpMonths.length) lines.push('Degradable protein may limit rumen digestion in ' + fb.totals.rdpMonths.map(function(m){ return FEED.MONTHS[m]; }).join(', ') + ' (cows need about 10% of the TDN they eat as degradable protein).');
       if(bc) lines.push('Cow body condition (protein-only supplement leaves energy gaps to body reserves): ' + fmt(bc.start, 1) + ' at calving, lowest ' + fmt(bc.low, 1) + ' in ' + FEED.MONTHS[bc.lowMonth] + ', ' + fmt(bc.breed, 1) + ' during breeding (about ' + fmt(bc.pregPct) + '% expected pregnant, Sprott 1985), ' + fmt(bc.end, 1) + ' a year later.');
       var shortM = fb.months.filter(function(x){ return x.graze < 0.999; }).map(function(x){ return x.name; });
       if(shortM.length) lines.push('Grass too short for a full bite (NRC 2016 grazing intake factor) in: ' + shortM.join(', ') + '.');
@@ -1327,6 +1381,9 @@
       }
       if(mr.settings && typeof mr.settings === 'object'){
         ['harvestEff', 'intakeLb', 'manualCap', 'maxGraze'].forEach(function(k){ if(mr.settings[k] === null || isFinite(+mr.settings[k])) state.settings[k] = mr.settings[k] === null ? null : +mr.settings[k]; });
+        if(mr.settings.heType) state.settings.heType = Object.assign({}, DEFAULT_SETTINGS.heType, mr.settings.heType);
+        if(isFinite(+mr.settings.hayRecovery) && +mr.settings.hayRecovery > 0) state.settings.hayRecovery = +mr.settings.hayRecovery;
+        if(mr.settings.slopeAdj === false) state.settings.slopeAdj = false;
         if(mr.settings.cond) state.settings.cond = Object.assign({}, DEFAULT_SETTINGS.cond, mr.settings.cond);
         if(mr.settings.zoneF) state.settings.zoneF = Object.assign({}, DEFAULT_SETTINGS.zoneF, mr.settings.zoneF);
         if(typeof mr.settings.waterAdj === 'boolean') state.settings.waterAdj = mr.settings.waterAdj;
@@ -1407,7 +1464,7 @@
     var st = state.settings;
     return {type:'FeatureCollection', name:state.name || 'My Ranch', features:feats,
             my_ranch:{version:1, name:state.name || '', herd:state.herd, herdNow:state.herdNow || null, spa:state.spa || null,
-                      settings:{harvestEff:st.harvestEff, intakeLb:st.intakeLb, manualCap:st.manualCap, maxGraze:st.maxGraze, cond:st.cond, zoneF:st.zoneF, waterAdj:st.waterAdj !== false}}};
+                      settings:{harvestEff:st.harvestEff, intakeLb:st.intakeLb, manualCap:st.manualCap, maxGraze:st.maxGraze, cond:st.cond, zoneF:st.zoneF, waterAdj:st.waterAdj !== false, slopeAdj:st.slopeAdj !== false, heType:st.heType, hayRecovery:st.hayRecovery}}};
   }
   function xml(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]; }); }
   function toKml(){
@@ -1503,6 +1560,7 @@
   function bindSettings(){
     $('ranchName').value = state.name || '';
     $('harvestEff').value = state.settings.harvestEff;
+    $('heImproved').value = state.settings.heType.improved; $('heSmallgrain').value = state.settings.heType.smallgrain; $('hayRecovery').value = state.settings.hayRecovery; $('slopeAdj').value = state.settings.slopeAdj === false ? 'off' : 'on';
     $('intakeLb').value = state.settings.intakeLb;
     $('manualCap').value = state.settings.manualCap > 0 ? state.settings.manualCap : '';
     $('manualCap').addEventListener('input', function(){ var v = num(this.value); state.settings.manualCap = v != null && v > 0 ? v : null; renderAll(false); });
@@ -1514,6 +1572,9 @@
       $(f[0]).addEventListener('input', function(){ var v = num(this.value); if(v != null && v >= f[2] && v <= f[3]){ state.herd[f[1]] = v; renderHerdNote(); renderAll(false); } });
       $(f[0]).addEventListener('blur', function(){ this.value = state.herd[f[1]]; });
     });
+    ['heImproved', 'heSmallgrain'].forEach(function(id){ $(id).addEventListener('input', function(){ var v = num(this.value); if(v != null && v > 0 && v <= 100){ state.settings.heType[id === 'heImproved' ? 'improved' : 'smallgrain'] = v; renderAll(false); } }); });
+    $('hayRecovery').addEventListener('input', function(){ var v = num(this.value); if(v != null && v > 0 && v <= 100){ state.settings.hayRecovery = v; renderAll(false); } });
+    $('slopeAdj').addEventListener('change', function(){ state.settings.slopeAdj = this.value !== 'off'; renderAll(false); });
     $('harvestEff').addEventListener('input', function(){ var v = num(this.value); if(v != null && v > 0 && v <= 100){ state.settings.harvestEff = v; syncGrazeSys(); renderAll(false); } });
     $('grazeSys').addEventListener('change', function(){ if(this.value !== 'custom'){ state.settings.harvestEff = +this.value; $('harvestEff').value = state.settings.harvestEff; renderAll(false); } else $('harvestEff').focus(); });
     syncGrazeSys();
@@ -1666,7 +1727,7 @@
     $('manualCap').value = state.settings.manualCap > 0 ? state.settings.manualCap : '';
     ['la_poor','la_fair','la_excellent'].forEach(function(id){ $(id).value = state.settings.cond[id.slice(3)]; });
     $('la_brush').value = state.settings.zoneF.brush; $('la_bottom').value = state.settings.zoneF.bottom; $('la_water').checked = state.settings.waterAdj !== false;
-    $('harvestEff').value = state.settings.harvestEff; $('intakeLb').value = state.settings.intakeLb; syncGrazeSys();
+    $('harvestEff').value = state.settings.harvestEff; $('intakeLb').value = state.settings.intakeLb; syncGrazeSys(); $('heImproved').value = state.settings.heType.improved; $('heSmallgrain').value = state.settings.heType.smallgrain; $('hayRecovery').value = state.settings.hayRecovery; $('slopeAdj').value = state.settings.slopeAdj === false ? 'off' : 'on';
   }
 
 
