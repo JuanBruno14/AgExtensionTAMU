@@ -293,15 +293,26 @@ def as_of_label(key, d):
 # ---------------------------------------------------------------------------------------------
 
 def api_get(slug, key, today):
+    """Not every report answers the same query: try the date-range query first, then simpler ones
+    (rows outside the date window are filtered later by report date anyway)."""
     start = (today - dt.timedelta(days=LOOKBACK_DAYS)).strftime('%m/%d/%Y')
     end = today.strftime('%m/%d/%Y')
     q = urllib.parse.quote('report_begin_date=%s:%s' % (start, end), safe='=:/')
-    url = '%s%s?q=%s&allSections=true' % (API, slug, q)
-    req = urllib.request.Request(url, headers={
-        'Authorization': 'Basic ' + base64.b64encode((key + ':').encode()).decode(),
-        'Accept': 'application/json', 'User-Agent': 'tamu-decision-aids-price-update'})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return json.load(r)
+    tries = ['%s%s?q=%s&allSections=true' % (API, slug, q), '%s%s?q=%s' % (API, slug, q),
+             '%s%s?allSections=true' % (API, slug), '%s%s' % (API, slug)]
+    last = None
+    for url in tries:
+        req = urllib.request.Request(url, headers={
+            'Authorization': 'Basic ' + base64.b64encode((key + ':').encode()).decode(),
+            'Accept': 'application/json', 'User-Agent': 'tamu-decision-aids-price-update'})
+        try:
+            with urllib.request.urlopen(req, timeout=60) as r:
+                return json.load(r)
+        except urllib.error.HTTPError as e:
+            if e.code not in (400, 404):
+                raise
+            last = e
+    raise last
 
 def fetch(data, payloads, today):
     """payloads: {slug: api json}. Returns (changed_keys, report_lines)."""
@@ -315,8 +326,11 @@ def fetch(data, payloads, today):
         rows = rows_of(payload)
         got = pick(key, rows, since)
         if not got:
-            notes.append('- %s: no newer matching line in report %s (%d rows read); kept %s from %s.'
-                         % (p['label'], p['report_slug'], len(rows), fmt_unit(p), p['report_date']))
+            seen = pick(key, rows, dt.date.min)   # say what the rule did find, so a broken rule shows up
+            found = ('latest matching line %s, %s' % (seen[0], fmt_unit(p, seen[1])) if seen
+                     else ':warning: no line matched this rule at all')
+            notes.append('- %s: no newer matching line in report %s (%d rows read; %s); kept %s from %s.'
+                         % (p['label'], p['report_slug'], len(rows), found, fmt_unit(p), p['report_date']))
             continue
         d, value, detail, lines = got
         lo, hi = SANE[key]
