@@ -119,4 +119,4 @@ with sync_playwright() as pw:
     pg.screenshot(path=os.path.join(OUT,'terrain.png'), full_page=False)
     c.close()
     check('no JS errors', not errs, errs)
-print('FAILURES:', fails)
+print('failed checks:', fails)
