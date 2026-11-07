@@ -211,6 +211,7 @@
 
   .sub-h{font-family:"Open Sans",system-ui,sans-serif;font-size:13px;font-weight:700;margin:22px 0 10px;color:var(--ink);letter-spacing:0;}
   .p-zones{margin-top:8px;font-size:12.5px;color:var(--ink-secondary);background:var(--surface-sunken);border-radius:8px;padding:6px 10px;}
+  .p-terrain{margin-top:6px;font-size:12px;color:var(--ink-muted);}
   .p-cond{margin-top:6px;}
   .p-cond label{display:none;}
   .zone-meta{flex:1;font-size:12.5px;color:var(--ink-secondary);}

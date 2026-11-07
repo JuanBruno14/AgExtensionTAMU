@@ -65,7 +65,7 @@ jobs:
 
       - name: My Ranch and Herd Calculators
         run: |
-          for t in test_ranch test_grass test_portal test_import test_supplement test_steps test_examples test_jim_ranch test_spa; do
+          for t in test_ranch test_grass test_portal test_import test_supplement test_steps test_examples test_jim_ranch test_spa test_terrain; do
             echo "::group::$t"
             python3 src/my-ranch/$t.py | tee /tmp/$t.log
             echo "::endgroup::"

@@ -25,6 +25,7 @@ JIM_ORIGIN = _m.group(1) if _m else ''
 
 CONNECT = ["'self'", JIM_ORIGIN,
            'https://sdmdataaccess.sc.egov.usda.gov',     # USDA-NRCS Soil Data Access (My Ranch)
+           'https://elevation.nationalmap.gov',          # USGS 3DEP elevation, pasture slopes (My Ranch)
            'https://services9.arcgis.com',               # U.S. Drought Monitor layer (My Ranch)
            'https://nominatim.openstreetmap.org']        # place search (My Ranch)
 IMAGES = ["'self'", 'data:', 'blob:',

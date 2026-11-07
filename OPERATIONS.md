@@ -32,6 +32,7 @@ flowchart LR
   W -- same, plus system prompt and tools --> A[Anthropic API]
   W -- reads knowledge base --> GH
   V -- "pasture outline (My Ranch)" --> S[USDA-NRCS Soil Data Access]
+  V -- "pasture outline box (My Ranch)" --> E[USGS 3DEP elevation]
   V -- "ranch location (My Ranch)" --> D[Drought Monitor via Esri ArcGIS]
   V -- "map tiles, place search (My Ranch)" --> M[Esri imagery, OpenStreetMap]
   GA[GitHub Actions, weekly] -- report requests --> U[USDA AMS MyMarketNews]
@@ -41,7 +42,7 @@ flowchart LR
 | Data | Stored | Leaves the browser? | Retention |
 | --- | --- | --- | --- |
 | Prices, costs, herd calculator inputs | Visitor's browser (localStorage) | No | Until the visitor clears it (button on `privacy.html`) |
-| My Ranch map, herd, feed plan | Visitor's browser; optional file the visitor downloads | Outline to NRCS soils; location to Drought Monitor and map services | Same |
+| My Ranch map, herd, feed plan | Visitor's browser; optional file the visitor downloads | Outline to NRCS soils and USGS elevation; location to Drought Monitor and map services | Same |
 | Jim conversation | Visitor's browser (sessionStorage) | Yes, to the Worker and Anthropic, per question | Browser: until the tab closes. Worker: none (no storage, no message logging). Anthropic: under its commercial API terms |
 | Saved-ranch summary for Jim | Visitor's browser | Only with Jim's "Use my saved ranch" switch on (max 3,500 characters) | Same as the conversation |
 | Default market prices | `data/market-prices.json` in the repository | Public | Git history |

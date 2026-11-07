@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PLP2BkGjATWR85v0OkWfwgBmifMzoylNLvRpm+yMwiw='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-eY5vFII4bn/cpYcDsm//RQKAOlMxfsZx1kDv8ULg7Vc='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Ranch · Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -550,6 +550,7 @@
 
   .sub-h{font-family:"Open Sans",system-ui,sans-serif;font-size:13px;font-weight:700;margin:22px 0 10px;color:var(--ink);letter-spacing:0;}
   .p-zones{margin-top:8px;font-size:12.5px;color:var(--ink-secondary);background:var(--surface-sunken);border-radius:8px;padding:6px 10px;}
+  .p-terrain{margin-top:6px;font-size:12px;color:var(--ink-muted);}
   .p-cond{margin-top:6px;}
   .p-cond label{display:none;}
   .zone-meta{flex:1;font-size:12.5px;color:var(--ink-secondary);}
@@ -1072,7 +1073,7 @@
           <div class="field">
             <label for="slopeAdj">Steep ground</label>
             <select id="slopeAdj"><option value="on">Count less forage on slopes (Holechek)</option><option value="off">No slope adjustment</option></select>
-            <span class="hint">From the soil survey: 11–30% slope counts 30% less, 31–60% counts 60% less, over 60% not at all</span>
+            <span class="hint">From USGS elevation inside each pasture (soil survey if unavailable): 11–30% slope counts 30% less, 31–60% counts 60% less, over 60% not at all</span>
           </div>
         </div>
         <p class="card-note" style="margin:14px 0 0;">Defaults follow AgriLife Extension's <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and with continuous grazing about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering). Rotation with rest raises that to about 30%, and intensive rotation to about 40% (University of Nebraska Extension).</p>
@@ -2582,6 +2583,7 @@
         s.points = s.points || [];
         // soil results saved before slope and miscellaneous areas were read are looked up again
         s.pastures.forEach(function(p){ if(p.soil && (p.soil.status === 'loading' || (p.soil.status === 'ok' && !('slopeFactor' in p.soil)))) p.soil = null; });
+        s.pastures.forEach(function(p){ if(p.terrain && (p.terrain.status === 'loading' || p.terrain.status === 'error')) p.terrain = null; });
         if(s.drought && s.drought.status === 'loading') s.drought = null;
         return s;
       }
@@ -2605,8 +2607,15 @@
     if(p.type === 'smallgrain') return Math.max(he, ht.smallgrain || he);
     return he;
   }
-  /* slope (Holechek, Range Management Table 8.11): from the soil survey's representative slope of each component */
-  function slopeFactor(p){ return state.settings.slopeAdj !== false && p.soil && p.soil.status === 'ok' && p.soil.slopeFactor != null ? p.soil.slopeFactor : 1; }
+  /* slope (Holechek, Range Management Table 8.11): from USGS 3DEP elevation inside the pasture when it has been read,
+     otherwise from the soil survey's representative slope of each component */
+  function slopeSource(p){
+    if(state.settings.slopeAdj === false) return null;
+    if(p.terrain && p.terrain.status === 'ok' && p.terrain.slopeFactor != null && p.terrain.key === terrainKey(p.geometry)) return 'terrain';
+    if(p.soil && p.soil.status === 'ok' && p.soil.slopeFactor != null) return 'soil';
+    return null;
+  }
+  function slopeFactor(p){ var s = slopeSource(p); return s === 'terrain' ? p.terrain.slopeFactor : s === 'soil' ? p.soil.slopeFactor : 1; }
   /* dry matter of hay baled a year on the hay meadows */
   function ownHayDmLb(){
     var rec = (state.settings.hayRecovery == null ? 80 : state.settings.hayRecovery)/100;
@@ -3316,7 +3325,7 @@
   }
   function scheduleSoil(id, delay){
     clearTimeout(soilTimers[id]);
-    var p = getPasture(id); if(p){ p.soil = {status:'loading'}; }
+    var p = getPasture(id); if(p){ p.soil = {status:'loading'}; scheduleTerrain(id); }
     soilTimers[id] = setTimeout(function(){
       if(soilQueue.indexOf(id) < 0) soilQueue.push(id);
       pumpSoil();
@@ -3344,6 +3353,133 @@
       pumpSoil();
     });
     renderPastures();
+  }
+
+  /* ------------------------------------------------------------------ terrain (USGS 3DEP elevation) */
+  /* Slope from the USGS 3D Elevation Program (lidar where flown, 1/3 arc-second elsewhere), sampled at about 10 m inside the
+     pasture outline. Replaces the soil survey's representative slope, which is one value per soil component, in the Holechek
+     slope adjustment. If the service can't be reached the soil-survey slope is used. */
+  var TERRAIN_URL = 'https://elevation.nationalmap.gov/arcgis/rest/services/3DEPElevation/ImageServer/exportImage';
+  var MERC_R = 6378137, TERRAIN_CELL_M = 10, TERRAIN_MAX_PX = 1200, TERRAIN_MIN_CELLS = 25;
+  var terrainQueue = [], terrainBusy = 0, terrainTimers = {};
+  function mercX(lng){ return lng*Math.PI/180*MERC_R; }
+  function mercY(lat){ return Math.log(Math.tan(Math.PI/4 + lat*Math.PI/360))*MERC_R; }
+  function mercLat(y){ return (2*Math.atan(Math.exp(y/MERC_R)) - Math.PI/2)*180/Math.PI; }
+  function terrainKey(geom){ return JSON.stringify(geom.coordinates[0]); }
+  /* The image request for a pasture: its bounding box in Web Mercator, one cell of padding, square ground cells of ~10 m
+     (coarser on very large pastures so the image stays under TERRAIN_MAX_PX a side). Exposed for testing. */
+  function terrainRequest(geom){
+    var ring = geom.coordinates[0], x0 = Infinity, x1 = -Infinity, y0 = Infinity, y1 = -Infinity, lat = 0;
+    ring.forEach(function(c){ var x = mercX(c[0]), y = mercY(c[1]); x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y); lat += c[1]; });
+    lat /= ring.length;
+    var k = Math.cos(lat*Math.PI/180);                 // ground meters per Web Mercator meter
+    var cell = TERRAIN_CELL_M/k;
+    cell = Math.max(cell, (x1 - x0)/(TERRAIN_MAX_PX - 3), (y1 - y0)/(TERRAIN_MAX_PX - 3));   // room for the padding and rounding up
+    x0 -= cell; y0 -= cell; x1 += cell; y1 += cell;
+    var w = Math.max(3, Math.ceil((x1 - x0)/cell)), h = Math.max(3, Math.ceil((y1 - y0)/cell));
+    x1 = x0 + w*cell; y1 = y0 + h*cell;
+    var params = {bbox:[x0, y0, x1, y1].map(function(v){ return v.toFixed(2); }).join(','), bboxSR:'3857', imageSR:'3857', size:w + ',' + h,
+      format:'tiff', pixelType:'F32', noData:'-9999', noDataInterpretation:'esriNoDataMatchAny', interpolation:'RSP_BilinearInterpolation',
+      compression:'None', f:'image'};
+    return {url:TERRAIN_URL + '?' + new URLSearchParams(params).toString(), x0:x0, y1:y1, cell:cell, groundCell:cell*k, w:w, h:h};
+  }
+  /* Minimal reader for the uncompressed 32-bit float GeoTIFF the service returns (strips or tiles, either byte order). */
+  function parseTiffF32(buf){
+    var dv = new DataView(buf);
+    var bo = dv.getUint16(0); if(bo !== 0x4949 && bo !== 0x4D4D) throw new Error('not a TIFF');
+    var le = bo === 0x4949; if(dv.getUint16(2, le) !== 42) throw new Error('not a TIFF');
+    var ifd = dv.getUint32(4, le), n = dv.getUint16(ifd, le), tags = {};
+    var size = {1:1, 2:1, 3:2, 4:4, 5:8, 6:1, 7:1, 8:2, 9:4, 10:8, 11:4, 12:8, 16:8};
+    for(var i = 0; i < n; i++){
+      var o = ifd + 2 + i*12, tag = dv.getUint16(o, le), typ = dv.getUint16(o + 2, le), cnt = dv.getUint32(o + 4, le);
+      var bytes = (size[typ] || 1)*cnt, at = bytes > 4 ? dv.getUint32(o + 8, le) : o + 8, vals = [];
+      if(typ === 3 || typ === 4) for(var j = 0; j < Math.min(cnt, 1e6); j++) vals.push(typ === 3 ? dv.getUint16(at + 2*j, le) : dv.getUint32(at + 4*j, le));
+      tags[tag] = vals;
+    }
+    var one = function(t, d){ return tags[t] && tags[t].length ? tags[t][0] : d; };
+    var W = one(256), H = one(257);
+    if(!(W > 0 && H > 0)) throw new Error('TIFF without a size');
+    if(one(259, 1) !== 1) throw new Error('compressed TIFF');
+    if(one(258, 32) !== 32 || one(339, 3) !== 3 || one(277, 1) !== 1) throw new Error('TIFF is not one band of 32-bit floats');
+    var out = new Float32Array(W*H);
+    var read = function(off, idx){ out[idx] = dv.getFloat32(off, le); };
+    if(tags[324]){                                     // tiles
+      var TW = one(322), TH = one(323), across = Math.ceil(W/TW), offs = tags[324];
+      offs.forEach(function(off, t){
+        var tx = (t % across)*TW, ty = Math.floor(t/across)*TH;
+        for(var r = 0; r < TH && ty + r < H; r++) for(var c = 0; c < TW && tx + c < W; c++) read(off + 4*(r*TW + c), (ty + r)*W + tx + c);
+      });
+    } else {                                           // strips
+      var rps = one(278, H), so = tags[273] || [];
+      so.forEach(function(off, s){
+        for(var r = 0; r < rps && s*rps + r < H; r++) for(var c = 0; c < W; c++) read(off + 4*(r*W + c), (s*rps + r)*W + c);
+      });
+    }
+    return {w:W, h:H, data:out};
+  }
+  /* Share of the pasture in each Holechek slope class and the slope factor. grid: elevations (m), req: terrainRequest().
+     Slope by Horn's method on cells whose center is inside the outline and whose 8 neighbours have data. Exposed for testing. */
+  function summarizeTerrain(grid, req, geom){
+    var ring = geom.coordinates[0], W = grid.w, H = grid.h, z = grid.data, g = req.groundCell;
+    var ok = function(v){ return v === v && v > -1000 && v < 9000; };
+    var bins = [0, 0, 0, 0], n = 0, sum = 0;
+    for(var r = 1; r < H - 1; r++){
+      var lat = mercLat(req.y1 - (r + 0.5)*req.cell);
+      for(var c = 1; c < W - 1; c++){
+        var lng = (req.x0 + (c + 0.5)*req.cell)/MERC_R*180/Math.PI;
+        if(!pointInRing({lat:lat, lng:lng}, ring)) continue;
+        var a = z[(r-1)*W + c-1], b = z[(r-1)*W + c], cc = z[(r-1)*W + c+1], d = z[r*W + c-1], f = z[r*W + c+1], gg = z[(r+1)*W + c-1], h = z[(r+1)*W + c], ii = z[(r+1)*W + c+1];
+        if(!(ok(a) && ok(b) && ok(cc) && ok(d) && ok(f) && ok(gg) && ok(h) && ok(ii) && ok(z[r*W + c]))) continue;
+        var dzdx = ((cc + 2*f + ii) - (a + 2*d + gg))/(8*g), dzdy = ((gg + 2*h + ii) - (a + 2*b + cc))/(8*g);
+        var pct = 100*Math.sqrt(dzdx*dzdx + dzdy*dzdy);
+        n++; sum += pct; bins[pct <= 10 ? 0 : pct <= 30 ? 1 : pct <= 60 ? 2 : 3]++;
+      }
+    }
+    if(n < TERRAIN_MIN_CELLS) return {status:'nodata', at:Date.now()};
+    var sh = bins.map(function(x){ return x/n; });
+    return {status:'ok', slopeFactor:sh[0] + 0.7*sh[1] + 0.4*sh[2], shares:sh, meanPct:sum/n, cells:n, cellM:Math.round(g), at:Date.now()};
+  }
+  /* The service drops roughly one request in three before answering (seen November 2026), so up to 3 tries */
+  function fetchTerrain(geom, tries){
+    var req = terrainRequest(geom);
+    tries = tries == null ? 3 : tries;
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function(){ if(ctrl) ctrl.abort(); }, 60000);
+    return fetch(req.url, {signal: ctrl ? ctrl.signal : undefined}).then(function(res){
+      clearTimeout(timer);
+      if(!res.ok) throw new Error('elevation service error ' + res.status);
+      var ct = res.headers.get('content-type') || '';
+      if(/json|html|text/i.test(ct)) throw new Error('elevation service did not return an image');
+      return res.arrayBuffer();
+    }).then(function(buf){ return summarizeTerrain(parseTiffF32(buf), req, geom); }, function(err){
+      clearTimeout(timer);
+      if(tries <= 1) throw err;
+      return new Promise(function(ok){ setTimeout(ok, 1500*(4 - tries)); }).then(function(){ return fetchTerrain(geom, tries - 1); });
+    });
+  }
+  function scheduleTerrain(id){
+    var p = getPasture(id); if(!p || !isGrazed(p) || p.mode !== 'soil') return;
+    var key = terrainKey(p.geometry);
+    if(p.terrain && p.terrain.key === key && (p.terrain.status === 'ok' || p.terrain.status === 'nodata' || p.terrain.status === 'loading')) return;
+    p.terrain = {status:'loading', key:key};
+    clearTimeout(terrainTimers[id]);
+    terrainTimers[id] = setTimeout(function(){ if(terrainQueue.indexOf(id) < 0) terrainQueue.push(id); pumpTerrain(); }, 600);
+  }
+  function pumpTerrain(){
+    if(terrainBusy >= 2) return;
+    var id = terrainQueue.shift(); if(!id) return;
+    var p = getPasture(id);
+    if(!p || !p.terrain || p.terrain.status !== 'loading'){ pumpTerrain(); return; }
+    terrainBusy++;
+    var key = terrainKey(p.geometry);
+    fetchTerrain(p.geometry).then(function(res){ return res; }, function(){ return {status:'error', at:Date.now()}; }).then(function(res){
+      var cur = getPasture(id);
+      if(cur && terrainKey(cur.geometry) === key){ res.key = key; cur.terrain = res; }
+      terrainBusy--;
+      renderAll(true);
+      pumpTerrain();
+    });
+    pumpTerrain();
   }
 
   /* ------------------------------------------------------------------ drought monitor */
@@ -3408,6 +3544,15 @@
     save();
   }
 
+  function terrainLine(p){
+    var t = p.terrain;
+    if(state.settings.slopeAdj === false || !t) return '';
+    if(t.status === 'loading') return '<div class="p-terrain"><span class="spinner"></span> Reading slopes from USGS elevation…</div>';
+    if(t.status !== 'ok' || t.key !== terrainKey(p.geometry)) return slopeSource(p) === 'soil' ? '<div class="p-terrain">Slope: from the soil survey (USGS elevation not available).</div>' : '';
+    var sh = t.shares;
+    return '<div class="p-terrain">Slope (USGS 3DEP elevation, ' + t.cellM + ' m cells): ' + fmt(sh[0]*100) + '% of the pasture 0–10% · ' + fmt(sh[1]*100) + '% 11–30% · ' +
+      fmt(sh[2]*100) + '% 31–60% · ' + fmt(sh[3]*100) + '% over 60%.</div>';
+  }
   function soilBlock(p){
     if(!isGrazed(p)) return '<div class="p-soil">Not counted toward grazing capacity.</div>';
     if(p.mode !== 'soil') return '';
@@ -3422,7 +3567,7 @@
     var cov = s.coverage < 0.95 ? '<div style="margin-top:6px;"><span class="tag warn">Partial data</span> Only ' + fmt(s.coverage*100) + '% of this pasture has a soil-survey forage estimate; the average is applied to the whole pasture.</div>' : '';
     var cf = condFactor(p);
     return '<div class="p-soil">Soil survey: <strong>' + fmt(s.normal) + ' lb/ac</strong> in a normal year (' + fmt(s.low) + ' unfavorable · ' + fmt(s.high) + ' favorable) for the site in top condition. At ' + CONDITIONS[p.condition || 'fair'].toLowerCase() + ' condition this tool uses <strong>' + fmt(s.normal*cf) + ' lb/ac</strong>.' + cov +
-      '<div class="table-scroll"><table><thead><tr><th>Soil</th><th class="num">Of pasture</th><th class="num">Normal year</th></tr></thead><tbody>' + rows + more + '</tbody></table></div></div>';
+      '<div class="table-scroll"><table><thead><tr><th>Soil</th><th class="num">Of pasture</th><th class="num">Normal year</th></tr></thead><tbody>' + rows + more + '</tbody></table></div>' + terrainLine(p) + '</div>';
   }
 
   function capBlock(p){
@@ -3440,7 +3585,8 @@
     if(z.bottom > 0.05) parts.push('〰 ' + fmt(z.bottom, z.bottom < 10 ? 1 : 0) + ' ac bottomland (' + f.bottom + '% forage)');
     var wb = state.settings.waterAdj === false ? null : waterBands(p);
     if(!wb && ranchHasWater() && isGrazed(p) && !isHayMeadow(p)) parts.push('⚠️ no water drawn inside this pasture or on its fence: its forage is counted as if water were close');
-    var sf = slopeFactor(p); if(sf < 0.995) parts.push('⛰ slopes: counts ' + fmt((1 - sf)*100) + '% less forage (Holechek)');
+    var sf = slopeFactor(p), ss = slopeSource(p);
+    if(sf < 0.995) parts.push('⛰ slopes: ' + (ss === 'terrain' ? fmt((1 - p.terrain.shares[0])*100) + '% of it is steeper than 10% (USGS elevation), so it ' : '') + 'counts ' + fmt((1 - sf)*100) + '% less forage (Holechek' + (ss === 'soil' ? ', soil-survey slope' : '') + ')');
     if(wb && wb.mid + wb.far >= 0.005) parts.push('🚶 ' + fmt((wb.mid + wb.far)*100) + '% over 1 mi from water' + (wb.far >= 0.005 ? ' (' + fmt(wb.far*100) + '% over 2 mi, not counted)' : '') + ': counts ' + fmt((1 - waterFactor(p))*100) + '% less forage');
     var ov = overlaps(p).map(function(o){ return fmt(o.ac, o.ac < 10 ? 1 : 0) + ' ac with “' + esc(o.p.name) + '”'; });
     return (parts.length ? '<div class="p-zones">Inside this pasture: ' + parts.join(' · ') + '</div>' : '') +
@@ -5716,13 +5862,13 @@
     bindSteps();
     renderAll(true);
     showStep(firstStep(), true);
-    state.pastures.forEach(function(p){ if(p.mode === 'soil' && isGrazed(p) && (!p.soil || p.soil.status === 'error')) scheduleSoil(p.id, 0); });
+    state.pastures.forEach(function(p){ if(p.mode === 'soil' && isGrazed(p) && (!p.soil || p.soil.status === 'error')) scheduleSoil(p.id, 0); else scheduleTerrain(p.id); });
     if(state.pastures.length) refreshDroughtIfMoved(false);
     window.addEventListener('beforeprint', function(){ if(map) map.invalidateSize(); });
   }
 
   /* test hooks (read-only helpers; harmless in production) */
-  window.MyRanch = {FEED:FEED, feed:function(){ return feedLast; }, netOf:function(a, b, c){ return netOf(a, b, c); }, herd:function(){ return state.herd; }, fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, state:function(){ return state; },
+  window.MyRanch = {FEED:FEED, feed:function(){ return feedLast; }, netOf:function(a, b, c){ return netOf(a, b, c); }, herd:function(){ return state.herd; }, fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, terrainRequest:terrainRequest, parseTiffF32:parseTiffF32, summarizeTerrain:summarizeTerrain, slopeFactor:function(id){ return slopeFactor(getPasture(id)); }, state:function(){ return state; },
                     addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, grassToday:grassToday, herdAU:herdAU, herdAUParts:herdAUParts, addPastureDrawn:function(g){ return addPasture(g, null, true); }, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }, go:function(s){ showStep(s, true); }, step:function(){ return curStep; }};
 
   init();
