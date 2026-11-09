@@ -4,14 +4,14 @@
   "prices": {
     "bred_cow": {
       "label": "Bred cow purchase price",
-      "value": 2828.62,
+      "value": 3365.18,
       "unit": "$/hd",
       "report_slug": "1955",
       "report_name": "Texas Weekly Cattle Auction Summary",
       "rule": "BRED COWS, Medium & Large 1 and 1-2, young (2-4 yr), 2nd-3rd stage; head-weighted average of matching lines over the last 4 weekly reports",
-      "report_date": "2026-09-02",
-      "as_of_label": "Sep 3, 2026",
-      "detail_html": "Cattlemen's Livestock, Dalhart TX (<code>ams_1953.pdf</code>) &mdash; \"BRED COWS, Medium &amp; Large 1\" line, 17&nbsp;hd, 1,243&ndash;1,327&nbsp;lb, $2,800&ndash;$2,850/hd"
+      "report_date": "2026-11-06",
+      "as_of_label": "Nov 6, 2026",
+      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"BRED COWS, Medium &amp; Large 1 and 1&ndash;2\", young (2&ndash;4&nbsp;yr), 2nd&ndash;3rd stage (12 lines, head-weighted average): 80&nbsp;hd, 905&ndash;1,385&nbsp;lb, $1,925&ndash;$4,200/hd, average $3,365.18/hd &mdash; 4 weekly reports, Oct 16, 2026 to Nov 6, 2026"
     },
     "fed_cattle": {
       "label": "Fed/finished cattle sale price",
@@ -26,80 +26,80 @@
     },
     "bred_heifer": {
       "label": "Bred heifer sale price",
-      "value": 3465.01,
+      "value": 3574.39,
       "unit": "$/hd",
       "report_slug": "1955",
       "report_name": "Texas Weekly Cattle Auction Summary",
       "rule": "BRED HEIFERS, Medium & Large 1 (not 1-2), any age/stage; head-weighted average of matching lines over the last 4 weekly reports",
-      "report_date": "2026-10-29",
+      "report_date": "2026-10-30",
       "as_of_label": "Oct 30, 2026",
-      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"BRED HEIFERS, Medium &amp; Large 1\" (3 lines, head-weighted average): 58&nbsp;hd, 812&ndash;1,330&nbsp;lb, $2,600&ndash;$3,700/hd, average $3,465.01/hd"
+      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"BRED HEIFERS, Medium &amp; Large 1\" (6 lines, head-weighted average): 89&nbsp;hd, 812&ndash;1,347&nbsp;lb, $2,350&ndash;$3,950/hd, average $3,574.39/hd &mdash; 2 weekly reports, Oct 16, 2026 to Oct 30, 2026"
     },
     "steer": {
       "label": "Steer price, 516.4 lb reference",
-      "value": 393.91,
+      "value": 401.22,
       "unit": "$/cwt",
       "report_slug": "1955",
       "report_name": "Texas Weekly Cattle Auction Summary",
       "rule": "FEEDER STEERS, Medium & Large 1, 500-549 lb, plain lots; head-weighted average of matching lines over the last 4 weekly reports",
-      "report_date": "2026-11-05",
+      "report_date": "2026-11-06",
       "as_of_label": "Nov 6, 2026",
-      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"FEEDER STEERS, Medium &amp; Large 1, 500&ndash;549&nbsp;lb\", plain lots only (1 line): 166&nbsp;hd, 500&ndash;545&nbsp;lb, $350.00&ndash;$430.00/cwt, average $393.91/cwt"
+      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"FEEDER STEERS, Medium &amp; Large 1, 500&ndash;549&nbsp;lb\", plain lots only (3 lines, head-weighted average): 412&nbsp;hd, 500&ndash;549&nbsp;lb, $350.00&ndash;$450.00/cwt, average $401.22/cwt &mdash; 3 weekly reports, Oct 23, 2026 to Nov 6, 2026"
     },
     "heifer": {
       "label": "Heifer price, 531.3 lb reference",
-      "value": 346.34,
+      "value": 365.76,
       "unit": "$/cwt",
       "report_slug": "1955",
       "report_name": "Texas Weekly Cattle Auction Summary",
       "rule": "FEEDER HEIFERS, Medium & Large 1, 500-549 lb, plain lots; head-weighted average of matching lines over the last 4 weekly reports",
-      "report_date": "2026-11-05",
+      "report_date": "2026-11-06",
       "as_of_label": "Nov 6, 2026",
-      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"FEEDER HEIFERS, Medium &amp; Large 1, 500&ndash;549&nbsp;lb\", plain lots only (1 line): 58&nbsp;hd, 500&ndash;541&nbsp;lb, $320.00&ndash;$376.00/cwt, average $346.34/cwt"
+      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"FEEDER HEIFERS, Medium &amp; Large 1, 500&ndash;549&nbsp;lb\", plain lots only (3 lines, head-weighted average): 277&nbsp;hd, 500&ndash;545&nbsp;lb, $320.00&ndash;$410.00/cwt, average $365.76/cwt &mdash; 3 weekly reports, Oct 23, 2026 to Nov 6, 2026"
     },
     "stocker_700": {
       "label": "Stocker sale price, 700 lb path",
-      "value": 321.95,
+      "value": 332.75,
       "unit": "$/cwt",
       "report_slug": "1955",
       "report_name": "Texas Weekly Cattle Auction Summary",
       "rule": "FEEDER STEERS, Medium & Large 1, 700-749 lb, plain lots; head-weighted average of matching lines over the last 4 weekly reports",
-      "report_date": "2026-11-05",
+      "report_date": "2026-11-06",
       "as_of_label": "Nov 6, 2026",
-      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"FEEDER STEERS, Medium &amp; Large 1, 700&ndash;749&nbsp;lb\", plain lots only (1 line): 91&nbsp;hd, 703&ndash;745&nbsp;lb, $285.00&ndash;$325.00/cwt, average $321.95/cwt"
+      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"FEEDER STEERS, Medium &amp; Large 1, 700&ndash;749&nbsp;lb\", plain lots only (3 lines, head-weighted average): 179&nbsp;hd, 700&ndash;745&nbsp;lb, $285.00&ndash;$365.00/cwt, average $332.75/cwt &mdash; 3 weekly reports, Oct 23, 2026 to Nov 6, 2026"
     },
     "stocker_800": {
       "label": "Stocker sale price, 800 lb path",
-      "value": 318.0,
+      "value": 338.56,
       "unit": "$/cwt",
       "report_slug": "1955",
       "report_name": "Texas Weekly Cattle Auction Summary",
       "rule": "FEEDER STEERS, Medium & Large 1, 800-849 lb, plain lots; head-weighted average of matching lines over the last 4 weekly reports",
-      "report_date": "2026-11-05",
+      "report_date": "2026-11-06",
       "as_of_label": "Nov 6, 2026",
-      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"FEEDER STEERS, Medium &amp; Large 1, 800&ndash;849&nbsp;lb\", plain lots only (1 line): 68&nbsp;hd, 819&ndash;819&nbsp;lb, $318.00&ndash;$318.00/cwt, average $318.00/cwt"
+      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"FEEDER STEERS, Medium &amp; Large 1, 800&ndash;849&nbsp;lb\", plain lots only (3 lines, head-weighted average): 480&nbsp;hd, 806&ndash;844&nbsp;lb, $290.00&ndash;$354.00/cwt, average $338.56/cwt &mdash; 3 weekly reports, Oct 23, 2026 to Nov 6, 2026"
     },
     "cull_cow": {
       "label": "Cull cow price, 1,279.4 lb Boner reference",
-      "value": 121.72,
+      "value": 125.06,
       "unit": "$/cwt",
       "report_slug": "1955",
       "report_name": "Texas Weekly Cattle Auction Summary",
       "rule": "SLAUGHTER COWS, Boner 80-85%, average dressing (not light weight); head-weighted average of matching lines over the last 4 weekly reports",
-      "report_date": "2026-11-05",
+      "report_date": "2026-11-06",
       "as_of_label": "Nov 6, 2026",
-      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"SLAUGHTER COWS, Boner 80&ndash;85%, average dressing\", plain lots only (1 line): 94&nbsp;hd, 120&ndash;1,335&nbsp;lb, $114.00&ndash;$129.00/cwt, average $121.72/cwt"
+      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"SLAUGHTER COWS, Boner 80&ndash;85%, average dressing\", plain lots only (3 lines, head-weighted average): 229&nbsp;hd, 120&ndash;1,462&nbsp;lb, $114.00&ndash;$147.50/cwt, average $125.06/cwt &mdash; 3 weekly reports, Oct 23, 2026 to Nov 6, 2026"
     },
     "cull_bull": {
       "label": "Cull bull price",
-      "value": 158.88,
+      "value": 162.9,
       "unit": "$/cwt",
       "report_slug": "1955",
       "report_name": "Texas Weekly Cattle Auction Summary",
       "rule": "SLAUGHTER BULLS, 1-2, average dressing (not light weight); head-weighted average of matching lines over the last 4 weekly reports",
-      "report_date": "2026-11-05",
+      "report_date": "2026-11-06",
       "as_of_label": "Nov 6, 2026",
-      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"SLAUGHTER BULLS, 1&ndash;2, average dressing\", plain lots only (1 line): 16&nbsp;hd, 1,065&ndash;2,140&nbsp;lb, $145.00&ndash;$175.00/cwt, average $158.88/cwt"
+      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"SLAUGHTER BULLS, 1&ndash;2, average dressing\", plain lots only (3 lines, head-weighted average): 52&nbsp;hd, 1,045&ndash;2,265&nbsp;lb, $145.00&ndash;$176.00/cwt, average $162.90/cwt &mdash; 3 weekly reports, Oct 23, 2026 to Nov 6, 2026"
     }
   },
   "history": [
@@ -244,6 +244,54 @@
     {
       "key": "cull_bull",
       "value": 158.88,
+      "report_date": "2026-11-06",
+      "applied": "2026-11-09"
+    },
+    {
+      "key": "bred_cow",
+      "value": 3365.18,
+      "report_date": "2026-11-06",
+      "applied": "2026-11-09"
+    },
+    {
+      "key": "bred_heifer",
+      "value": 3574.39,
+      "report_date": "2026-10-30",
+      "applied": "2026-11-09"
+    },
+    {
+      "key": "steer",
+      "value": 401.22,
+      "report_date": "2026-11-06",
+      "applied": "2026-11-09"
+    },
+    {
+      "key": "heifer",
+      "value": 365.76,
+      "report_date": "2026-11-06",
+      "applied": "2026-11-09"
+    },
+    {
+      "key": "stocker_700",
+      "value": 332.75,
+      "report_date": "2026-11-06",
+      "applied": "2026-11-09"
+    },
+    {
+      "key": "stocker_800",
+      "value": 338.56,
+      "report_date": "2026-11-06",
+      "applied": "2026-11-09"
+    },
+    {
+      "key": "cull_cow",
+      "value": 125.06,
+      "report_date": "2026-11-06",
+      "applied": "2026-11-09"
+    },
+    {
+      "key": "cull_bull",
+      "value": 162.9,
       "report_date": "2026-11-06",
       "applied": "2026-11-09"
     }
