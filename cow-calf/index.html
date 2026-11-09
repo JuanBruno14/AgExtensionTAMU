@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-w0AzDm4o2VKKQNtMqJiTk2Z832Z9crqpuUKeXYUt5gE='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-oORvuorrW7v3L+e0BVifPnnbzf1LrJK3R2lQCP9VMnk='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -563,7 +563,13 @@
         <h2>Year-by-year prices &amp; calf crop</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Year 1 operating cost is filled in automatically from the "Cow operating cost" card below. Steer/heifer/cull-cow price (amber) auto-fill from the weight sliders above — the price is interpolated between the nearest reported weight classes (or condition grades, for cull cows) in the Sept 2026 Texas auction price curve, re-centered on the Rolling Plains District 3 budget's current prices. Type over any amber cell to lock in your own number for that year; it stops following the slider until you reset.</p>
+        <p class="card-note">Year 1 operating cost is filled in automatically from the "Cow operating cost" card below. Steer, heifer and cull-cow prices (amber) start from this week's USDA Texas auction price at the weights set above (interpolated along the auction weight curve), then change by the yearly percentage below from year 2 on. The default &minus;5% a year assumes prices ease off today's highs over the cattle cycle; set 0% to keep today's prices every year. Type over any amber cell to lock in your own number for that year; it stops following until you reset.</p>
+        <div class="field-grid cols-3" style="margin-bottom:14px;">
+          <div class="field">
+            <label for="priceTrend">Price change per year, from year 2</label>
+            <div class="input-wrap has-suffix"><input type="number" id="priceTrend" value="-5" min="-30" max="30" step="1"><span class="suffix">%</span></div>
+          </div>
+        </div>
         <div class="table-scroll">
           <table class="grid" id="yearTable">
             <thead>
@@ -1120,7 +1126,7 @@
 
 <footer id="toolFooter">
   <a class="footer-brand" href="https://agrilifeextension.tamu.edu/" aria-label="Texas A&amp;M AgriLife Extension"><img class="logo-on-light" src="../brand/agrilife-extension-agecon-horizontal-color.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="331" height="40"><img class="logo-on-dark" src="../brand/agrilife-extension-agecon-horizontal-white.png" alt="" width="331" height="40"></a>
-  Based on the <strong>A1 — Cow Bid Price and Budget</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; the starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a purchase decision.
+  Based on the <strong>A1 — Cow Bid Price and Budget</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a purchase decision.
   <p class="eeo-statement">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the County Commissioners Courts of Texas Cooperating.</p>
 <!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Required links"><li><a href="../privacy.html">Site privacy &amp; data</a></li><li><a href="https://agrilife.tamu.edu/required-links/compact/">Compact with Texans</a></li><li><a href="https://agrilife.tamu.edu/required-links/privacy/">Privacy and Security</a></li><li><a href="https://agrilife.tamu.edu/accessibility/">Accessibility Policy</a></li><li><a href="https://dir.texas.gov/resource-library-item/state-website-linking-and-privacy-policy">State Link Policy</a></li><li><a href="https://www.tsl.texas.gov/trail/index.html">Statewide Search</a></li><li><a href="https://veterans.tamu.edu/">Veterans Benefits</a></li><li><a href="https://fch.tamu.edu/programs/military-programs/">Military Families</a></li><li><a href="https://secure.ethicspoint.com/domain/en/report_custom.asp?clientid=19681">Risk, Fraud &amp; Misconduct Hotline</a></li><li><a href="https://gov.texas.gov/organization/hsgd">Texas Homeland Security</a></li><li><a href="https://veterans.portal.texas.gov/">Texas Veteran&rsquo;s Portal</a></li><li><a href="https://agrilifeas.tamu.edu/hr/equal-opportunity/affirmative-actionequal-opportunity-employment/">Equal Opportunity</a></li><li><a href="https://agrilife.tamu.edu/required-links/orpi/">Open Records/Public Information</a></li></ul><!-- required-links:end -->
 </footer>
@@ -1426,7 +1432,8 @@
   var DEFAULTS = {
     bidPrice:2828.62, steerWeight:516.4, heiferWeight:531.3, cullWeight:1279.4,
     discountRate:5, calvingYears:7, startYear:2026,
-    equityPct:20, loanTerm:5, interestRate:5
+    equityPct:20, loanTerm:5, interestRate:5,
+    priceTrend:-5
   };
   /* Single source of truth for the year-grid default arrays, so the initial
      declaration and the Reset button can never drift apart (they used to be
@@ -1598,7 +1605,7 @@
     YEARS.forEach(function(y){
       var th = document.createElement('th'); th.textContent = 'Year '+y; headRow.appendChild(th);
     });
-    var thBlank = document.createElement('th'); labelRow.appendChild(thBlank);
+    // the label row already starts with an empty <th> in the markup (under "Variable")
     YEARS.forEach(function(y){
       var th = document.createElement('th'); th.id='calYearLabel'+y; th.style.fontWeight='500'; labelRow.appendChild(th);
     });
@@ -1826,6 +1833,7 @@
     var equityPct = num('equityPct');
     var loanTerm = num('loanTerm');
     var interestRatePct = num('interestRate');
+    var priceTrend = Math.max(-30, Math.min(30, num('priceTrend') || 0));
 
     // year labels
     YEARS.forEach(function(y){
@@ -1846,21 +1854,23 @@
     var steerSlidePrice = round(priceSlideLookup(STEER_PRICE_SLIDE, num('steerWeight')), 2);
     var heiferSlidePrice = round(priceSlideLookup(HEIFER_PRICE_SLIDE, num('heiferWeight')), 2);
     var cullSlidePrice = round(priceSlideLookup(CULL_COW_PRICE_SLIDE, num('cullWeight')), 2);
+    // Year 1 = today's price at that weight; each later year moves by the yearly % (cattle cycle).
     YEARS.forEach(function(y, idx){
+      var f = Math.pow(1 + priceTrend/100, idx);
       if(steerPriceAuto[idx]){
-        steerPrice[idx] = steerSlidePrice;
+        steerPrice[idx] = round(steerSlidePrice*f, 2);
         var sEl = document.querySelector('input[data-row="steerPrice"][data-year="'+y+'"]');
-        if(sEl) sEl.value = steerSlidePrice;
+        if(sEl) sEl.value = steerPrice[idx];
       }
       if(heiferPriceAuto[idx]){
-        heiferPrice[idx] = heiferSlidePrice;
+        heiferPrice[idx] = round(heiferSlidePrice*f, 2);
         var hEl = document.querySelector('input[data-row="heiferPrice"][data-year="'+y+'"]');
-        if(hEl) hEl.value = heiferSlidePrice;
+        if(hEl) hEl.value = heiferPrice[idx];
       }
       if(cullPriceAuto[idx]){
-        cullPrice[idx] = cullSlidePrice;
+        cullPrice[idx] = round(cullSlidePrice*f, 2);
         var cEl = document.querySelector('input[data-row="cullPrice"][data-year="'+y+'"]');
-        if(cEl) cEl.value = cullSlidePrice;
+        if(cEl) cEl.value = cullPrice[idx];
       }
     });
 
@@ -1889,6 +1899,8 @@
     $('npvTile').className = 'stat-tile wide '+(verdictGood?'good':'critical');
     $('npvValue').textContent = (npvTotal<0?'-':'')+'$'+fmtMoney2.format(Math.abs(npvTotal));
     $('irrValue').textContent = isFinite(irrPct) ? irrPct.toFixed(1)+'%' : '—';
+    var trendNote = priceTrend === 0 ? ' (today\'s prices held every year)'
+      : ' (today\'s prices, then '+(priceTrend>0?'+':'&minus;')+Math.abs(priceTrend)+'% a year from year 2)';
     var noLoanTxt = isFinite(fin.irrNoLoanPct) ? fin.irrNoLoanPct.toFixed(1)+'%' : '—';
     $('irrBasis').textContent = loanTerm>0 ? 'on your '+equityPct+'% down payment' : 'on the full bid price';
     $('irrNoLoan').textContent = loanTerm>0 ? 'Whole cow, no loan: '+noLoanTxt : '';
@@ -1899,8 +1911,8 @@
       : 'The positive net present value indicates this is an economically feasible investment.';
     $('narrativeIrr').innerHTML = isFinite(irrPct)
       ? 'This investment has an internal rate of return of <strong>'+irrPct.toFixed(1)+'%</strong>'+(loanTerm>0
-          ? ' on the $'+fmtMoney0.format(fin.equityAmount)+' down payment ('+equityPct+'% of the bid price; the loan pays for the rest). Borrowing makes this number much larger than the return on the cow itself: bought outright with no loan, the same cow returns <strong>'+(isFinite(fin.irrNoLoanPct)?fin.irrNoLoanPct.toFixed(1)+'%':'—')+'</strong> a year. Both assume today\'s calf prices hold for every year of the plan.'
-          : ' on the full bid price. It assumes today\'s calf prices hold for every year of the plan.')
+          ? ' on the $'+fmtMoney0.format(fin.equityAmount)+' down payment ('+equityPct+'% of the bid price; the loan pays for the rest). Borrowing makes this number much larger than the return on the cow itself: bought outright with no loan, the same cow returns <strong>'+(isFinite(fin.irrNoLoanPct)?fin.irrNoLoanPct.toFixed(1)+'%':'—')+'</strong> a year. Both use the calf and cull prices in the year table'+trendNote+'.'
+          : ' on the full bid price. It uses the calf and cull prices in the year table'+trendNote+'.')
       : 'A stable IRR could not be found for these assumptions.';
     $('narrativePayback').innerHTML = paybackYear
       ? 'This investment has a payback period of <strong>'+yearWords[paybackYear]+' ('+paybackYear+')</strong> years.'
@@ -2397,7 +2409,7 @@
         if(titleEl && btn.dataset.title) titleEl.textContent = btn.dataset.title;
         var footerEl = $('toolFooter');
         if(footerEl && btn.dataset.source){
-          footerEl.innerHTML = 'Based on the <strong>' + btn.dataset.source + '</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; the starting values are the spreadsheet\'s original assumptions, not a real producer\'s data. Always verify results before using them to ' + btn.dataset.use + '.';
+          footerEl.innerHTML = 'Based on the <strong>' + btn.dataset.source + '</strong> spreadsheet from Texas A&amp;M AgriLife Extension (Agricultural Economics). Pilot tool for internal use by agents; starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet\'s original assumptions, not a real producer\'s data. Always verify results before using them to ' + btn.dataset.use + '.';
         }
         if(tab === 'a2') recalcA2();
         if(tab === 'a1') recalc();

@@ -3,7 +3,7 @@
 
 These prices on this site come from public USDA AMS Market News reports:
 
-    bred_cow     AMS 1953  Cattlemen's Livestock, Dalhart TX     BRED COWS M&L 1, 2-4 yr, 2nd trimester  ($/hd)
+    bred_cow     AMS 1955  Texas Weekly Cattle Auction Summary   BRED COWS M&L 1 / 1-2, 2-4 yr, 2nd-3rd stage ($/hd)
     bred_heifer  AMS 1955  Texas Weekly Cattle Auction Summary   BRED HEIFERS M&L 1                      ($/hd)
     fed_cattle   AMS 2477  5 Area Weekly Direct Slaughter Cattle Live FOB steers, Over 80% Choice        ($/cwt)
     steer        AMS 1955  Texas Weekly Cattle Auction Summary   FEEDER STEERS M&L 1, 500-549 lb         ($/cwt)
@@ -12,6 +12,11 @@ These prices on this site come from public USDA AMS Market News reports:
     stocker_800  AMS 1955  Texas Weekly Cattle Auction Summary   FEEDER STEERS M&L 1, 800-849 lb         ($/cwt)
     cull_cow     AMS 1955  Texas Weekly Cattle Auction Summary   SLAUGHTER COWS Boner 80-85%, Average    ($/cwt)
     cull_bull    AMS 1955  Texas Weekly Cattle Auction Summary   SLAUGHTER BULLS 1-2, Average            ($/cwt)
+
+Auction prices (every class except fed_cattle) are the head-weighted average of all matching
+lines in the last WINDOW_DAYS of reports (four weekly editions), so one thin week does not
+swing a price; fewer than MIN_HEAD head in the window keeps the old price. fed_cattle is
+already a national weekly weighted average and uses the newest week only.
 
 Feeder lines only count when they are plain lots: lines the report marks Fancy, Full,
 Fleshy, Thin Fleshed, Unweaned, Value Added or Gaunt are left out, and so are slaughter
@@ -43,7 +48,9 @@ DATA = os.path.join(REPO, 'data', 'market-prices.json')
 REPORT = os.path.join(REPO, 'price-update-report.md')
 API = 'https://marsapi.ams.usda.gov/services/v1.2/reports/'
 MPR = 'https://mpr.datamart.ams.usda.gov/services/v1.1/reports/'
-LOOKBACK_DAYS = 21
+LOOKBACK_DAYS = 35         # enough reports for the 4-week window
+WINDOW_DAYS = 28           # auction prices: head-weighted over the last four weekly reports
+MIN_HEAD = 10              # fewer head than this in the window: keep the old price
 MAX_CHANGE = 0.25          # 25% week-to-week move is treated as "check by hand"
 SANE = {'bred_cow': (800, 8000), 'bred_heifer': (800, 9000), 'fed_cattle': (100, 400),
         'steer': (100, 1000), 'heifer': (100, 1000), 'stocker_700': (100, 800), 'stocker_800': (100, 800),
@@ -124,14 +131,18 @@ def is_class(row, word):
     return word in (str(c).lower() if c is not None else text(row))
 
 def match_bred_cow(row):
-    if not (is_class(row, 'bred cow') and grade_is_1(row) and per_head(row)):
+    """Young (2-4 yr) bred cows, Medium & Large 1 or 1-2, 2nd or 3rd stage (2nd/3rd lines too).
+    Young cows fit A1's seven calving opportunities; 1st-stage cows carry more open risk."""
+    if not (is_class(row, 'bred cow') and (grade_is_1(row) or grade_is_12(row)) and per_head(row)):
+        return False
+    frame = str(field(row, 'frame', 'frame_desc') or '').lower()
+    if frame and 'medium' not in frame and 'large' not in frame:
         return False
     age = str(field(row, 'age', 'age_description') or text(row)).lower()
     stage = str(field(row, 'pregnancy_stage', 'stage', 'trimester', 'pregnancyStage') or text(row)).lower()
-    # API stages look like "2nd Stage (4-6 mo)"; combined lines ("2nd/3rd Stage (4-9 mo)") are not 2nd trimester
-    second = bool(re.search(r'\bt2\b|2nd|second|\bt\s*2\b', stage))
-    other = bool(re.search(r'1st|3rd|first|third|\bt[13]\b|t2\s*-\s*3|/', stage))
-    return bool(re.search(r'\b2\s*-\s*4\b', age)) and second and not other
+    later = bool(re.search(r'\bt[23]\b|2nd|3rd|second|third', stage))
+    early = bool(re.search(r'1st|first|\bt1\b', stage))
+    return bool(re.search(r'\b2\s*-\s*4\b', age)) and later and not early
 
 def match_bred_heifer(row):
     return is_class(row, 'bred heifer') and grade_is_1(row) and per_head(row)
@@ -245,23 +256,35 @@ def lbs(v):
     return '{:,.0f}'.format(v)
 
 def pick(key, rows, since):
-    """Newest report after `since` with at least one line matching the rule.
+    """Newest report after `since` with at least one line matching the rule; auction classes then
+    average every matching line of the last WINDOW_DAYS (head-weighted).
     Returns (date, value, detail_html, lines) or None."""
     by_date = {}
     for r in rows:
         d = parse_date(field(r, 'published_date', 'report_date', 'report_end_date', 'reportDate'))
-        if d and d > since and RULES[key](r) and number(r, *PRICE):
+        if d and RULES[key](r) and number(r, *PRICE):
             by_date.setdefault(d, []).append(r)
     if not by_date:
         return None
     d = max(by_date)
-    lines = by_date[d]
+    if d <= since:
+        return None
+    if key == 'fed_cattle':
+        dates = [d]
+    else:
+        dates = sorted(x for x in by_date if (d - x).days < WINDOW_DAYS)
+    lines = [r for x in dates for r in by_date[x]]
     heads = [number(r, *HEAD) or 0 for r in lines]
     prices = [number(r, *PRICE) for r in lines]
     total = sum(heads)
+    if key != 'fed_cattle' and total < MIN_HEAD:
+        return None
     value = sum(h * p for h, p in zip(heads, prices)) / total if total else sum(prices) / len(prices)
     value = round(value, 2)
-    return d, value, detail_for(key, lines, value, total), lines
+    detail = detail_for(key, lines, value, total)
+    if len(dates) > 1:
+        detail += ' &mdash; %d weekly reports, %s to %s' % (len(dates), as_of_label(key, dates[0]), as_of_label(key, dates[-1]))
+    return d, value, detail, lines
 
 def detail_for(key, lines, value, heads):
     lo = [x for x in (number(r, *LOW) for r in lines) if x]
@@ -291,8 +314,8 @@ def detail_for(key, lines, value, heads):
     if lo and hi:
         bits.append('$%s&ndash;$%s/hd' % ('{:,.0f}'.format(min(lo)), '{:,.0f}'.format(max(hi))))
     if key == 'bred_cow':
-        return ('Cattlemen\'s Livestock, Dalhart TX (<code>ams_1953.pdf</code>) &mdash; "BRED COWS, Medium &amp; Large 1", '
-                '2&ndash;4&nbsp;yr, 2nd trimester (%s): %s' % (linewords, ', '.join(bits)))
+        return ('USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "BRED COWS, Medium &amp; Large 1 and 1&ndash;2", '
+                'young (2&ndash;4&nbsp;yr), 2nd&ndash;3rd stage (%s): %s, average %s/hd' % (linewords, ', '.join(bits), money(value)))
     return ('USDA AMS "Texas Weekly Cattle Auction Summary" (<code>ams_1955.pdf</code>) &mdash; "BRED HEIFERS, Medium &amp; Large 1" '
             '(%s): %s, average %s/hd' % (linewords, ', '.join(bits), money(value)))
 
@@ -443,6 +466,25 @@ def row_html(key, p):
             '            <td><span class="tag fresh">%s</span></td>\n          </tr>\n          <!-- price:%s:end -->'
             % (key, fmt_unit(p), USED[key], p['detail_html'], p['as_of_label'], key))
 
+KB = 'jim/kb.json'      # Jim's knowledge base, read live by the Worker from the published site
+KB_ID = 'market-prices'
+KB_ORDER = ['steer', 'heifer', 'stocker_700', 'stocker_800', 'cull_cow', 'cull_bull', 'bred_cow', 'bred_heifer',
+            'fed_cattle']
+
+def kb_chunk(data):
+    """One knowledge-base passage with today's prices, so Jim can answer "what are calves worth now"."""
+    out = ['These are the cattle prices the decision aids on this website start from. They are refreshed every '
+           'week from USDA AMS market reports (auction prices are the head-weighted average of the last four weekly '
+           'reports). Anyone can type their own prices on the home page, in "Market prices & factors".',
+           '', 'Current prices, updated %s:' % data['updated']]
+    for key in KB_ORDER + [k for k in data['prices'] if k not in KB_ORDER]:
+        p = data['prices'][key]
+        out.append('- %s: %s (USDA AMS %s, %s; %s)' % (p['label'], fmt_unit(p), p['report_name'], p['as_of_label'], p['rule']))
+    out += ['', 'The 2026 D03 budgets were built in early 2026 with their own price list (for example steer calves '
+            '$530/cwt, heifer calves $460/cwt, cull cows $180/cwt). Those are budget assumptions, not today\'s market. '
+            'When someone asks what cattle are worth now, or which prices the tools use, give the prices above with their date.']
+    return {'t': 'Current cattle market prices used on this website today (USDA weekly)', 'x': '\n'.join(out), 'i': KB_ID}
+
 def apply(data, repo=REPO):
     """Returns list of files changed. Raises if an expected spot is missing."""
     changed = []
@@ -484,6 +526,14 @@ def apply(data, repo=REPO):
             if n != 1:
                 raise SystemExit('apply: data-sources.html: centralized row for %s missing' % key)
     edits['data-sources.html'] = ds
+    kb = json.loads(load(KB))
+    chunk = kb_chunk(data)
+    idx = [n for n, c in enumerate(kb['chunks']) if c.get('i') == KB_ID]
+    if idx:
+        kb['chunks'][idx[0]] = chunk
+    else:
+        kb['chunks'].append(chunk)
+    edits[KB] = json.dumps(kb, separators=(',', ':'), ensure_ascii=False)
     for f, html in edits.items():
         path = os.path.join(repo, f)
         if open(path, encoding='utf-8').read() != html:

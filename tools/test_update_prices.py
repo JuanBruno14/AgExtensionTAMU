@@ -52,15 +52,21 @@ def check(name, cond):
 
 # --- matching rules -------------------------------------------------------------------------
 check('bred cow M&L 1, 2-4 yr, T2 matches', up.match_bred_cow(auction(**{'class': 'Bred Cows', 'age': '2-4', 'pregnancy_stage': 'T2'})))
-check('bred cow M&L 1-2 rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'muscle_grade': '1-2', 'age': '2-4', 'pregnancy_stage': 'T2'})))
+check('bred cow M&L 1-2 accepted', up.match_bred_cow(auction(**{'class': 'Bred Cows', 'muscle_grade': '1-2', 'age': '2-4', 'pregnancy_stage': 'T2'})))
+check('bred cow M&L 2 rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'muscle_grade': '2', 'age': '2-4', 'pregnancy_stage': 'T2'})))
+check('bred cow small frame rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'frame': 'Small', 'age': '2-4', 'pregnancy_stage': 'T2'})))
 check('bred cow >8 yr rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'age': '>8', 'pregnancy_stage': 'T2'})))
-check('bred cow T3 rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'age': '2-4', 'pregnancy_stage': 'T3'})))
+check('bred cow T3 accepted', up.match_bred_cow(auction(**{'class': 'Bred Cows', 'age': '2-4', 'pregnancy_stage': 'T3'})))
+check('bred cow T1 rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'age': '2-4', 'pregnancy_stage': 'T1'})))
 check('bred cow per cwt rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'age': '2-4', 'pregnancy_stage': 'T2', 'price_unit': 'Per Cwt'})))
 check('bred heifer M&L 1 matches', up.match_bred_heifer(auction(**{'class': 'Bred Heifers'})))
 check('API "Per Unit" counts as per head', up.match_bred_heifer(auction(**{'class': 'Bred Heifers', 'price_unit': 'Per Unit'})))
 check('API bred cow row matches', up.match_bred_cow(auction(**{'class': 'Bred Cows', 'price_unit': 'Per Unit', 'age': 'Young (2-4 yrs)', 'pregnancy_stage': '2nd Stage (4-6 mo)'})))
-check('API 2nd/3rd stage rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'price_unit': 'Per Unit', 'age': 'Young (2-4 yrs)', 'pregnancy_stage': '2nd/3rd Stage (4-9 mo)'})))
-check('API 3rd stage rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'price_unit': 'Per Unit', 'age': 'Young (2-4 yrs)', 'pregnancy_stage': '3rd Stage (7-9 mo)'})))
+check('API 2nd/3rd stage accepted', up.match_bred_cow(auction(**{'class': 'Bred Cows', 'price_unit': 'Per Unit', 'age': 'Young (2-4 yrs)', 'pregnancy_stage': '2nd/3rd Stage (4-9 mo)'})))
+check('API 3rd stage accepted', up.match_bred_cow(auction(**{'class': 'Bred Cows', 'price_unit': 'Per Unit', 'age': 'Young (2-4 yrs)', 'pregnancy_stage': '3rd Stage (7-9 mo)'})))
+check('API 1st stage rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'price_unit': 'Per Unit', 'age': 'Young (2-4 yrs)', 'pregnancy_stage': '1st Stage (1-3 mo)'})))
+check('API middle-aged rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'price_unit': 'Per Unit', 'age': 'Middle Aged (5-8 yrs)', 'pregnancy_stage': '2nd Stage (4-6 mo)'})))
+check('API aged rejected', not up.match_bred_cow(auction(**{'class': 'Bred Cows', 'price_unit': 'Per Unit', 'age': 'Middle Aged/Aged (>5 yrs)', 'pregnancy_stage': '2nd Stage (4-6 mo)'})))
 check('bred heifer M&L 1-2 rejected', not up.match_bred_heifer(auction(**{'class': 'Bred Heifers', 'muscle_grade': '1-2'})))
 check('fed steers live FOB over 80% matches', up.match_fed_cattle(fed()))
 check('dressed basis rejected', not up.match_fed_cattle(fed(selling_basis_description='DRESSED DELIVERED')))
@@ -123,10 +129,10 @@ check('class with no line keeps its price', data['prices']['stocker_800']['value
 # --- fetch logic ----------------------------------------------------------------------------
 data = fetch_base()
 payloads = {
-    '1953': section([auction(**{'class': 'Bred Cows', 'age': '2-4', 'pregnancy_stage': 'T2', 'head_count': 10, 'avg_price': 2900}),
+    '1955': section([auction(**{'class': 'Bred Cows', 'age': '2-4', 'pregnancy_stage': 'T2', 'head_count': 10, 'avg_price': 2900}),
                      auction(**{'class': 'Bred Cows', 'age': '2-4', 'pregnancy_stage': 'T2', 'head_count': 30, 'avg_price': 3000}),
-                     auction(**{'class': 'Bred Cows', 'muscle_grade': '1-2', 'age': '2-4', 'pregnancy_stage': 'T2', 'avg_price': 1000})]),
-    '1955': section([auction(**{'class': 'Bred Heifers', 'avg_price': 3700, 'report_date': '10/09/2026'})]),  # not newer
+                     auction(**{'class': 'Bred Cows', 'muscle_grade': '2', 'age': '2-4', 'pregnancy_stage': 'T2', 'avg_price': 1000}),
+                     auction(**{'class': 'Bred Heifers', 'avg_price': 3700, 'report_date': '10/09/2026'})]),  # not newer
     '2477': {'results': [fed()]},
 }
 changed, notes = up.fetch(data, payloads, TODAY)
@@ -145,11 +151,27 @@ data = fetch_base()
 changed, notes = up.fetch(data, {'1955': section([auction(**{'class': 'Bred Heifers', 'muscle_grade': '1-2', 'avg_price': 3500})])}, TODAY)
 check('only 1-2 lines -> no change', not changed)
 
+# four-week window: lines of the last 28 days count, head-weighted; older ones do not
+data = fetch_base()
+data['prices']['steer']['report_date'] = '2026-10-01'
+wk = section([cwt(report_date='10/16/2026', head_count=100, avg_price=400),
+              cwt(report_date='10/09/2026', head_count=50, avg_price=430),
+              cwt(report_date='09/25/2026', head_count=60, avg_price=420),
+              cwt(report_date='09/18/2026', head_count=500, avg_price=100)])   # 28 days before Oct 16: out
+changed, notes = up.fetch(data, {'1955': wk}, TODAY)
+check('4-week head-weighted steer price', data['prices']['steer']['value'] == round((100*400 + 50*430 + 60*420) / 210, 2))
+check('dated from the newest report', data['prices']['steer']['report_date'] == '2026-10-16')
+check('detail names the reports', '3 weekly reports' in data['prices']['steer']['detail_html'])
+data = fetch_base()
+data['prices']['steer']['report_date'] = '2026-10-01'
+changed, notes = up.fetch(data, {'1955': section([cwt(report_date='10/16/2026', head_count=6, avg_price=500)])}, TODAY)
+check('under 10 head in the window keeps the price', 'steer' not in changed)
+
 # --- apply on a copy of the site ------------------------------------------------------------
 tmp = tempfile.mkdtemp()
 try:
     for f in ['index.html', 'cow-calf/index.html', 'replacement-heifer/index.html', 'retained-ownership/index.html',
-              'data-sources.html', 'tools/secure_pages.py', 'jim/jim.js', 'my-ranch/index.html', 'herd-tools/index.html',
+              'data-sources.html', 'tools/secure_pages.py', 'jim/jim.js', 'jim/kb.json', 'my-ranch/index.html', 'herd-tools/index.html',
               'src/my-ranch/build.py', 'src/my-ranch/body.html', 'src/my-ranch/extra.css', 'src/my-ranch/app.js',
               'src/my-ranch/feed.js', 'src/my-ranch/feedui.js']:
         os.makedirs(os.path.join(tmp, os.path.dirname(f)), exist_ok=True)
@@ -159,7 +181,7 @@ try:
     up.fetch(data, payloads, TODAY)
     files = up.apply(data, repo=tmp)
     check('apply edits the four tools and data-sources', sorted(files) == sorted(
-        ['index.html', 'cow-calf/index.html', 'retained-ownership/index.html', 'data-sources.html']))
+        ['index.html', 'cow-calf/index.html', 'retained-ownership/index.html', 'data-sources.html', 'jim/kb.json']))
     cc = open(os.path.join(tmp, 'cow-calf/index.html')).read()
     check('A1 input and default updated', 'id="bidPrice" value="2975"' in cc and 'bidPrice:2975.00' in cc and '2828.62,' not in cc)
     ro = open(os.path.join(tmp, 'retained-ownership/index.html')).read()
@@ -181,6 +203,10 @@ try:
     check('My Ranch default steer price', 'mp_steerPrice:401.50' in mr and '/530*(mult' in mr)
     ds = open(os.path.join(tmp, 'data-sources.html')).read()
     check('data-sources steer row', '$401.50/cwt' in ds)
+    kb = json.load(open(os.path.join(tmp, 'jim/kb.json'), encoding='utf-8'))
+    mine = [c for c in kb['chunks'] if c.get('i') == 'market-prices']
+    check('Jim knowledge base has one current-prices passage', len(mine) == 1 and '$401.50/cwt' in mine[0]['x'])
+    check('Jim knowledge base keeps every other passage', len(kb['chunks']) == len(json.load(open(os.path.join(REPO, 'jim/kb.json'), encoding='utf-8'))['chunks']))
 finally:
     shutil.rmtree(tmp)
 
