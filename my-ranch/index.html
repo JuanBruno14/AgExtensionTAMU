@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-eY5vFII4bn/cpYcDsm//RQKAOlMxfsZx1kDv8ULg7Vc='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-KXW6ttRl3I/lSNGRPuqNY4iDxVcEq3zMPw/byNQlBVg='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Ranch · Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -3810,7 +3810,7 @@
   // Defaults used when the visitor has no saved shared prices. Written by tools/update_prices.py apply
   // from data/market-prices.json (USDA AMS Texas weekly auction). The slide anchors above (530 / 460)
   // are the curves' own points and must stay as they are.
-  var MP_DEFAULT = {mp_steerPrice:407.31, mp_heiferPrice:379.18, mp_cullCowPrice:126.24, mp_cullBullPrice:162.73};
+  var MP_DEFAULT = {mp_steerPrice:393.91, mp_heiferPrice:346.34, mp_cullCowPrice:121.72, mp_cullBullPrice:158.88};
   function cullPrice(mult){
     var v = MP_DEFAULT.mp_cullCowPrice;
     try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); if(mp && +mp.mp_cullCowPrice > 0) v = +mp.mp_cullCowPrice; }catch(e){}

@@ -8,7 +8,7 @@
   // Defaults used when the visitor has no saved shared prices. Written by tools/update_prices.py apply
   // from data/market-prices.json (USDA AMS Texas weekly auction). The slide anchors above (530 / 460)
   // are the curves' own points and must stay as they are.
-  var MP_DEFAULT = {mp_steerPrice:407.31, mp_heiferPrice:379.18, mp_cullCowPrice:126.24, mp_cullBullPrice:162.73};
+  var MP_DEFAULT = {mp_steerPrice:393.91, mp_heiferPrice:346.34, mp_cullCowPrice:121.72, mp_cullBullPrice:158.88};
   function cullPrice(mult){
     var v = MP_DEFAULT.mp_cullCowPrice;
     try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); if(mp && +mp.mp_cullCowPrice > 0) v = +mp.mp_cullCowPrice; }catch(e){}

@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-dqJJNQuExWi/mLRzx5moEESFO2GVQd1aAaZ/U/diISk='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-k9WmpjQ4rsPoa7sMMPI9XexDFtEHLgL8qo4x0RmuzFU='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -488,10 +488,10 @@
         <fieldset style="margin-bottom:18px;">
           <legend>Weight-class prices (steer/heifer/cull, at their reference weight)</legend>
           <div class="field-grid cols-3">
-            <div class="field"><label for="mp_steerPrice">Steer, at 516.4&nbsp;lb</label><div class="input-wrap has-suffix"><input type="number" id="mp_steerPrice" value="407.31" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_heiferPrice">Heifer, at 531.3&nbsp;lb</label><div class="input-wrap has-suffix"><input type="number" id="mp_heiferPrice" value="379.18" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_cullCowPrice">Cull cow, at 1,279.4&nbsp;lb (Boner)</label><div class="input-wrap has-suffix"><input type="number" id="mp_cullCowPrice" value="126.24" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_cullBullPrice">Cull bull</label><div class="input-wrap has-suffix"><input type="number" id="mp_cullBullPrice" value="162.73" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_steerPrice">Steer, at 516.4&nbsp;lb</label><div class="input-wrap has-suffix"><input type="number" id="mp_steerPrice" value="393.91" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_heiferPrice">Heifer, at 531.3&nbsp;lb</label><div class="input-wrap has-suffix"><input type="number" id="mp_heiferPrice" value="346.34" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_cullCowPrice">Cull cow, at 1,279.4&nbsp;lb (Boner)</label><div class="input-wrap has-suffix"><input type="number" id="mp_cullCowPrice" value="121.72" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_cullBullPrice">Cull bull</label><div class="input-wrap has-suffix"><input type="number" id="mp_cullBullPrice" value="158.88" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
           </div>
           <p class="card-note" style="margin:10px 0 0;">Each tool keeps its own weight-vs-price curve (the real shape of how price changes with weight, digitized from actual auction data) and rescales it to match these numbers at the reference weight above &mdash; so dragging a weight slider on any tool page still interpolates sensibly, not just the default point.</p>
         </fieldset>
@@ -502,8 +502,8 @@
             <div class="field"><label for="mp_bredCowPrice">Bred cow</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="mp_bredCowPrice" value="2828.62" min="0" step="1"></div></div>
             <div class="field"><label for="mp_bredHeiferPrice">Bred heifer</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="mp_bredHeiferPrice" value="3465.01" min="0" step="1"></div></div>
             <div class="field"><label for="mp_fedCattlePrice">Fed/finished cattle</label><div class="input-wrap has-suffix"><input type="number" id="mp_fedCattlePrice" value="223.65" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_stocker700Price">Stocker sale, 700&nbsp;lb path</label><div class="input-wrap has-suffix"><input type="number" id="mp_stocker700Price" value="334.67" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_stocker800Price">Stocker sale, 800&nbsp;lb path</label><div class="input-wrap has-suffix"><input type="number" id="mp_stocker800Price" value="336.84" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_stocker700Price">Stocker sale, 700&nbsp;lb path</label><div class="input-wrap has-suffix"><input type="number" id="mp_stocker700Price" value="321.95" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="mp_stocker800Price">Stocker sale, 800&nbsp;lb path</label><div class="input-wrap has-suffix"><input type="number" id="mp_stocker800Price" value="318" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
           </div>
         </fieldset>
 
@@ -597,9 +597,9 @@
      index.html all read this same localStorage key. */
   var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
   var MP_DEFAULTS = {
-    mp_steerPrice:407.31, mp_heiferPrice:379.18, mp_cullCowPrice:126.24, mp_cullBullPrice:162.73,
+    mp_steerPrice:393.91, mp_heiferPrice:346.34, mp_cullCowPrice:121.72, mp_cullBullPrice:158.88,
     mp_bredCowPrice:2828.62, mp_bredHeiferPrice:3465.01, mp_fedCattlePrice:223.65,
-    mp_stocker700Price:334.67, mp_stocker800Price:336.84,
+    mp_stocker700Price:321.95, mp_stocker800Price:318.00,
     mp_bullCost:4500, mp_bullLife:4, mp_bullSalvageWeight:1650.7, mp_bullDeathLoss:2, mp_perBull:25,
     mp_hayPrice:210, mp_hayRollLb:1000
   };
