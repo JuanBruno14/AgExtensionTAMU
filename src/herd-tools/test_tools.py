@@ -95,7 +95,7 @@ with sync_playwright() as pw:
     check('no horizontal scroll on phone', m.evaluate('document.documentElement.scrollWidth')<=390, m.evaluate('document.documentElement.scrollWidth'))
     # portal card
     pg.goto(f'http://127.0.0.1:{PORT}/index.html'); pg.wait_for_timeout(300)
-    check('portal links to herd calculators', pg.locator('a[href="herd-tools/index.html"]').count()==1)
+    check('portal links to herd calculators', pg.locator('#herd-tools-link a[href="herd-tools/index.html"]').count()==1)
     check('no JS errors', not errs, errs)
     b.close()
 print('\n%d failures' % len(fails)); sys.exit(1 if fails else 0)

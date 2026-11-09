@@ -36,3 +36,17 @@
   font-weight: 100 900;
   src: url(fraunces-latin-opsz-normal.woff2) format('woff2-variations'), url(fraunces-latin-opsz-normal.woff2) format('woff2');
 }
+@font-face {
+  font-family: 'Rye';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 400;
+  src: url(rye-latin-400-normal.woff2) format('woff2');
+}
+@font-face {
+  font-family: 'Roboto Slab';
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  src: url(roboto-slab-latin-wght-normal.woff2) format('woff2-variations'), url(roboto-slab-latin-wght-normal.woff2) format('woff2');
+}

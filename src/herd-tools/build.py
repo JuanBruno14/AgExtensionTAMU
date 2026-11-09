@@ -12,6 +12,7 @@ head='''<!doctype html>
 <link rel="stylesheet" href="../brand/fonts/fonts.css">
 <style>'''+css+open(os.path.join(HERE,'extra.css')).read()+'''</style>
 <link rel="stylesheet" href="../brand/tamu-brand.css">
+<link rel="stylesheet" href="../brand/western.css">
 </head>
 '''
 page=head+open(os.path.join(HERE,'body.html')).read()+'<script>\n'+open(os.path.join(HERE,'app.js')).read()+'</script>\n</body>\n</html>\n'
