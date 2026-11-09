@@ -9,7 +9,7 @@
 
 Both builds end by running `tools/secure_pages.py` (Content-Security-Policy, referrer policy, required links). After hand-editing any other page, run `python3 tools/secure_pages.py` yourself; `python3 tools/test_security.py` checks the whole site. See `SECURITY.md`.
 
-Both builds take the shared page styles from `replacement-heifer/index.html` (the `<style>` block), add the page's own `extra.css`, then `body.html` and the script. The site brand stylesheet `brand/tamu-brand.css` is linked last.
+Both builds take the shared page styles from `replacement-heifer/index.html` (the `<style>` block), add the page's own `extra.css`, then `body.html` and the script. The site brand stylesheet `brand/base.css` is linked last.
 
 ## My Ranch files
 

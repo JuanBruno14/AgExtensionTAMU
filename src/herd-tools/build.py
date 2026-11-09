@@ -11,7 +11,7 @@ head='''<!doctype html>
 <meta name="description" content="Water, ration mix, dewormer dose and withdrawal, weight gain and herd reproduction calculators for beef cattle, from public extension sources and FDA labels.">
 <link rel="stylesheet" href="../brand/fonts/fonts.css">
 <style>'''+css+open(os.path.join(HERE,'extra.css')).read()+'''</style>
-<link rel="stylesheet" href="../brand/tamu-brand.css">
+<link rel="stylesheet" href="../brand/base.css">
 <link rel="stylesheet" href="../brand/western.css">
 </head>
 '''

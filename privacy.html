@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-1JdJGzYSTRVWdTOErmtUJspLAfbAKOeNzxrHjQM5dCk=' 'sha256-3bgM+l9Z9nCFEJfLPOkUjDJ9PXcfbB2XJVS1NBoz5yM='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Privacy &amp; Data · Decision Making · Texas A&amp;M AgriLife Extension</title>
+<title>Privacy &amp; Data · Back 40</title>
 <meta name="description" content="What the Decision Aids site stores, what it sends and to whom: browser-only storage, the Jim assistant, and the public map and soil services.">
 <link rel="stylesheet" href="brand/fonts/fonts.css">
 <style>
@@ -108,22 +108,19 @@
   .privacy-btn:hover{background:var(--accent,#500000);color:var(--on-accent,#fff);}
   .privacy-btn:focus-visible{outline:3px solid var(--focus,#02233B);outline-offset:2px;}
 </style>
-<link rel="stylesheet" href="brand/tamu-brand.css">
+<link rel="stylesheet" href="brand/base.css">
 <link rel="stylesheet" href="brand/western.css">
 </head>
 <body>
 <header class="topbar">
   <div class="wordmark">
     <a href="index.html" style="display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;">
-      <span class="brand-logo"><img class="logo-horizontal" src="brand/agrilife-extension-agecon-horizontal-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="381" height="46"><img class="logo-stacked" src="brand/agrilife-extension-agecon-stacked-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="120" height="52"></span>
-      <div class="text">
-      <div class="main">Decision Aids &middot; Privacy &amp; Data</div>
-      </div>
+      <span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back 40</span></span>
     </a>
   </div>
+  <nav class="b40-nav" aria-label="Sections"><a href="index.html#cow-decisions">Cow decisions</a><a href="herd-tools/index.html">Calculators</a><a href="my-ranch/index.html">My Ranch</a></nav>
   <h1 class="tool-title">Privacy and your data</h1>
   <div class="header-right">
-    <a href="index.html" style="font-size:12.5px;font-weight:700;color:rgba(255,255,255,0.85);text-decoration:none;border:1px solid rgba(255,255,255,0.4);padding:5px 11px;border-radius:100px;">&larr; All categories</a>
     <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
   </div>
 </header>
@@ -141,7 +138,7 @@
   <div class="card">
     <div class="card-head"><h2>What is stored, and where</h2></div>
     <div class="card-body">
-      <p class="card-note">Everything below is kept in your browser's local storage on this device. Texas A&amp;M AgriLife does not receive it and cannot see it. Clearing your browser's site data, or the button at the end of this section, deletes it.</p>
+      <p class="card-note">Everything below is kept in your browser's local storage on this device. Back 40 does not receive it and cannot see it. Clearing your browser's site data, or the button at the end of this section, deletes it.</p>
       <table class="ref">
         <thead><tr><th>What</th><th>Why</th><th>Where it is kept</th></tr></thead>
         <tbody>
@@ -186,19 +183,10 @@
     </div>
   </div>
 
-  <div class="card">
-    <div class="card-head"><h2>Texas A&amp;M AgriLife policies</h2></div>
-    <div class="card-body">
-      <p>This site follows the Texas A&amp;M AgriLife <a href="https://agrilife.tamu.edu/required-links/privacy/">Privacy and Security</a> and <a href="https://agrilife.tamu.edu/accessibility/">Accessibility</a> policies. Questions about this site: Department of Agricultural Economics, Texas A&amp;M AgriLife Extension.</p>
-    </div>
-  </div>
-
 </div>
 
 <footer>
-  <a class="footer-brand" href="https://agrilifeextension.tamu.edu/" aria-label="Texas A&amp;M AgriLife Extension"><img class="logo-on-light" src="brand/agrilife-extension-agecon-horizontal-color.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="331" height="40"><img class="logo-on-dark" src="brand/agrilife-extension-agecon-horizontal-white.png" alt="" width="331" height="40"></a>
-  <p class="eeo-statement">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the County Commissioners Courts of Texas Cooperating.</p>
-<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Required links"><li><a href="privacy.html">Site privacy &amp; data</a></li><li><a href="https://agrilife.tamu.edu/required-links/compact/">Compact with Texans</a></li><li><a href="https://agrilife.tamu.edu/required-links/privacy/">Privacy and Security</a></li><li><a href="https://agrilife.tamu.edu/accessibility/">Accessibility Policy</a></li><li><a href="https://dir.texas.gov/resource-library-item/state-website-linking-and-privacy-policy">State Link Policy</a></li><li><a href="https://www.tsl.texas.gov/trail/index.html">Statewide Search</a></li><li><a href="https://veterans.tamu.edu/">Veterans Benefits</a></li><li><a href="https://fch.tamu.edu/programs/military-programs/">Military Families</a></li><li><a href="https://secure.ethicspoint.com/domain/en/report_custom.asp?clientid=19681">Risk, Fraud &amp; Misconduct Hotline</a></li><li><a href="https://gov.texas.gov/organization/hsgd">Texas Homeland Security</a></li><li><a href="https://veterans.portal.texas.gov/">Texas Veteran&rsquo;s Portal</a></li><li><a href="https://agrilifeas.tamu.edu/hr/equal-opportunity/affirmative-actionequal-opportunity-employment/">Equal Opportunity</a></li><li><a href="https://agrilife.tamu.edu/required-links/orpi/">Open Records/Public Information</a></li></ul><!-- required-links:end -->
+<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="privacy.html">Privacy &amp; data</a></li><li><a href="data-sources.html">Where the prices come from</a></li></ul><!-- required-links:end -->
 </footer>
 
 <script>

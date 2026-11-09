@@ -7,7 +7,7 @@ Checks:
   * no page triggers a Content-Security-Policy violation or a script error, including My Ranch
     importing KML, KMZ and a zipped shapefile (the libraries that unzip and parse files)
   * no page loads anything from a third-party host except the allowed public services
-  * every page shows the State/AgriLife required links and the equal-opportunity statement
+  * every page shows the site links (privacy, price sources) and no Texas A&M branding
   * Jim sends the saved ranch only while the "Use my saved ranch" switch is on, and links the privacy page
   * the privacy page's delete button removes everything the site stored
 """
@@ -99,9 +99,10 @@ with sync_playwright() as pw:
         meta = p.evaluate("""() => ({csp: !!document.querySelector('meta[http-equiv="Content-Security-Policy"]'),
             ref: (document.querySelector('meta[name=referrer]')||{}).content,
             links: Array.from(document.querySelectorAll('.required-links a')).map(a => a.textContent),
-            eeo: !!document.querySelector('.eeo-statement')})""")
+            eeo: !!document.querySelector('.eeo-statement'),
+            brand: /agrilife-extension-agecon|required-links\/compact|Texas A&amp;M AgriLife Extension Service provides/.test(document.documentElement.innerHTML)})""")
         check('CSP + referrer meta: ' + path, meta['csp'] and meta['ref'] == 'strict-origin-when-cross-origin')
-        check('required links + EEO: ' + path, len(meta['links']) == 13 and 'Compact with Texans' in meta['links'] and meta['eeo'], len(meta['links']))
+        check('site links, no A&M branding: ' + path, len(meta['links']) == 2 and 'Privacy & data' in meta['links'] and not meta['eeo'] and not meta['brand'], meta)
         p.close()
     check('only allowed hosts contacted', hosts <= ALLOWED, sorted(hosts - ALLOWED))
 

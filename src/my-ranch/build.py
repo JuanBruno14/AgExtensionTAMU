@@ -7,12 +7,12 @@ head='''<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Ranch · Decision Making · Texas A&amp;M AgriLife Extension</title>
+<title>My Ranch · Back 40</title>
 <link rel="stylesheet" href="../brand/fonts/fonts.css">
 <link rel="stylesheet" href="../vendor/leaflet-1.9.4/leaflet.css">
 <link rel="stylesheet" href="../vendor/leaflet-geoman-2.20.2/leaflet-geoman.css">
 <style>'''+css+open(os.path.join(HERE,'extra.css')).read()+'''</style>
-<link rel="stylesheet" href="../brand/tamu-brand.css">
+<link rel="stylesheet" href="../brand/base.css">
 <link rel="stylesheet" href="../brand/western.css">
 <script src="../brand/market-store.js"></script>
 </head>

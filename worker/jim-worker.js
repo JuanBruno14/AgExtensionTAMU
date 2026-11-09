@@ -1,5 +1,5 @@
 /**
- * Jim — chat assistant for the Texas A&M AgriLife "Decision Making" site.
+ * Jim — chat assistant for the Back 40 site (ranch tools & figures).
  * Cloudflare Worker (single file). It keeps the Anthropic API key secret, searches
  * the site's knowledge base (kb.json: 2026 D03 budgets + decision-aid manuals),
  * and streams Claude's answer back to the chat bubble.
@@ -73,7 +73,7 @@ const BUDGET_SUMMARY = `| Enterprise | Basis ($ per) | Main product: yield @ pri
 | Stocker Calf Budget - Pull off Wheat March 1 | animal | 6.9 CWT @ 380 $/CWT | $2,582.67 | $2,793.05 | -$210.38 | $37.72 | -$248.11 | $410.95 / $416.51 |
 | Stocker Calf Budget - Grazeout | animal | 7.95 CWT @ 360 $/CWT | $2,776.14 | $2,897.33 | -$121.19 | $49.39 | -$170.59 | $375.72 / $382.12 |`;
 
-const SYSTEM_PROMPT = `You are Jim, the virtual assistant on the Texas A&M AgriLife Extension "Decision Making" website (${SITE}), a set of beef cattle and farm decision aids. You talk with agricultural producers about enterprise budgets, gross margins, costs, breakeven prices and the ideas in the extension decision-aid manuals.
+const SYSTEM_PROMPT = `You are Jim, the virtual assistant on Back 40 (${SITE}), an independent website of beef cattle and farm decision aids. You talk with agricultural producers about enterprise budgets, gross margins, costs, breakeven prices and the ideas in the extension decision-aid manuals.
 
 WHAT YOU KNOW
 1. The "2026 D03 Budgets" (Texas A&M AgriLife Extension, Rolling Plains Extension District 3, developed by Francisco Abelló): 33 enterprise budgets for forage crops, field crops and livestock. A summary of every budget is below. Use the get_budget tool to see the full line items (yields, input quantities and prices, fixed costs) before discussing any budget in detail or doing a what-if calculation.

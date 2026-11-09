@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-0K+kGfJcrHDHodLexTCGrdGZIfJDzlOOEklOU5+Trd0='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Decision Making · Texas A&amp;M AgriLife Extension</title>
+<title>Back 40 · Ranch tools &amp; figures</title>
 <link rel="stylesheet" href="brand/fonts/fonts.css">
 <style>
   :root{
@@ -324,19 +324,15 @@
   .bcu-ranch[hidden]{display:none;}
   .bcu-ranch-toggle{display:flex;align-items:center;gap:8px;margin-top:8px;font-weight:700;cursor:pointer;}
 </style>
-<link rel="stylesheet" href="brand/tamu-brand.css">
+<link rel="stylesheet" href="brand/base.css">
 <link rel="stylesheet" href="brand/western.css">
 <script src="brand/market-store.js"></script>
 </head>
 <body>
 
 <header class="topbar">
-  <div class="wordmark">
-    <span class="brand-logo"><img class="logo-horizontal" src="brand/agrilife-extension-agecon-horizontal-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="381" height="46"><img class="logo-stacked" src="brand/agrilife-extension-agecon-stacked-white.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="120" height="52"></span>
-    <div class="text">
-    <div class="main">Beef Cattle Decision Aids</div>
-    </div>
-  </div>
+  <div class="wordmark"><a href="index.html" aria-label="Back 40 home"><span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back 40</span></span></a></div>
+  <nav class="b40-nav" aria-label="Sections"><a href="index.html#cow-decisions">Cow decisions</a><a href="herd-tools/index.html">Calculators</a><a href="my-ranch/index.html">My Ranch</a></nav>
   <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
 </header>
 
@@ -344,51 +340,24 @@
   <div class="poster-frame">
     <div class="poster">
       <div class="poster-inner">
-        <p class="eyebrow">&#9733; Est. as 24 Extension spreadsheets &#9733;</p>
-        <h1>Ranch Tools &amp; Figures</h1>
-        <p class="lede">Texas A&amp;M AgriLife Extension&rsquo;s beef cattle decision aids &mdash; bid prices, heifer budgets, retained ownership, grazing and more &mdash; rebuilt as web tools. Change any number and every answer updates on the spot. No formulas, no downloads.</p>
-        <div class="cta">
-          <a class="primary" href="my-ranch/index.html">Map my ranch</a>
-          <a class="secondary" href="herd-tools/index.html">Open a calculator</a>
-        </div>
-        <div class="hero-meta">
-          <div><strong>24</strong>categories</div>
-          <div><strong>3</strong>live today</div>
-          <div><strong>Weekly</strong>USDA price update</div>
-        </div>
+        <p class="eyebrow">&#9733; Ranch tools &amp; figures &#9733;</p>
+        <h1>Back 40</h1>
+        <p class="lede">Bid prices, heifer budgets, retained ownership, herd math and your own pastures on a map. Change any number and every answer updates on the spot. No formulas, no downloads.</p>
+        <nav class="doors" aria-label="Start here">
+          <a class="door" href="#cow-decisions"><span class="door-num" aria-hidden="true">1</span><span class="door-name">Cow decisions</span><span class="door-sub">What to pay, what to keep, what to sell</span></a>
+          <a class="door" href="#calculators"><span class="door-num" aria-hidden="true">2</span><span class="door-name">Calculators</span><span class="door-sub">Quick herd math: water, hay, dewormer, gain</span></a>
+          <a class="door" href="#my-ranch"><span class="door-num" aria-hidden="true">3</span><span class="door-name">My Ranch</span><span class="door-sub">Map your pastures and match herd to grass</span></a>
+        </nav>
       </div>
     </div>
   </div>
 </section>
 
 <main>
-  <section class="shared-tool" id="my-ranch-link" style="margin-bottom:28px;">
-    <p class="section-label">Your ranch</p>
-    <a class="cat-card live" href="my-ranch/index.html" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
-      <span class="cat-num" aria-hidden="true" style="width:44px;height:44px;font-size:22px;">🗺️</span>
-      <div style="flex:1;min-width:220px;">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;"><h3 style="margin:0;">My Ranch &mdash; map your pastures</h3><span class="status-pill live">New</span></div>
-        <p>Draw your pastures on a satellite map to get acres, forage from the USDA soil survey, how many cattle the place can carry, and the current drought status.</p>
-        <p id="myRanchPreview" style="margin-top:6px;font-weight:700;color:var(--ink-secondary);" hidden></p>
-      </div>
-      <span class="go" style="margin-top:0;">Open the map &rarr;</span>
-    </a>
-  </section>
-
-  <section class="shared-tool" id="herd-tools-link" style="margin-bottom:28px;">
-    <p class="section-label">Quick calculators</p>
-    <a class="cat-card live" href="herd-tools/index.html" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
-      <span class="cat-num" aria-hidden="true" style="width:44px;height:44px;font-size:22px;">🧮</span>
-      <div style="flex:1;min-width:220px;">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;"><h3 style="margin:0;">Herd Calculators</h3><span class="status-pill live">New</span></div>
-        <p>Water needs, hay-and-supplement mix, dewormer dose and withdrawal, weight gain, and the herd&rsquo;s year in numbers &mdash; each from a public extension source or product label.</p>
-      </div>
-      <span class="go" style="margin-top:0;">Open the calculators &rarr;</span>
-    </a>
-  </section>
-
+  <section class="b40-part" id="cow-decisions" aria-labelledby="cowH">
+    <div class="part-head"><span class="part-num" aria-hidden="true">1</span><div><h2 id="cowH">Cow decisions</h2><p>Full budgets for the big calls: what a bred cow is worth to you, raising versus buying heifers, keeping calves longer. Set your costs and prices once and every decision tool uses them.</p></div></div>
   <section class="shared-tool" id="bcu-calculator">
-    <p class="section-label">Shared calculator</p>
+    <p class="section-label">Your numbers, used by every tool</p>
     <div class="bcu-card">
       <button type="button" class="bcu-card-toggle" id="bcuToggleBtn" aria-expanded="false" aria-controls="bcuFields">
         <div class="cat-top">
@@ -470,10 +439,8 @@
       </div>
     </div>
   </section>
-
   <section class="shared-tool" id="market-prices-calculator">
-    <p class="section-label">Shared calculator</p>
-    <div class="bcu-card">
+        <div class="bcu-card">
       <button type="button" class="bcu-card-toggle" id="mpToggleBtn" aria-expanded="false" aria-controls="mpFields">
         <div class="cat-top">
           <span class="cat-num" aria-hidden="true">💲</span>
@@ -543,18 +510,46 @@
       </div>
     </div>
   </section>
+    <p class="section-label">The 24 decision categories</p>
+    <div class="grid" id="catGrid"></div>
+  </section>
 
-  <p class="section-label">Categories</p>
-  <div class="grid" id="catGrid"></div>
+  <section class="b40-part" id="calculators" aria-labelledby="calcH">
+    <div class="part-head"><span class="part-num" aria-hidden="true">2</span><div><h2 id="calcH">Calculators</h2><p>Quick answers for everyday herd work, each from a public extension source or product label.</p></div></div>
+  <section class="shared-tool" id="herd-tools-link">
+        <a class="cat-card live" href="herd-tools/index.html" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+      <span class="cat-num" aria-hidden="true" style="width:44px;height:44px;font-size:22px;">🧮</span>
+      <div style="flex:1;min-width:220px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;"><h3 style="margin:0;">Herd Calculators</h3><span class="status-pill live">New</span></div>
+        <p>Water needs, hay-and-supplement mix, dewormer dose and withdrawal, weight gain, and the herd&rsquo;s year in numbers &mdash; each from a public extension source or product label.</p>
+      </div>
+      <span class="go" style="margin-top:0;">Open the calculators &rarr;</span>
+    </a>
+  </section>
+  </section>
+
+  <section class="b40-part" id="my-ranch" aria-labelledby="ranchH">
+    <div class="part-head"><span class="part-num" aria-hidden="true">3</span><div><h2 id="ranchH">My Ranch</h2><p>Your place on a satellite map: acres, forage, carrying capacity, drought and a year plan for the herd.</p></div></div>
+  <section class="shared-tool" id="my-ranch-link">
+        <a class="cat-card live" href="my-ranch/index.html" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
+      <span class="cat-num" aria-hidden="true" style="width:44px;height:44px;font-size:22px;">🗺️</span>
+      <div style="flex:1;min-width:220px;">
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;"><h3 style="margin:0;">My Ranch &mdash; map your pastures</h3><span class="status-pill live">New</span></div>
+        <p>Draw your pastures on a satellite map to get acres, forage from the USDA soil survey, how many cattle the place can carry, and the current drought status.</p>
+        <p id="myRanchPreview" style="margin-top:6px;font-weight:700;color:var(--ink-secondary);" hidden></p>
+      </div>
+      <span class="go" style="margin-top:0;">Open the map &rarr;</span>
+    </a>
+  </section>
+  </section>
 </main>
 
 <div class="viz-tooltip" id="vizTooltip"></div>
 
 <footer>
-  <a class="footer-brand" href="https://agrilifeextension.tamu.edu/" aria-label="Texas A&amp;M AgriLife Extension"><img class="logo-on-light" src="brand/agrilife-extension-agecon-horizontal-color.png" alt="Texas A&amp;M AgriLife Extension, Agricultural Economics" width="331" height="40"><img class="logo-on-dark" src="brand/agrilife-extension-agecon-horizontal-white.png" alt="" width="331" height="40"></a>
-  Rebuilding <a href="https://agecoext.tamu.edu/resources/decisionaids/beef/">Texas A&amp;M AgriLife Extension's Beef Cattle Decision Aids</a> as interactive web tools, one category at a time. Starting values reproduce each original spreadsheet's own assumptions, not real producer data &mdash; always verify results before using them to make a decision. Where a price was updated to a current market number, it's cited on <a href="data-sources.html">the market data page</a>.
-  <p class="eeo-statement">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the County Commissioners Courts of Texas Cooperating.</p>
-<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Required links"><li><a href="privacy.html">Site privacy &amp; data</a></li><li><a href="https://agrilife.tamu.edu/required-links/compact/">Compact with Texans</a></li><li><a href="https://agrilife.tamu.edu/required-links/privacy/">Privacy and Security</a></li><li><a href="https://agrilife.tamu.edu/accessibility/">Accessibility Policy</a></li><li><a href="https://dir.texas.gov/resource-library-item/state-website-linking-and-privacy-policy">State Link Policy</a></li><li><a href="https://www.tsl.texas.gov/trail/index.html">Statewide Search</a></li><li><a href="https://veterans.tamu.edu/">Veterans Benefits</a></li><li><a href="https://fch.tamu.edu/programs/military-programs/">Military Families</a></li><li><a href="https://secure.ethicspoint.com/domain/en/report_custom.asp?clientid=19681">Risk, Fraud &amp; Misconduct Hotline</a></li><li><a href="https://gov.texas.gov/organization/hsgd">Texas Homeland Security</a></li><li><a href="https://veterans.portal.texas.gov/">Texas Veteran&rsquo;s Portal</a></li><li><a href="https://agrilifeas.tamu.edu/hr/equal-opportunity/affirmative-actionequal-opportunity-employment/">Equal Opportunity</a></li><li><a href="https://agrilife.tamu.edu/required-links/orpi/">Open Records/Public Information</a></li></ul><!-- required-links:end -->
+  <p class="b40-foot-brand"><strong>Back 40</strong> &middot; Ranch tools &amp; figures</p>
+  <p>The cow decision tools start from the <a href="https://agecoext.tamu.edu/resources/decisionaids/beef/">Beef Cattle Decision Aids</a> spreadsheets published by Texas A&amp;M AgriLife Extension. Starting values reproduce each spreadsheet&rsquo;s own assumptions, not real producer data &mdash; always check results before making a decision. Current prices are cited on <a href="data-sources.html">the market data page</a>.</p>
+<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="privacy.html">Privacy &amp; data</a></li><li><a href="data-sources.html">Where the prices come from</a></li></ul><!-- required-links:end -->
 </footer>
 
 <script>

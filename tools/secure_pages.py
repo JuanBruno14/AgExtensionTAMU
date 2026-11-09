@@ -8,8 +8,7 @@ For each .html page outside vendor/ and src/ it:
   1. writes a Content-Security-Policy <meta> (scripts only from this site + the exact inline
      scripts on the page, by SHA-256 hash; network calls only to the services listed below);
   2. writes a Referrer-Policy <meta>;
-  3. puts the State of Texas / Texas A&M AgriLife required links (and the Extension
-     equal-opportunity statement, if the footer lacks it) at the end of the page footer;
+  3. puts the site links (privacy & data, price sources) at the end of the page footer;
   4. adds rel="noopener noreferrer" to any link that opens a new tab without it.
 
 The two built pages (my-ranch, herd-tools) call this script at the end of their build.
@@ -33,24 +32,9 @@ IMAGES = ["'self'", 'data:', 'blob:',
           'https://tile.openstreetmap.org']              # street map tiles
 
 REQUIRED_LINKS = [
-    ('Site privacy &amp; data', '{root}privacy.html'),
-    ('Compact with Texans', 'https://agrilife.tamu.edu/required-links/compact/'),
-    ('Privacy and Security', 'https://agrilife.tamu.edu/required-links/privacy/'),
-    ('Accessibility Policy', 'https://agrilife.tamu.edu/accessibility/'),
-    ('State Link Policy', 'https://dir.texas.gov/resource-library-item/state-website-linking-and-privacy-policy'),
-    ('Statewide Search', 'https://www.tsl.texas.gov/trail/index.html'),
-    ('Veterans Benefits', 'https://veterans.tamu.edu/'),
-    ('Military Families', 'https://fch.tamu.edu/programs/military-programs/'),
-    ('Risk, Fraud &amp; Misconduct Hotline', 'https://secure.ethicspoint.com/domain/en/report_custom.asp?clientid=19681'),
-    ('Texas Homeland Security', 'https://gov.texas.gov/organization/hsgd'),
-    ("Texas Veteran&rsquo;s Portal", 'https://veterans.portal.texas.gov/'),
-    ('Equal Opportunity', 'https://agrilifeas.tamu.edu/hr/equal-opportunity/affirmative-actionequal-opportunity-employment/'),
-    ('Open Records/Public Information', 'https://agrilife.tamu.edu/required-links/orpi/'),
+    ('Privacy &amp; data', '{root}privacy.html'),
+    ('Where the prices come from', '{root}data-sources.html'),
 ]
-EEO = ('<p class="eeo-statement">Texas A&amp;M AgriLife Extension Service provides equal opportunities in its programs and '
-       'employment to all persons, regardless of race, color, sex, religion, national origin, disability, age, genetic '
-       'information, and veteran status. The Texas A&amp;M University System, U.S. Department of Agriculture, and the '
-       'County Commissioners Courts of Texas Cooperating.</p>')
 LINKS_START, LINKS_END = '<!-- required-links:start (tools/secure_pages.py) -->', '<!-- required-links:end -->'
 CSS = ('<style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;'
        'border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}'
@@ -69,11 +53,10 @@ def pages():
     return out
 
 
-def links_block(rel, footer_has_eeo):
+def links_block(rel, footer_has_eeo=False):
     root = '../' * rel.count('/')
     items = ''.join('<li><a href="%s">%s</a></li>' % (href.format(root=root), label) for label, href in REQUIRED_LINKS)
-    eeo = '' if footer_has_eeo else EEO
-    return LINKS_START + CSS + eeo + '<ul class="required-links" aria-label="Required links">' + items + '</ul>' + LINKS_END
+    return LINKS_START + CSS + '<ul class="required-links" aria-label="Site links">' + items + '</ul>' + LINKS_END
 
 
 def csp_for(html):
@@ -101,7 +84,7 @@ def csp_for(html):
 
 
 def secure(html, rel):
-    # 1. required links at the end of the footer (replace an earlier copy)
+    # 1. site links at the end of the footer (replace an earlier copy)
     html = re.sub(re.escape(LINKS_START) + '.*?' + re.escape(LINKS_END) + r'\n?', '', html, flags=re.S)
     m = re.search(r'<footer\b[^>]*>(.*?)</footer>', html, re.S)
     if m:

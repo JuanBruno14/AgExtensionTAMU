@@ -1,5 +1,5 @@
 /*!
- * Jim — chat bubble for the Texas A&M AgriLife "Decision Making" site.
+ * Jim — chat bubble for the Back 40 site.
  * Add to any page with:  <script src="jim/jim.js" defer></script>   (use ../jim/jim.js from sub-folders)
  * Talks to the "Jim" Cloudflare Worker, which holds the API key and the knowledge base.
  */

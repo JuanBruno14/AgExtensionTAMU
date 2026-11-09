@@ -235,7 +235,7 @@
     var gp = grazingPlan(), gsvg = '';
     if(gp){ var tmp = document.createElement('div'); tmp.innerHTML = grazingPlanHtml(); var sv = tmp.querySelector('svg'); gsvg = sv ? sv.outerHTML : ''; }
     function kv(k, v){ return '<div class="ps-kv"><span>' + k + '</span><strong>' + v + '</strong></div>'; }
-    return '<div class="ps-head"><div><div class="ps-kicker">Texas A&amp;M AgriLife Extension · My Ranch</div><h1>' + esc(state.name || 'My ranch') + ' — plan for the year</h1></div><div class="ps-date">' + today + '</div></div>' +
+    return '<div class="ps-head"><div><div class="ps-kicker">Back 40 · My Ranch</div><h1>' + esc(state.name || 'My ranch') + ' — plan for the year</h1></div><div class="ps-date">' + today + '</div></div>' +
       '<div class="ps-grid">' +
         kv('Land', fmt(t.acres) + ' ac · ' + t.pastures + ' pasture' + (t.pastures === 1 ? '' : 's')) +
         kv('Carrying capacity', t.cap > 0 ? fmt(t.cap) + ' AU' + (t.lowCap != null ? ' (' + fmt(t.lowCap) + ' in a dry year)' : '') : '—') +

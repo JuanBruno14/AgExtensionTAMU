@@ -1,111 +1,100 @@
 /* ==========================================================================
-   Texas A&M AgriLife Extension — brand layer for the Decision Aids site
-   Loaded AFTER each page's own <style>, so these tokens win the cascade.
-
-   Colors: AgriLife Marketing & Communications brand palette
-     Primary   — Aggie Maroon #500000 · White #FFFFFF · Dark Blue #02233B
-     Secondary — Sage #97BFB4 · Crimson #8B0215 · Gold #CF8A40 · Tan #D6D3C4
-     Accent    — Dark Maroon #3C0000 · Light Maroon #732F2F · Magenta #900049
-                 Jade #115740 · Teal #007B89 · Light Blue #27A9E1
-     Neutrals  — True Black #000000 · Black #202020 · Dark Gray #3E3E3E
-                 Charcoal #333333 · Gray #707070 · Steel #666666
-                 Light Gray #D1D1D1 · Off-White #F6F6F6
-   Type: Texas A&M brand fonts — Work Sans (headlines), Oswald (all-caps
-         labels only, never body), Open Sans (body copy).
+   Back 40 — base layer shared by every page (tokens, header, footer, focus).
+   brand/western.css loads after this and sets the look.
    ========================================================================== */
 
 :root{
   /* brand primitives */
-  --tamu-maroon:#500000;
-  --tamu-dark-maroon:#3C0000;
-  --tamu-light-maroon:#732F2F;
-  --tamu-dark-blue:#02233B;
-  --tamu-sage:#97BFB4;
-  --tamu-crimson:#8B0215;
-  --tamu-gold:#CF8A40;
-  --tamu-tan:#D6D3C4;
-  --tamu-jade:#115740;
-  --tamu-teal:#007B89;
-  --tamu-light-blue:#27A9E1;
-  --tamu-magenta:#900049;
-  --tamu-black:#202020;
-  --tamu-charcoal:#333333;
-  --tamu-dark-gray:#3E3E3E;
-  --tamu-gray:#707070;
-  --tamu-steel:#666666;
-  --tamu-light-gray:#D1D1D1;
-  --tamu-off-white:#F6F6F6;
+  --b40-maroon:#500000;
+  --b40-dark-maroon:#3C0000;
+  --b40-light-maroon:#732F2F;
+  --b40-dark-blue:#02233B;
+  --b40-sage:#97BFB4;
+  --b40-crimson:#8B0215;
+  --b40-gold:#CF8A40;
+  --b40-tan:#D6D3C4;
+  --b40-jade:#115740;
+  --b40-teal:#007B89;
+  --b40-light-blue:#27A9E1;
+  --b40-magenta:#900049;
+  --b40-black:#202020;
+  --b40-charcoal:#333333;
+  --b40-dark-gray:#3E3E3E;
+  --b40-gray:#707070;
+  --b40-steel:#666666;
+  --b40-light-gray:#D1D1D1;
+  --b40-off-white:#F6F6F6;
 
   --font-head:"Work Sans", "Open Sans", Arial, sans-serif;
   --font-label:"Oswald", "Work Sans", Arial, sans-serif;
   --font-body:"Open Sans", Arial, sans-serif;
 
   /* site tokens mapped onto the brand palette */
-  --maroon-900:var(--tamu-dark-maroon);
-  --maroon-800:var(--tamu-maroon);
-  --maroon-700:var(--tamu-light-maroon);
+  --maroon-900:var(--b40-dark-maroon);
+  --maroon-800:var(--b40-maroon);
+  --maroon-700:var(--b40-light-maroon);
   --maroon-100:#F3E9E9;            /* background-only tint of Aggie Maroon */
-  --wheat-500:var(--tamu-gold);
+  --wheat-500:var(--b40-gold);
   --wheat-100:#EFEDE6;             /* background-only tint of Tan */
-  --good-700:var(--tamu-jade);
+  --good-700:var(--b40-jade);
   --good-100:#E5EFEC;              /* background-only tint of Sage */
-  --critical-700:var(--tamu-crimson);
+  --critical-700:var(--b40-crimson);
   --critical-100:#F6E5E7;          /* background-only tint of Crimson */
-  --accent:var(--tamu-maroon);
+  --accent:var(--b40-maroon);
   --on-accent:#FFFFFF;
-  --bg:var(--tamu-off-white);
+  --bg:var(--b40-off-white);
   --surface:#FFFFFF;
-  --surface-sunken:var(--tamu-off-white);
-  --border:var(--tamu-light-gray);
-  --ink:var(--tamu-black);
-  --ink-secondary:var(--tamu-dark-gray);
-  --ink-muted:var(--tamu-steel);   /* 5.3:1 on Off-White, 5.7:1 on White, 4.7:1 or more on the tints above */
-  --focus:var(--tamu-dark-blue);
+  --surface-sunken:var(--b40-off-white);
+  --border:var(--b40-light-gray);
+  --ink:var(--b40-black);
+  --ink-secondary:var(--b40-dark-gray);
+  --ink-muted:var(--b40-steel);   /* 5.3:1 on Off-White, 5.7:1 on White, 4.7:1 or more on the tints above */
+  --focus:var(--b40-dark-blue);
   --shadow-card:0 1px 2px rgba(80,0,0,0.05), 0 4px 16px rgba(2,35,59,0.07);
   /* chart series drawn from the brand palette */
-  --s1:var(--tamu-dark-blue); --s2:var(--tamu-gold); --s3:var(--tamu-teal);
-  --s4:var(--tamu-crimson);   --s5:var(--tamu-light-blue);
+  --s1:var(--b40-dark-blue); --s2:var(--b40-gold); --s3:var(--b40-teal);
+  --s4:var(--b40-crimson);   --s5:var(--b40-light-blue);
 }
 
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
     --bg:#000000;            /* True Black */
-    --surface:var(--tamu-black);
-    --surface-sunken:var(--tamu-charcoal);
-    --border:var(--tamu-dark-gray);
+    --surface:var(--b40-black);
+    --surface-sunken:var(--b40-charcoal);
+    --border:var(--b40-dark-gray);
     --ink:#FFFFFF;
-    --ink-secondary:var(--tamu-off-white);
-    --ink-muted:var(--tamu-light-gray);
+    --ink-secondary:var(--b40-off-white);
+    --ink-muted:var(--b40-light-gray);
     --maroon-100:#3A2424;
-    --good-100:#1E302B; --good-700:var(--tamu-sage);
-    --critical-100:#2C2620; --critical-700:var(--tamu-gold);
-    --wheat-100:#3A3127; --wheat-500:var(--tamu-gold);
-    --accent:var(--tamu-sage);
-    --on-accent:var(--tamu-black);
-    --focus:var(--tamu-light-blue);
+    --good-100:#1E302B; --good-700:var(--b40-sage);
+    --critical-100:#2C2620; --critical-700:var(--b40-gold);
+    --wheat-100:#3A3127; --wheat-500:var(--b40-gold);
+    --accent:var(--b40-sage);
+    --on-accent:var(--b40-black);
+    --focus:var(--b40-light-blue);
     --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
-    --s1:var(--tamu-light-blue); --s2:var(--tamu-gold); --s3:var(--tamu-sage);
-    --s4:var(--tamu-tan); --s5:var(--tamu-light-gray);
+    --s1:var(--b40-light-blue); --s2:var(--b40-gold); --s3:var(--b40-sage);
+    --s4:var(--b40-tan); --s5:var(--b40-light-gray);
   }
 }
 :root[data-theme="dark"]{
   --bg:#000000;            /* True Black */
-  --surface:var(--tamu-black);
-  --surface-sunken:var(--tamu-charcoal);
-  --border:var(--tamu-dark-gray);
+  --surface:var(--b40-black);
+  --surface-sunken:var(--b40-charcoal);
+  --border:var(--b40-dark-gray);
   --ink:#FFFFFF;
-  --ink-secondary:var(--tamu-off-white);
-  --ink-muted:var(--tamu-light-gray);
+  --ink-secondary:var(--b40-off-white);
+  --ink-muted:var(--b40-light-gray);
   --maroon-100:#3A2424;
-  --good-100:#1E302B; --good-700:var(--tamu-sage);
-  --critical-100:#2C2620; --critical-700:var(--tamu-gold);
-  --wheat-100:#3A3127; --wheat-500:var(--tamu-gold);
-  --accent:var(--tamu-sage);
-  --on-accent:var(--tamu-black);
-  --focus:var(--tamu-light-blue);
+  --good-100:#1E302B; --good-700:var(--b40-sage);
+  --critical-100:#2C2620; --critical-700:var(--b40-gold);
+  --wheat-100:#3A3127; --wheat-500:var(--b40-gold);
+  --accent:var(--b40-sage);
+  --on-accent:var(--b40-black);
+  --focus:var(--b40-light-blue);
   --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
-  --s1:var(--tamu-light-blue); --s2:var(--tamu-gold); --s3:var(--tamu-sage);
-  --s4:var(--tamu-tan); --s5:var(--tamu-light-gray);
+  --s1:var(--b40-light-blue); --s2:var(--b40-gold); --s3:var(--b40-sage);
+  --s4:var(--b40-tan); --s5:var(--b40-light-gray);
 }
 
 /* ---------- Typography ---------- */
@@ -124,12 +113,12 @@ button.btn,
 button.btn.secondary{color:var(--accent);}
 
 /* In-progress pill: gold is a fill color, not a text color (fails contrast) */
-.status-pill.progress{color:var(--ink-secondary);box-shadow:inset 0 0 0 1px var(--tamu-gold);}
+.status-pill.progress{color:var(--ink-secondary);box-shadow:inset 0 0 0 1px var(--b40-gold);}
 
 /* ---------- Header: solid Aggie Maroon band with the official lockup ---------- */
 .topbar{
-  background:var(--tamu-maroon) !important;
-  border-bottom:4px solid var(--tamu-dark-maroon);
+  background:var(--b40-maroon) !important;
+  border-bottom:4px solid var(--b40-dark-maroon);
 }
 .wordmark{gap:20px;}
 .wordmark a{gap:20px !important;}
