@@ -33,7 +33,7 @@ httpd = Q(('127.0.0.1', PORT), functools.partial(H, directory=REPO))
 threading.Thread(target=httpd.serve_forever, daemon=True).start()
 BASE = f'http://127.0.0.1:{PORT}/'
 
-ALLOWED = {'127.0.0.1', 'jim.j-bautista-bruno.workers.dev', 'sdmdataaccess.sc.egov.usda.gov', 'elevation.nationalmap.gov', 'services9.arcgis.com',
+ALLOWED = {'127.0.0.1', 'jim.j-bautista-bruno.workers.dev', 'sdmdataaccess.sc.egov.usda.gov', 'elevation.nationalmap.gov', 'services9.arcgis.com', 'us-central1-rap-data-365417.cloudfunctions.net',
            'nominatim.openstreetmap.org', 'server.arcgisonline.com', 'tile.openstreetmap.org'}
 PNG = bytes.fromhex('89504e470d0a1a0a0000000d4948445200000001000000010806000000' + '1f15c4890000000d4944415478da63f8cfc0f01f0005000201a5d0e1a10000000049454e44ae426082')
 hosts, jim_bodies = set(), []

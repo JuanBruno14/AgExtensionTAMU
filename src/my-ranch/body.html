@@ -238,6 +238,16 @@
             <div class="input-wrap has-suffix"><input type="number" id="hayRecovery" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
             <span class="hint">Of what the meadow grows, the share that ends up in the bale (mowing, raking and baling losses)</span>
           </div>
+          <div class="field" style="grid-column:1 / -1;">
+            <label for="satMode">Satellite forage record <span style="font-weight:500;color:var(--ink-muted);">(optional)</span></label>
+            <select id="satMode"><option value="off">Off</option><option value="on">On: check my pastures against the satellite record</option></select>
+            <span class="hint">Sends each pasture outline to the Rangeland Analysis Platform (USDA Agricultural Research Service) and reads how much grass and forbs grew there every 16 days, estimated from Landsat images. The record starts in 1986; My Ranch uses the years with no gaps, usually 2000 on. Each pasture then shows its record next to the soil survey, and <em>Decisions → Year by year</em> runs your plan through every one of those years. Turning it on changes no number in your plan. Small grains are skipped (the record leaves out cropland).</span>
+          </div>
+          <div class="field" id="satCurveField" style="grid-column:1 / -1;" hidden>
+            <label for="satCurve">Growth through the year</label>
+            <select id="satCurve"><option value="nrcs">NRCS growth curve for the region</option><option value="sat">Each pasture’s own satellite record</option></select>
+            <span class="hint">Which months the year’s forage grows in. The NRCS curve is one typical site for the whole region; the satellite record is the average of what each native or improved pasture actually did, month by month. The yearly amount stays the same either way.</span>
+          </div>
           <div class="field">
             <label for="slopeAdj">Steep ground</label>
             <select id="slopeAdj"><option value="on">Count less forage on slopes (Holechek)</option><option value="off">No slope adjustment</option></select>
@@ -381,6 +391,7 @@
                   <div class="field"><label for="fc_heiferPreg">Heifers that settle</label><div class="input-wrap has-suffix"><input type="number" id="fc_heiferPreg" data-h="heiferPreg" min="40" max="100" step="1"><span class="suffix">%</span></div><span class="hint">Open heifers sold at preg check</span></div>
                   <div class="field"><label for="fc_seasonal">Seasonal prices</label>
                     <select id="fc_seasonal" data-hs="seasonal"><option value="off">Off (today's price)</option><option value="on">On (seasonal pattern)</option></select></div>
+                  <div class="field"><label for="fc_heiferLighter">Heifer calves lighter than steers</label><div class="input-wrap has-suffix"><input type="number" id="fc_heiferLighter" data-h="heiferLighter" min="0" max="15" step="1"><span class="suffix">%</span></div><span class="hint">0 = sold at the same weight. Heifers usually weigh 5–8% less at weaning; each sex is then priced at its own weight</span></div>
                 </div>
                 <p class="card-note" id="fc_replNote" style="margin:10px 0 0;"></p>
               </fieldset>
@@ -480,6 +491,7 @@
                 <div class="field"><label for="oc_utilities">Utilities</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_utilities" data-oc="utilities" min="0" max="2000" step="1"></div></div>
                 <div class="field"><label for="oc_admin">Office, insurance &amp; overhead</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_admin" data-oc="admin" min="0" max="2000" step="1"></div></div>
                 <div class="field"><label for="oc_vehicle">Vehicle &amp; equipment depreciation</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_vehicle" data-oc="vehicle" min="0" max="2000" step="1"></div></div>
+                <div class="field"><label for="oc_int">Interest on the herd</label><div class="input-wrap has-suffix"><input type="number" id="oc_int" data-h="intRate" min="0" max="20" step="0.5"><span class="suffix">%</span></div><span class="hint">0 = not charged (as in the BCU sheet). A yearly rate on what the cows and bulls are worth: what that money costs you or would earn elsewhere</span></div>
                 <div class="field"><label for="oc_other">Other</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_other" data-oc="other" min="0" max="10000" step="1"></div></div>
               </div>
               <p class="card-note" id="oc_note" style="margin:10px 0 0;"></p>
@@ -580,12 +592,13 @@
     <div class="card" id="decCard">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v12M18 9v12M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM6 15c0-4 12-2 12-6"/></svg>
-        <h2>Decisions: calving season, drought, what if</h2>
+        <h2>Decisions: calving season, drought, year by year, what if</h2>
       </div>
       <div class="card-body">
         <div class="segmented dec-tabs" role="tablist" aria-label="Decision tools">
           <button type="button" class="seg-btn active" data-dec="calving" role="tab" aria-selected="true">Best calving season</button>
           <button type="button" class="seg-btn" data-dec="drought" role="tab" aria-selected="false">Drought: buy feed or wean early?</button>
+          <button type="button" class="seg-btn" data-dec="years" role="tab" aria-selected="false">Year by year</button>
           <button type="button" class="seg-btn" data-dec="whatif" role="tab" aria-selected="false">What if…</button>
         </div>
         <div class="fc-empty" id="dec_empty" hidden></div>
@@ -646,9 +659,30 @@
           </div>
         </div>
 
+        <div class="dec-panel" id="dec_years" hidden>
+          <p class="card-note" style="margin-top:14px;">Your year plan is a normal year. This runs the same herd, prices and costs through every year of your pastures’ satellite record, one after the other: each year’s grass grows as it did that year, what is left standing in December carries into the next, and whatever the herd is short of is bought.</p>
+          <div class="dm-suggest" id="dec_yrStatus" hidden></div>
+          <div id="dec_yrBody">
+            <div class="fc-chart yr-chart" id="dec_yrChart"></div>
+            <p class="fc-short" id="dec_yrText"></p>
+            <h3 class="sub-h">How many cows? The same years with a smaller or larger herd</h3>
+            <div class="yr-sizes" id="dec_yrSizes"></div>
+            <p class="fc-short" id="dec_yrSizeText"></p>
+            <details class="advanced" style="margin-top:12px;">
+              <summary>Every year: grass, hay, supplement, calves, net return</summary>
+              <div class="adv-body"><div class="table-scroll"><table class="plan fc-table" id="dec_yrTable"></table></div></div>
+            </details>
+            <p class="card-note" style="margin:12px 0 0;">Grass by year and month: Rangeland Analysis Platform (USDA Agricultural Research Service), each pasture’s growth as a share of its own average, applied to the forage estimate in your plan; small grains stay at their normal year. Prices, costs and forage quality are today’s in every year, and the herd is never sold down, so this shows what the weather alone does to the plan (the Drought tab compares ways through a dry year). Thin cows at breeding mean fewer calves the next year (Sprott 1985). The satellite estimate tells dry years from good ones well; treat single years as approximate.</p>
+          </div>
+        </div>
+
         <div class="dec-panel" id="dec_whatif" hidden>
           <p class="card-note" style="margin-top:14px;">How much cattle sales minus feed costs move when one thing changes and everything else stays the same. Longest bars matter most.</p>
           <div id="dec_whatifChart"></div>
+          <h3 class="sub-h">What to measure first</h3>
+          <p class="card-note">Some inputs are typical values, not your ranch’s. This tests each one across its likely range and puts the one that moves your result most on top: that is the number worth measuring.</p>
+          <div class="table-scroll"><table class="plan fc-table wi-assume" id="dec_assume"></table></div>
+          <p class="fc-short" id="dec_assumeText"></p>
         </div>
       </div>
     </div>
@@ -658,6 +692,6 @@
 </div>
 
 <footer>
-  Forage estimates: USDA-NRCS Soil Survey (SSURGO) through Soil Data Access, &ldquo;range production, normal year&rdquo; weighted by soil area and component share. Drought status: U.S. Drought Monitor (National Drought Mitigation Center, USDA, NOAA), current week. Stocking rate method: AgriLife Extension, <em>Stocking Rate: The Key Grazing Management Decision</em>. Budget benchmark: AgriLife Extension 2026 District 3 (Rolling Plains) cow-calf enterprise budget. Satellite imagery &copy; Esri and its partners; search &copy; OpenStreetMap contributors. These are planning estimates, not a range inspection &mdash; walk your pastures and check with your county agent or NRCS office before setting a stocking rate.
+  Forage estimates: USDA-NRCS Soil Survey (SSURGO) through Soil Data Access, &ldquo;range production, normal year&rdquo; weighted by soil area and component share. Satellite forage record (optional): Rangeland Analysis Platform, USDA Agricultural Research Service and University of Montana, 16-day herbaceous production from Landsat (Jones et al. 2021, <em>Rangeland Ecology &amp; Management</em> 77:112&ndash;117). Drought status: U.S. Drought Monitor (National Drought Mitigation Center, USDA, NOAA), current week. Stocking rate method: AgriLife Extension, <em>Stocking Rate: The Key Grazing Management Decision</em>. Budget benchmark: AgriLife Extension 2026 District 3 (Rolling Plains) cow-calf enterprise budget. Satellite imagery &copy; Esri and its partners; search &copy; OpenStreetMap contributors. These are planning estimates, not a range inspection &mdash; walk your pastures and check with your county agent or NRCS office before setting a stocking rate.
 </footer>
 <script src="../brand/a11y-scroll.js" defer></script>

@@ -17,9 +17,9 @@ Both builds take the shared page styles from `replacement-heifer/index.html` (th
 | --- | --- |
 | `body.html` | Page markup (cards, inputs, tables) |
 | `extra.css` | Styles specific to My Ranch |
-| `app.js` | Map (Leaflet + Geoman), pastures, soil survey lookup (USDA-NRCS Soil Data Access), pasture slopes (USGS 3DEP elevation), drought (U.S. Drought Monitor), capacity, storage, import/export |
+| `app.js` | Map (Leaflet + Geoman), pastures, soil survey lookup (USDA-NRCS Soil Data Access), pasture slopes (USGS 3DEP elevation), satellite forage record (Rangeland Analysis Platform, optional), drought (U.S. Drought Monitor), capacity, storage, import/export |
 | `feed.js` | Nutrition engine, no DOM: NRC 2016 / BCNRM requirements, calves, heifers, weather, pasture supply, monthly balance, economics. Injected into `app.js` at `/*@@FEED@@*/` |
-| `feedui.js` | Feed calendar, grazing calendar, "Grass today", decisions (calving season, drought, what-if), one-page plan. Injected at `/*@@FEEDUI@@*/` |
+| `feedui.js` | Feed calendar, grazing calendar, "Grass today", decisions (calving season, drought, year by year, what-if and what to measure first), one-page plan. Injected at `/*@@FEEDUI@@*/` |
 | `valbc.js` + `bcnrm_val.json` | Checks `feed.js` against 12 cow scenarios run in the official BCNRM 2016 spreadsheet (v1.0.37). `node valbc.js` must print `WORST % diff vs BCNRM: 0.000` |
 
 ## Tests
@@ -40,6 +40,7 @@ python3 src/my-ranch/test_steps.py      # the four steps, summary strip, save pa
 python3 src/my-ranch/test_examples.py   # example ranches (my-ranch/examples), grazing system, Drought Monitor suggestion
 python3 src/my-ranch/test_jim_ranch.py   # Jim on other pages reads the ranch saved in My Ranch
 python3 src/my-ranch/test_terrain.py    # pasture slopes from USGS 3DEP elevation (TIFF reader, retries, soil-survey fallback)
+python3 src/my-ranch/test_years.py      # satellite forage record (Rangeland Analysis Platform), year by year, what to measure first, second herd and rest, heifer weight, interest, the manual's worked example
 python3 src/herd-tools/test_tools.py    # Herd Calculators
 python3 tools/test_security.py          # CSP, required links, third-party hosts, Jim ranch switch, privacy delete
 (cd tools && npm install axe-core@4.10.2) && python3 tools/test_a11y.py   # accessibility, WCAG 2.1 AA (axe-core)

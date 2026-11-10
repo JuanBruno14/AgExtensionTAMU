@@ -10,7 +10,7 @@ A static website (HTML, CSS, JavaScript). No accounts, no sign-in, no database, 
 
 | Control | Where |
 | --- | --- |
-| Content-Security-Policy on every page: scripts only from this site plus the page's own inline scripts by SHA-256 hash; network calls only to the Jim relay, USDA-NRCS Soil Data Access, the Drought Monitor layer and OpenStreetMap search; `object-src 'none'`, `frame-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `upgrade-insecure-requests` | `tools/secure_pages.py` |
+| Content-Security-Policy on every page: scripts only from this site plus the page's own inline scripts by SHA-256 hash; network calls only to the Jim relay, USDA-NRCS Soil Data Access, USGS elevation, the Rangeland Analysis Platform (satellite forage record, optional), the Drought Monitor layer and OpenStreetMap search; `object-src 'none'`, `frame-src 'none'`, `base-uri 'self'`, `form-action 'self'`, `upgrade-insecure-requests` | `tools/secure_pages.py` |
 | `Referrer-Policy: strict-origin-when-cross-origin` on every page | `tools/secure_pages.py` |
 | No third-party scripts or fonts: map libraries (Leaflet, Geoman, polygon-clipping, togeojson, shpjs, JSZip) and fonts are served from this site, pinned to exact versions, with their licenses | `vendor/`, `brand/fonts/` |
 | No secrets in the code: the Anthropic API key exists only as an encrypted secret in the Worker | `jim/jim.js` holds only the public relay address |
