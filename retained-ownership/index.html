@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-bp/2gdXWp83qv1ZprUw9UEKRFYYMa+5lEk8O+LvyDg4='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-b3EKJGI9GAFSkueINEWMiC37dV+KjIYmVBxtvPNnSdY='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sell or Keep to Upgrade · Back 40</title>
@@ -1020,7 +1020,7 @@
           <div class="field"><label for="skfy8_cog">Cost of gain</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_cog" value="72" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
           <div class="field"><label for="skfy8_days">Days on feedyard</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_days" value="180" min="1"><span class="suffix">days</span></div></div>
           <div class="field"><label for="skfy8_adg">ADG</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_adg" value="3.5" min="0" step="0.1"><span class="suffix">lb/day</span></div></div>
-          <div class="field"><label for="skfy8_salePrice">Sale price, fed cattle</label><span class="hint">Pre-filled from Market prices &amp; factors</span><div class="input-wrap has-suffix"><input type="number" id="skfy8_salePrice" value="223.65" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div></div>
+          <div class="field"><label for="skfy8_salePrice">Sale price, fed cattle</label><span class="hint">Pre-filled from Market prices &amp; factors</span><div class="input-wrap has-suffix"><input type="number" id="skfy8_salePrice" value="215.21" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div></div>
           <div class="field"><label for="skfy8_deathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="skfy8_deathLoss" value="1" min="0" step="0.1"><span class="suffix">%</span></div></div>
         </div>
         <p class="derived-note" id="fy8_weightNote">—</p>
@@ -1082,7 +1082,7 @@
           <div class="field"><label for="skfy7_cog">Cost of gain</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_cog" value="72" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
           <div class="field"><label for="skfy7_days">Days on feedyard</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_days" value="210" min="1"><span class="suffix">days</span></div></div>
           <div class="field"><label for="skfy7_adg">ADG</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_adg" value="3.5" min="0" step="0.1"><span class="suffix">lb/day</span></div></div>
-          <div class="field"><label for="skfy7_salePrice">Sale price, fed cattle</label><span class="hint">Pre-filled from Market prices &amp; factors</span><div class="input-wrap has-suffix"><input type="number" id="skfy7_salePrice" value="223.65" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div></div>
+          <div class="field"><label for="skfy7_salePrice">Sale price, fed cattle</label><span class="hint">Pre-filled from Market prices &amp; factors</span><div class="input-wrap has-suffix"><input type="number" id="skfy7_salePrice" value="215.21" min="0" step="1" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."><span class="suffix">$/cwt</span></div></div>
           <div class="field"><label for="skfy7_deathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="skfy7_deathLoss" value="1" min="0" step="0.1"><span class="suffix">%</span></div></div>
         </div>
         <p class="derived-note" id="fy7_weightNote">—</p>
@@ -1210,7 +1210,7 @@
      exactly. Applied once at load (see D1_DEFAULTS/STOCKERS_DEFAULTS below) -- these
      stay plain, freely-editable fields afterward, same as before this change. */
   var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
-  var MP_FALLBACK = { mp_cullCowPrice:125.06, mp_fedCattlePrice:223.65, mp_stocker700Price:332.75, mp_stocker800Price:338.56, mp_steerPrice:401.22 };
+  var MP_FALLBACK = { mp_cullCowPrice:125.06, mp_fedCattlePrice:215.21, mp_stocker700Price:332.75, mp_stocker800Price:338.56, mp_steerPrice:401.22 };
   function getMarketPrices(){
     try {
       var raw = window.localStorage.getItem(MP_STORAGE_KEY);
@@ -1658,8 +1658,8 @@
        narrower region); the 5-Area report is USDA's standard fallback and
        still includes the Texas feeding region. Not fabricated - sourced and
        disclosed. */
-    skfy8_cog:72, skfy8_days:180, skfy8_adg:3.5, skfy8_salePrice:223.65, skfy8_deathLoss:1,
-    skfy7_cog:72, skfy7_days:210, skfy7_adg:3.5, skfy7_salePrice:223.65, skfy7_deathLoss:1,
+    skfy8_cog:72, skfy8_days:180, skfy8_adg:3.5, skfy8_salePrice:215.21, skfy8_deathLoss:1,
+    skfy7_cog:72, skfy7_days:210, skfy7_adg:3.5, skfy7_salePrice:215.21, skfy7_deathLoss:1,
 
     skrm_costRate:120
   };

@@ -1,6 +1,6 @@
 {
   "_about": "Prices on this site that come from public USDA AMS Market News reports. Updated weekly by .github/workflows/update-prices.yml (tools/update_prices.py). Edit by hand only if you also run `python3 tools/update_prices.py apply`.",
-  "updated": "2026-11-09",
+  "updated": "2026-11-10",
   "prices": {
     "bred_cow": {
       "label": "Bred cow purchase price",
@@ -15,14 +15,14 @@
     },
     "fed_cattle": {
       "label": "Fed/finished cattle sale price",
-      "value": 223.65,
+      "value": 215.21,
       "unit": "$/cwt",
       "report_slug": "2477",
       "report_name": "5 Area Weekly Weighted Average Direct Slaughter Cattle (LM_CT150)",
       "rule": "Live FOB steers, Over 80% Choice, weighted average",
-      "report_date": "2026-11-02",
-      "as_of_label": "report dated Nov 2, 2026",
-      "detail_html": "USDA AMS \"5&nbsp;Area Weekly Weighted Average Direct Slaughter Cattle\" (<code>ams_2477.pdf</code>) &mdash; live FOB steers, Over 80% Choice, $218&ndash;$226/cwt, 20,960&nbsp;hd, 1,370&ndash;1,700&nbsp;lb, weighted avg $223.65/cwt"
+      "report_date": "2026-11-09",
+      "as_of_label": "report dated Nov 9, 2026",
+      "detail_html": "USDA AMS \"5&nbsp;Area Weekly Weighted Average Direct Slaughter Cattle\" (<code>ams_2477.pdf</code>) &mdash; live FOB steers, Over 80% Choice, $208&ndash;$219/cwt, 23,327&nbsp;hd, 1,450&ndash;1,740&nbsp;lb, weighted avg $215.21/cwt"
     },
     "bred_heifer": {
       "label": "Bred heifer sale price",
@@ -294,6 +294,12 @@
       "value": 162.9,
       "report_date": "2026-11-06",
       "applied": "2026-11-09"
+    },
+    {
+      "key": "fed_cattle",
+      "value": 215.21,
+      "report_date": "2026-11-09",
+      "applied": "2026-11-10"
     }
   ]
 }

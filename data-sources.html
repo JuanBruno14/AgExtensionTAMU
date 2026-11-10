@@ -161,10 +161,10 @@
           <!-- price:bred_cow:end -->
           <!-- price:fed_cattle:start -->
           <tr>
-            <td class="value nowrap">$223.65/cwt</td>
+            <td class="value nowrap">$215.21/cwt</td>
             <td class="used">Fed/finished cattle sale price &mdash; <a href="retained-ownership/index.html">Stockers</a> "Feedyard" paths (both sub-paths)</td>
-            <td>USDA AMS "5&nbsp;Area Weekly Weighted Average Direct Slaughter Cattle" (<code>ams_2477.pdf</code>) &mdash; live FOB steers, Over 80% Choice, $218&ndash;$226/cwt, 20,960&nbsp;hd, 1,370&ndash;1,700&nbsp;lb, weighted avg $223.65/cwt</td>
-            <td><span class="tag fresh">report dated Nov 2, 2026</span></td>
+            <td>USDA AMS "5&nbsp;Area Weekly Weighted Average Direct Slaughter Cattle" (<code>ams_2477.pdf</code>) &mdash; live FOB steers, Over 80% Choice, $208&ndash;$219/cwt, 23,327&nbsp;hd, 1,450&ndash;1,740&nbsp;lb, weighted avg $215.21/cwt</td>
+            <td><span class="tag fresh">report dated Nov 9, 2026</span></td>
           </tr>
           <!-- price:fed_cattle:end -->
           <!-- price:bred_heifer:start -->
@@ -240,7 +240,7 @@
       <table class="ref">
         <thead><tr><th>Value</th><th>Used in</th><th>Note</th></tr></thead>
         <tbody>
-          <tr><td class="value nowrap">$223.65/cwt</td><td class="used">Fed/finished cattle sale price &mdash; shared store's <code>mp_fedCattlePrice</code>, read by <a href="retained-ownership/index.html">Stockers</a> "Feedyard" paths (both sub-paths)</td><td>Same USDA AMS figure as the market-reports card above, now centralized</td></tr>
+          <tr><td class="value nowrap">$215.21/cwt</td><td class="used">Fed/finished cattle sale price &mdash; shared store's <code>mp_fedCattlePrice</code>, read by <a href="retained-ownership/index.html">Stockers</a> "Feedyard" paths (both sub-paths)</td><td>Same USDA AMS figure as the market-reports card above, now centralized</td></tr>
           <tr><td class="value nowrap">$3,365.18/hd</td><td class="used">Bred cow purchase price &mdash; shared store's <code>mp_bredCowPrice</code>, read by <a href="cow-calf/index.html">A1</a> "Bid price" and <a href="cow-calf/index.html">A2</a> "Cost/head"</td><td>Same USDA AMS figure as the market-reports card above, now centralized</td></tr>
           <tr><td class="value">$4,500/hd, 4&nbsp;yr life, 1,650.7&nbsp;lb salvage wt, 2% death loss, 25 cows/bull</td><td class="used">Herd bull economics &mdash; shared store's <code>mp_bullCost</code>/<code>mp_bullLife</code>/<code>mp_bullSalvageWeight</code>/<code>mp_bullDeathLoss</code>/<code>mp_perBull</code>, read directly from the <a href="index.html#market-prices-calculator">"Market prices &amp; factors" calculator</a> itself, feeding the home page's own <a href="index.html#bcu-calculator">"Cow operating cost (BCU)"</a> calculator's read-only bull-economics readout, plus <a href="cow-calf/index.html">A2</a>'s "Herd bull" card and <a href="replacement-heifer/index.html">B1a</a>'s "Bull investment" card</td><td>The $4,500/hd figure and 1,650.7&nbsp;lb reference weight are the original BCU-calculator's assumption (never independently re-sourced); see the shared-store card above for why this is now the single number used everywhere instead of three drifting ones</td></tr>
           <tr><td class="value">$210/ton, 1,000&nbsp;lb round bale</td><td class="used">Hay price &mdash; shared store's <code>mp_hayPrice</code>/<code>mp_hayRollLb</code> (unified 2026-10-21), read by the home page's "Cow operating cost (BCU)" calculator as $/roll (price &times; bale weight, $105/roll by default) and by <a href="my-ranch/index.html">My Ranch</a> as the starting hay price of a new ranch (each ranch can still set its own, with a one-click "Use it" back to the site price)</td><td>$105/roll is the original BCU sheet's value; Texas A&amp;M AgriLife's 2026 District 3 budgets use $200/ton ($0.10/lb)</td></tr>
