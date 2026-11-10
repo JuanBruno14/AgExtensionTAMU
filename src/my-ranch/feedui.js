@@ -185,9 +185,8 @@
       ownHayLb:ownHayDmLb(), ownHayCost:h.ownHayCost == null ? 60 : +h.ownHayCost, supTdn:h.supTdn, supCp:h.supCp, supPrice:h.supPrice,
       tripCost:h.tripCost, supTrips:+h.supTrips, hayTrips:+h.hayTrips, distPerTon:h.distPerTon}, over || {});
   }
-  /* own: every pasture keeps its own entry (tagged with its id), for the year-by-year run */
-  function supplyNow(mult, own){
-    var past = state.pastures.map(function(p){ return {annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair', grazed:isGrazed(p) && !isHayMeadow(p), measured:p.measured || null, forageAcres:forageAcres(p), name:p.name, he:heOf(p)/100, curve:curveOf(p), pid:own ? p.id : undefined}; });
+  function supplyNow(mult){
+    var past = state.pastures.map(function(p){ return {annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair', grazed:isGrazed(p) && !isHayMeadow(p), measured:p.measured || null, forageAcres:forageAcres(p), name:p.name, he:heOf(p)/100, curve:curveOf(p)}; });
     var reg = regionKey(), he = state.settings.harvestEff/100;
     var sup = FEED.pastureSupply(past, he, reg, state.herd.fq);
     var t = totals(), mc = state.settings.manualCap;
@@ -770,7 +769,6 @@
     decKey = key;
     if(decTab === 'calving') renderCalvingDecision();
     else if(decTab === 'drought') renderDroughtDecision();
-    else if(decTab === 'years') renderYearsDecision();
     else renderWhatIf();
   }
 
@@ -1458,153 +1456,10 @@
       : 'On this ranch the number worth measuring first is <strong>' + top.t.label.charAt(0).toLowerCase() + top.t.label.slice(1) + '</strong>: across its likely range it moves cattle sales minus feed by ' + money(top.span) + ' a year' + (AR[1] ? ', ahead of ' + AR[1].t.label.charAt(0).toLowerCase() + AR[1].t.label.slice(1) + ' (' + money(AR[1].span) + ')' : '') + '.';
   }
 
-  /* ---- year by year: the plan run through every year of the ranch's satellite record (Rangeland Analysis Platform).
-     Each pasture's forage in a year = its normal-year estimate x that year's growth as a share of its own satellite average,
-     month by month (pastures without a record use the ranch-wide index; small grains stay normal). Years are chained: the
-     grass standing in December is next January's. Herd, prices, costs and forage quality stay as in the plan; feed short is
-     bought. Cows bred thin get pregnant less, so the next year calves less (Sprott 1985), relative to the normal year. */
+  /* the satellite record's state, so decisions redraw when it changes */
   function rapSig(){
     if(!satOn()) return 'off';
     return state.pastures.map(function(p){ return p.rap ? p.rap.status + (p.rap.at || '') : '-'; }).join(',') + '|' + state.settings.satCurve;
-  }
-  function yearsRun(over){
-    var rr = ranchRap(); if(!rr || !(state.herd.cows > 0)) return null;
-    var h = state.herd, cows = over && over.cows > 0 ? Math.round(over.cows) : h.cows;
-    var bulls = cows === h.cows ? bullCount() : Math.max(1, Math.round(bullCount()*cows/h.cows));
-    var base = supplyNow(1, true); if(!base.length) return null;
-    var byId = {}; state.pastures.forEach(function(p){ byId[p.id] = p; });
-    var rec = (state.settings.hayRecovery == null ? 80 : state.settings.hayRecovery)/100;
-    var meadows = state.pastures.filter(function(p){ return isHayMeadow(p) && annualLb(p) != null; });
-    var other = otherCosts(cows, bulls).total, herdO = {cows:cows, bulls:bulls};
-    var normal = FEED.balance(feedOptions(herdO), base, feedsFor());
-    var normGrow = base.reduce(function(a, g){ return a + g.growth.reduce(function(x, y){ return x + y; }, 0); }, 0);
-    var stock = normal.endStock, cr = h.calvingRate, list = [];
-    rr.years.forEach(function(y, i){
-      var sup = FEED.yearSupply(base, function(g){
-        if(g.type === 'smallgrain') return null;
-        var p = g.pid != null ? byId[g.pid] : null;
-        return (p && rapIndex(p, y)) || rr.idx[i];
-      });
-      var sum12 = function(ix){ return ix.reduce(function(a, b){ return a + b; }, 0); };
-      var ownHay = meadows.reduce(function(a, p){ return a + annualLb(p)*rec*sum12(rapIndex(p, y) || rr.idx[i]); }, 0);
-      var o = feedOptions(Object.assign({}, herdO, {calvingRate:cr, startStock:stock}));
-      var r = FEED.balance(o, sup, feedsFor({ownHayLb:ownHay}));
-      var grow = sup.reduce(function(a, g){ return a + g.growth.reduce(function(x, yv){ return x + yv; }, 0); }, 0);
-      list.push({year:y, grass:normGrow > 0 ? grow/normGrow : 1, hayT:r.totals.hayBuy/2000, supT:r.totals.sup/2000, feed:r.econ.costs, sales:r.econ.income,
-                 net:r.econ.net - other, calvRate:cr, calves:r.econ.calvesSold, wean:r.econ.avgWeanLb, bcs:r.bcs.breed, bcsLow:r.bcs.low});
-      stock = r.endStock;
-      cr = Math.max(30, Math.min(100, h.calvingRate*FEED.pregByBcs(r.bcs.breed)/FEED.pregByBcs(normal.bcs.breed)));
-    });
-    var n = list.length, avg = function(f){ return list.reduce(function(a, x){ return a + f(x); }, 0)/n; };
-    var byNet = list.slice().sort(function(a, b){ return a.net - b.net; }), k5 = Math.max(1, Math.round(n/5));
-    var hayYears = list.filter(function(x){ return x.hayT >= 0.5; });
-    return {years:list, n:n, cows:cows, bulls:bulls, share:rr.share,
-            normal:{net:normal.econ.net - other, hayT:normal.totals.hayBuy/2000, supT:normal.totals.sup/2000},
-            avgNet:avg(function(x){ return x.net; }), avgHay:avg(function(x){ return x.hayT; }), avgSup:avg(function(x){ return x.supT; }),
-            hayYears:hayYears.length, maxHay:list.reduce(function(a, x){ return x.hayT > a.hayT ? x : a; }, list[0]),
-            worst:byNet[0], best:byNet[n - 1], dryNet:byNet.slice(0, k5).reduce(function(a, x){ return a + x.net; }, 0)/k5, dryN:k5,
-            lowBcs:list.reduce(function(a, x){ return x.bcs < a.bcs ? x : a; }, list[0])};
-  }
-  var yrTimer = null, yrToken = 0, yrLast = null;   // yrLast: the latest run with the ranch's own herd, for the plan summary Jim reads
-  function renderYearsDecision(){
-    var h = state.herd, st = $('dec_yrStatus'), body = $('dec_yrBody');
-    clearTimeout(yrTimer); var token = ++yrToken;
-    var want = state.pastures.filter(function(p){ return isGrazed(p) && p.type !== 'smallgrain'; });
-    if(!satOn()){
-      st.hidden = false; body.hidden = true;
-      st.innerHTML = 'This needs the satellite record of your pastures, which is off. <button type="button" class="tool-btn small" id="yr_on">Turn it on</button> <span class="hint">It sends each pasture outline to the Rangeland Analysis Platform (USDA Agricultural Research Service) and takes about half a minute per pasture.</span>';
-      $('yr_on').addEventListener('click', function(){ state.settings.satellite = 'on'; syncSat(); renderAll(true); });
-      return;
-    }
-    var okN = want.filter(function(p){ return rapOk(p); }).length, loading = want.filter(function(p){ return !p.rap || p.rap.status === 'loading'; }).length;
-    var run = loading ? null : yearsRun();
-    yrLast = run ? {key:feedKey + '|' + rapSig(), run:run} : null;
-    if(run){ clearTimeout(briefTimer); briefTimer = setTimeout(writeRanchBrief, 600); }   // the saved summary Jim reads now includes these years
-    if(!run){
-      st.hidden = false; body.hidden = true;
-      st.innerHTML = loading ? '<span class="spinner"></span> Reading the satellite record: ' + okN + ' of ' + want.length + ' pastures done…'
-        : 'No pasture has a usable satellite record (it leaves out cropland and towns, and needs at least 10 complete years). See each pasture under <em>Ranch → Pastures</em>.';
-      return;
-    }
-    st.hidden = run.share >= 0.999;
-    if(run.share < 0.999) st.innerHTML = 'Only ' + fmt(run.share*100) + '% of your grazed acres have a satellite record; the rest follow the ranch-wide pattern.';
-    body.hidden = false;
-    var L = run.years, n = run.n, dryCut = L.map(function(x){ return x.grass; }).sort(function(a, b){ return a - b; })[Math.max(0, Math.round(n/5) - 1)];
-    (function(){
-      var el = $('dec_yrChart'), W = Math.round(Math.max(320, Math.min(760, el.clientWidth || 760))), ml = W < 500 ? 38 : 48, mr = 6, pw = W - ml - mr, band = pw/n, bw = Math.max(2, band*0.72);
-      var t1 = 18, h1 = 130, t2 = t1 + h1 + 30, h2 = 80, H = t2 + h2 + 26;
-      var gMax = Math.max(1.5, Math.ceil(Math.max.apply(null, L.map(function(x){ return x.grass; }))*4)/4), hMax = niceMax(Math.max(1, Math.max.apply(null, L.map(function(x){ return x.hayT; }))));
-      var yG = function(v){ return t1 + h1 - v/gMax*h1; }, yH = function(v){ return t2 + h2 - v/hMax*h2; };
-      var sv = '<svg viewBox="0 0 ' + W + ' ' + H + '" aria-hidden="true"><g class="grid">';
-      [0, 0.5, 1, 1.5].filter(function(v){ return v <= gMax; }).forEach(function(v){ sv += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + yG(v) + '" y2="' + yG(v) + '"/>'; });
-      [0, 0.5, 1].forEach(function(f){ sv += '<line x1="' + ml + '" x2="' + (W - mr) + '" y1="' + yH(hMax*f) + '" y2="' + yH(hMax*f) + '"/>'; });
-      sv += '</g><g class="axis">';
-      [0, 0.5, 1, 1.5].filter(function(v){ return v <= gMax; }).forEach(function(v){ sv += '<text x="' + (ml - 6) + '" y="' + (yG(v) + 4) + '" text-anchor="end">' + fmt(v*100) + '%</text>'; });
-      [0, 0.5, 1].forEach(function(f){ sv += '<text x="' + (ml - 6) + '" y="' + (yH(hMax*f) + 4) + '" text-anchor="end">' + fmt(hMax*f, hMax < 10 ? 1 : 0) + '</text>'; });
-      L.forEach(function(x, i){ if(x.year % 5 === 0 || n <= 12) sv += '<text x="' + (ml + band*i + band/2).toFixed(1) + '" y="' + (H - 8) + '" text-anchor="middle">' + x.year + '</text>'; });
-      sv += '</g><text class="yr-cap" x="' + ml + '" y="12">Grass grown, % of the average year</text><text class="yr-cap" x="' + ml + '" y="' + (t2 - 8) + '">Hay to buy, tons</text>';
-      L.forEach(function(x, i){
-        var x0 = ml + band*i + (band - bw)/2;
-        sv += '<rect class="yr-grass' + (x.grass <= dryCut ? ' dry' : '') + '" x="' + x0.toFixed(1) + '" y="' + yG(x.grass).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0, t1 + h1 - yG(x.grass)).toFixed(1) + '"/>';
-        if(x.hayT > 0.05) sv += '<rect class="yr-hay" x="' + x0.toFixed(1) + '" y="' + yH(x.hayT).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, t2 + h2 - yH(x.hayT)).toFixed(1) + '"/>';
-      });
-      sv += '<line class="yr-avg" x1="' + ml + '" x2="' + (W - mr) + '" y1="' + yG(1) + '" y2="' + yG(1) + '"/>';
-      L.forEach(function(x, i){ sv += '<rect class="hit" data-m="' + i + '" tabindex="0" x="' + (ml + band*i).toFixed(1) + '" y="' + t1 + '" width="' + band.toFixed(1) + '" height="' + (H - t1 - 20) + '"/>'; });
-      sv += '</svg>';
-      el.innerHTML = '<div class="fc-legend" style="margin-bottom:6px;"><span><i class="sw" style="background:var(--s3);"></i>Grass grown that year</span><span><i class="sw" style="background:var(--s2);"></i>Driest fifth of the years</span><span><i class="sw" style="background:var(--s4);"></i>Hay bought</span></div>' + sv;
-      var tipTxt = function(i){ var x = L[i]; return '<div class="tt-val">' + x.year + '</div><div>Grass: <strong>' + fmt(x.grass*100) + '%</strong> of average</div><div>Hay bought: ' + (x.hayT >= 0.05 ? fmt(x.hayT, 1) + ' t' : 'none') + ' · supplement ' + fmt(x.supT, 1) + ' t</div><div>Net return: <strong>' + money(x.net) + '</strong></div><div class="tt-lbl">' + fmt(x.calves) + ' calves sold at ' + fmt(x.wean) + ' lb · cows at BCS ' + fmt(x.bcs, 1) + ' when bred</div>'; };
-      a11yHits(el, 'Grass grown and hay bought in each year from ' + L[0].year + ' to ' + L[n - 1].year + '. The table below has the same numbers.', function(i){ return htmlText(tipTxt(i)); });
-      var tip = feedTip();
-      el.querySelectorAll('.hit').forEach(function(hh){
-        function show(){ var b = hh.getBoundingClientRect(); tip.innerHTML = tipTxt(+hh.getAttribute('data-m')); tip.style.left = (b.left + b.width/2) + 'px'; tip.style.top = (b.top + 10) + 'px'; tip.classList.add('show'); }
-        hh.addEventListener('mouseenter', show); hh.addEventListener('focus', show);
-        hh.addEventListener('mouseleave', function(){ tip.classList.remove('show'); }); hh.addEventListener('blur', function(){ tip.classList.remove('show'); });
-      });
-    })();
-    var in10 = function(k){ return fmt(k/n*10, k/n*10 < 1 && k > 0 ? 1 : 0); };
-    var big = L.filter(function(x){ return x.hayT > Math.max(1, run.avgHay*2); }).length;
-    var txt = 'Through the ' + n + ' years from ' + L[0].year + ' to ' + L[n - 1].year + ', with today’s ' + fmt(run.cows) + ' cows, prices and costs: ';
-    txt += run.hayYears === 0 ? 'your grass would have carried the herd <strong>every year, with no hay</strong>. '
-      : 'you would have bought hay in <strong>' + run.hayYears + ' of ' + n + ' years</strong> (about ' + in10(run.hayYears) + ' in 10), ' + fmt(run.avgHay, 1) + ' t a year on average and the most, <strong>' + fmt(run.maxHay.hayT, run.maxHay.hayT < 10 ? 1 : 0) + ' t, in ' + run.maxHay.year + '</strong>, when the grass grew ' + fmt(run.maxHay.grass*100) + '% of average' + (big > 1 ? ' (' + big + ' years took more than twice the average)' : '') + '. ';
-    txt += 'Net return averaged <strong>' + money(run.avgNet) + '</strong> a year (' + money(run.avgNet/run.cows) + ' per cow), against ' + money(run.normal.net) + ' in the normal-year plan; the worst year, ' + run.worst.year + ', left <strong>' + money(run.worst.net) + '</strong>, and the driest fifth of the years averaged ' + money(run.dryNet) + '. ';
-    if(run.lowBcs.bcs < 4.75) txt += 'Cows came to breeding thinnest in ' + run.lowBcs.year + ' (BCS ' + fmt(run.lowBcs.bcs, 1) + '), so fewer calved the year after. ';
-    if(Math.abs(run.avgNet - run.normal.net) > Math.max(500, Math.abs(run.normal.net)*0.03)) txt += run.avgNet < run.normal.net ? 'The average of real years is below the normal-year plan because a dry year costs more than a good year gives back: extra grass is left standing, missing grass is bought.' : '';
-    $('dec_yrText').innerHTML = txt;
-    $('dec_yrTable').innerHTML = '<thead><tr><th>Year</th><th class="num">Grass, % of avg.</th><th class="num">Hay bought</th><th class="num">Supplement</th><th class="num">Feed &amp; feeding</th><th class="num">Calved</th><th class="num">Calves sold</th><th class="num">BCS at breeding</th><th class="num">Net return</th></tr></thead><tbody>' +
-      L.map(function(x){ return '<tr class="' + (x.grass <= dryCut ? 'short' : '') + '"><td>' + x.year + '</td><td class="num">' + fmt(x.grass*100) + '%</td><td class="num">' + (x.hayT >= 0.05 ? fmt(x.hayT, 1) + ' t' : '—') + '</td><td class="num">' + fmt(x.supT, 1) + ' t</td><td class="num">' + money(x.feed) + '</td><td class="num">' + fmt(x.calvRate) + '%</td><td class="num">' + fmt(x.calves) + ' × ' + fmt(x.wean) + ' lb</td><td class="num">' + fmt(x.bcs, 1) + '</td><td class="num">' + money(x.net) + '</td></tr>'; }).join('') +
-      '</tbody><tfoot><tr><td>Average</td><td class="num">100%</td><td class="num">' + fmt(run.avgHay, 1) + ' t</td><td class="num">' + fmt(run.avgSup, 1) + ' t</td><td></td><td></td><td></td><td></td><td class="num">' + money(run.avgNet) + '</td></tr></tfoot>';
-
-    /* the same years with other herd sizes, one size per tick so the page stays responsive */
-    var t = totals(), sizes = [0.7, 0.8, 0.9, 1, 1.1, 1.2].map(function(f){ return Math.max(1, Math.round(h.cows*f)); }).filter(function(v, i, a){ return a.indexOf(v) === i; });
-    var rows = {}; rows[h.cows] = run;
-    function draw(done){
-      var have = sizes.filter(function(c){ return rows[c]; }).map(function(c){ return rows[c]; });
-      var bestAvg = have.reduce(function(a, r){ return r.avgNet > a.avgNet ? r : a; }, have[0]), bestDry = have.reduce(function(a, r){ return r.dryNet > a.dryNet ? r : a; }, have[0]);
-      $('dec_yrSizes').innerHTML = '<div class="table-scroll"><table class="plan fc-table"><thead><tr><th>Cows</th><th class="num">Of capacity</th><th class="num">Years buying hay</th><th class="num">Hay, average</th><th class="num">Net, average year</th><th class="num">Net, driest fifth</th><th class="num">Net, worst year</th></tr></thead><tbody>' +
-        sizes.map(function(c){
-          var r = rows[c]; if(!r) return '<tr><td>' + fmt(c) + '</td><td colspan="6"><span class="spinner"></span> running ' + n + ' years…</td></tr>';
-          var au = t.cap > 0 ? herdAU()*c/h.cows/t.cap : null;
-          return '<tr class="' + (c === h.cows ? 'cur' : '') + '"><td>' + fmt(c) + (c === h.cows ? ' <span class="tag">your herd</span>' : '') + '</td><td class="num">' + (au != null ? fmt(au*100) + '%' : '—') + '</td><td class="num">' + r.hayYears + ' of ' + n + '</td><td class="num">' + fmt(r.avgHay, 1) + ' t</td>' +
-            '<td class="num">' + money(r.avgNet) + (done && r === bestAvg ? ' <span class="tag good">most</span>' : '') + '</td><td class="num">' + money(r.dryNet) + (done && r === bestDry && bestDry !== bestAvg ? ' <span class="tag good">most</span>' : '') + '</td><td class="num">' + money(r.worst.net) + (r.best.net - r.worst.net >= 1 ? ' <small>(' + r.worst.year + ')</small>' : '') + '</td></tr>';
-        }).join('') + '</tbody></table></div>';
-      if(!done){ $('dec_yrSizeText').textContent = ''; return; }
-      var me = run, s2 = 'Over these years the herd size that earned the most on average was <strong>' + fmt(bestAvg.cows) + ' cows</strong> (' + money(bestAvg.avgNet) + ' a year)' + (bestAvg === me ? ', your herd. ' : ', ' + money(bestAvg.avgNet - me.avgNet) + ' a year more than your ' + fmt(me.cows) + '. ');
-      if(bestDry !== bestAvg) s2 += 'In the driest fifth of the years, <strong>' + fmt(bestDry.cows) + ' cows</strong> did best (' + money(bestDry.dryNet) + ' against ' + money(bestAvg.dryNet) + '): fewer cows give up some income in good years and lose less in bad ones. ';
-      var bigger = rows[sizes[sizes.length - 1]], smaller = rows[sizes[0]];
-      if(t.cap > 0 && herdAU()*bestAvg.cows/h.cows > t.cap*1.001) s2 += fmt(bestAvg.cows) + ' cows is more than the carrying capacity: these numbers count the feed you buy, not what grazing past take-half-leave-half does to the range in the years after, so treat it as a ceiling, not a target. ';
-      if(bestAvg === bigger) s2 += 'The largest herd tried still came out ahead, so grass was not what limited these years: check the forage estimate before adding cows (the What if tab shows what a 25% smaller estimate does). ';
-      s2 += 'Range research found much the same: stocking steady at about 90% of average capacity earned about as much as chasing the grass up and down, with less risk (Martin 1975, Santa Rita, Arizona; in Vallentine 2001).';
-      $('dec_yrSizeText').innerHTML = s2;
-    }
-    draw(false);
-    var todo = sizes.filter(function(c){ return !rows[c]; });
-    (function step(){
-      if(token !== yrToken) return;
-      var c = todo.shift();
-      if(c == null){ draw(true); return; }
-      rows[c] = yearsRun({cows:c}); draw(false);
-      yrTimer = setTimeout(step, 20);
-    })();
   }
 
   /* ---- bindings */

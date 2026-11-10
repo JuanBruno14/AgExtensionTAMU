@@ -502,15 +502,7 @@
 .gp-herds select{font:inherit;padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);}
 .gp-assign{display:flex;flex-wrap:wrap;gap:6px 12px;}
 
-/* decisions: year by year (the plan run through every year of the satellite record) */
-.yr-chart svg{display:block;width:100%;height:auto;}
-.yr-chart rect.yr-grass{fill:var(--s3);}
-.yr-chart rect.yr-grass.dry{fill:var(--s2);}
-.yr-chart rect.yr-hay{fill:var(--s4);}
-.yr-chart line.yr-avg{stroke:var(--ink);stroke-width:1;stroke-dasharray:4 3;opacity:.55;}
-.yr-chart text.yr-cap{font-size:11px;font-weight:700;fill:var(--ink-secondary);}
-.yr-sizes tr.cur td{font-weight:700;}
-.yr-sizes td .tag{margin-left:6px;}
+/* decisions: what to measure first */
 .wi-assume td, .wi-assume th{vertical-align:top;}
 .wi-assume td.neg{color:var(--critical-700);} .wi-assume td.pos{color:var(--good-700);}
 .wi-assume td.num small{display:block;white-space:normal;max-width:210px;margin-left:auto;font-weight:500;}

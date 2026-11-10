@@ -2,7 +2,7 @@ import os
 HERE=os.path.dirname(os.path.realpath(__file__))
 __file__=os.path.join(HERE,'test_ranch.py')
 exec(open(__file__).read().split('with sync_playwright() as pw:')[0].replace('PORT=8765','PORT=8786'))
-# Satellite forage record (Rangeland Analysis Platform), the plan run year by year, "what to measure first", a second herd and
+# Satellite forage record (Rangeland Analysis Platform), "what to measure first", a second herd and
 # rest periods in the grazing calendar, heifers sold lighter, interest on the herd, and the worked example of the manual.
 # The satellite service is mocked with a real answer saved in data/rap_central_texas.txt (read 2026-11-10).
 RAP_HOST='us-central1-rap-data-365417.cloudfunctions.net'
@@ -56,9 +56,9 @@ with sync_playwright() as pw:
 
     # ---- satellite record: off by default, nothing is sent
     check('satellite record is off by default and no outline has been sent', pg.evaluate("MyRanch.state().settings.satellite")=='off' and len(rap_requests)==0 and pg.locator('.p-rap').count()==0)
-    pg.evaluate("MyRanch.go('decide')"); pg.click('.seg-btn[data-dec="years"]'); pg.wait_for_timeout(600)
-    check('year by year asks to turn the record on first', pg.is_visible('#yr_on') and not pg.is_visible('#dec_yrBody') and len(rap_requests)==0)
-    pg.click('#yr_on')
+    pg.evaluate("MyRanch.go('ranch')"); pg.evaluate("document.getElementById('satMode').closest('details') && (document.getElementById('satMode').closest('details').open=true)")
+    check('no year-by-year tab: decisions are calving season, drought and what if', pg.locator('.seg-btn[data-dec]').count()==3 and pg.locator('#dec_years').count()==0)
+    pg.select_option('#satMode','on')
     check('turning it on reads every pasture', wait_js(pg, "MyRanch.state().pastures.every(p=>p.rap&&p.rap.status==='ok')"), [ (p.get('rap') or {}).get('status') for p in pg.evaluate("MyRanch.state().pastures")])
     q=rap_requests[0]
     check('request is a GeoJSON polygon with mask on and all years', q.get('type')=='Feature' and q['geometry']['type']=='Polygon' and q['properties']=={'mask':True,'year':None} and len(q['geometry']['coordinates'][0])>=4, str(q)[:160])
@@ -72,24 +72,9 @@ with sync_playwright() as pw:
     check('pasture card shows the record next to the estimate, with a bar per year', 'Satellite record, 2000–2025' in card and 'your estimate' in card and pg.locator('#pastureList .p-rap').first.locator('rect').count()==26, card[:220])
     check('turning the record on changes no number of the plan', near(pg.evaluate("MyRanch.totals().cap"), base_cap, 1e-6) and near(pg.evaluate("MyRanch.feed().econ.net"), base_net, 0.01))
 
-    # ---- year by year
-    check('year by year shows after the record is read', wait_js(pg, "!document.getElementById('dec_yrBody').hidden && document.querySelectorAll('#dec_yrTable tbody tr').length===26"))
-    run=pg.evaluate("MyRanch.yearsRun()")
-    Y=run['years']; g={y['year']:y for y in Y}
-    check('26 years, grass averages 100% of the plan', run['n']==26 and near(sum(y['grass'] for y in Y)/26, 1.0, 0.01), round(sum(y['grass'] for y in Y)/26,3))
-    lo=min(Y, key=lambda y:y['grass'])
-    check('the driest year takes the most hay, the best year none', lo['year']==DRY and run['maxHay']['year']==DRY and g[DRY]['hayT']>1 and g[WET]['hayT']<0.05, (lo['year'], round(lo['grass'],2), run['maxHay']['year'], round(run['maxHay']['hayT'],1)))
-    check('a dry year costs money: net in the driest year below the average', g[DRY]['net'] < run['avgNet'] and run['worst']['net'] <= run['dryNet'] <= run['avgNet'] <= run['best']['net'], (round(g[DRY]['net']), round(run['avgNet'])))
-    check('real years average no better than the normal-year plan (extra grass is left, missing grass is bought)', run['avgNet'] <= run['normal']['net']+1, (round(run['avgNet']), round(run['normal']['net'])))
-    check('chart, text and table are filled', pg.locator('#dec_yrChart rect.yr-grass').count()==26 and '26 years from 2000 to 2025' in pg.inner_text('#dec_yrText') and 'average' in pg.text_content('#dec_yrTable tfoot').lower(), (pg.locator('#dec_yrChart rect.yr-grass').count(), pg.inner_text('#dec_yrTable tfoot')[:40], pg.inner_text('#dec_yrText')[:60]))
-    check('herd sizes: six sizes compared, yours marked', wait_js(pg, "document.querySelectorAll('#dec_yrSizes tbody tr').length===6 && !document.querySelector('#dec_yrSizes .spinner') && document.getElementById('dec_yrSizeText').textContent.length>40") and 'your herd' in pg.inner_text('#dec_yrSizes').lower(), pg.inner_text('#dec_yrSizeText')[:200])
-    big=pg.evaluate("MyRanch.yearsRun({cows:120})"); small=pg.evaluate("MyRanch.yearsRun({cows:56})")
-    check('more cows on the same grass buy hay in more years; fewer cows in fewer', big['hayYears'] >= run['hayYears'] >= small['hayYears'] and big['avgHay'] > small['avgHay'], (small['hayYears'], run['hayYears'], big['hayYears']))
-    again=pg.evaluate("MyRanch.yearsRun()")
-    check('the run is repeatable', near(again['avgNet'], run['avgNet'], 0.01))
     pg.wait_for_timeout(900)
     brief=pg.evaluate("MyRanch.ranchContext()")
-    check('Jim reads why hay is fed (or that none is) and the year-by-year result', ('Why hay is fed' in brief or 'No hay months' in brief) and 'Satellite forage record' in brief and 'Plan run through each of those 26 years' in brief, brief[brief.find('Satellite'):][:300])
+    check('Jim reads why hay is fed (or that none is) and the satellite record', ('Why hay is fed' in brief or 'No hay months' in brief) and 'Satellite forage record' in brief, brief[brief.find('Satellite'):][:200])
 
     # ---- the pasture's own growth curve
     g0=pg.evaluate("MyRanch.feed().months.map(m=>m.forageAvailLb)")
@@ -151,6 +136,6 @@ with sync_playwright() as pw:
     check('the feed plan itself does not change with how the herds are split', near(pg.evaluate("MyRanch.feed().totals.sup"), pg.evaluate("MyRanch.netOf({}).totals.sup"), 1e-6))
 
     check('no script errors', not errs, errs[:3])
-    pg.screenshot(path=os.path.join(OUT,'years.png'), full_page=True)
+    pg.screenshot(path=os.path.join(OUT,'satellite.png'), full_page=True)
 print('\n%d failures' % len(fails))
 for x in fails: print('FAIL', x)

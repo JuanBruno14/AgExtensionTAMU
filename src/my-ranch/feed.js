@@ -655,11 +655,11 @@
         if(!p.annualLb || !p.grazed) return;
         var t = p.type === 'range' ? 'range' : p.type;
         var meas = p.measured && p.measured.lbAc > 0 && p.measured.month != null;
-        // a pasture with a measured standing crop, its own growth curve or a year-by-year record keeps its own entry
-        if(meas || ownCurve(p) || p.pid != null){
+        // a pasture with a measured standing crop or its own growth curve keeps its own entry
+        if(meas || ownCurve(p)){
           var hp = p.he || he;
           own.push({type:t, condition:t === 'range' ? (p.condition || 'fair') : undefined, annual:p.annualLb*hp, growth:pastureGrowth(p, hp, regionKey), quality:qOf(t),
-                    measured:meas ? {month:p.measured.month, lb:p.measured.lbAc*(p.forageAcres || 0)*hp} : undefined, name:p.name, acres:p.forageAcres || 0, he:hp, pid:p.pid});
+                    measured:meas ? {month:p.measured.month, lb:p.measured.lbAc*(p.forageAcres || 0)*hp} : undefined, name:p.name, acres:p.forageAcres || 0, he:hp});
           return;
         }
         // native range is grouped by condition too: each condition has its own growth curve
@@ -680,21 +680,9 @@
         if(which === 'all' || which === g.type){
           for(var i = 0; i < months; i++){ var m = (fromMonth + i) % 12; growth[m] *= (1 - cutPct/100); }
         }
-        return {type:g.type, condition:g.condition, annual:g.annual, growth:growth, quality:g.quality, measured:g.measured, name:g.name, acres:g.acres, he:g.he, pid:g.pid};
+        return {type:g.type, condition:g.condition, annual:g.annual, growth:growth, quality:g.quality, measured:g.measured, name:g.name, acres:g.acres, he:g.he};
       });
     }
-    /* The same supply in one real year: each entry's growth replaced by its normal year's total times that year's monthly
-       index (idxFor(entry) -> 12 numbers: that month's growth as a share of the pasture's average year, so a normal year adds
-       up to 1). Entries without an index keep their normal growth. The yearly total (annual) stays the normal one: it is the
-       reference for stubble and for the standing-grass cap. */
-    function yearSupply(supply, idxFor){
-      return supply.map(function(g){
-        var ix = idxFor(g), growth = g.growth;
-        if(ix && ix.length === 12){ var yr = g.growth.reduce(function(a, b){ return a + b; }, 0); growth = ix.map(function(x){ return Math.max(0, yr*x); }); }
-        return {type:g.type, condition:g.condition, annual:g.annual, growth:growth, quality:g.quality, measured:undefined, name:g.name, acres:g.acres, he:g.he, pid:g.pid};
-      });
-    }
-
     /* Grazing intake limited by forage mass (NRC 2016 Eq. 19-97 to 19-99, as coded in the BCNRM spreadsheet, Calc!D182:D184).
        The book prints 0.000764 in Eq. 19-97; the software uses 0.000074, which reaches 1 at 1,150 kg/ha (the printed value
        goes negative). FM = standing forage, kg DM/ha; guHa = ha per head; dop = days on the pasture; sbw kg; nm = diet NEma.
@@ -716,11 +704,8 @@
       var cs = cohorts(o), co = calfOutcome(o, cs, ftdn);
       var req = requirements(o, cs, co, ftdn);
       var cows = o.cows*(1 - (o.cowLoss || 0)/200), bulls = o.bulls;
-      /* o.startStock (lb standing on each supply entry on Jan 1): one pass from that stock, for a chain of real years
-         (the grass left in December is next January's); without it the year is run twice so it starts from its own December. */
-      var chain = o.startStock && o.startStock.length === supply.length;
-      var stock = supply.map(function(g, i){ return chain ? Math.max(0, +o.startStock[i] || 0) : 0; }), months = [];
-      for(var pass = chain ? 1 : 0; pass < 2; pass++){
+      var stock = supply.map(function(){ return 0; }), months = [];
+      for(var pass = 0; pass < 2; pass++){
         months = [];
         for(var m = 0; m < 12; m++){
           var r = req[m], n = MONTH_DAYS[m];
@@ -766,9 +751,7 @@
                     : grazeFactor(fmKg, acresTot/2.471054/heads, n, o.cowLb/LB*0.96, nemaOf(dTdn));
           f = Math.min(f, graze);   // short grass limits what cattle can bite off; hay fills the rest
           var eaten = demand*f;
-          // in a chain of real years, grass left over does not pile up from year to year: old growth weathers and is trampled, so the
-          // standing stock never exceeds one normal year's usable growth (the same cap the grazing calendar uses)
-          supply.forEach(function(g, i){ var take = availTot > 0 ? eaten*avail[i]/availTot : 0; stock[i] = Math.max(0, avail[i] - take); if(chain) stock[i] = Math.min(stock[i], g.annual); });
+          supply.forEach(function(g, i){ var take = availTot > 0 ? eaten*avail[i]/availTot : 0; stock[i] = Math.max(0, avail[i] - take); });
           // protOnly: supplement covers the protein gap only; the energy still missing comes from body reserves (mature cows and bulls)
           var feedFor = function(cap, rTdn, rCp, protOnly){
             var forage = cap*f, hay = cap*(1 - f);
@@ -901,7 +884,7 @@
       econ.net = econ.income - econ.costs;
       tot.hayOwnSurplus = Math.max(0, ownAsFed - ownUsed);
       tot.rdpMonths = months.filter(function(x){ return x.rdpShort > 0; }).map(function(x){ return x.m; });
-      return {months:months, totals:tot, econ:econ, calves:co, forageTdn:ftdn, bcs:bcsInfo, calf:calfInfo, endStock:stock.slice()};
+      return {months:months, totals:tot, econ:econ, calves:co, forageTdn:ftdn, bcs:bcsInfo, calf:calfInfo};
     }
 
     function doy(mmdd){ var p = String(mmdd || '').split('-'); var mo = +p[0], da = +p[1]; if(!(mo >= 1 && mo <= 12 && da >= 1)) return 45; return MONTH_START[mo - 1] + Math.min(da, MONTH_DAYS[mo - 1]) - 1; }
@@ -927,7 +910,7 @@
     }
     return {peakLbOf:peakLbOf, cowWeightMix:cowWeightMix, pastureGrowth:pastureGrowth, heiferDay:heiferDay, heiferState:heiferState, heifersKeptPerCow:heifersKeptPerCow, heiferAges:heiferAges, bodyEnergy:bodyEnergy, SEASON_CALF:SEASON_CALF, SEASON_CULL:SEASON_CULL, nemaOf:nemaOf, needAt:needAt, cowParams:cowParams, envFor:envFor, birthLb:birthLb, BREEDS:BREEDS, MILK:MILK, REGIONS:REGIONS, QUALITY:QUALITY, ACTIVITY:ACTIVITY, MONTHS:MONTHS, MONTH_DAYS:MONTH_DAYS, MONTH_START:MONTH_START,
             NAHMS:NAHMS, SOURCES:SOURCES, LOSS_DEFAULT:LOSS_DEFAULT, WEATHER_SHARE:WEATHER_SHARE,
-            cowDay:cowDay, retainedEnergy:retainedEnergy, mpToNp:mpToNp, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, COW_AGE:COW_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, yearSupply:yearSupply, balance:balance,
+            cowDay:cowDay, retainedEnergy:retainedEnergy, mpToNp:mpToNp, cowAgeShares:cowAgeShares, MILK_AGE:MILK_AGE, COW_AGE:COW_AGE, bullDay:bullDay, calfDay:calfDay, weanedGain:weanedGain, requirements:requirements, pastureSupply:pastureSupply, adjustSupply:adjustSupply, balance:balance,
             intakePct:intakePct, doy:doy, B6124:B6124, rangeQuality:rangeQuality, regionFromMlra:regionFromMlra, regionFromLatLng:regionFromLatLng, inTexas:inTexas, solveTDN:solveTDN, cohorts:cohorts, calfCurve:calfCurve, calfForageDmKg:calfForageDmKg, calfForageTF:calfForageTF, T67:T67, RANGE_SHAPE:RANGE_SHAPE, calfOutcome:calfOutcome,
             weatherFactor:weatherFactor, grazeFactor:grazeFactor, weatherLoss:weatherLoss, pregByBcs:pregByBcs, flyActivity:flyActivity, slideLookup:slideLookup, monthOfDay:monthOfDay};
   })();

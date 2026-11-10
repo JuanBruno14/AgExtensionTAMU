@@ -241,7 +241,7 @@
           <div class="field" style="grid-column:1 / -1;">
             <label for="satMode">Satellite forage record <span style="font-weight:500;color:var(--ink-muted);">(optional)</span></label>
             <select id="satMode"><option value="off">Off</option><option value="on">On: check my pastures against the satellite record</option></select>
-            <span class="hint">Sends each pasture outline to the Rangeland Analysis Platform (USDA Agricultural Research Service) and reads how much grass and forbs grew there every 16 days, estimated from Landsat images. The record starts in 1986; My Ranch uses the years with no gaps, usually 2000 on. Each pasture then shows its record next to the soil survey, and <em>Decisions → Year by year</em> runs your plan through every one of those years. Turning it on changes no number in your plan. Small grains are skipped (the record leaves out cropland).</span>
+            <span class="hint">Sends each pasture outline to the Rangeland Analysis Platform (USDA Agricultural Research Service) and reads how much grass and forbs grew there every 16 days, estimated from Landsat images. The record starts in 1986; My Ranch uses the years with no gaps, usually 2000 on. Each pasture then shows its record next to the soil survey or your estimate. Turning it on changes no number in your plan. Small grains are skipped (the record leaves out cropland).</span>
           </div>
           <div class="field" id="satCurveField" style="grid-column:1 / -1;" hidden>
             <label for="satCurve">Growth through the year</label>
@@ -592,13 +592,12 @@
     <div class="card" id="decCard">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v12M18 9v12M6 15a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM18 3a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM6 15c0-4 12-2 12-6"/></svg>
-        <h2>Decisions: calving season, drought, year by year, what if</h2>
+        <h2>Decisions: calving season, drought, what if</h2>
       </div>
       <div class="card-body">
         <div class="segmented dec-tabs" role="tablist" aria-label="Decision tools">
           <button type="button" class="seg-btn active" data-dec="calving" role="tab" aria-selected="true">Best calving season</button>
           <button type="button" class="seg-btn" data-dec="drought" role="tab" aria-selected="false">Drought: buy feed or wean early?</button>
-          <button type="button" class="seg-btn" data-dec="years" role="tab" aria-selected="false">Year by year</button>
           <button type="button" class="seg-btn" data-dec="whatif" role="tab" aria-selected="false">What if…</button>
         </div>
         <div class="fc-empty" id="dec_empty" hidden></div>
@@ -656,23 +655,6 @@
           <p class="fc-short" id="dec_drLongText"></p>
           <div class="table-scroll"><table class="plan fc-table" id="dec_drLongTable"></table></div>
           <p class="card-note" style="margin:8px 0 0;">* Worth today: each year’s cash discounted at your interest rate, plus the cows you still own in year 10 valued as culls, so selling and staying smaller isn’t rewarded just for holding cash. A normal year after the drought uses your ranch’s own feed calendar and today’s prices; thin cows at breeding during the drought mean fewer calves the next year (Sprott 1985). The grass recovers over two years after the drought (your setting); a herd too big for it buys hay at your normal price. Not counted: taxes (drought sales can be deferred) and buying cows of unknown health. Idea and structure from Texas A&amp;M AgriLife’s <em>Drought Decision-Aid / Restocking Options</em> (F. Abello, Vernon).</p>
-          </div>
-        </div>
-
-        <div class="dec-panel" id="dec_years" hidden>
-          <p class="card-note" style="margin-top:14px;">Your year plan is a normal year. This runs the same herd, prices and costs through every year of your pastures’ satellite record, one after the other: each year’s grass grows as it did that year, what is left standing in December carries into the next, and whatever the herd is short of is bought.</p>
-          <div class="dm-suggest" id="dec_yrStatus" hidden></div>
-          <div id="dec_yrBody">
-            <div class="fc-chart yr-chart" id="dec_yrChart"></div>
-            <p class="fc-short" id="dec_yrText"></p>
-            <h3 class="sub-h">How many cows? The same years with a smaller or larger herd</h3>
-            <div class="yr-sizes" id="dec_yrSizes"></div>
-            <p class="fc-short" id="dec_yrSizeText"></p>
-            <details class="advanced" style="margin-top:12px;">
-              <summary>Every year: grass, hay, supplement, calves, net return</summary>
-              <div class="adv-body"><div class="table-scroll"><table class="plan fc-table" id="dec_yrTable"></table></div></div>
-            </details>
-            <p class="card-note" style="margin:12px 0 0;">Grass by year and month: Rangeland Analysis Platform (USDA Agricultural Research Service), each pasture’s growth as a share of its own average, applied to the forage estimate in your plan; small grains stay at their normal year. Prices, costs and forage quality are today’s in every year, and the herd is never sold down, so this shows what the weather alone does to the plan (the Drought tab compares ways through a dry year). Thin cows at breeding mean fewer calves the next year (Sprott 1985). The satellite estimate tells dry years from good ones well; treat single years as approximate.</p>
           </div>
         </div>
 
