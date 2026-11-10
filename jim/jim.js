@@ -173,8 +173,8 @@
     '<div class="jim-foot"><form class="jim-form"><label class="jim-sr" for="jimInput" style="position:absolute;left:-9999px">Your question for Jim</label>' +
     '<textarea id="jimInput" class="jim-input" rows="1" placeholder="Ask about margins, costs, prices…" maxlength="2000"></textarea>' +
     '<button type="submit" class="jim-send" aria-label="Send">' + ICON_SEND + '</button></form>' +
-    '<p class="jim-note">Jim is an AI assistant (Claude, by Anthropic) and can make mistakes. Budget figures are 2026 planning estimates for the Rolling Plains (District 3) — check them against your own numbers. ' +
-    'Your questions are sent to Anthropic to answer them; please don\'t type names, addresses, account numbers or other personal information. ' +
+    '<p class="jim-note">Jim is an AI assistant and can make mistakes. Budget figures are 2026 planning estimates for the Rolling Plains (District 3) — check them against your own numbers. ' +
+    'Your questions go to an outside AI service to be answered; please don\'t type names, addresses, account numbers or other personal information. ' +
     '<a href="' + esc(PRIVACY_URL) + '" target="_blank" rel="noopener">Privacy &amp; data</a></p></div>';
 
   root.appendChild(launch);
