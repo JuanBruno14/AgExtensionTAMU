@@ -169,7 +169,7 @@
       weanLb:h.weanLb, calfGrowth:h.calfGrowth === 'target' ? 'target' : 'nrc', birthLb:FEED.birthLb({breed:h.breed}), weanPeriod:h.weanPeriod, postAdg:h.postAdg,
       calvingRate:h.calvingRate, calfLoss:h.calfLoss, cowLoss:h.cowLoss, region:regionKey(),
       replRate:+h.replRate || 0, heiferPreg:+h.heiferPreg || 85, cullPrice:cullPrice(over && over.priceMult), bcsWean:+h.bcsWean || +h.bcs,
-      seasonal:h.seasonal !== 'off', nowMonth:new Date().getMonth(),
+      seasonal:h.seasonal !== 'off', nowMonth:new Date().getMonth(), heiferLighter:+h.heiferLighter || 0,
       weatherAdj:h.weatherAdj !== 'off', windMph:h.windMph, coat:+h.coat || 1, heat:+h.heat || 1,
       nwsPresent:h.nws === 'yes', nwsLoss:h.nwsLoss, nwsCost:h.nwsCost, hornFly:+h.hornFly,
       supMode:h.supMode === 'full' ? 'full' : 'protein', mineralOz:h.mineralOz == null ? 4 : +h.mineralOz, mineralPrice:h.mineralPrice == null ? 0.45 : +h.mineralPrice, calfShort:h.calfShort === 'lighter' ? 'lighter' : 'creep', creepPrice:+h.creepPrice || 0, creepConv:+h.creepConv || 8,
@@ -186,7 +186,7 @@
       tripCost:h.tripCost, supTrips:+h.supTrips, hayTrips:+h.hayTrips, distPerTon:h.distPerTon}, over || {});
   }
   function supplyNow(mult){
-    var past = state.pastures.map(function(p){ return {annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair', grazed:isGrazed(p) && !isHayMeadow(p), measured:p.measured || null, forageAcres:forageAcres(p), name:p.name, he:heOf(p)/100}; });
+    var past = state.pastures.map(function(p){ return {annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair', grazed:isGrazed(p) && !isHayMeadow(p), measured:p.measured || null, forageAcres:forageAcres(p), name:p.name, he:heOf(p)/100, curve:curveOf(p)}; });
     var reg = regionKey(), he = state.settings.harvestEff/100;
     var sup = FEED.pastureSupply(past, he, reg, state.herd.fq);
     var t = totals(), mc = state.settings.manualCap;
@@ -285,7 +285,9 @@
     setTimeout(function(){ window.print(); }, 50);
   }
 
-  /* ---- grazing calendar: one herd moved through the pastures in your order */
+  /* ---- grazing calendar: the herd moved through the pastures in your order.
+     Optional: replacement heifers and weaned calves as a second herd on the pastures you give them (settings.youngHerd = 'own',
+     pasture.group = 'young'), and a minimum rest before a pasture is grazed again (settings.minRest, days). */
   function grazingPlan(){
     if(!(state.herd.cows > 0)) return null;
     var list = state.pastures.filter(function(p){ return isGrazed(p) && !isHayMeadow(p) && annualLb(p) != null; });
@@ -293,32 +295,49 @@
     var res = runFeed(), reg = regionKey(), he = state.settings.harvestEff/100;
     var k = 1, mc = state.settings.manualCap;
     if(mc > 0){ var have = list.reduce(function(a, p){ return a + annualLb(p)*he; }, 0); if(have > 0) k = mc*state.settings.intakeLb*365/have; }
+    var hasYoung = res.months.some(function(x){ return (x.forageDemandYoungLb || 0) > 1; });
+    var split = state.settings.youngHerd === 'own' && hasYoung && list.some(function(p){ return p.group === 'young'; }) && list.some(function(p){ return p.group !== 'young'; });
     var P = list.map(function(p){
-      return {p:p, g:FEED.pastureGrowth({annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair'}, he, reg).map(function(x){ return x*k; }),
+      return {p:p, grp:split && p.group === 'young' ? 'young' : 'cows',
+              g:FEED.pastureGrowth({annualLb:annualLb(p), type:p.type, condition:p.condition || 'fair', curve:curveOf(p)}, he, reg).map(function(x){ return x*k; }),
               meas:p.measured && p.measured.lbAc > 0 ? {m:p.measured.month, lb:p.measured.lbAc*forageAcres(p)*he} : null,
-              stock:0, day:[], sd:[], visits:0, grazed:0, fed:0};
+              stock:0, day:[], sd:[], dem:[], visits:0, grazed:0, fed:0, out:-9999};
     });
     // ungrazed grass doesn't pile up forever: it weathers and is trampled, so standing forage never exceeds one year's usable growth
     P.forEach(function(x){ x.cap = Math.max(x.g.reduce(function(a, b){ return a + b; }, 0), x.meas ? x.meas.lb : 0); });
-    var maxStay = Math.max(3, +state.settings.maxGraze || 30), cur = 0, stay = 0, hayDays = 0, feeding = false, demDay = [];
+    var maxStay = Math.max(3, +state.settings.maxGraze || 30), minRest = Math.max(0, Math.min(180, +state.settings.minRest || 0)), demDay = [];
+    var G = (split ? ['cows', 'young'] : ['cows']).map(function(key){ return {key:key, L:P.filter(function(x){ return x.grp === key; }), cur:0, stay:0, feeding:false, hayDays:0, restBreaks:0}; });
     for(var yr = 0; yr < 2; yr++){
       for(var d = 0; d < 365; d++){
-        var m = FEED.monthOfDay(d), first = d === FEED.MONTH_START[m];
-        var dem = res.months[m].forageDemandLb/FEED.MONTH_DAYS[m];
+        var m = FEED.monthOfDay(d), first = d === FEED.MONTH_START[m], abs = yr*365 + d;
+        var mo = res.months[m], demAll = mo.forageDemandLb/FEED.MONTH_DAYS[m], demY = split ? (mo.forageDemandYoungLb || 0)/FEED.MONTH_DAYS[m] : 0;
         P.forEach(function(x){ if(first && x.meas && x.meas.m === m) x.stock = x.meas.lb; x.stock = Math.min(x.stock + x.g[m]/FEED.MONTH_DAYS[m], x.cap); if(yr === 1) x.sd[d] = x.stock; });
-        if(yr === 1) demDay[d] = dem;
-        // move when this pasture can't feed today, or after the longest stay, to the next pasture (in your order) with at least
-        // a week of feed (two weeks if the herd is being fed hay). If none has, the herd stays put and is fed there.
-        if(P[cur].stock < dem || stay >= maxStay){
-          var need = feeding ? 14 : 7;
-          for(var j = 1; j < P.length + (P.length === 1 ? 1 : 0); j++){ var c = (cur + j) % P.length; if(c !== cur && P[c].stock >= dem*need){ cur = c; stay = 0; if(yr === 1) P[cur].visits++; break; } }
-        }
-        var x = P[cur], eat = Math.min(x.stock, dem); x.stock -= eat; stay++; feeding = eat < dem*0.98;
-        if(yr === 1){
-          var short = eat < dem*0.98;
-          P.forEach(function(y, i){ y.day[d] = i === cur ? (short ? 'feed' : 'graze') : 'rest'; });
-          if(short){ x.fed++; hayDays++; } else x.grazed++;
-        }
+        if(yr === 1) demDay[d] = demAll - demY;
+        G.forEach(function(h){
+          var dem = h.key === 'young' ? demY : demAll - demY, L = h.L;
+          if(yr === 1) L.forEach(function(x){ x.dem[d] = dem; });
+          if(!(dem > 0)){ if(yr === 1) L.forEach(function(x){ x.day[d] = 'rest'; }); return; }   // no animals in this herd today
+          // move when this pasture can't feed today, or after the longest stay, to the next pasture (in your order) with at least
+          // a week of feed (two weeks if the herd is being fed hay) that has rested long enough. If none has rested, the herd
+          // stays while its grass lasts; out of grass, it moves to any pasture with feed (a rest cut short). If none has feed,
+          // the herd stays put and is fed there.
+          if(L[h.cur].stock < dem || h.stay >= maxStay){
+            var need = h.feeding ? 14 : 7, pick = -1, anyFeed = -1;
+            for(var j = 1; j < L.length + (L.length === 1 ? 1 : 0); j++){
+              var c = (h.cur + j) % L.length; if(c === h.cur || L[c].stock < dem*need) continue;
+              if(anyFeed < 0) anyFeed = c;
+              if(abs - L[c].out >= minRest){ pick = c; break; }
+            }
+            if(pick < 0 && anyFeed >= 0 && L[h.cur].stock < dem){ pick = anyFeed; if(yr === 1) h.restBreaks++; }
+            if(pick >= 0){ L[h.cur].out = abs; h.cur = pick; h.stay = 0; if(yr === 1) L[h.cur].visits++; }
+          }
+          var x = L[h.cur], eat = Math.min(x.stock, dem); x.stock -= eat; h.stay++; h.feeding = eat < dem*0.98; x.out = abs;
+          if(yr === 1){
+            var short = eat < dem*0.98, pre = h.key === 'young' ? 'y' : '';
+            L.forEach(function(y, i){ y.day[d] = i === h.cur ? pre + (short ? 'feed' : 'graze') : 'rest'; });
+            if(short){ x.fed++; h.hayDays++; } else x.grazed++;
+          }
+        });
       }
     }
     P.forEach(function(x){
@@ -329,7 +348,8 @@
       x.rest = rests.length && x.grazed + x.fed > 0 ? rests.reduce(function(a, b){ return a + b; }, 0)/rests.length : null;
       if(!x.visits && x.grazed + x.fed > 0) x.visits = 1;
     });
-    return {P:P, hayDays:hayDays, maxStay:maxStay, dem:demDay};
+    return {P:P, hayDays:G[0].hayDays, maxStay:maxStay, dem:demDay, minRest:minRest, restBreaks:G.reduce(function(a, h){ return a + h.restBreaks; }, 0),
+            split:split, hasYoung:hasYoung, youngHayDays:split ? G[1].hayDays : 0};
   }
 
   /* ---- where the herd is today and how much grass each pasture has standing (estimates from the grazing calendar) */
@@ -354,8 +374,8 @@
           var dd = W(d), m = FEED.monthOfDay(dd);
           if(k > 0) stock = Math.min(stock + x0.g[m]/FEED.MONTH_DAYS[m], x0.cap);
           if(k === din) now = stock;
-          if(stock < g.dem[dd] || stay >= g.maxStay) break;
-          stock -= g.dem[dd]; stay++; d++;
+          if(stock < x0.dem[dd] || stay >= g.maxStay) break;
+          stock -= x0.dem[dd]; stay++; d++;
         }
         if(now == null) now = stock;
         actual = {x:x0, since:since, daysIn:din, stay:stay, now:now};
@@ -364,13 +384,13 @@
     g.P.forEach(function(x, i){
       var st = x.day[td], rest = null, standing = x.sd[td];
       if(st === 'rest'){ rest = 0; for(var b = 1; b < 365 && x.day[W(td - b)] === 'rest'; b++) rest = b; if(rest >= 364) rest = null; else rest++; }
-      out.list.push({x:x, i:i, planHere:st !== 'rest', rest:rest, standing:standing, days:standing/g.dem[td]});
+      out.list.push({x:x, i:i, planHere:st !== 'rest', rest:rest, standing:standing, days:x.dem[td] > 0 ? standing/x.dem[td] : 365});
     });
     if(actual){
-      out.list.forEach(function(r){ if(r.x === actual.x){ r.standing = actual.now; r.days = actual.now/g.dem[td]; } });
+      out.list.forEach(function(r){ if(r.x === actual.x){ r.standing = actual.now; r.days = actual.x.dem[td] > 0 ? actual.now/actual.x.dem[td] : 365; } });
       out.herd = {p:actual.x.p, since:actual.since, daysIn:actual.daysIn, stay:actual.stay, left:Math.max(0, actual.stay - actual.daysIn), moveBy:addDays(actual.since, actual.stay), source:'you'};
     } else {
-      var here = null; out.list.forEach(function(r){ if(r.planHere) here = r; });
+      var here = null; out.list.forEach(function(r){ if(r.planHere && r.x.grp === 'cows') here = r; });
       if(here){
         var a = 0; while(a < 364 && here.x.day[W(td - a - 1)] !== 'rest') a++;
         var f = 0; while(f < 364 && here.x.day[W(td + f + 1)] !== 'rest') f++;
@@ -381,9 +401,9 @@
       var hp = out.herd.p, ga = grazeableAcres(hp);
       out.herd.acPerAU = herd > 0 ? ga/herd : null;
       // next pasture in your order with at least a week of grass when the herd moves
-      var idx = -1; g.P.forEach(function(x, i){ if(x.p === hp) idx = i; });
+      var mine = g.P.filter(function(x){ return x.grp === 'cows' || x.p === hp; }), idx = -1; mine.forEach(function(x, i){ if(x.p === hp) idx = i; });
       var md = W(td + out.herd.left);
-      for(var j = 1; j < g.P.length; j++){ var c = g.P[(idx + j) % g.P.length]; if(c.sd[md] >= g.dem[md]*7){ out.herd.next = {p:c.p, days:c.sd[md]/g.dem[md]}; break; } }
+      for(var j = 1; j < mine.length; j++){ var c = mine[(idx + j) % mine.length]; if(g.dem[md] > 0 && c.sd[md] >= g.dem[md]*7){ out.herd.next = {p:c.p, days:c.sd[md]/g.dem[md]}; break; } }
       out.list.forEach(function(r){ r.herdHere = r.x.p === hp; if(r.herdHere) r.rest = null; });
     }
     return out;
@@ -393,7 +413,7 @@
   var hnOpen = false;
   function herdNowHtml(){
     var t = grassToday(); if(!t) return '';
-    var opts = '<option value="">Follow the grazing calendar</option>' + t.g.P.map(function(x){ return '<option value="' + x.p.id + '"' + ((state.herdNow || {}).pid === x.p.id ? ' selected' : '') + '>' + esc(x.p.name) + '</option>'; }).join('');
+    var opts = '<option value="">Follow the grazing calendar</option>' + t.g.P.filter(function(x){ return x.grp === 'cows'; }).map(function(x){ return '<option value="' + x.p.id + '"' + ((state.herdNow || {}).pid === x.p.id ? ' selected' : '') + '>' + esc(x.p.name) + '</option>'; }).join('');
     var hn = state.herdNow || {}, h = t.herd, msg = '';
     if(t.future) msg = '<span class="tag warn">Date is in the future</span> Pick the day the herd went in.';
     else if(h){
@@ -407,7 +427,7 @@
     var rows = t.list.slice().sort(function(a, b){ return (b.herdHere - a.herdHere) || (b.days - a.days); }).map(function(r){
       var c = grassClass(r);
       return '<tr><td><span class="p-swatch" style="display:inline-block;vertical-align:-2px;margin-right:6px;background:' + GRASS_COLORS[c] + ';"></span>' + esc(r.x.p.name) + '</td>' +
-        '<td>' + (r.herdHere ? '🐄 Herd here' : r.rest != null ? 'Rested ' + fmt(r.rest) + ' d' : r.planHere ? 'Resting' : 'Not used this year') + '</td>' +
+        '<td>' + (r.herdHere ? '🐄 Herd here' : r.planHere && r.x.grp === 'young' ? 'Heifers &amp; weaned calves here' : r.rest != null ? 'Rested ' + fmt(r.rest) + ' d' : r.planHere ? 'Resting' : 'Not used this year') + '</td>' +
         '<td class="num">' + fmt(r.standing/Math.max(forageAcres(r.x.p), 0.01)/(state.settings.harvestEff/100)) + ' lb/ac</td>' +
         '<td class="num">' + fmt(r.days) + ' d</td></tr>';
     }).join('');
@@ -431,7 +451,7 @@
       var d = 0;
       while(d < 365){
         var st = x.day[d], e = d; while(e < 365 && x.day[e] === st) e++;
-        if(st !== 'rest') s += '<rect class="gp-' + st + '" x="' + (lw + d*cw) + '" y="' + (y + 3) + '" width="' + Math.max(1.5, (e - d)*cw) + '" height="' + (rh - 6) + '" rx="2"/>';
+        if(st !== 'rest') s += '<rect class="gp-' + (st.charAt(0) === 'y' ? st.slice(1) + ' gp-young' : st) + '" x="' + (lw + d*cw) + '" y="' + (y + 3) + '" width="' + Math.max(1.5, (e - d)*cw) + '" height="' + (rh - 6) + '" rx="2"/>';
         d = e;
       }
       var txt = (x.grazed + x.fed) + ' d' + (x.rest != null ? ' · rest ' + fmt(x.rest) + ' d' : ' · not used');
@@ -441,9 +461,16 @@
     var unused = g.P.filter(function(x){ return x.grazed + x.fed === 0; }).map(function(x){ return x.p.name; });
     return '<h3 class="gp-title">Grazing calendar</h3>' +
       '<div class="fc-legend"><span><i class="sw gp-graze"></i>Grazing</span><span><i class="sw gp-feed"></i>Herd here, feeding hay</span><span><i class="sw gp-rest"></i>Resting</span>' +
-      '<label class="gp-max">Move at least every <input type="number" id="gp_max" min="3" max="120" step="1" value="' + g.maxStay + '"> days</label></div>' +
+      (g.split ? '<span><i class="sw gp-graze gp-young"></i>Heifers &amp; weaned calves</span>' : '') +
+      '<label class="gp-max">Move at least every <input type="number" id="gp_max" min="3" max="120" step="1" value="' + g.maxStay + '"> days</label>' +
+      '<label class="gp-max">Rest at least <input type="number" id="gp_rest" min="0" max="180" step="5" value="' + g.minRest + '"> days</label></div>' +
+      (g.hasYoung ? '<div class="gp-herds"><label>Heifers &amp; weaned calves <select id="gp_young" aria-label="How heifers and weaned calves graze"><option value="with"' + (state.settings.youngHerd === 'own' ? '' : ' selected') + '>graze with the cows</option><option value="own"' + (state.settings.youngHerd === 'own' ? ' selected' : '') + '>have their own pastures</option></select></label>' +
+        (state.settings.youngHerd === 'own' ? '<span class="gp-assign">' + g.P.map(function(x){ return '<label>' + esc(x.p.name.length > 18 ? x.p.name.slice(0, 17) + '…' : x.p.name) + ' <select data-grp="' + x.p.id + '" aria-label="Herd that grazes ' + esc(x.p.name) + '"><option value="cows"' + (x.p.group === 'young' ? '' : ' selected') + '>Cows</option><option value="young"' + (x.p.group === 'young' ? ' selected' : '') + '>Young stock</option></select></label>'; }).join('') + '</span>' +
+          (g.split ? '' : '<span class="hint">Give at least one pasture to each herd.</span>') : '') + '</div>' : '') +
       '<div class="table-scroll">' + s + '</div>' +
-      '<p class="narrative" style="margin:10px 0 0;font-size:13px;">One herd moving through your pastures in order, leaving each when its grass runs out or after ' + g.maxStay + ' days. ' +
+      '<p class="narrative" style="margin:10px 0 0;font-size:13px;">' + (g.split ? 'Two herds, each moving through its own pastures in order: the cows (with bulls and nursing calves), and the replacement heifers and weaned calves. A herd leaves a pasture' : 'One herd moving through your pastures in order, leaving each') + ' when its grass runs out or after ' + g.maxStay + ' days' + (g.minRest > 0 ? ', and goes only to a pasture rested ' + g.minRest + ' days or more' : '') + '. ' +
+      (g.minRest > 0 && g.restBreaks > 0 ? 'On <strong>' + fmt(g.restBreaks) + ' move' + (g.restBreaks > 1 ? 's' : '') + '</strong> no rested pasture had grass, so a rest was cut short: fewer cattle, more pastures or a shorter rest would fix it. ' : '') +
+      (g.split && g.youngHayDays > 0 ? 'The young stock run out of grass on about <strong>' + fmt(g.youngHayDays) + ' days</strong> on the pastures you gave them. ' : '') +
       (g.hayDays > 0 ? 'On about <strong>' + fmt(g.hayDays) + ' days</strong> no pasture has enough, so the herd stays put and is fed hay (orange). ' : 'Pasture carries the herd every day of the year. ') +
       (unused.length ? 'Never needed: ' + esc(unused.join(', ')) + '. ' : '') + 'Aim for 30–90 days of rest in the growing season.</p>';
   }
@@ -737,7 +764,7 @@
     document.querySelectorAll('.dec-panel').forEach(function(p){ p.hidden = !ready || p.id !== 'dec_' + decTab; });
     if(!ready){ empty.hidden = false; empty.innerHTML = 'Enter your cows and draw pastures with a forage estimate (or enter your own carrying capacity) to compare decisions.'; return; }
     empty.hidden = true;
-    var key = decTab + '|' + feedKey + '|' + JSON.stringify(h.dr) + '|' + JSON.stringify(h.sell || {}) + '|' + (h.decPrice || '');
+    var key = decTab + '|' + feedKey + '|' + JSON.stringify(h.dr) + '|' + JSON.stringify(h.sell || {}) + '|' + (h.decPrice || '') + '|' + rapSig() + '|' + JSON.stringify(h.oc || {}) + '|' + (h.intRate || 0);
     if(key === decKey) return;
     decKey = key;
     if(decTab === 'calving') renderCalvingDecision();
@@ -928,11 +955,19 @@
     var cost = g('mp_bullCost', 4500), life = Math.max(1, g('mp_bullLife', 4)), lb = g('mp_bullSalvageWeight', 1650.7), pr = g('mp_cullBullPrice', MP_DEFAULT.mp_cullBullPrice), dl = g('mp_bullDeathLoss', 2);
     return (cost - lb*pr/100*(100 - dl)/100)/life;
   }
-  function otherCosts(){
+  /* Interest on the money tied up in the breeding herd (optional, state.herd.intRate % a year, default 0 = not charged, as in
+     the BCU sheet): cows at the bred-cow price and bulls at their purchase price, from the site's market prices. It is an
+     opportunity cost (what that money would earn elsewhere, or what the cattle note costs), not a cash bill for a paid-off herd. */
+  function herdInterest(cows, bulls){
+    var r = Math.max(0, +state.herd.intRate || 0)/100; if(!(r > 0)) return 0;
+    var mp = mpStore(), bullCost = +mp.mp_bullCost > 0 ? +mp.mp_bullCost : 4500;
+    return r*(cows*bredCowPrice() + bulls*bullCost);
+  }
+  function otherCosts(nCows, nBulls){
     var h = state.herd, oc = h.oc || {}, items = 0;
     OC_KEYS.forEach(function(k){ items += +oc[k] || 0; });
-    var bulls = bullCount(), bullTotal = bulls*bullDeprPerBull(), cows = Math.max(1, h.cows || 0);
-    return {perCowItems:items, bullTotal:bullTotal, perCow:items + bullTotal/cows, total:items*(h.cows || 0) + bullTotal};
+    var n = nCows != null ? nCows : (h.cows || 0), bulls = nBulls != null ? nBulls : bullCount(), bullTotal = bulls*bullDeprPerBull(), cows = Math.max(1, n), interest = herdInterest(n, bulls);
+    return {perCowItems:items, bullTotal:bullTotal, interest:interest, perCow:items + (bullTotal + interest)/cows, total:items*n + bullTotal + interest};
   }
   /* all costs, net return, and the calf price that pays them: (all costs - cull and open-heifer sales) / cwt of calves weaned
      (sold and kept), like the SPA unit cost of production adjusted for non-calf revenue */
@@ -944,7 +979,7 @@
   function renderOcNote(){
     var el = $('oc_note'); if(!el) return;
     var oc = otherCosts();
-    el.innerHTML = 'Bull depreciation: ' + money(bullDeprPerBull()) + ' per bull a year × ' + bullCount() + ' bulls = ' + money(oc.bullTotal) + '. All other costs: <strong>' + money(oc.perCow) + ' per cow</strong> (' + money(oc.total) + ' a year). Net return in the bar at the top and in the year plan.';
+    el.innerHTML = 'Bull depreciation: ' + money(bullDeprPerBull()) + ' per bull a year × ' + bullCount() + ' bulls = ' + money(oc.bullTotal) + '. ' + (oc.interest > 0 ? 'Interest on the herd: ' + fmt(+state.herd.intRate, 1) + '% of ' + money(oc.interest/(+state.herd.intRate/100)) + ' (cows at the bred-cow price, bulls at their cost) = ' + money(oc.interest) + '. ' : '') + 'All other costs: <strong>' + money(oc.perCow) + ' per cow</strong> (' + money(oc.total) + ' a year). Net return in the bar at the top and in the year plan.';
   }
 
   /* ---- Texas A&M Cow-Calf SPA Worksheets (.xlsx): read the cached values of the "Data Entry" and "SPASum" sheets with JSZip
@@ -1388,6 +1423,43 @@
       var worse = r.a < r.b ? {v:r.a, l:r.t.lo} : {v:r.b, l:r.t.hi}, better = r.a < r.b ? {v:r.b, l:r.t.hi} : {v:r.a, l:r.t.lo};
       return '<div class="wi-row"><span class="wi-lbl">' + esc(r.t.label) + '</span><div class="wi-side left">' + bar(Math.min(0, worse.v), worse.l) + '</div><div class="wi-side right">' + bar(Math.max(0, better.v), better.l) + '</div></div>';
     }).join('') + '<p class="card-note" style="margin:12px 0 0;">Change in cattle sales minus feed costs per year, whole herd, from today’s ' + money(base) + '.</p>';
+    /* what to measure first: the inputs that are typical values rather than this ranch's, each across its likely range */
+    var other = h.fq === 'b6124' ? 'typical' : 'b6124', regK = regionKey();
+    var swapQ = function(sup){ var q = FEED.rangeQuality(other, regK); return sup.map(function(g){ return g.type === 'range' ? Object.assign({}, g, {quality:q}) : g; }); };
+    var hasRange = supplyNow().some(function(g){ return g.type === 'range'; }), waste = h.hayWaste == null ? 15 : +h.hayWaste;
+    var A = [
+      {label:'How much grass your pastures grow', lo:'20% less', hi:'20% more', a:function(){ return netOf({}, {}, 0.8); }, b:function(){ return netOf({}, {}, 1.2); },
+       how:'Clip and weigh a few frames in each pasture this fall and enter it under <em>Pastures → Measured forage</em>' + (satOn() ? '' : '; the satellite record (Forage &amp; capacity settings) is a second opinion') + '.'},
+      {label:'Cows’ milk (sets weaning weight)', lo:'low', hi:'high', a:function(){ return netOf({peakMilkLb:FEED.peakLbOf(h.breed, 'low')}); }, b:function(){ return netOf({peakMilkLb:FEED.peakLbOf(h.breed, 'high')}); },
+       how:'Weigh the calves at weaning, enter the average under <em>Herd</em> and press <em>Match it</em>.'},
+      {label:'Hay lost in storage and feeding', lo:'30%', hi:'none', a:function(){ return netOf({}, {hayWaste:30}); }, b:function(){ return netOf({}, {hayWaste:0}); },
+       how:'Weigh a few bales and look at what is left around the feeder; a ring and covered storage are where this number comes down. You use ' + fmt(waste) + '%.'},
+      {label:'Calving rate', lo:'5 points lower', hi:'5 points higher', a:function(){ return netOf({calvingRate:Math.max(30, h.calvingRate - 5)}); }, b:function(){ return netOf({calvingRate:Math.min(100, h.calvingRate + 5)}); },
+       how:'Pregnancy-check, and count calves weaned against cows exposed.'}
+    ];
+    if(hasRange) A.push({label:'Forage quality of native range', lo:other === 'b6124' ? 'what cattle select (B-6124)' : 'typical values', hi:null, a:function(){ return netOf({}, {}, 1, swapQ); }, b:null,
+       how:'Send a forage sample, or a manure sample for fecal NIRS (Grazingland Animal Nutrition Lab), in winter and in summer.'});
+    var bT = feedLast.totals, cell = function(r, lab){
+      if(!r) return '<td class="num">—</td>';
+      var d = r.econ.net - base, dh = (r.totals.hay - bT.hay)/2000, ds = (r.totals.sup - bT.sup)/2000, bits = [];
+      if(Math.abs(dh) >= 0.5) bits.push((dh > 0 ? '+' : '−') + fmt(Math.abs(dh), 1) + ' t hay');
+      if(Math.abs(ds) >= 0.5) bits.push((ds > 0 ? '+' : '−') + fmt(Math.abs(ds), 1) + ' t supplement');
+      if(Math.abs(r.econ.avgWeanLb - feedLast.econ.avgWeanLb) >= 3) bits.push('weaning ' + fmt(r.econ.avgWeanLb) + ' lb');
+      return '<td class="num ' + (d < -0.5 ? 'neg' : d > 0.5 ? 'pos' : '') + '">' + (d >= 0 ? '+' : '−') + money(Math.abs(d)) + '<br><small>' + esc(lab) + (bits.length ? ' · ' + bits.join(', ') : '') + '</small></td>';
+    };
+    var AR = A.map(function(t){ var ra = t.a(), rb = t.b ? t.b() : null, da = ra.econ.net - base, db = rb ? rb.econ.net - base : 0; return {t:t, ra:ra, rb:rb, span:rb ? Math.abs(db - da) : Math.abs(da)}; });
+    AR.sort(function(x, y){ return y.span - x.span; });
+    $('dec_assume').innerHTML = '<thead><tr><th>Input</th><th class="num">If it is…</th><th class="num">…or</th><th class="num">Moves the result by</th><th>How to find out</th></tr></thead><tbody>' +
+      AR.map(function(r){ return '<tr><td>' + r.t.label + '</td>' + cell(r.ra, r.t.lo) + cell(r.rb, r.t.hi || '') + '<td class="num"><strong>' + money(r.span) + '</strong></td><td>' + r.t.how + '</td></tr>'; }).join('') + '</tbody>';
+    var top = AR[0];
+    $('dec_assumeText').innerHTML = top.span < Math.max(500, Math.abs(base)*0.01) ? 'None of these moves your result much at the moment: the plan is not sensitive to them at this herd size.'
+      : 'On this ranch the number worth measuring first is <strong>' + top.t.label.charAt(0).toLowerCase() + top.t.label.slice(1) + '</strong>: across its likely range it moves cattle sales minus feed by ' + money(top.span) + ' a year' + (AR[1] ? ', ahead of ' + AR[1].t.label.charAt(0).toLowerCase() + AR[1].t.label.slice(1) + ' (' + money(AR[1].span) + ')' : '') + '.';
+  }
+
+  /* the satellite record's state, so decisions redraw when it changes */
+  function rapSig(){
+    if(!satOn()) return 'off';
+    return state.pastures.map(function(p){ return p.rap ? p.rap.status + (p.rap.at || '') : '-'; }).join(',') + '|' + state.settings.satCurve;
   }
 
   /* ---- bindings */
@@ -1396,7 +1468,7 @@
     $('fc_source').innerHTML = Object.keys(FEED.SOURCES).map(function(k){ var s = FEED.SOURCES[k]; return '<option value="' + k + '">' + esc(s.label) + (s.cp != null ? ' (' + s.cp + '% CP)' : '') + '</option>'; }).join('');
     $('dr_from').innerHTML = FEED.MONTHS.map(function(m, i){ return '<option value="' + i + '">' + m + '</option>'; }).join('');
     bindFeedValues();
-    function rerender(){ save(); renderHayShared(); renderSummary(); renderRotation(); renderFeed(); renderHerdNote(); }
+    function rerender(){ save(); renderHayShared(); renderSummary(); renderRotation(); renderFeed(); renderHerdNote(); renderOcNote(); }
     var useHay = $('fc_hayUseShared');
     if(useHay) useHay.addEventListener('click', function(){ state.herd.hayPrice = sharedHayPrice(); $('fc_hayPrice').value = state.herd.hayPrice; rerender(); });
     window.addEventListener('storage', function(e){ if(e.key === 'tamuDecisionAidsMarketPrices') renderHayShared(); });

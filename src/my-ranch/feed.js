@@ -505,12 +505,15 @@
         var wSale = wWean + (o.postAdg || 0)*(o.weanPeriod || 0);
         var saleM = monthOfDay(c.day + c.weanAge + (o.weanPeriod || 0));
         var sIdx = seasonIdx(o, SEASON_CALF, saleM);
-        var pS = slideLookup(o.steerSlide, wSale)*sIdx, pH = slideLookup(o.heiferSlide, wSale)*sIdx;
+        /* o.heiferLighter (% lighter than the steers at the same age, default 0 = same weight): the entered or predicted weight
+           is the average of both sexes, so steers go up and heifers down by half the gap; each is priced at its own weight. */
+        var hl = Math.max(0, Math.min(20, +o.heiferLighter || 0))/100, wS = wSale*2/(2 - hl), wH = wS*(1 - hl);
+        var pS = slideLookup(o.steerSlide, wS)*sIdx, pH = slideLookup(o.heiferSlide, wH)*sIdx;
         var price = 0.5*pS + 0.5*pH;   // $/cwt, half steers, half heifers
         var weaned = born*surv;
         var kept = Math.min(weaned/2, heifersKeptPerCow(o)*c.share);
         var sold = weaned - kept;
-        var calfInc = (weaned/2)*wSale/100*pS + (weaned/2 - kept)*wSale/100*pH;
+        var calfInc = (weaned/2)*wS/100*pS + (weaned/2 - kept)*wH/100*pH;
         // open heifers sold at pregnancy check; cull cows sold at weaning
         var opens = kept*(1 - (o.heiferPreg || 85)/100), openLb = heiferState(o, H_CHECK, c.weanAge, wWean).sbw/0.96*LB;
         var openInc = opens*openLb/100*slideLookup(o.heiferSlide, openLb)*seasonIdx(o, SEASON_CALF, monthOfDay(c.day + H_CHECK));
@@ -519,7 +522,7 @@
         c.surv = surv; c.wWean = wWean; c.wSale = wSale; c.price = price; c.born = born; c.weaned = weaned; c.kept = kept; c.sold = sold; c.saleMonth = saleM;
         out.born += born; out.weaned += weaned; out.kept += kept; out.sold += sold; out.opens += opens; out.culls += culls;
         out.deadWeather += born*lWeather; out.deadNws += born*lNws; out.deadOther += born*lOther;
-        out.soldLb += sold*wSale; out.calfIncome += calfInc; out.openIncome += openInc; out.cullIncome += cullInc;
+        out.soldLb += (weaned/2)*wS + (weaned/2 - kept)*wH; out.calfIncome += calfInc; out.openIncome += openInc; out.cullIncome += cullInc;
         out.income += calfInc + openInc + cullInc;
         out.nwsCalves += o.nwsPresent ? born*fly : 0;
         out.cohorts.push(c);
@@ -637,8 +640,11 @@
       return (R.byCond && R.byCond[cond || 'fair']) || R.curve;
     }
     /* One pasture's usable forage growth by month (lb) */
+    /* p.curve (optional): the pasture's own monthly growth shares, e.g. from its satellite record (Rangeland Analysis Platform);
+       it replaces the regional NRCS curve for that pasture only. */
+    function ownCurve(p){ return p && p.curve && p.curve.length === 12 && p.curve.reduce(function(a, b){ return a + b; }, 0) > 0 ? p.curve : null; }
     function pastureGrowth(p, he, regionKey){
-      var t = p.type === 'range' ? 'range' : p.type, curve = curveFor(t, regionKey, p.condition), tot = curve.reduce(function(a, b){ return a + b; }, 0);
+      var t = p.type === 'range' ? 'range' : p.type, curve = ownCurve(p) || curveFor(t, regionKey, p.condition), tot = curve.reduce(function(a, b){ return a + b; }, 0);
       return curve.map(function(x){ return (p.annualLb || 0)*he*x/tot; });
     }
     /* Pastures grouped by type; a pasture with a measured standing crop keeps its own entry so the measurement can reset its stock */
@@ -648,10 +654,12 @@
       pastures.forEach(function(p){
         if(!p.annualLb || !p.grazed) return;
         var t = p.type === 'range' ? 'range' : p.type;
-        if(p.measured && p.measured.lbAc > 0 && p.measured.month != null){
+        var meas = p.measured && p.measured.lbAc > 0 && p.measured.month != null;
+        // a pasture with a measured standing crop or its own growth curve keeps its own entry
+        if(meas || ownCurve(p)){
           var hp = p.he || he;
-          own.push({type:t, annual:p.annualLb*hp, growth:pastureGrowth(p, hp, regionKey), quality:qOf(t),
-                    measured:{month:p.measured.month, lb:p.measured.lbAc*(p.forageAcres || 0)*hp}, name:p.name, acres:p.forageAcres || 0, he:hp});
+          own.push({type:t, condition:t === 'range' ? (p.condition || 'fair') : undefined, annual:p.annualLb*hp, growth:pastureGrowth(p, hp, regionKey), quality:qOf(t),
+                    measured:meas ? {month:p.measured.month, lb:p.measured.lbAc*(p.forageAcres || 0)*hp} : undefined, name:p.name, acres:p.forageAcres || 0, he:hp});
           return;
         }
         // native range is grouped by condition too: each condition has its own growth curve
@@ -672,10 +680,9 @@
         if(which === 'all' || which === g.type){
           for(var i = 0; i < months; i++){ var m = (fromMonth + i) % 12; growth[m] *= (1 - cutPct/100); }
         }
-        return {type:g.type, annual:g.annual, growth:growth, quality:g.quality, measured:g.measured, name:g.name, acres:g.acres, he:g.he};
+        return {type:g.type, condition:g.condition, annual:g.annual, growth:growth, quality:g.quality, measured:g.measured, name:g.name, acres:g.acres, he:g.he};
       });
     }
-
     /* Grazing intake limited by forage mass (NRC 2016 Eq. 19-97 to 19-99, as coded in the BCNRM spreadsheet, Calc!D182:D184).
        The book prints 0.000764 in Eq. 19-97; the software uses 0.000074, which reaches 1 at 1,150 kg/ha (the printed value
        goes negative). FM = standing forage, kg DM/ha; guHa = ha per head; dop = days on the pasture; sbw kg; nm = diet NEma.
@@ -728,7 +735,7 @@
           var nrcDmi = function(a, milk){ return (mbwC*(a + 0.04997*nmD*nmD)/(nmD <= 1 ? 0.95 : nmD)*tfD + 0.2*milk)*LB; };
           var cowCap = o.cowIntake !== 'nrc' ? wCow/100*(r.lactFrac*pctL + (1 - r.lactFrac)*pctD) : nrcDmi(r.dmiA, r.dmiMilk);
           var bullCap = o.bullLb/100*pctD;
-          var demand = (cows*(cowCap + r.calfDm + r.wcCap + r.hCap) + bulls*bullCap)*n;
+          var demand = (cows*(cowCap + r.calfDm + r.wcCap + r.hCap) + bulls*bullCap)*n, demandYoung = cows*(r.wcCap + r.hCap)*n;
           var f = demand > 0 ? Math.min(1, availTot/demand) : 1;
           // forage mass on the grazed acres, lb/ac -> kg/ha: forage the cattle can still harvest plus the stubble left standing
           // (take half, leave half: half of a year's growth stays standing; AgriLife "Stocking Rate"). It falls below 1,150 kg/ha
@@ -788,7 +795,7 @@
           var tripCost = trips*feeds.tripCost, distCost = (hayLb + supLb)/2000*feeds.distPerTon;
           months.push({
             m:m, name:MONTHS[m], days:n, dietTdn:dTdn, dietCp:dCp, pastureShare:f, graze:graze, forageKgHa:fmKg,
-            forageAvailLb:availTot, forageDemandLb:demand, carryOutLb:stock.reduce(function(a, b){ return a + b; }, 0),
+            forageAvailLb:availTot, forageDemandLb:demand, forageDemandYoungLb:demandYoung, carryOutLb:stock.reduce(function(a, b){ return a + b; }, 0),
             req:{cow:{tdn:r.cowTdn, cp:r.cowCp, tdnNoWx:r.cowTdnNoWx}, bull:{tdn:r.bullTdn, cp:r.bullCp, tdnNoWx:r.bullTdnNoWx}, env:r.env,
                  calf:{tdn:r.calfTdn, cp:r.calfCp, dm:r.calfDm, nursing:r.calvesNursing},
                  weaned:{n:r.wcN, tdn:r.wcN > 0 ? r.wcTdn/r.wcN : 0, cp:r.wcN > 0 ? r.wcCp/r.wcN : 0, bw:r.wcBw},

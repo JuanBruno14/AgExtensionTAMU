@@ -43,7 +43,10 @@
      semiarid areas, 50% for annual grasslands and humid areas). Hay meadows are baled: hayRecovery % of what grows reaches the bale.
      Range condition: excellent = 100% of the soil survey's normal-year production (the reference plant community). */
   var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:100}, zoneF:{brush:25, bottom:200}, waterAdj:true,
-    slopeAdj:true, heType:{improved:40, smallgrain:50}, hayRecovery:80};
+    slopeAdj:true, heType:{improved:40, smallgrain:50}, hayRecovery:80,
+    /* satellite: 'on' reads each pasture's Rangeland Analysis Platform record; satCurve: 'sat' uses it for monthly growth; minRest: days a
+       pasture rests before the calendar grazes it again (0 = no minimum); youngHerd: 'own' runs heifers and weaned calves as a second herd */
+    satellite:'off', satCurve:'nrcs', minRest:0, youngHerd:'with'};
   var CONDITIONS = {poor:'Poor', fair:'Fair', excellent:'Excellent'};
   var ZONE_TYPES = {
     water:  {label:'Pond / lake', icon:'💧', style:{color:'#bfe3ff', weight:1.5, fillColor:'#2b7fd6', fillOpacity:0.6}},
@@ -58,7 +61,7 @@
   var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'none',
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535, calfGrowth:'nrc',
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto', fq:'typical',
-    nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
+    nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', heiferLighter:0, intRate:0, supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
     // feed prices: Texas A&M AgriLife 2026 District 3 budgets, Prices sheet (supplement $0.196/lb = $9.80 per 50-lb bag, salt & mineral $0.45/lb)
     hayTdn:55, hayCp:10, hayDm:88, hayWaste:15, ownHayCost:60, hayPrice:sharedHayPrice(), mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
@@ -172,6 +175,7 @@
         // soil results saved before slope and miscellaneous areas were read are looked up again
         s.pastures.forEach(function(p){ if(p.soil && (p.soil.status === 'loading' || (p.soil.status === 'ok' && !('slopeFactor' in p.soil)))) p.soil = null; });
         s.pastures.forEach(function(p){ if(p.terrain && (p.terrain.status === 'loading' || p.terrain.status === 'error')) p.terrain = null; });
+        s.pastures.forEach(function(p){ if(p.rap && (p.rap.status === 'loading' || p.rap.status === 'error')) p.rap = null; });
         if(s.drought && s.drought.status === 'loading') s.drought = null;
         return s;
       }
@@ -1070,6 +1074,162 @@
     pumpTerrain();
   }
 
+  /* ------------------------------------------------------------------ satellite forage record (Rangeland Analysis Platform) */
+  /* Optional (Forage & capacity settings -> Satellite forage record). The Rangeland Analysis Platform (RAP; USDA Agricultural
+     Research Service and University of Montana) estimates the herbaceous growth (grasses and forbs, lb/ac) of every 30-m
+     Landsat pixel of U.S. rangeland for each 16-day period since 1986 (Jones et al. 2021, Rangeland Ecology & Management
+     77:112-117). For each pasture outline My Ranch reads that record and keeps, per complete year, the growth of each month (a year with a missing
+     period is left out: in the record checked, Central Texas, that is every year before 2000).
+     It is used two ways: a cross-check of the forage estimate (soil survey or the producer's), the pasture's own growth
+     curve instead of the regional NRCS curve (a setting). RAP masks cropland,
+     development and water, so small grains are not looked up. Against 16,591 NRCS field plots its yearly production correlated
+     r = 0.63 (same paper): it shows the pattern between years and months better than the level of any one pasture. */
+  var RAP_URL = 'https://us-central1-rap-data-365417.cloudfunctions.net/production16dayV3';
+  var RAP_MIN_YEARS = 10, RAP_MIN_LB = 100;
+  var rapQueue = [], rapBusy = false, rapTries = {};
+  function satOn(){ return state.settings.satellite === 'on'; }
+  function rapWanted(p){ return satOn() && isGrazed(p) && p.type !== 'smallgrain'; }
+  function rapOk(p){ return !!(p && p.rap && p.rap.status === 'ok' && p.rap.key === terrainKey(p.geometry) && rapWanted(p)); }
+  /* the pasture's own monthly growth shares, when the "Growth through the year" setting asks for the satellite record */
+  function curveOf(p){ return state.settings.satCurve === 'sat' && rapOk(p) && (p.type === 'range' || p.type === 'improved') ? p.rap.curve : undefined; }
+  /* Turns the service's rows ([date, year, doy, AFG, PFG, HER], one per 16-day period, -99 = no data) into growth by month for
+     each complete year. A period's growth is spread evenly over its days (the first ends on day 16, the last on day 365).
+     Exposed for testing. */
+  function summarizeRap(rows){
+    if(!rows || rows.length < 2) return {status:'nodata'};
+    var head = rows[0].map(function(h){ return String(h).toLowerCase(); }), iy = head.indexOf('year'), id = head.indexOf('doy'), ih = head.indexOf('her');
+    if(iy < 0 || id < 0 || ih < 0) return {status:'nodata'};
+    var by = {};
+    for(var r = 1; r < rows.length; r++){ var y = +rows[r][iy]; if(!(y > 1900)) continue; (by[y] = by[y] || []).push([+rows[r][id], +rows[r][ih]]); }
+    var years = [], mon = [], tot = [];
+    Object.keys(by).map(Number).sort(function(a, b){ return a - b; }).forEach(function(y){
+      var list = by[y].sort(function(a, b){ return a[0] - b[0]; });
+      var whole = list.length >= 22 && list[list.length - 1][0] >= 350 && list.every(function(x){ return x[0] > 0 && x[1] >= 0 && isFinite(x[1]); });
+      if(!whole) return;                                   // the current year (still -99 ahead) and any year with gaps are left out
+      var m12 = [0,0,0,0,0,0,0,0,0,0,0,0], prev = 0;
+      list.forEach(function(x){
+        var d = Math.min(365, x[0]), days = d - prev; if(days <= 0) return;
+        for(var day = prev; day < d; day++) m12[FEED.monthOfDay(day)] += x[1]/days;
+        prev = d;
+      });
+      var t = m12.reduce(function(a, b){ return a + b; }, 0);
+      years.push(y); mon.push(m12.map(function(v){ return Math.round(v); })); tot.push(t);
+    });
+    var n = years.length;
+    if(n < RAP_MIN_YEARS) return {status:'nodata', n:n};
+    var mean = tot.reduce(function(a, b){ return a + b; }, 0)/n;
+    if(!(mean >= RAP_MIN_LB)) return {status:'nodata', n:n, mean:mean};
+    var curve = [0,0,0,0,0,0,0,0,0,0,0,0];
+    mon.forEach(function(m12){ m12.forEach(function(v, m){ curve[m] += v/n/mean*100; }); });
+    var sorted = tot.slice().sort(function(a, b){ return a - b; });
+    var q = function(p){ var x = p*(n - 1), i = Math.floor(x); return sorted[i] + (sorted[Math.min(n - 1, i + 1)] - sorted[i])*(x - i); };
+    var sd = Math.sqrt(tot.reduce(function(a, v){ return a + (v - mean)*(v - mean); }, 0)/n);
+    var lowI = tot.indexOf(sorted[0]);
+    return {status:'ok', years:years, mon:mon, mean:Math.round(mean), curve:curve.map(function(v){ return Math.round(v*10)/10; }),
+            dry:Math.round(q(0.2)), good:Math.round(q(0.8)), cv:Math.round(sd/mean*100), worst:{year:years[lowI], lb:Math.round(sorted[0])}, n:n};
+  }
+  function rapYearTotals(rap){ return rap.mon.map(function(m12){ return m12.reduce(function(a, b){ return a + b; }, 0); }); }
+  function fetchRap(geom){
+    var ctrl = window.AbortController ? new AbortController() : null;
+    var timer = setTimeout(function(){ if(ctrl) ctrl.abort(); }, 90000);
+    return fetch(RAP_URL, {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({type:'Feature', geometry:{type:'Polygon', coordinates:[geom.coordinates[0].map(function(c){ return [+c[0].toFixed(6), +c[1].toFixed(6)]; })]}, properties:{mask:true, year:null}}),
+      signal:ctrl ? ctrl.signal : undefined
+    }).then(function(res){
+      clearTimeout(timer);
+      if(!res.ok) throw new Error('The satellite service answered with an error (' + res.status + ').');
+      return res.json();
+    }).then(function(j){
+      return summarizeRap(j && j.properties ? j.properties.production16day : null);
+    }, function(err){
+      clearTimeout(timer);
+      throw (err && err.name === 'AbortError') ? new Error('The satellite service took too long to answer.') : err;
+    });
+  }
+  function scheduleRap(id){
+    var p = getPasture(id); if(!p || !rapWanted(p)) return;
+    p.rap = {status:'loading', key:terrainKey(p.geometry)};
+    if(rapQueue.indexOf(id) < 0) rapQueue.push(id);
+    pumpRap();
+  }
+  function pumpRap(){
+    if(rapBusy) return;
+    var id = rapQueue.shift(); if(!id) return;
+    var p = getPasture(id);
+    if(!p || !rapWanted(p)){ pumpRap(); return; }
+    rapBusy = true;
+    var key = terrainKey(p.geometry);
+    fetchRap(p.geometry).then(function(res){
+      var cur = getPasture(id);
+      if(cur && terrainKey(cur.geometry) === key){ res.key = key; res.at = Date.now(); cur.rap = res; }
+    }).catch(function(err){
+      var cur = getPasture(id);
+      if(cur && terrainKey(cur.geometry) === key){
+        var msg = (err && err.message && !/Failed to fetch|NetworkError|Load failed/i.test(err.message)) ? err.message : 'Couldn’t reach the satellite record.';
+        cur.rap = {status:'error', key:key, message:msg, at:Date.now()};
+      }
+    }).then(function(){
+      rapBusy = false;
+      renderAll(true);
+      pumpRap();
+    });
+  }
+  /* look up every pasture that still needs its record (new, redrawn, or the setting was just turned on) */
+  function syncRap(){
+    if(!satOn()) return;
+    state.pastures.forEach(function(p){
+      if(!rapWanted(p)) return;
+      var key = terrainKey(p.geometry), r = p.rap;
+      if(r && r.key === key && (r.status === 'ok' || r.status === 'nodata' || r.status === 'loading' || r.status === 'error')) return;
+      scheduleRap(p.id);
+    });
+  }
+  /* Ranch-wide record: the grazed pastures' satellite growth, weighted by forage acres, for the years every pasture has.
+     idx[y][m] = that month's growth as a share of the average year's total. */
+  function ranchRap(){
+    var list = state.pastures.filter(function(p){ return rapOk(p) && !isHayMeadow(p); });
+    if(!list.length) return null;
+    var years = list[0].rap.years.filter(function(y){ return list.every(function(p){ return p.rap.years.indexOf(y) >= 0; }); });
+    if(years.length < RAP_MIN_YEARS) return null;
+    var w = 0, mean = 0, mon = years.map(function(){ return [0,0,0,0,0,0,0,0,0,0,0,0]; });
+    list.forEach(function(p){
+      var a = Math.max(0.01, forageAcres(p)); w += a; mean += a*p.rap.mean;
+      years.forEach(function(y, i){ var m12 = p.rap.mon[p.rap.years.indexOf(y)]; m12.forEach(function(v, m){ mon[i][m] += a*v; }); });
+    });
+    mean /= w;
+    var idx = mon.map(function(m12){ return m12.map(function(v){ return v/w/mean; }); });
+    var covered = list.reduce(function(a, p){ return a + p.acres; }, 0), all = state.pastures.filter(function(p){ return isGrazed(p) && !isHayMeadow(p); }).reduce(function(a, p){ return a + p.acres; }, 0);
+    return {years:years, idx:idx, mean:mean, pastures:list.length, share:all > 0 ? covered/all : 0};
+  }
+  function rapSpark(rap){
+    var tot = rapYearTotals(rap), n = tot.length, W = 300, H = 46, bw = W/n, max = Math.max.apply(null, tot) || 1;
+    var s = '<svg class="rap-spark" viewBox="0 0 ' + W + ' ' + (H + 12) + '" role="img" aria-label="Growth each year from ' + rap.years[0] + ' to ' + rap.years[n - 1] + ': lowest ' + fmt(rap.worst.lb) + ' lb per acre in ' + rap.worst.year + ', average ' + fmt(rap.mean) + '">';
+    tot.forEach(function(v, i){ var h = Math.max(1, v/max*H); s += '<rect class="' + (v <= rap.dry ? 'dry' : 'ok') + '" x="' + (i*bw + 0.5).toFixed(1) + '" y="' + (H - h).toFixed(1) + '" width="' + Math.max(1, bw - 1).toFixed(1) + '" height="' + h.toFixed(1) + '"><title>' + rap.years[i] + ': ' + fmt(v) + ' lb/ac</title></rect>'; });
+    var ym = H - rap.mean/max*H;
+    s += '<line class="avg" x1="0" x2="' + W + '" y1="' + ym.toFixed(1) + '" y2="' + ym.toFixed(1) + '"/>';
+    s += '<text x="0" y="' + (H + 10) + '">' + rap.years[0] + '</text><text x="' + W + '" y="' + (H + 10) + '" text-anchor="end">' + rap.years[n - 1] + '</text></svg>';
+    return s;
+  }
+  function rapBlock(p){
+    if(!rapWanted(p)) return '';
+    var r = p.rap;
+    if(!r || r.status === 'loading') return '<div class="p-rap"><span class="spinner"></span> Reading the satellite record for this pasture (it can take half a minute)…</div>';
+    if(r.status === 'error') return '<div class="p-rap"><span class="tag warn">Satellite record not read</span> ' + esc(r.message || '') + ' <button type="button" class="tool-btn small p-rap-retry">Try again</button></div>';
+    if(r.status === 'nodata') return '<div class="p-rap"><span class="tag">No satellite record</span> The Rangeland Analysis Platform has no usable growth record here — it leaves out cropland, towns and water, and woods grow little grass.</div>';
+    var mine = forageLb(p), cmp = '';
+    if(mine != null){
+      var d = r.mean/mine - 1, src = p.mode === 'soil' ? 'the soil survey at ' + CONDITIONS[p.condition || 'fair'].toLowerCase() + ' condition' : 'your estimate';
+      cmp = Math.abs(d) < 0.15 ? ' That is close to ' + src + ' (' + fmt(mine) + ' lb/ac).'
+        : ' That is <strong>' + fmt(Math.abs(d)*100) + '% ' + (d > 0 ? 'more' : 'less') + '</strong> than ' + src + ' (' + fmt(mine) + ' lb/ac)' + (Math.abs(d) >= 0.3 ? ': a gap this size is worth a clipping this fall (Measured forage, below).' : '.');
+    }
+    return '<div class="p-rap"><div class="p-rap-txt">Satellite record, ' + r.years[0] + '–' + r.years[r.n - 1] + ': grasses and forbs here grew <strong>' + fmt(r.mean) + ' lb/ac</strong> in the average year' +
+      ' (' + fmt(r.dry) + ' in a dry year, one in five · ' + fmt(r.good) + ' in a good one; lowest ' + fmt(r.worst.lb) + ' in ' + r.worst.year + ').' + cmp +
+      (mine == null || Math.abs(r.mean/mine - 1) >= 0.15 ? ' <button type="button" class="link-btn p-rap-use">Use ' + fmt(Math.round(r.mean/10)*10) + ' lb/ac as my estimate</button>' : '') + '</div>' +
+      rapSpark(r) +
+      '<div class="p-rap-note">Rangeland Analysis Platform, USDA Agricultural Research Service: an estimate from Landsat images, good for telling dry years from good ones and when the grass grows; the level on one pasture can be off (brush and tree cover, heavy grazing). Red bars: the driest fifth of the years.</div></div>';
+  }
+
   /* ------------------------------------------------------------------ drought monitor */
   var droughtBusy = false;
   function inUSDM(c){ return c && c.lat > 17 && c.lat < 72 && c.lng > -180 && c.lng < -64; }
@@ -1118,6 +1278,7 @@
 
   /* ------------------------------------------------------------------ rendering */
   function renderAll(listChanged){
+    syncRap();
     if(listChanged) renderPastures(); else updatePastureNumbers();
     renderZones();
     renderPoints();
@@ -1221,6 +1382,7 @@
         '</div>' +
         zoneLine(p) +
         soilBlock(p) +
+        rapBlock(p) +
         measureBlock(p) +
         '<div class="p-foot"><span class="water">' + waterTxt + '</span>' +
           (grazed && p.mode === 'soil' && p.soil && (p.soil.status === 'error' || p.soil.status === 'ok' || p.soil.status === 'nodata') ? '<button type="button" class="tool-btn small p-soil-retry">↻ Soil lookup</button>' : '') +
@@ -1357,6 +1519,11 @@
       renderRotation(); updateMapGrass(); save();
     });
     if(hs) hs.addEventListener('change', function(){ if(state.herdNow && /^\d{4}-\d{2}-\d{2}$/.test(this.value)){ state.herdNow.since = this.value; renderRotation(); updateMapGrass(); save(); } });
+    var gr = $('gp_rest');
+    if(gr) gr.addEventListener('change', function(){ var v = num(this.value); if(v != null && v >= 0 && v <= 180){ state.settings.minRest = Math.round(v); renderRotation(); updateMapGrass(); save(); } });
+    var gy = $('gp_young');
+    if(gy) gy.addEventListener('change', function(){ state.settings.youngHerd = this.value === 'own' ? 'own' : 'with'; renderRotation(); updateMapGrass(); save(); });
+    el.querySelectorAll('[data-grp]').forEach(function(sel){ sel.addEventListener('change', function(){ var p = getPasture(this.getAttribute('data-grp')); if(p){ p.group = this.value === 'young' ? 'young' : 'cows'; renderRotation(); updateMapGrass(); save(); } }); });
     var gm = $('gp_max');
     if(gm) gm.addEventListener('change', function(){ var v = num(this.value); if(v >= 3 && v <= 120){ state.settings.maxGraze = v; renderRotation(); updateMapGrass(); save(); } });
   }
@@ -1417,6 +1584,18 @@
       lines.push('Yearly purchased feed: ' + fmt(fb.totals.hay/2000, 1) + ' tons hay ($' + h.hayPrice + '/ton, ' + h.hayTdn + '% TDN, ' + h.hayCp + '% CP) + ' + fmt(fb.totals.sup/2000, 1) + ' tons supplement ($' + h.supPrice + '/ton, ' + h.supCp + '% CP) + feeding trips & delivery = ' + money(fb.totals.cost) + ' (' + money(fb.totals.cost/h.cows) + ' per cow).');
       if(fb.econ && typeof econAll === 'function'){ var ea = econAll(fb); lines.push('Weaning weight ' + (fb.calves && fb.calves.growth === 'nrc' ? 'predicted from milk and grass (NRC 2016 milk, Tedeschi & Fox RNS calf forage and milk energy' + (h.milk === 'custom' && h.milkLb > 0 ? ', milk matched to the ranch weaning weight: ' + h.milkLb + ' lb at peak' : '') + '): ' : 'entered: ') + fmt(fb.econ.avgWeanLb) + ' lb. Other (non-feed) costs ' + money(ea.other.perCow) + ' per cow; net return ' + money(ea.net) + ' (' + money(ea.net/Math.max(1, h.cows)) + ' per cow); break-even calf price ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : 'n/a') + '.'); }
       if(state.spa){ var sp = state.spa; lines.push('SPA records loaded (fiscal year ' + (sp.year || '?') + '): ' + fmt(sp.exposed) + ' exposed females, ' + fmt(sp.weaned) + ' calves weaned at ' + fmt(sp.weanLb) + ' lb, ' + fmt((sp.protLb || 0)/Math.max(1, sp.exposed || 1)) + ' lb protein supplement per cow, total cost $' + fmt(sp.costCow) + ' per breeding cow.'); }
+    }
+    if(fb && h.cows > 0 && fb.months){
+      // why feed is bought, month by month, so Jim can explain the plan and not only repeat it
+      var why = fb.months.filter(function(x){ return x.pastureShare < 0.995; }).map(function(x){
+        return x.name + ' (' + (x.graze < 0.999 && x.graze <= x.pastureShare + 0.001 ? 'grass too short for a full bite' : 'standing grass ' + fmt(x.forageAvailLb) + ' lb usable vs ' + fmt(x.forageDemandLb) + ' lb the herd can eat') + ')';
+      });
+      lines.push(why.length ? 'Why hay is fed: ' + why.join('; ') + '.' : 'No hay months: usable standing grass covers what the herd can eat in every month.');
+    }
+    var rrJ = satOn() ? ranchRap() : null;
+    if(rrJ){
+      var totJ = rrJ.idx.map(function(m12){ return m12.reduce(function(a, b){ return a + b; }, 0); }), loJ = totJ.indexOf(Math.min.apply(null, totJ));
+      lines.push('Satellite forage record (Rangeland Analysis Platform, Landsat estimate, ' + rrJ.years[0] + '-' + rrJ.years[rrJ.years.length - 1] + '): average ' + fmt(rrJ.mean) + ' lb/ac of grass and forbs grown; driest year ' + rrJ.years[loJ] + ' at ' + fmt(totJ[loJ]*100) + '% of average. It ranks years well; the level on one pasture can be off.');
     }
     var d = state.drought;
     if(d && d.status === 'ok') lines.push('U.S. Drought Monitor at the ranch: ' + (d.dm < 0 ? 'no drought mapped' : DM_LABELS[Math.min(d.dm,4)].code + ' ' + DM_LABELS[Math.min(d.dm,4)].name) + (d.date ? ' (week of ' + new Date(d.date).toISOString().slice(0,10) + ')' : '') + '.');
@@ -1720,6 +1899,9 @@
     ['heImproved', 'heSmallgrain'].forEach(function(id){ $(id).addEventListener('input', function(){ var v = num(this.value); if(v != null && v > 0 && v <= 100){ state.settings.heType[id === 'heImproved' ? 'improved' : 'smallgrain'] = v; renderAll(false); } }); });
     $('hayRecovery').addEventListener('input', function(){ var v = num(this.value); if(v != null && v > 0 && v <= 100){ state.settings.hayRecovery = v; renderAll(false); } });
     $('slopeAdj').addEventListener('change', function(){ state.settings.slopeAdj = this.value !== 'off'; renderAll(false); });
+    $('satMode').addEventListener('change', function(){ state.settings.satellite = this.value === 'on' ? 'on' : 'off'; if(!satOn()) state.settings.satCurve = 'nrcs'; syncSat(); renderAll(true); });
+    $('satCurve').addEventListener('change', function(){ state.settings.satCurve = this.value === 'sat' ? 'sat' : 'nrcs'; renderAll(false); });
+    syncSat();
     $('harvestEff').addEventListener('input', function(){ var v = num(this.value); if(v != null && v > 0 && v <= 100){ state.settings.harvestEff = v; syncGrazeSys(); renderAll(false); } });
     $('grazeSys').addEventListener('change', function(){ if(this.value !== 'custom'){ state.settings.harvestEff = +this.value; $('harvestEff').value = state.settings.harvestEff; renderAll(false); } else $('harvestEff').focus(); });
     syncGrazeSys();
@@ -1774,6 +1956,8 @@
       if(e.target.closest('.p-del')) removePasture(id);
       else if(e.target.closest('.p-zoom')) zoomTo(id);
       else if(e.target.closest('.p-soil-retry')){ scheduleSoil(id, 0); renderPastures(); }
+      else if(e.target.closest('.p-rap-retry')){ scheduleRap(id); renderPastures(); }
+      else if(e.target.closest('.p-rap-use')){ var pr = getPasture(id); if(pr && pr.rap && pr.rap.status === 'ok'){ pr.mode = 'manual'; pr.manual = Math.round(pr.rap.mean/10)*10; renderAll(true); } }
       else if(!e.target.closest('input,select,button')) selectPasture(id, false);
     });
     $('rotationBody').addEventListener('click', function(e){
@@ -1866,13 +2050,14 @@
     state = blankState(); state.view = view;
     bindSettingsValues();
   }
+  function syncSat(){ var a = $('satMode'), b = $('satCurve'), f = $('satCurveField'); if(!a) return; a.value = satOn() ? 'on' : 'off'; b.value = state.settings.satCurve === 'sat' ? 'sat' : 'nrcs'; f.hidden = !satOn(); }
   function syncGrazeSys(){ var g = $('grazeSys'); if(g) g.value = [25, 30, 40].indexOf(+state.settings.harvestEff) >= 0 ? String(+state.settings.harvestEff) : 'custom'; }
   function bindSettingsValues(){
     $('ranchName').value = state.name || ''; bindHerdValues();
     $('manualCap').value = state.settings.manualCap > 0 ? state.settings.manualCap : '';
     ['la_poor','la_fair','la_excellent'].forEach(function(id){ $(id).value = state.settings.cond[id.slice(3)]; });
     $('la_brush').value = state.settings.zoneF.brush; $('la_bottom').value = state.settings.zoneF.bottom; $('la_water').checked = state.settings.waterAdj !== false;
-    $('harvestEff').value = state.settings.harvestEff; $('intakeLb').value = state.settings.intakeLb; syncGrazeSys(); $('heImproved').value = state.settings.heType.improved; $('heSmallgrain').value = state.settings.heType.smallgrain; $('hayRecovery').value = state.settings.hayRecovery; $('slopeAdj').value = state.settings.slopeAdj === false ? 'off' : 'on';
+    $('harvestEff').value = state.settings.harvestEff; $('intakeLb').value = state.settings.intakeLb; syncGrazeSys(); $('heImproved').value = state.settings.heType.improved; $('heSmallgrain').value = state.settings.heType.smallgrain; $('hayRecovery').value = state.settings.hayRecovery; $('slopeAdj').value = state.settings.slopeAdj === false ? 'off' : 'on'; syncSat();
   }
 
 
@@ -1968,7 +2153,7 @@
   }
 
   /* test hooks (read-only helpers; harmless in production) */
-  window.MyRanch = {FEED:FEED, feed:function(){ return feedLast; }, netOf:function(a, b, c){ return netOf(a, b, c); }, herd:function(){ return state.herd; }, fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, terrainRequest:terrainRequest, parseTiffF32:parseTiffF32, summarizeTerrain:summarizeTerrain, slopeFactor:function(id){ return slopeFactor(getPasture(id)); }, state:function(){ return state; },
+  window.MyRanch = {FEED:FEED, feed:function(){ return feedLast; }, netOf:function(a, b, c){ return netOf(a, b, c); }, herd:function(){ return state.herd; }, fit:fitRanch, drought:refreshDroughtIfMoved, polygonAcres:polygonAcres, summarizeSoil:summarizeSoil, soilQuery:soilQuery, terrainRequest:terrainRequest, parseTiffF32:parseTiffF32, summarizeTerrain:summarizeTerrain, summarizeRap:summarizeRap, ranchRap:ranchRap, slopeFactor:function(id){ return slopeFactor(getPasture(id)); }, state:function(){ return state; },
                     addPasture:function(g, p){ return addPasture(g, p, false); }, addPoint:addPoint, totals:totals, ranchContext:ranchContext, toKml:toKml, toGeoJSON:toGeoJSON, importObject:function(o){ var r = importObject(o); state.pastures.forEach(function(p){ if(!pastureLayers[p.id]){ drawPastureLayer(p); if(p.mode === 'soil' && isGrazed(p)) scheduleSoil(p.id, 0);} }); state.points.forEach(function(pt){ if(!pointLayers[pt.id]) drawPointLayer(pt); }); state.zones.forEach(function(z){ if(!zoneLayers[z.id]) drawZoneLayer(z); }); renderAll(true); return r; }, addZone:addZone, grassToday:grassToday, herdAU:herdAU, herdAUParts:herdAUParts, addPastureDrawn:function(g){ return addPasture(g, null, true); }, zoneAcres:function(id){ return zoneAcres(getPasture(id)); }, go:function(s){ showStep(s, true); }, step:function(){ return curStep; }};
 
   init();

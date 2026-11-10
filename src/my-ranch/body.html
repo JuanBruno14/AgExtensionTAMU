@@ -238,6 +238,16 @@
             <div class="input-wrap has-suffix"><input type="number" id="hayRecovery" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
             <span class="hint">Of what the meadow grows, the share that ends up in the bale (mowing, raking and baling losses)</span>
           </div>
+          <div class="field" style="grid-column:1 / -1;">
+            <label for="satMode">Satellite forage record <span style="font-weight:500;color:var(--ink-muted);">(optional)</span></label>
+            <select id="satMode"><option value="off">Off</option><option value="on">On: check my pastures against the satellite record</option></select>
+            <span class="hint">Sends each pasture outline to the Rangeland Analysis Platform (USDA Agricultural Research Service) and reads how much grass and forbs grew there every 16 days, estimated from Landsat images. The record starts in 1986; My Ranch uses the years with no gaps, usually 2000 on. Each pasture then shows its record next to the soil survey or your estimate. Turning it on changes no number in your plan. Small grains are skipped (the record leaves out cropland).</span>
+          </div>
+          <div class="field" id="satCurveField" style="grid-column:1 / -1;" hidden>
+            <label for="satCurve">Growth through the year</label>
+            <select id="satCurve"><option value="nrcs">NRCS growth curve for the region</option><option value="sat">Each pasture’s own satellite record</option></select>
+            <span class="hint">Which months the year’s forage grows in. The NRCS curve is one typical site for the whole region; the satellite record is the average of what each native or improved pasture actually did, month by month. The yearly amount stays the same either way.</span>
+          </div>
           <div class="field">
             <label for="slopeAdj">Steep ground</label>
             <select id="slopeAdj"><option value="on">Count less forage on slopes (Holechek)</option><option value="off">No slope adjustment</option></select>
@@ -381,6 +391,7 @@
                   <div class="field"><label for="fc_heiferPreg">Heifers that settle</label><div class="input-wrap has-suffix"><input type="number" id="fc_heiferPreg" data-h="heiferPreg" min="40" max="100" step="1"><span class="suffix">%</span></div><span class="hint">Open heifers sold at preg check</span></div>
                   <div class="field"><label for="fc_seasonal">Seasonal prices</label>
                     <select id="fc_seasonal" data-hs="seasonal"><option value="off">Off (today's price)</option><option value="on">On (seasonal pattern)</option></select></div>
+                  <div class="field"><label for="fc_heiferLighter">Heifer calves lighter than steers</label><div class="input-wrap has-suffix"><input type="number" id="fc_heiferLighter" data-h="heiferLighter" min="0" max="15" step="1"><span class="suffix">%</span></div><span class="hint">0 = sold at the same weight. Heifers usually weigh 5–8% less at weaning; each sex is then priced at its own weight</span></div>
                 </div>
                 <p class="card-note" id="fc_replNote" style="margin:10px 0 0;"></p>
               </fieldset>
@@ -480,6 +491,7 @@
                 <div class="field"><label for="oc_utilities">Utilities</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_utilities" data-oc="utilities" min="0" max="2000" step="1"></div></div>
                 <div class="field"><label for="oc_admin">Office, insurance &amp; overhead</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_admin" data-oc="admin" min="0" max="2000" step="1"></div></div>
                 <div class="field"><label for="oc_vehicle">Vehicle &amp; equipment depreciation</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_vehicle" data-oc="vehicle" min="0" max="2000" step="1"></div></div>
+                <div class="field"><label for="oc_int">Interest on the herd</label><div class="input-wrap has-suffix"><input type="number" id="oc_int" data-h="intRate" min="0" max="20" step="0.5"><span class="suffix">%</span></div><span class="hint">0 = not charged (as in the BCU sheet). A yearly rate on what the cows and bulls are worth: what that money costs you or would earn elsewhere</span></div>
                 <div class="field"><label for="oc_other">Other</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_other" data-oc="other" min="0" max="10000" step="1"></div></div>
               </div>
               <p class="card-note" id="oc_note" style="margin:10px 0 0;"></p>
@@ -649,6 +661,10 @@
         <div class="dec-panel" id="dec_whatif" hidden>
           <p class="card-note" style="margin-top:14px;">How much cattle sales minus feed costs move when one thing changes and everything else stays the same. Longest bars matter most.</p>
           <div id="dec_whatifChart"></div>
+          <h3 class="sub-h">What to measure first</h3>
+          <p class="card-note">Some inputs are typical values, not your ranch’s. This tests each one across its likely range and puts the one that moves your result most on top: that is the number worth measuring.</p>
+          <div class="table-scroll"><table class="plan fc-table wi-assume" id="dec_assume"></table></div>
+          <p class="fc-short" id="dec_assumeText"></p>
         </div>
       </div>
     </div>
@@ -658,6 +674,6 @@
 </div>
 
 <footer>
-  Forage estimates: USDA-NRCS Soil Survey (SSURGO) through Soil Data Access, &ldquo;range production, normal year&rdquo; weighted by soil area and component share. Drought status: U.S. Drought Monitor (National Drought Mitigation Center, USDA, NOAA), current week. Stocking rate method: AgriLife Extension, <em>Stocking Rate: The Key Grazing Management Decision</em>. Budget benchmark: AgriLife Extension 2026 District 3 (Rolling Plains) cow-calf enterprise budget. Satellite imagery &copy; Esri and its partners; search &copy; OpenStreetMap contributors. These are planning estimates, not a range inspection &mdash; walk your pastures and check with your county agent or NRCS office before setting a stocking rate.
+  Forage estimates: USDA-NRCS Soil Survey (SSURGO) through Soil Data Access, &ldquo;range production, normal year&rdquo; weighted by soil area and component share. Satellite forage record (optional): Rangeland Analysis Platform, USDA Agricultural Research Service and University of Montana, 16-day herbaceous production from Landsat (Jones et al. 2021, <em>Rangeland Ecology &amp; Management</em> 77:112&ndash;117). Drought status: U.S. Drought Monitor (National Drought Mitigation Center, USDA, NOAA), current week. Stocking rate method: AgriLife Extension, <em>Stocking Rate: The Key Grazing Management Decision</em>. Budget benchmark: AgriLife Extension 2026 District 3 (Rolling Plains) cow-calf enterprise budget. Satellite imagery &copy; Esri and its partners; search &copy; OpenStreetMap contributors. These are planning estimates, not a range inspection &mdash; walk your pastures and check with your county agent or NRCS office before setting a stocking rate.
 </footer>
 <script src="../brand/a11y-scroll.js" defer></script>

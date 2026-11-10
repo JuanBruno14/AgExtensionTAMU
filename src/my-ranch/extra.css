@@ -484,3 +484,28 @@
 .spa-load{display:flex;flex-wrap:wrap;align-items:center;gap:6px 12px;margin:0 0 16px;}
 .spa-load .hint{flex:1 1 260px;margin:0;}
 #fc_spa{margin-top:16px;}
+
+/* satellite forage record (Rangeland Analysis Platform) */
+.p-rap{margin-top:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:var(--surface-sunken);font-size:12.5px;line-height:1.45;color:var(--ink-secondary);}
+.p-rap .rap-spark{display:block;width:100%;max-width:340px;height:auto;margin:8px 0 4px;}
+.rap-spark rect.ok{fill:var(--good-700);opacity:.75;}
+.rap-spark rect.dry{fill:var(--s2);}
+.rap-spark line.avg{stroke:var(--ink);stroke-width:1;stroke-dasharray:3 3;opacity:.6;}
+.rap-spark text{font-size:9px;fill:var(--ink-muted);}
+.p-rap-note{font-size:11.5px;color:var(--ink-muted);}
+
+/* grazing calendar: a second herd (heifers and weaned calves) and its pastures */
+.gp-svg rect.gp-graze.gp-young{fill:var(--s4);}
+#planSheet .ps-graze rect.gp-graze.gp-young{fill:#eda100;}
+.fc-legend .sw.gp-young{background:var(--s4);}
+.gp-herds{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;margin:6px 0 8px;font-size:12.5px;color:var(--ink-secondary);}
+.gp-herds select{font:inherit;padding:2px 6px;border:1px solid var(--border);border-radius:6px;background:var(--surface);color:var(--ink);}
+.gp-assign{display:flex;flex-wrap:wrap;gap:6px 12px;}
+
+/* decisions: what to measure first */
+.wi-assume td, .wi-assume th{vertical-align:top;}
+.wi-assume td.neg{color:var(--critical-700);} .wi-assume td.pos{color:var(--good-700);}
+.wi-assume td.num small{display:block;white-space:normal;max-width:210px;margin-left:auto;font-weight:500;}
+.wi-assume th{white-space:normal;}
+.wi-assume td:last-child, .wi-assume th:last-child{min-width:220px;white-space:normal;}
+.wi-assume td:first-child{min-width:150px;white-space:normal;}

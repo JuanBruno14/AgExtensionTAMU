@@ -26,6 +26,7 @@ CONNECT = ["'self'", JIM_ORIGIN,
            'https://sdmdataaccess.sc.egov.usda.gov',     # USDA-NRCS Soil Data Access (My Ranch)
            'https://elevation.nationalmap.gov',          # USGS 3DEP elevation, pasture slopes (My Ranch)
            'https://services9.arcgis.com',               # U.S. Drought Monitor layer (My Ranch)
+           'https://us-central1-rap-data-365417.cloudfunctions.net',   # Rangeland Analysis Platform, USDA ARS: satellite forage record (My Ranch, optional)
            'https://nominatim.openstreetmap.org']        # place search (My Ranch)
 IMAGES = ["'self'", 'data:', 'blob:',
           'https://server.arcgisonline.com',             # Esri imagery and reference tiles
