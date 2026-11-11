@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Back 40 — base layer shared by every page (tokens, header, footer, focus).
+   Back40 — base layer shared by every page (tokens, header, footer, focus).
    brand/western.css loads after this and sets the look.
    ========================================================================== */
 
@@ -33,7 +33,7 @@
   --maroon-900:var(--b40-dark-maroon);
   --maroon-800:var(--b40-maroon);
   --maroon-700:var(--b40-light-maroon);
-  --maroon-100:#F3E9E9;            /* background-only tint of Aggie Maroon */
+  --maroon-100:#F3E9E9;            /* background-only tint of maroon */
   --wheat-500:var(--b40-gold);
   --wheat-100:#EFEDE6;             /* background-only tint of Tan */
   --good-700:var(--b40-jade);
@@ -115,7 +115,7 @@ button.btn.secondary{color:var(--accent);}
 /* In-progress pill: gold is a fill color, not a text color (fails contrast) */
 .status-pill.progress{color:var(--ink-secondary);box-shadow:inset 0 0 0 1px var(--b40-gold);}
 
-/* ---------- Header: solid Aggie Maroon band with the official lockup ---------- */
+/* ---------- Header: solid maroon band with the official lockup ---------- */
 .topbar{
   background:var(--b40-maroon) !important;
   border-bottom:4px solid var(--b40-dark-maroon);

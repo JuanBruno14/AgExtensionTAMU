@@ -5,10 +5,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-UCMmLqRwpNk+L+A7N/i6Lbt1eyUM6+T7utCMsMGe5eQ='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-hJSyjrlDcCofrCpSrfxHCn3Di2Me+2nXuuG9Kf4edPY='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Back 40 · Ranch tools &amp; figures</title>
+<title>Back40 · Decision tools for cow-calf ranchers</title>
 <link rel="stylesheet" href="brand/fonts/fonts.css">
 <style>
   :root{
@@ -331,25 +331,22 @@
 <body>
 
 <header class="topbar">
-  <div class="wordmark"><a href="index.html" aria-label="Back 40 home"><span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back 40</span></span></a></div>
-  <nav class="b40-nav" aria-label="Sections"><a href="index.html#cow-decisions">Cow decisions</a><a href="herd-tools/index.html">Calculators</a><a href="my-ranch/index.html">My Ranch</a></nav>
+  <div class="wordmark"><a href="index.html" aria-label="Back40 home"><span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back40</span></span></a></div>
+  <nav class="b40-nav" aria-label="Sections"><a href="index.html#cow-decisions">Cow decisions</a><a href="herd-tools/index.html">Calculators</a><a href="my-ranch/index.html">My Ranch</a><a href="index.html#about">About</a></nav>
   <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
 </header>
 
 <section class="hero">
-  <div class="poster-frame">
-    <div class="poster">
-      <div class="poster-inner">
-        <p class="eyebrow">&#9733; Ranch tools &amp; figures &#9733;</p>
-        <h1>Back 40</h1>
-        <p class="lede">Bid prices, heifer budgets, retained ownership, herd math and your own pastures on a map. Change any number and every answer updates on the spot. No formulas, no downloads.</p>
-        <nav class="doors" aria-label="Start here">
-          <a class="door" href="#cow-decisions"><span class="door-num" aria-hidden="true">1</span><span class="door-name">Cow decisions</span><span class="door-sub">What to pay, what to keep, what to sell</span></a>
-          <a class="door" href="#calculators"><span class="door-num" aria-hidden="true">2</span><span class="door-name">Calculators</span><span class="door-sub">Quick herd math: water, hay, dewormer, gain</span></a>
-          <a class="door" href="#my-ranch"><span class="door-num" aria-hidden="true">3</span><span class="door-name">My Ranch</span><span class="door-sub">Map your pastures and match herd to grass</span></a>
-        </nav>
-      </div>
-    </div>
+  <div class="hero-inner">
+    <p class="eyebrow">Decision tools for cow-calf ranchers</p>
+    <h1>Back40</h1>
+    <p class="tagline">From the back 40 to the bottom line</p>
+    <p class="lede">Change any number and every answer updates on the spot. No formulas, no downloads.</p>
+    <nav class="doors" aria-label="Start here">
+      <a class="door" href="#cow-decisions"><span class="door-num" aria-hidden="true">1</span><span class="door-name">Cow decisions</span><span class="door-sub">What to pay, what to keep, what to sell</span></a>
+      <a class="door" href="#calculators"><span class="door-num" aria-hidden="true">2</span><span class="door-name">Calculators</span><span class="door-sub">Quick herd math: water, hay, dewormer, gain</span></a>
+      <a class="door" href="#my-ranch"><span class="door-num" aria-hidden="true">3</span><span class="door-name">My Ranch</span><span class="door-sub">Map your pastures and match herd to grass</span></a>
+    </nav>
   </div>
 </section>
 
@@ -510,7 +507,8 @@
       </div>
     </div>
   </section>
-    <p class="section-label">The 24 decision categories</p>
+    <p class="section-label">The toolbox</p>
+    <p id="toolboxNote" style="margin:-4px 0 14px;color:var(--ink-secondary);font-size:15.5px;"></p>
     <div class="grid" id="catGrid"></div>
   </section>
 
@@ -542,12 +540,37 @@
     </a>
   </section>
   </section>
+  <section class="b40-block" id="three-steps" aria-labelledby="stepsH">
+    <h2 id="stepsH">Three steps. No spreadsheet required.</h2>
+    <ol class="steps">
+      <li><span class="step-num" aria-hidden="true">01</span><h3>Map your land</h3><p>Draw your pastures and tell us what grows on them.</p></li>
+      <li><span class="step-num" aria-hidden="true">02</span><h3>Enter your herd</h3><p>Head count, weights, calving season. That&rsquo;s it.</p></li>
+      <li><span class="step-num" aria-hidden="true">03</span><h3>Decide with numbers</h3><p>Stocking rate, forage gaps and costs, laid out plainly.</p></li>
+    </ol>
+  </section>
+
+  <section class="b40-block get-started" id="get-started" aria-labelledby="gsH">
+    <div>
+      <h2 id="gsH">B4 you buy. B4 you build.</h2>
+      <p>Run the numbers first. It is free and nothing to install.</p>
+    </div>
+    <div class="gs-actions">
+      <a class="gs-btn" href="my-ranch/index.html">Start with My Ranch</a>
+      <a class="gs-btn ghost" href="#cow-decisions">Price a cow</a>
+    </div>
+  </section>
+
+  <section class="b40-block about" id="about" aria-labelledby="aboutH">
+    <h2 id="aboutH">About Back40</h2>
+    <p>Back40 is an independent set of decision tools for cow-calf ranchers: what a bred cow is worth, raising or buying heifers, keeping calves longer, everyday herd math, and a grazing plan drawn on your own map.</p>
+    <p>Every tool starts from published budgets and research and shows where its numbers come from. Your entries stay in your browser. Check any result against your own records before you act on it.</p>
+  </section>
 </main>
 
 <div class="viz-tooltip" id="vizTooltip"></div>
 
 <footer>
-  <p class="b40-foot-brand"><strong>Back 40</strong> &middot; Ranch tools &amp; figures</p>
+  <p class="b40-foot-brand"><strong>Back40</strong> &middot; Decision tools for cow-calf ranchers</p>
   <p>The cow decision tools start from the <a href="https://agecoext.tamu.edu/resources/decisionaids/beef/">Beef Cattle Decision Aids</a> spreadsheets. Starting values reproduce each spreadsheet&rsquo;s own assumptions, not real producer data &mdash; always check results before making a decision. Current prices are cited on <a href="data-sources.html">the market data page</a>.</p>
 <!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="privacy.html">Privacy &amp; data</a></li><li><a href="data-sources.html">Where the prices come from</a></li></ul><!-- required-links:end -->
 </footer>
@@ -914,12 +937,15 @@
   ];
 
   var grid = document.getElementById('catGrid');
-  var html = categories.map(function(c){
+  var liveCats = categories.filter(function(c){ return c.status === 'progress'; });
+  var noteEl = document.getElementById('toolboxNote');
+  if(noteEl){ var words = ['No','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten']; noteEl.textContent = (words[liveCats.length] || liveCats.length) + ' tool' + (liveCats.length === 1 ? '' : 's') + ' today. More on the way.'; }
+  var html = liveCats.map(function(c){
     var isLive = c.status === 'progress';
     var pill = isLive
-      ? '<span class="status-pill progress">In progress</span>'
+      ? ''
       : '<span class="status-pill soon">Coming soon</span>';
-    var noteLine = c.note ? '<p style="margin-top:6px;color:var(--accent);font-weight:600;">'+c.note+'</p>' : '';
+    var noteLine = '';
     var goLine = isLive ? '<span class="go">Open tool &rarr;</span>' : '';
     var num = '<span class="cat-num">'+(c.n<10?'0':'')+c.n+'</span>';
     var body = '<div class="cat-top">'+num+pill+'</div><h3>'+c.name+'</h3><p>'+c.desc+'</p>'+noteLine+goLine;
