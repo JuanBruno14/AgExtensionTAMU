@@ -4,14 +4,8 @@ exec(open(os.path.join(HERE,'test_ranch.py')).read().split("with sync_playwright
 with sync_playwright() as pw:
     b=pw.chromium.launch(); ctx=b.new_context(viewport={'width':1280,'height':900}); ctx.route('**/*', route); pg=ctx.new_page()
     errs=[]; pg.on('pageerror', lambda e: errs.append(str(e)))
-    pg.goto(f'http://127.0.0.1:{PORT}/index.html'); pg.wait_for_timeout(400)
-    check('preview hidden with no ranch', not pg.is_visible('#myRanchPreview'))
-    pg.goto(f'http://127.0.0.1:{PORT}/my-ranch/index.html'); pg.wait_for_timeout(500)
-    pg.fill('#ranchName','North place')
-    pg.evaluate("MyRanch.addPasture({type:'Polygon',coordinates:[[[-99.3,33.1],[-99.29,33.1],[-99.29,33.11],[-99.3,33.11],[-99.3,33.1]]]},{name:'T'})"); pg.wait_for_timeout(800)
-    pg.goto(f'http://127.0.0.1:{PORT}/index.html'); pg.wait_for_timeout(400)
-    t=pg.inner_text('#myRanchPreview') if pg.is_visible('#myRanchPreview') else ''
-    check('preview shows saved ranch', 'North place' in t and '256 acres' in t, t)
+    # The home page is now three doors; the BCU calculator and market prices live on Cow decisions.
+    pg.goto(f'http://127.0.0.1:{PORT}/cow-decisions/index.html'); pg.wait_for_timeout(400)
     # default BCU total: $673.26 with the $190/cwt cull bull it was written for; the bull salvage part
     # follows the site's current default cull bull price (weekly USDA job), so work it out from that.
     bull_cwt = float(pg.input_value('#mp_cullBullPrice'))
@@ -32,10 +26,8 @@ with sync_playwright() as pw:
     pg.evaluate("document.getElementById('bcuToggleBtn').click()"); pg.wait_for_timeout(100); pg.click('#bcu_resetBtn'); pg.wait_for_timeout(200)
     check('reset returns to default', abs(bcu_now()-bcu0) < 0.015 and not pg.is_checked('#bcu_useRanchFeed'))
     pg.screenshot(path=os.path.join(OUT,'portal.png'))
-    pg.click('#my-ranch-link a'); pg.wait_for_timeout(400)
-    check('card links to My Ranch', pg.url.endswith('/my-ranch/index.html'))
-    # one hay price for the site: home page "Market prices" -> BCU per roll and My Ranch default
-    pg.goto(f'http://127.0.0.1:{PORT}/index.html'); pg.wait_for_timeout(300)
+    # one hay price for the site: Cow decisions "Market prices" -> BCU per roll and My Ranch default
+    pg.goto(f'http://127.0.0.1:{PORT}/cow-decisions/index.html'); pg.wait_for_timeout(300)
     check('BCU hay per roll from shared $210/ton', '$105.00' in pg.inner_text('#bcuHay_roll'), pg.inner_text('#bcuHay_roll'))
     pg.evaluate("document.getElementById('mpToggleBtn').click()"); pg.fill('#mp_hayPrice','250'); pg.wait_for_timeout(200)
     check('BCU follows shared hay price', '$125.00' in pg.inner_text('#bcuHay_roll'), pg.inner_text('#bcuHay_roll'))
