@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-/69yLE4QywYPqB9duq4xHHTObEwe0FHw19bTp5LZoD0='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-efemjj37rPmrXhNO4Mk5LRPnMXTK2q02efq6112AENw='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Ranch · Back40</title>
@@ -835,7 +835,7 @@
       <span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back40</span></span>
     </a>
   </div>
-  <nav class="b40-nav" aria-label="Sections"><a href="../index.html#cow-decisions">Cow decisions</a><a href="../herd-tools/index.html">Calculators</a><a href="../my-ranch/index.html" aria-current="page">My Ranch</a><a href="../index.html#about">About</a></nav>
+  <nav class="b40-nav" aria-label="Sections"><a href="../cow-decisions/index.html">Cow decisions</a><a href="../herd-tools/index.html">Calculators</a><a href="../my-ranch/index.html" aria-current="page">My Ranch</a><a href="../index.html#about">About</a></nav>
   <h1 class="tool-title">My Ranch</h1>
   <div class="header-right">
     <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
@@ -4073,7 +4073,7 @@
                    hayTons:Math.round(t.hay/2000*10)/10, supTons:Math.round(t.sup/2000*10)/10, cows:h.cows, ranch:state.name || '', savedAt:new Date().toISOString()};
     payload.total = Math.round((payload.hay + payload.supplement + payload.feeding)*100)/100;
     var ok = true; try{ localStorage.setItem(RANCH_FEED_KEY, JSON.stringify(payload)); }catch(e){ ok = false; }
-    $('fc_bcuNote').innerHTML = ok ? 'Sent: ' + money(payload.total) + ' per cow (hay ' + money(payload.hay) + ', supplement ' + money(payload.supplement) + ', feeding ' + money(payload.feeding) + '). Open <a href="../index.html#bcu-calculator">Cow operating cost</a> on the home page and choose “Use My Ranch feed”.' : 'This browser is blocking storage, so the cost can’t be shared.';
+    $('fc_bcuNote').innerHTML = ok ? 'Sent: ' + money(payload.total) + ' per cow (hay ' + money(payload.hay) + ', supplement ' + money(payload.supplement) + ', feeding ' + money(payload.feeding) + '). Open <a href="../cow-decisions/index.html#bcu-calculator">Cow operating cost</a> on the home page and choose “Use My Ranch feed”.' : 'This browser is blocking storage, so the cost can’t be shared.';
   }
   var planBusy = false;
   function printPlan(){

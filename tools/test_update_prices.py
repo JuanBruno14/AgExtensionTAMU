@@ -170,7 +170,7 @@ check('under 10 head in the window keeps the price', 'steer' not in changed)
 # --- apply on a copy of the site ------------------------------------------------------------
 tmp = tempfile.mkdtemp()
 try:
-    for f in ['index.html', 'cow-calf/index.html', 'replacement-heifer/index.html', 'retained-ownership/index.html',
+    for f in ['index.html', 'cow-decisions/index.html', 'cow-calf/index.html', 'replacement-heifer/index.html', 'retained-ownership/index.html',
               'data-sources.html', 'tools/secure_pages.py', 'jim/jim.js', 'jim/kb.json', 'my-ranch/index.html', 'herd-tools/index.html',
               'src/my-ranch/build.py', 'src/my-ranch/body.html', 'src/my-ranch/extra.css', 'src/my-ranch/app.js',
               'src/my-ranch/feed.js', 'src/my-ranch/feedui.js']:
@@ -181,7 +181,7 @@ try:
     up.fetch(data, payloads, TODAY)
     files = up.apply(data, repo=tmp)
     check('apply edits the four tools and data-sources', sorted(files) == sorted(
-        ['index.html', 'cow-calf/index.html', 'retained-ownership/index.html', 'data-sources.html', 'jim/kb.json']))
+        ['cow-decisions/index.html', 'cow-calf/index.html', 'retained-ownership/index.html', 'data-sources.html', 'jim/kb.json']))
     cc = open(os.path.join(tmp, 'cow-calf/index.html')).read()
     check('A1 input and default updated', 'id="bidPrice" value="2975"' in cc and 'bidPrice:2975.00' in cc and '2828.62,' not in cc)
     ro = open(os.path.join(tmp, 'retained-ownership/index.html')).read()

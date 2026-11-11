@@ -32,7 +32,7 @@ def route(r):
     if 'arcgis.com' in u: return r.fulfill(status=200, body='{"features":[]}', headers={'content-type': 'application/json', 'access-control-allow-origin': '*'})
     return r.abort()
 
-PAGES = ['index.html', 'data-sources.html', 'privacy.html', 'cow-calf/index.html', 'cow-calf/understanding-irr.html',
+PAGES = ['index.html', 'cow-decisions/index.html', 'data-sources.html', 'privacy.html', 'cow-calf/index.html', 'cow-calf/understanding-irr.html',
          'replacement-heifer/index.html', 'retained-ownership/index.html', 'herd-tools/index.html', 'my-ranch/index.html']
 RUN = """async () => { const r = await axe.run(document, {runOnly: {type: 'tag', values: ['wcag2a','wcag2aa','wcag21a','wcag21aa']}, resultTypes: ['violations']});
   return r.violations.map(v => ({id: v.id, impact: v.impact, help: v.help, n: v.nodes.length,

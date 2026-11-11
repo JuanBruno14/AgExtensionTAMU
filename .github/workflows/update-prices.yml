@@ -53,7 +53,7 @@ jobs:
             git diff --stat
             exit 0
           fi
-          git add data/market-prices.json index.html cow-calf/index.html replacement-heifer/index.html \
+          git add data/market-prices.json cow-decisions/index.html cow-calf/index.html replacement-heifer/index.html \
                   retained-ownership/index.html data-sources.html src/my-ranch/feedui.js my-ranch/index.html \
                   jim/kb.json
           if git diff --cached --quiet; then
