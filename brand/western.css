@@ -276,3 +276,48 @@ footer p{margin:0 0 8px;}
 .contact-card{font-style:normal;display:flex;flex-direction:column;gap:3px;padding:20px 22px;border:1px solid var(--border);background:var(--surface);font-size:15.5px;color:var(--ink-secondary);}
 .contact-card strong{font-family:var(--font-head);font-weight:600;font-size:21px;color:var(--ink);margin-bottom:4px;letter-spacing:0.02em;}
 .contact-card a{color:var(--accent);font-weight:700;}
+
+/* ==========================================================================
+   Phones. Loaded last on every page, so it only adds; desktop is untouched.
+   - Form fields are 16px so iPhone Safari does not zoom the page on focus
+   - Buttons, tabs, toggles and footer links are at least 44px to tap
+   - Header menu is a balanced 2 x 2 grid instead of 3 + 1 orphan
+   ========================================================================== */
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%;}
+button,[role="button"],summary,select,.tab-btn,.seg-btn,.tool-btn,.phase-chip,.theme-toggle,input[type="range"]{touch-action:manipulation;}
+@media (pointer:coarse){
+  .leaflet-bar a,.leaflet-touch .leaflet-bar a{width:40px !important;height:40px !important;line-height:40px !important;}
+  input[type="range"]{min-height:32px;}
+}
+@media (max-width:720px){
+  body{overflow-wrap:break-word;}
+  img,video,canvas,svg{max-width:100%;}
+
+  /* header */
+  .theme-toggle{width:44px !important;height:44px !important;font-size:18px;}
+  .header-right{gap:8px;}
+  .phase-chip{min-height:36px;display:inline-flex;align-items:center;}
+  .b40-nav{display:grid;grid-template-columns:1fr 1fr;gap:4px;}
+  .b40-nav a{justify-content:center;text-align:center;padding:10px 6px;}
+
+  /* forms: 16px stops the iOS zoom on focus; 44px is a comfortable fingertip */
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="hidden"]):not([type="file"]),
+  select,textarea{font-size:16px !important;min-height:44px;}
+  .input-wrap .prefix,.input-wrap .suffix{font-size:14px;}
+  input[type="checkbox"],input[type="radio"]{width:22px;height:22px;}
+  label:has(> input[type="checkbox"]),label:has(> input[type="radio"]){min-height:44px;display:inline-flex;align-items:center;gap:8px;}
+
+  /* buttons and tabs */
+  button,.btn,.tool-btn,.seg-btn,.tab-btn,.cat-card,summary{min-height:44px;}
+  .tool-btn{padding-top:9px;padding-bottom:9px;}
+  summary{display:flex;align-items:center;}
+
+  /* footer links */
+  footer a{display:inline-block;padding:11px 0;}
+  footer .footer-brand a,footer .eeo-statement a{padding:0;display:inline;}
+  .b40-foot a{padding:11px 4px;}
+}
+@media (max-width:420px){
+  .b40-name{font-size:21px;letter-spacing:0.12em;}
+  .tool-title{font-size:19px;}
+}
