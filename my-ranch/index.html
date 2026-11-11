@@ -2,10 +2,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ikDyJjI6T0EeZFgvych+fuvHXjgvdotSUvomPB+YLi0='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-efemjj37rPmrXhNO4Mk5LRPnMXTK2q02efq6112AENw='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Ranch · Back 40</title>
+<title>My Ranch · Back40</title>
 <link rel="stylesheet" href="../brand/fonts/fonts.css">
 <link rel="stylesheet" href="../vendor/leaflet-1.9.4/leaflet.css">
 <link rel="stylesheet" href="../vendor/leaflet-geoman-2.20.2/leaflet-geoman.css">
@@ -832,10 +832,10 @@
 <header class="topbar">
   <div class="wordmark">
     <a href="../index.html" style="display:flex;align-items:center;gap:14px;color:inherit;text-decoration:none;">
-      <span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back 40</span></span>
+      <span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back40</span></span>
     </a>
   </div>
-  <nav class="b40-nav" aria-label="Sections"><a href="../index.html#cow-decisions">Cow decisions</a><a href="../herd-tools/index.html">Calculators</a><a href="../my-ranch/index.html" aria-current="page">My Ranch</a></nav>
+  <nav class="b40-nav" aria-label="Sections"><a href="../cow-decisions/index.html">Cow decisions</a><a href="../herd-tools/index.html">Calculators</a><a href="../my-ranch/index.html" aria-current="page">My Ranch</a><a href="../about/index.html">About</a></nav>
   <h1 class="tool-title">My Ranch</h1>
   <div class="header-right">
     <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
@@ -886,7 +886,7 @@
         <h2>Save, share &amp; print</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Your map is saved automatically in this browser only &mdash; nothing is sent to Back 40. To move it to another device or give it to your agent, download a file and open it there.</p>
+        <p class="card-note">Your map is saved automatically in this browser only &mdash; nothing is sent to Back40. To move it to another device or give it to your agent, download a file and open it there.</p>
         <div class="file-actions">
           <button type="button" class="tool-btn" id="importBtn">⬆ Open a file</button>
           <button type="button" class="tool-btn" id="exportGeoBtn" title="The whole ranch: map, herd, feed and decision settings">⬇ Ranch file (GeoJSON)</button>
@@ -4038,7 +4038,7 @@
     var gp = grazingPlan(), gsvg = '';
     if(gp){ var tmp = document.createElement('div'); tmp.innerHTML = grazingPlanHtml(); var sv = tmp.querySelector('svg'); gsvg = sv ? sv.outerHTML : ''; }
     function kv(k, v){ return '<div class="ps-kv"><span>' + k + '</span><strong>' + v + '</strong></div>'; }
-    return '<div class="ps-head"><div><div class="ps-kicker">Back 40 · My Ranch</div><h1>' + esc(state.name || 'My ranch') + ' — plan for the year</h1></div><div class="ps-date">' + today + '</div></div>' +
+    return '<div class="ps-head"><div><div class="ps-kicker">Back40 · My Ranch</div><h1>' + esc(state.name || 'My ranch') + ' — plan for the year</h1></div><div class="ps-date">' + today + '</div></div>' +
       '<div class="ps-grid">' +
         kv('Land', fmt(t.acres) + ' ac · ' + t.pastures + ' pasture' + (t.pastures === 1 ? '' : 's')) +
         kv('Carrying capacity', t.cap > 0 ? fmt(t.cap) + ' AU' + (t.lowCap != null ? ' (' + fmt(t.lowCap) + ' in a dry year)' : '') : '—') +
@@ -4073,7 +4073,7 @@
                    hayTons:Math.round(t.hay/2000*10)/10, supTons:Math.round(t.sup/2000*10)/10, cows:h.cows, ranch:state.name || '', savedAt:new Date().toISOString()};
     payload.total = Math.round((payload.hay + payload.supplement + payload.feeding)*100)/100;
     var ok = true; try{ localStorage.setItem(RANCH_FEED_KEY, JSON.stringify(payload)); }catch(e){ ok = false; }
-    $('fc_bcuNote').innerHTML = ok ? 'Sent: ' + money(payload.total) + ' per cow (hay ' + money(payload.hay) + ', supplement ' + money(payload.supplement) + ', feeding ' + money(payload.feeding) + '). Open <a href="../index.html#bcu-calculator">Cow operating cost</a> on the home page and choose “Use My Ranch feed”.' : 'This browser is blocking storage, so the cost can’t be shared.';
+    $('fc_bcuNote').innerHTML = ok ? 'Sent: ' + money(payload.total) + ' per cow (hay ' + money(payload.hay) + ', supplement ' + money(payload.supplement) + ', feeding ' + money(payload.feeding) + '). Open <a href="../cow-decisions/index.html#bcu-calculator">Cow operating cost</a> on the home page and choose “Use My Ranch feed”.' : 'This browser is blocking storage, so the cost can’t be shared.';
   }
   var planBusy = false;
   function printPlan(){

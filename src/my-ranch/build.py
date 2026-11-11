@@ -7,7 +7,7 @@ head='''<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>My Ranch · Back 40</title>
+<title>My Ranch · Back40</title>
 <link rel="stylesheet" href="../brand/fonts/fonts.css">
 <link rel="stylesheet" href="../vendor/leaflet-1.9.4/leaflet.css">
 <link rel="stylesheet" href="../vendor/leaflet-geoman-2.20.2/leaflet-geoman.css">

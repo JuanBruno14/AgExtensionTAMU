@@ -235,7 +235,7 @@
     var gp = grazingPlan(), gsvg = '';
     if(gp){ var tmp = document.createElement('div'); tmp.innerHTML = grazingPlanHtml(); var sv = tmp.querySelector('svg'); gsvg = sv ? sv.outerHTML : ''; }
     function kv(k, v){ return '<div class="ps-kv"><span>' + k + '</span><strong>' + v + '</strong></div>'; }
-    return '<div class="ps-head"><div><div class="ps-kicker">Back 40 · My Ranch</div><h1>' + esc(state.name || 'My ranch') + ' — plan for the year</h1></div><div class="ps-date">' + today + '</div></div>' +
+    return '<div class="ps-head"><div><div class="ps-kicker">Back40 · My Ranch</div><h1>' + esc(state.name || 'My ranch') + ' — plan for the year</h1></div><div class="ps-date">' + today + '</div></div>' +
       '<div class="ps-grid">' +
         kv('Land', fmt(t.acres) + ' ac · ' + t.pastures + ' pasture' + (t.pastures === 1 ? '' : 's')) +
         kv('Carrying capacity', t.cap > 0 ? fmt(t.cap) + ' AU' + (t.lowCap != null ? ' (' + fmt(t.lowCap) + ' in a dry year)' : '') : '—') +
@@ -270,7 +270,7 @@
                    hayTons:Math.round(t.hay/2000*10)/10, supTons:Math.round(t.sup/2000*10)/10, cows:h.cows, ranch:state.name || '', savedAt:new Date().toISOString()};
     payload.total = Math.round((payload.hay + payload.supplement + payload.feeding)*100)/100;
     var ok = true; try{ localStorage.setItem(RANCH_FEED_KEY, JSON.stringify(payload)); }catch(e){ ok = false; }
-    $('fc_bcuNote').innerHTML = ok ? 'Sent: ' + money(payload.total) + ' per cow (hay ' + money(payload.hay) + ', supplement ' + money(payload.supplement) + ', feeding ' + money(payload.feeding) + '). Open <a href="../index.html#bcu-calculator">Cow operating cost</a> on the home page and choose “Use My Ranch feed”.' : 'This browser is blocking storage, so the cost can’t be shared.';
+    $('fc_bcuNote').innerHTML = ok ? 'Sent: ' + money(payload.total) + ' per cow (hay ' + money(payload.hay) + ', supplement ' + money(payload.supplement) + ', feeding ' + money(payload.feeding) + '). Open <a href="../cow-decisions/index.html#bcu-calculator">Cow operating cost</a> on the home page and choose “Use My Ranch feed”.' : 'This browser is blocking storage, so the cost can’t be shared.';
   }
   var planBusy = false;
   function printPlan(){

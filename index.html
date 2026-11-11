@@ -5,10 +5,10 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-UCMmLqRwpNk+L+A7N/i6Lbt1eyUM6+T7utCMsMGe5eQ='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-bynoGQpmJ5muxJzC06uHWiE25858tN4IGmdc9JthM2A='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Back 40 · Ranch tools &amp; figures</title>
+<title>Back40 · Decision tools for cow-calf ranchers</title>
 <link rel="stylesheet" href="brand/fonts/fonts.css">
 <style>
   :root{
@@ -331,233 +331,68 @@
 <body>
 
 <header class="topbar">
-  <div class="wordmark"><a href="index.html" aria-label="Back 40 home"><span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back 40</span></span></a></div>
-  <nav class="b40-nav" aria-label="Sections"><a href="index.html#cow-decisions">Cow decisions</a><a href="herd-tools/index.html">Calculators</a><a href="my-ranch/index.html">My Ranch</a></nav>
+  <div class="wordmark"><a href="index.html" aria-label="Back40 home"><span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back40</span></span></a></div>
+  <nav class="b40-nav" aria-label="Sections"><a href="cow-decisions/index.html">Cow decisions</a><a href="herd-tools/index.html">Calculators</a><a href="my-ranch/index.html">My Ranch</a><a href="about/index.html">About</a></nav>
   <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
 </header>
 
 <section class="hero">
-  <div class="poster-frame">
-    <div class="poster">
-      <div class="poster-inner">
-        <p class="eyebrow">&#9733; Ranch tools &amp; figures &#9733;</p>
-        <h1>Back 40</h1>
-        <p class="lede">Bid prices, heifer budgets, retained ownership, herd math and your own pastures on a map. Change any number and every answer updates on the spot. No formulas, no downloads.</p>
-        <nav class="doors" aria-label="Start here">
-          <a class="door" href="#cow-decisions"><span class="door-num" aria-hidden="true">1</span><span class="door-name">Cow decisions</span><span class="door-sub">What to pay, what to keep, what to sell</span></a>
-          <a class="door" href="#calculators"><span class="door-num" aria-hidden="true">2</span><span class="door-name">Calculators</span><span class="door-sub">Quick herd math: water, hay, dewormer, gain</span></a>
-          <a class="door" href="#my-ranch"><span class="door-num" aria-hidden="true">3</span><span class="door-name">My Ranch</span><span class="door-sub">Map your pastures and match herd to grass</span></a>
-        </nav>
-      </div>
-    </div>
+  <div class="hero-inner">
+    <p class="eyebrow">Decision tools for cow-calf ranchers</p>
+    <h1>Back40</h1>
+    <p class="tagline">From the back 40 to the bottom line</p>
+    <p class="lede">Change any number and every answer updates on the spot. No formulas, no downloads.</p>
+    <nav class="doors" aria-label="Start here">
+      <a class="door" href="cow-decisions/index.html"><span class="door-num" aria-hidden="true">1</span><span class="door-name">Cow decisions</span><span class="door-sub">What to pay, what to keep, what to sell</span></a>
+      <a class="door" href="herd-tools/index.html"><span class="door-num" aria-hidden="true">2</span><span class="door-name">Calculators</span><span class="door-sub">Quick herd math: water, hay, dewormer, gain</span></a>
+      <a class="door" href="my-ranch/index.html"><span class="door-num" aria-hidden="true">3</span><span class="door-name">My Ranch</span><span class="door-sub">Map your pastures and match herd to grass</span></a>
+    </nav>
   </div>
 </section>
 
 <main>
-  <section class="b40-part" id="cow-decisions" aria-labelledby="cowH">
-    <div class="part-head"><span class="part-num" aria-hidden="true">1</span><div><h2 id="cowH">Cow decisions</h2><p>Full budgets for the big calls: what a bred cow is worth to you, raising versus buying heifers, keeping calves longer. Set your costs and prices once and every decision tool uses them.</p></div></div>
-  <section class="shared-tool" id="bcu-calculator">
-    <p class="section-label">Your numbers, used by every tool</p>
-    <div class="bcu-card">
-      <button type="button" class="bcu-card-toggle" id="bcuToggleBtn" aria-expanded="false" aria-controls="bcuFields">
-        <div class="cat-top">
-          <span class="cat-num" aria-hidden="true">🐄</span>
-          <span class="status-pill live">Shared tool</span>
-        </div>
-        <h3>Cow operating cost (BCU)</h3>
-        <p>Feed, labor, and bull-depreciation cost per Breeding Cow Unit &mdash; set your own numbers once and every tool on this site that needs it, starting with A1's Year 1 operating cost, uses the same value automatically.</p>
-        <div class="bcu-preview">
-          <span class="bcu-preview-value" id="bcuHeaderValue">$0</span>
-          <span class="bcu-preview-label">/ BCU &middot; <span id="bcuSourceLabel">original default</span></span>
-        </div>
-        <span class="go">
-          <span id="bcuToggleLabel">Edit my numbers</span>
-          <svg class="chevron" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
-        </span>
-      </button>
+  <section class="b40-block" id="three-steps" aria-labelledby="stepsH">
+    <h2 id="stepsH">Three steps. No spreadsheet required.</h2>
+    <ol class="steps">
+      <li><span class="step-num" aria-hidden="true">01</span><h3>Map your land</h3><p>Draw your pastures and tell us what grows on them.</p></li>
+      <li><span class="step-num" aria-hidden="true">02</span><h3>Enter your herd</h3><p>Head count, weights, calving season. That&rsquo;s it.</p></li>
+      <li><span class="step-num" aria-hidden="true">03</span><h3>Decide with numbers</h3><p>Stocking rate, forage gaps and costs, laid out plainly.</p></li>
+    </ol>
+  </section>
 
-      <div class="bcu-fields" id="bcuFields" hidden>
-        <p class="card-note">This is saved in your browser only (not sent anywhere, not shared across devices) &mdash; if you switch browsers or devices, or clear site data, you'll need to re-enter it.</p>
+  <section class="b40-block" id="on-the-land" aria-labelledby="landH">
+    <h2 id="landH">On the land</h2>
+    <div class="photo-strip">
+      <figure><img src="brand/photos/cattle.jpg" width="900" height="600" loading="lazy" alt="Black and white-faced cows looking over a barbed-wire fence in tall grass"></figure>
+      <figure><img src="brand/photos/deer.jpg" width="900" height="600" loading="lazy" alt="A white-tailed deer looking back across a dry winter pasture"></figure>
+      <figure><img src="brand/photos/hawk.jpg" width="900" height="600" loading="lazy" alt="A hawk perched on a fence post above golden grass"></figure>
+    </div>
+    <p class="photo-credit">Photos: Bruce Barrow, Camerauthor Photos and David Thielen on <a href="https://unsplash.com/" rel="noopener">Unsplash</a>.</p>
+  </section>
 
-        <div class="bcu-ranch" id="bcuRanch" hidden>
-          <div id="bcuRanchText"></div>
-          <label class="bcu-ranch-toggle"><input type="checkbox" id="bcu_useRanchFeed"> Use My Ranch feed instead of the hay rolls and protein below</label>
-        </div>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Direct costs</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="bcu_landLeaseRate">Land grazing lease ($/mo)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_landLeaseRate" value="15" min="0"></div></div>
-            <div class="field"><label for="bcu_landLeaseMonths">Grazing months</label><div class="input-wrap"><input type="number" id="bcu_landLeaseMonths" value="11" min="0" max="12"></div></div>
-            <div class="field"><label for="bcu_hayRolls">Hay (rolls)</label><div class="input-wrap"><input type="number" id="bcu_hayRolls" value="1.5" min="0" step="0.1"></div></div>
-            <div class="field"><span class="hint" style="margin-top:0;">Hay price ($/roll)</span><strong id="bcuHay_roll">$105.00</strong><span class="hint" id="bcuHay_note">$210/ton &times; 1,000&nbsp;lb roll &mdash; set in &ldquo;Market prices &amp; factors&rdquo; below</span></div>
-            <div class="field"><label for="bcu_saltLbs">Salt &amp; mineral (lb)</label><div class="input-wrap"><input type="number" id="bcu_saltLbs" value="90" min="0"></div></div>
-            <div class="field"><label for="bcu_saltPrice">Salt/mineral price ($/lb)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_saltPrice" value="0.25" min="0" step="0.01"></div></div>
-            <div class="field"><label for="bcu_laborMgmt">Labor &amp; management</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_laborMgmt" value="120" min="0"></div></div>
-            <div class="field"><label for="bcu_vetMed">Veterinarian &amp; medicine</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_vetMed" value="35" min="0"></div></div>
-          </div>
-        </fieldset>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Herd bull depreciation (allocated per BCU)</legend>
-          <p class="card-note" style="margin:0 0 10px;">Bull cost, life, salvage weight/price and cows-per-bull now come from the <strong>"Market prices &amp; factors"</strong> calculator below &mdash; edit them there, not here, so B1a and every other tool stay in sync with this one.</p>
-          <div class="field-grid cols-3" id="bcuBullReadout">
-            <div class="field"><span class="hint" style="margin-top:0;">Bull cost</span><strong id="bcuBull_cost">$0</strong></div>
-            <div class="field"><span class="hint" style="margin-top:0;">Productive life</span><strong id="bcuBull_life">0 yrs</strong></div>
-            <div class="field"><span class="hint" style="margin-top:0;">Salvage (weight &times; cull price)</span><strong id="bcuBull_salvage">$0</strong></div>
-            <div class="field"><span class="hint" style="margin-top:0;">Death loss</span><strong id="bcuBull_deathLoss">0%</strong></div>
-            <div class="field"><span class="hint" style="margin-top:0;">Cows per bull</span><strong id="bcuBull_perBull">0</strong></div>
-          </div>
-        </fieldset>
-
-        <fieldset style="margin-bottom:14px;">
-          <legend>Indirect costs</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="bcu_repairMaint">Vehicle/equipment repair</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_repairMaint" value="16" min="0"></div></div>
-            <div class="field"><label for="bcu_fuelOil">Fuel &amp; oil</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_fuelOil" value="5" min="0"></div></div>
-            <div class="field"><label for="bcu_utilities">Utilities</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_utilities" value="10" min="0"></div></div>
-            <div class="field"><label for="bcu_adminGA">General &amp; administration</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_adminGA" value="20" min="0"></div></div>
-            <div class="field"><label for="bcu_vehicleDepr">Vehicle/equipment depreciation</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_vehicleDepr" value="48" min="0"></div></div>
-          </div>
-        </fieldset>
-
-        <div class="stat-tile wide" style="margin-top:4px;">
-          <span class="label">Total operating cost per BCU</span>
-          <span class="value" id="bcu_opCostTotal">$0</span>
-          <span class="sub" id="bcu_opCostBreak"></span>
-        </div>
-
-        <div style="margin-top:18px;">
-          <div class="stackbar-total"><span>Where it goes</span><strong id="bcu_opCostBarTotal">$0 / BCU</strong></div>
-          <div class="stackbar" id="bcu_opCostStackbar"></div>
-          <div class="legend-rows" id="bcu_opCostLegend"></div>
-        </div>
-
-        <div class="btn-row" style="padding:18px 0 0;">
-          <button class="btn secondary" id="bcu_resetBtn" type="button">Reset to defaults</button>
-        </div>
-      </div>
+  <section class="b40-block get-started" id="get-started" aria-labelledby="gsH">
+    <div>
+      <h2 id="gsH">B4 you buy. B4 you build.</h2>
+      <p>Run the numbers first. It is free and nothing to install.</p>
+    </div>
+    <div class="gs-actions">
+      <a class="gs-btn" href="my-ranch/index.html">Start with My Ranch</a>
+      <a class="gs-btn ghost" href="cow-decisions/index.html">Price a cow</a>
     </div>
   </section>
-  <section class="shared-tool" id="market-prices-calculator">
-        <div class="bcu-card">
-      <button type="button" class="bcu-card-toggle" id="mpToggleBtn" aria-expanded="false" aria-controls="mpFields">
-        <div class="cat-top">
-          <span class="cat-num" aria-hidden="true">💲</span>
-          <span class="status-pill live">Shared tool</span>
-        </div>
-        <h3>Market prices &amp; factors</h3>
-        <p>Steer, heifer, cull cow/bull, bred cow, bred heifer, fed-cattle and stocker sale prices, plus herd-bull cost and life and the hay price &mdash; set them once here and every tool that uses one reads the same number (pre-filled, still editable per page if you want to try a different scenario just there).</p>
-        <div class="bcu-preview">
-          <span class="bcu-preview-value" id="mpHeaderValue" style="font-size:16px;">14 values</span>
-          <span class="bcu-preview-label">&middot; <span id="mpSourceLabel">original defaults</span></span>
-        </div>
-        <span class="go">
-          <span id="mpToggleLabel">Edit my numbers</span>
-          <svg class="chevron" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
-        </span>
-      </button>
 
-      <div class="bcu-fields" id="mpFields" hidden>
-        <p class="card-note">Saved in your browser only (not sent anywhere, not shared across devices) &mdash; if you switch browsers or devices, or clear site data, you'll need to re-enter it. See <a href="data-sources.html" style="color:inherit;text-decoration:underline;">the market data page</a> for where each of these numbers came from.</p>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Weight-class prices (steer/heifer/cull, at their reference weight)</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="mp_steerPrice">Steer, at 516.4&nbsp;lb</label><div class="input-wrap has-suffix"><input type="number" id="mp_steerPrice" value="401.22" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_heiferPrice">Heifer, at 531.3&nbsp;lb</label><div class="input-wrap has-suffix"><input type="number" id="mp_heiferPrice" value="365.76" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_cullCowPrice">Cull cow, at 1,279.4&nbsp;lb (Boner)</label><div class="input-wrap has-suffix"><input type="number" id="mp_cullCowPrice" value="125.06" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_cullBullPrice">Cull bull</label><div class="input-wrap has-suffix"><input type="number" id="mp_cullBullPrice" value="162.9" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-          </div>
-          <p class="card-note" style="margin:10px 0 0;">Each tool keeps its own weight-vs-price curve (the real shape of how price changes with weight, digitized from actual auction data) and rescales it to match these numbers at the reference weight above &mdash; so dragging a weight slider on any tool page still interpolates sensibly, not just the default point.</p>
-        </fieldset>
-
-        <fieldset style="margin-bottom:18px;">
-          <legend>Flat prices</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="mp_bredCowPrice">Bred cow</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="mp_bredCowPrice" value="3365.18" min="0" step="1"></div></div>
-            <div class="field"><label for="mp_bredHeiferPrice">Bred heifer</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="mp_bredHeiferPrice" value="3574.39" min="0" step="1"></div></div>
-            <div class="field"><label for="mp_fedCattlePrice">Fed/finished cattle</label><div class="input-wrap has-suffix"><input type="number" id="mp_fedCattlePrice" value="215.21" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_stocker700Price">Stocker sale, 700&nbsp;lb path</label><div class="input-wrap has-suffix"><input type="number" id="mp_stocker700Price" value="332.75" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-            <div class="field"><label for="mp_stocker800Price">Stocker sale, 800&nbsp;lb path</label><div class="input-wrap has-suffix"><input type="number" id="mp_stocker800Price" value="338.56" min="0" step="1"><span class="suffix">$/cwt</span></div></div>
-          </div>
-        </fieldset>
-
-        <fieldset>
-          <legend>Herd bull economics</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="mp_bullCost">Bull cost</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="mp_bullCost" value="4500" min="0"></div></div>
-            <div class="field"><label for="mp_bullLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="mp_bullLife" value="4" min="1"><span class="suffix">yrs</span></div></div>
-            <div class="field"><label for="mp_bullSalvageWeight">Salvage weight</label><div class="input-wrap has-suffix"><input type="number" id="mp_bullSalvageWeight" value="1650.7" min="0"><span class="suffix">lb</span></div></div>
-            <div class="field"><label for="mp_bullDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="mp_bullDeathLoss" value="2" min="0" max="100"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="mp_perBull">Females per bull</label><div class="input-wrap"><input type="number" id="mp_perBull" value="25" min="1"></div></div>
-          </div>
-          <p class="card-note" style="margin:10px 0 0;">Salvage value uses the cull bull price above. Used for the "Cow operating cost (BCU)" calculator's bull depreciation, and for Replacement Heifer Budgets' (B1a) bull investment section.</p>
-        </fieldset>
-
-        <fieldset style="margin-top:18px;">
-          <legend>Feed</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="mp_hayPrice">Hay price</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="mp_hayPrice" value="210" min="0" step="5"><span class="suffix">/ton</span></div></div>
-            <div class="field"><label for="mp_hayRollLb">Round bale weight</label><div class="input-wrap has-suffix"><input type="number" id="mp_hayRollLb" value="1000" min="100" step="50"><span class="suffix">lb</span></div></div>
-          </div>
-          <p class="card-note" style="margin:10px 0 0;">One hay price for the whole site: My Ranch starts its feed plan with it (per ton), and the &ldquo;Cow operating cost (BCU)&rdquo; calculator turns it into a price per roll with the bale weight ($210/ton &times; 1,000&nbsp;lb = $105/roll, the original BCU sheet&rsquo;s value; the 2026 District 3 (Rolling Plains) budgets use $200/ton).</p>
-        </fieldset>
-
-        <div class="btn-row" style="padding:18px 0 0;">
-          <button class="btn secondary" id="mp_resetBtn" type="button">Reset to defaults</button>
-        </div>
-      </div>
-    </div>
-  </section>
-    <p class="section-label">The 24 decision categories</p>
-    <div class="grid" id="catGrid"></div>
-  </section>
-
-  <section class="b40-part" id="calculators" aria-labelledby="calcH">
-    <div class="part-head"><span class="part-num" aria-hidden="true">2</span><div><h2 id="calcH">Calculators</h2><p>Quick answers for everyday herd work, each from a public extension source or product label.</p></div></div>
-  <section class="shared-tool" id="herd-tools-link">
-        <a class="cat-card live" href="herd-tools/index.html" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
-      <span class="cat-num" aria-hidden="true" style="width:44px;height:44px;font-size:22px;">🧮</span>
-      <div style="flex:1;min-width:220px;">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;"><h3 style="margin:0;">Herd Calculators</h3><span class="status-pill live">New</span></div>
-        <p>Water needs, hay-and-supplement mix, dewormer dose and withdrawal, weight gain, and the herd&rsquo;s year in numbers &mdash; each from a public extension source or product label.</p>
-      </div>
-      <span class="go" style="margin-top:0;">Open the calculators &rarr;</span>
-    </a>
-  </section>
-  </section>
-
-  <section class="b40-part" id="my-ranch" aria-labelledby="ranchH">
-    <div class="part-head"><span class="part-num" aria-hidden="true">3</span><div><h2 id="ranchH">My Ranch</h2><p>Your place on a satellite map: acres, forage, carrying capacity, drought and a year plan for the herd.</p></div></div>
-  <section class="shared-tool" id="my-ranch-link">
-        <a class="cat-card live" href="my-ranch/index.html" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap;">
-      <span class="cat-num" aria-hidden="true" style="width:44px;height:44px;font-size:22px;">🗺️</span>
-      <div style="flex:1;min-width:220px;">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px;"><h3 style="margin:0;">My Ranch &mdash; map your pastures</h3><span class="status-pill live">New</span></div>
-        <p>Draw your pastures on a satellite map to get acres, forage from the USDA soil survey, how many cattle the place can carry, and the current drought status.</p>
-        <p id="myRanchPreview" style="margin-top:6px;font-weight:700;color:var(--ink-secondary);" hidden></p>
-      </div>
-      <span class="go" style="margin-top:0;">Open the map &rarr;</span>
-    </a>
-  </section>
-  </section>
 </main>
 
 <div class="viz-tooltip" id="vizTooltip"></div>
 
 <footer>
-  <p class="b40-foot-brand"><strong>Back 40</strong> &middot; Ranch tools &amp; figures</p>
+  <p class="b40-foot-brand"><strong>Back40</strong> &middot; Decision tools for cow-calf ranchers</p>
   <p>The cow decision tools start from the <a href="https://agecoext.tamu.edu/resources/decisionaids/beef/">Beef Cattle Decision Aids</a> spreadsheets. Starting values reproduce each spreadsheet&rsquo;s own assumptions, not real producer data &mdash; always check results before making a decision. Current prices are cited on <a href="data-sources.html">the market data page</a>.</p>
 <!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="privacy.html">Privacy &amp; data</a></li><li><a href="data-sources.html">Where the prices come from</a></li></ul><!-- required-links:end -->
 </footer>
 
 <script>
-(function(){
-  "use strict";
-
-  /* ---------------- Manual dark/light toggle (overrides the OS/browser setting) ---------------- */
-  (function initThemeToggle(){
+(function initThemeToggle(){
     var STORAGE_KEY = 'tamuDecisionAidsTheme';
     var toggle = document.getElementById('themeToggle');
     if(!toggle) return;
@@ -589,360 +424,6 @@
       updateButton();
     });
   })();
-
-  /* ---------------- Shared "Market prices & factors" ----------------
-     2026-09-21: added at the user's request, same "set it once, every tool
-     reads it" pattern as the BCU calculator below. Defined up here (before BCU)
-     so the BCU calculator's own bull-economics fields can read from it instead
-     of keeping a second, separately-editable copy of the same numbers — that
-     duplication ($4,500 here vs. B1a's own $4,000, discovered while building
-     this) is exactly the kind of drift this shared store exists to prevent.
-     cow-calf/index.html, retained-ownership/index.html and replacement-heifer/
-     index.html all read this same localStorage key. */
-  var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
-  var MP_DEFAULTS = {
-    mp_steerPrice:401.22, mp_heiferPrice:365.76, mp_cullCowPrice:125.06, mp_cullBullPrice:162.90,
-    mp_bredCowPrice:3365.18, mp_bredHeiferPrice:3574.39, mp_fedCattlePrice:215.21,
-    mp_stocker700Price:332.75, mp_stocker800Price:338.56,
-    mp_bullCost:4500, mp_bullLife:4, mp_bullSalvageWeight:1650.7, mp_bullDeathLoss:2, mp_perBull:25,
-    mp_hayPrice:210, mp_hayRollLb:1000
-  };
-  function readMarketPrices(){
-    try {
-      var raw = window.localStorage.getItem(MP_STORAGE_KEY);
-      if(raw){
-        var data = JSON.parse(raw);
-        if(data){
-          var out = {};
-          Object.keys(MP_DEFAULTS).forEach(function(id){ out[id] = isFinite(data[id]) ? data[id] : MP_DEFAULTS[id]; });
-          return out;
-        }
-      }
-    } catch(e){ /* private mode / blocked storage */ }
-    var fallback = {};
-    Object.keys(MP_DEFAULTS).forEach(function(id){ fallback[id] = MP_DEFAULTS[id]; });
-    return fallback;
-  }
-
-  /* ---------------- Shared "Cow operating cost (BCU)" calculator ----------------
-     2026-09-16: moved here from the A1 tool page at the user's request, so a
-     producer enters it once and every tool that needs a per-BCU operating cost
-     reads the same number instead of re-asking for it on every page. Persisted
-     to localStorage (this browser only — not synced across devices) under
-     STORAGE_KEY below; site/cow-calf/index.html reads the same key.
-     2026-09-21: the bull-economics sub-inputs below now read from the shared
-     "Market prices & factors" store above (readMarketPrices()) instead of
-     keeping their own copy — see the note above. */
-  (function initBcuCalculator(){
-    var card = document.getElementById('bcu-calculator');
-    if(!card) return;
-
-    var STORAGE_KEY = 'tamuDecisionAidsBcuOpCost';
-    var fmtMoney0 = new Intl.NumberFormat('en-US',{maximumFractionDigits:0});
-    var fmtMoney2 = new Intl.NumberFormat('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
-
-    function $(id){ return document.getElementById(id); }
-    function num(id){ var el = $(id); var v = el ? parseFloat(el.value) : NaN; return isFinite(v)?v:0; }
-    function round(v,d){ var m=Math.pow(10,d||0); return Math.round(v*m)/m; }
-    var RANCH_FEED_KEY = 'tamuDecisionAidsRanchFeed';
-    function readRanchFeed(){
-      try { var r = JSON.parse(window.localStorage.getItem(RANCH_FEED_KEY) || 'null'); return (r && isFinite(r.total)) ? r : null; } catch(e){ return null; }
-    }
-    function showRanchFeed(r, on){
-      var box = $('bcuRanch'); if(!box) return;
-      box.hidden = !r;
-      if(!r) return;
-      $('bcuRanchText').innerHTML = '<strong>My Ranch feed plan'+(r.ranch ? ' ('+String(r.ranch).replace(/[<>&]/g,'')+')' : '')+':</strong> $'+fmtMoney2.format(r.total)+' per cow a year &mdash; hay $'+fmtMoney2.format(r.hay)+', supplement $'+fmtMoney2.format(r.supplement)+', feeding trips &amp; delivery $'+fmtMoney2.format(r.feeding)+'.';
-      ['bcu_hayRolls'].forEach(function(id){ var el=$(id); if(el){ el.disabled = on; el.closest('.field').style.opacity = on ? 0.5 : ''; } });
-    }
-
-    var BCU_DEFAULTS = {
-      bcu_landLeaseRate:15, bcu_landLeaseMonths:11, bcu_hayRolls:1.5,
-      bcu_saltLbs:90, bcu_saltPrice:0.25, bcu_laborMgmt:120, bcu_vetMed:35,
-      bcu_repairMaint:16, bcu_fuelOil:5, bcu_utilities:10, bcu_adminGA:20, bcu_vehicleDepr:48
-    };
-    var customized = false; // true once the producer has their own saved numbers (vs. the shipped defaults)
-
-    function refreshBullReadout(mp){
-      var salvage = mp.mp_bullSalvageWeight*mp.mp_cullBullPrice*0.01;
-      if($('bcuBull_cost')) $('bcuBull_cost').textContent = '$'+fmtMoney0.format(mp.mp_bullCost);
-      if($('bcuBull_life')) $('bcuBull_life').textContent = mp.mp_bullLife+' yrs';
-      if($('bcuBull_salvage')) $('bcuBull_salvage').textContent = '$'+fmtMoney0.format(salvage)+' ('+mp.mp_bullSalvageWeight+' lb @ $'+mp.mp_cullBullPrice.toFixed(2)+'/cwt)';
-      if($('bcuBull_deathLoss')) $('bcuBull_deathLoss').textContent = mp.mp_bullDeathLoss+'%';
-      if($('bcuBull_perBull')) $('bcuBull_perBull').textContent = mp.mp_perBull;
-    }
-
-    /* ---- tooltip + stacked bar (same small chart pattern the tool pages use) ---- */
-    function showVizTooltip(x,y,html){
-      var tt = $('vizTooltip');
-      if(!tt) return;
-      tt.innerHTML = html;
-      tt.style.left = x+'px';
-      tt.style.top = (y-6)+'px';
-      tt.classList.add('show');
-    }
-    function hideVizTooltip(){ var tt=$('vizTooltip'); if(tt) tt.classList.remove('show'); }
-    function buildStackBar(barId, legendId, totalId, data, total, totalSuffix){
-      var bar = $(barId), legend = $(legendId);
-      if(!bar || !legend) return;
-      bar.innerHTML=''; legend.innerHTML='';
-      if(totalId && $(totalId)) $(totalId).textContent = '$'+fmtMoney2.format(total)+(totalSuffix||'');
-      data.forEach(function(d){
-        var pct = total>0 ? (d.value/total*100) : 0;
-        var seg = document.createElement('div');
-        seg.className='seg';
-        seg.style.background = d.color;
-        seg.style.width = Math.max(pct,0)+'%';
-        seg.tabIndex = 0;
-        seg.setAttribute('role','img');
-        seg.setAttribute('aria-label', d.label+': $'+fmtMoney2.format(d.value)+' ('+pct.toFixed(1)+'%)');
-        function showTt(){
-          var r = seg.getBoundingClientRect();
-          showVizTooltip(r.left+r.width/2, r.top, '<div class="tt-val">$'+fmtMoney2.format(d.value)+'</div><div class="tt-lbl">'+d.label+' &middot; '+pct.toFixed(1)+'% of total</div>');
-        }
-        seg.addEventListener('pointerenter', showTt);
-        seg.addEventListener('focus', showTt);
-        seg.addEventListener('pointerleave', hideVizTooltip);
-        seg.addEventListener('blur', hideVizTooltip);
-        bar.appendChild(seg);
-
-        var row = document.createElement('div');
-        row.className='legend-row';
-        row.innerHTML = '<span class="swatch" style="background:'+d.color+'"></span>'+
-                         '<span class="lbl"></span>'+
-                         '<span class="val">$'+fmtMoney2.format(d.value)+'</span>'+
-                         '<span class="pct">'+pct.toFixed(1)+'%</span>';
-        row.querySelector('.lbl').textContent = d.label;
-        legend.appendChild(row);
-      });
-    }
-
-    function calcAndPersist(){
-      var mp = readMarketPrices();
-      refreshBullReadout(mp);
-
-      var landLease = num('bcu_landLeaseRate')*num('bcu_landLeaseMonths');
-      // Hay price per roll = shared $/ton x roll weight (same hay price My Ranch uses)
-      var rollLb = mp.mp_hayRollLb > 0 ? mp.mp_hayRollLb : 1000, hayRoll = mp.mp_hayPrice*rollLb/2000;
-      if($('bcuHay_roll')) $('bcuHay_roll').textContent = '$'+fmtMoney2.format(hayRoll);
-      if($('bcuHay_note')) $('bcuHay_note').innerHTML = '$'+fmtMoney0.format(mp.mp_hayPrice)+'/ton &times; '+fmtMoney0.format(rollLb)+'&nbsp;lb roll &mdash; set in &ldquo;Market prices &amp; factors&rdquo; below';
-      var hayCost = num('bcu_hayRolls')*hayRoll;
-      var proteinQty = num('bcu_hayRolls')*rollLb*0.2/100;
-      var proteinCost = proteinQty*20; // protein price fixed at $20/cwt per original sheet
-      // Optional: purchased feed per cow from the My Ranch feed calendar replaces the hay-roll rule of thumb
-      var ranch = readRanchFeed(), useRanch = !!(ranch && $('bcu_useRanchFeed') && $('bcu_useRanchFeed').checked);
-      showRanchFeed(ranch, useRanch);
-      if(useRanch){ hayCost = ranch.hay + ranch.feeding; proteinCost = ranch.supplement; }
-      var saltCost = num('bcu_saltLbs')*num('bcu_saltPrice');
-      var subtotalFeed = landLease+hayCost+proteinCost+saltCost;
-
-      var salvage = mp.mp_bullSalvageWeight*mp.mp_cullBullPrice*0.01;
-      var netSalvage = salvage*(100-mp.mp_bullDeathLoss)*0.01;
-      var bullDeprTotal = (mp.mp_bullCost-netSalvage)/mp.mp_bullLife;
-      var bullDeprPerBCU = bullDeprTotal/mp.mp_perBull;
-
-      var totalDirect = subtotalFeed + num('bcu_laborMgmt') + num('bcu_vetMed') + bullDeprPerBCU;
-      var totalIndirect = num('bcu_repairMaint')+num('bcu_fuelOil')+num('bcu_utilities')+num('bcu_adminGA')+num('bcu_vehicleDepr');
-      var total = totalDirect + totalIndirect;
-
-      $('bcu_opCostTotal').textContent = '$'+fmtMoney2.format(total);
-      $('bcu_opCostBreak').textContent = 'Direct $'+fmtMoney0.format(totalDirect)+' + Indirect $'+fmtMoney0.format(totalIndirect)+' (incl. bull depreciation $'+fmtMoney2.format(bullDeprPerBCU)+'/BCU)';
-
-      buildStackBar('bcu_opCostStackbar','bcu_opCostLegend','bcu_opCostBarTotal', [
-        {label:useRanch ? 'Feed (My Ranch) & land' : 'Feed & land', value:subtotalFeed, color:'var(--s1)'},
-        {label:'Labor & management', value:num('bcu_laborMgmt'), color:'var(--s2)'},
-        {label:'Vet & health', value:num('bcu_vetMed'), color:'var(--s3)'},
-        {label:'Bull depreciation', value:bullDeprPerBCU, color:'var(--s4)'},
-        {label:'Equipment & other indirect', value:totalIndirect, color:'var(--s5)'}
-      ], total, ' / BCU');
-
-      var payload = { total: round(total,3), savedAt: new Date().toISOString(), useRanchFeed: useRanch };
-      Object.keys(BCU_DEFAULTS).forEach(function(id){ payload[id] = num(id); });
-      try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }
-      catch(e){ /* private mode / blocked storage -- this session's value just won't persist or be shared with other pages */ }
-
-      // Always-visible preview on the collapsed card face, so the producer sees the
-      // number at a glance without opening the calculator.
-      var headerVal = $('bcuHeaderValue'), sourceLbl = $('bcuSourceLabel');
-      if(headerVal) headerVal.textContent = '$'+fmtMoney2.format(total);
-      if(sourceLbl) sourceLbl.textContent = customized ? 'your saved numbers' : 'original default';
-
-      return total;
-    }
-
-    function loadStored(){
-      try {
-        var raw = window.localStorage.getItem(STORAGE_KEY);
-        if(!raw) return false;
-        var data = JSON.parse(raw);
-        if(!data) return false;
-        Object.keys(BCU_DEFAULTS).forEach(function(id){
-          if(isFinite(data[id])){ var el = $(id); if(el) el.value = data[id]; }
-        });
-        if($('bcu_useRanchFeed')) $('bcu_useRanchFeed').checked = !!data.useRanchFeed;
-        return true;
-      } catch(e){ return false; }
-    }
-
-    var hadStoredValues = loadStored();
-    if(hadStoredValues){
-      customized = true;
-    }
-
-    Object.keys(BCU_DEFAULTS).forEach(function(id){
-      var el = $(id);
-      if(el) el.addEventListener('input', function(){ customized = true; calcAndPersist(); });
-    });
-    $('bcu_resetBtn').addEventListener('click', function(){
-      Object.keys(BCU_DEFAULTS).forEach(function(id){ var el=$(id); if(el) el.value = BCU_DEFAULTS[id]; });
-      if($('bcu_useRanchFeed')) $('bcu_useRanchFeed').checked = false;
-      customized = false;
-      calcAndPersist();
-    });
-
-    // Bull economics now live in the "Market prices & factors" card above --
-    // re-read and refresh whenever it changes (same page, and cross-tab via storage).
-    window.addEventListener('tamuMarketPricesChanged', calcAndPersist);
-    if($('bcu_useRanchFeed')) $('bcu_useRanchFeed').addEventListener('change', function(){ customized = true; calcAndPersist(); });
-    window.addEventListener('storage', function(e){ if(e.key === RANCH_FEED_KEY) calcAndPersist(); });
-    window.addEventListener('storage', function(e){
-      if(e.key === 'tamuDecisionAidsMarketPrices') calcAndPersist();
-    });
-
-    /* Collapsed by default (see .bcu-card CSS) — click to open/close the editor. */
-    var toggleBtn = $('bcuToggleBtn'), fields = $('bcuFields'), toggleLabel = $('bcuToggleLabel');
-    toggleBtn.addEventListener('click', function(){
-      var open = fields.hasAttribute('hidden');
-      if(open){ fields.removeAttribute('hidden'); } else { fields.setAttribute('hidden',''); }
-      toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      toggleLabel.textContent = open ? 'Hide' : 'Edit my numbers';
-    });
-
-    calcAndPersist();
-  })();
-
-  (function initMarketPricesCalculator(){
-    var card = document.getElementById('market-prices-calculator');
-    if(!card) return;
-    function $(id){ return document.getElementById(id); }
-    function num(id){ var el = $(id); var v = el ? parseFloat(el.value) : NaN; return isFinite(v)?v:0; }
-    var customized = false;
-
-    function persist(){
-      // Only the numbers the visitor changed are saved (v:2). Everything else falls back to the
-      // defaults above, which the weekly USDA price job keeps current; saving every value froze
-      // returning visitors on old prices (see brand/market-store.js).
-      var payload = { savedAt: new Date().toISOString(), v: 2 };
-      Object.keys(MP_DEFAULTS).forEach(function(id){
-        var v = num(id);
-        if(Math.abs(v - MP_DEFAULTS[id]) > 1e-9) payload[id] = v;
-      });
-      try { window.localStorage.setItem(MP_STORAGE_KEY, JSON.stringify(payload)); }
-      catch(e){ /* private mode / blocked storage -- this session's values just won't persist or be shared */ }
-
-      var headerVal = $('mpHeaderValue'), sourceLbl = $('mpSourceLabel');
-      if(headerVal) headerVal.textContent = Object.keys(MP_DEFAULTS).length + ' values';
-      if(sourceLbl) sourceLbl.textContent = customized ? 'your saved numbers' : 'original defaults';
-
-      // Let the BCU calculator (and any other same-page listener) know to re-read.
-      window.dispatchEvent(new CustomEvent('tamuMarketPricesChanged'));
-      return payload;
-    }
-
-    function loadStored(){
-      try {
-        var raw = window.localStorage.getItem(MP_STORAGE_KEY);
-        if(!raw) return false;
-        var data = JSON.parse(raw);
-        if(!data) return false;
-        var any = false;
-        Object.keys(MP_DEFAULTS).forEach(function(id){
-          if(isFinite(data[id])){ var el = $(id); if(el){ el.value = data[id]; any = true; } }
-        });
-        return any;
-      } catch(e){ return false; }
-    }
-
-    if(loadStored()) customized = true;
-
-    Object.keys(MP_DEFAULTS).forEach(function(id){
-      var el = $(id);
-      if(el) el.addEventListener('input', function(){ customized = true; persist(); });
-    });
-    $('mp_resetBtn').addEventListener('click', function(){
-      Object.keys(MP_DEFAULTS).forEach(function(id){ var el=$(id); if(el) el.value = MP_DEFAULTS[id]; });
-      customized = false;
-      persist();
-    });
-
-    var toggleBtn = $('mpToggleBtn'), fields = $('mpFields'), toggleLabel = $('mpToggleLabel');
-    toggleBtn.addEventListener('click', function(){
-      var open = fields.hasAttribute('hidden');
-      if(open){ fields.removeAttribute('hidden'); } else { fields.setAttribute('hidden',''); }
-      toggleBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
-      toggleLabel.textContent = open ? 'Hide' : 'Edit my numbers';
-    });
-
-    persist();
-  })();
-
-  var categories = [
-    {n:1,  name:"Cow-Calf Bid Price and Budgets", desc:"What to bid for a bred cow, and the operating budget behind it.", status:"progress", href:"cow-calf/index.html", note:"A1 live · A2 in progress"},
-    {n:2,  name:"Replacement Heifer Budgets", desc:"Natural service, AI, and sexed-semen heifer development budgets and closeouts.", status:"progress", href:"replacement-heifer/index.html", note:"B1a live · AI/sexed-semen planned next"},
-    {n:3,  name:"Cow-Calf Budgeting and Herd Bull Investment", desc:"Full cow-calf enterprise budgets and bull investment analysis."},
-    {n:4,  name:"Retained Ownership", desc:"Stocker, feeder, and custom-finish profit projections and closeouts.", status:"progress", href:"retained-ownership/index.html", note:"D1 + Stockers live"},
-    {n:5,  name:"Cattle Inventories", desc:"Monthly and annual cattle inventory and balance sheet reporting."},
-    {n:6,  name:"Feed Fed & Purchases", desc:"Feed record-keeping, purchases, and reconciled inventory."},
-    {n:7,  name:"Hay and Grazing", desc:"Hay production vs. purchase, grazing budgets, and fencing cost estimates."},
-    {n:8,  name:"Cow-Calf Grazing Lease Economic Evaluation and Production Records", desc:"Lease cost, income, and record-keeping for owners and lessees."},
-    {n:9,  name:"Labor and Management", desc:"Compensation planning and job description resources."},
-    {n:10, name:"Vehicle and Freight Cost", desc:"Pickup, trailer, and freight cost and replacement planning."},
-    {n:11, name:"Preconditioning Profitability Decision Aid", desc:"Preconditioning profit projections, closeouts, and cost calculators."},
-    {n:12, name:"Developing Financial Statements to Measure Ranch Profitability", desc:"Converting IRS Schedule F records into managerial financial statements."},
-    {n:13, name:"Grassfed Beef Accounting, Profit Projection and Closeout", desc:"Profit projection and closeout for grassfed live, carcass, and meat sales."},
-    {n:14, name:"Standardized Performance Analysis (SPA) Reproduction, Production and Grazing Calculations", desc:"SPA-based reproduction, feed use, and grazing calculations."},
-    {n:15, name:"Cow-Calf Herd Health Economics", desc:"Herd health planning, treatment records, and delayed-pregnancy cost impact."},
-    {n:16, name:"Program Cattle Economics", desc:"Weaned calf and stocker program evaluation and verification cost tracking."},
-    {n:17, name:"Program Cattle Retained Ownership Economic Evaluation", desc:"Preconditioning, stocker-feeder, and custom-finish program examples."},
-    {n:18, name:"Herd Bull Replacement Economics of Alternatives", desc:"Comparing sexed semen, conventional AI, and purchased-bull costs."},
-    {n:19, name:"Beef Sexed Semen Based Breeding Systems", desc:"Economic comparisons of sexed semen vs. conventional breeding systems."},
-    {n:20, name:"Capital Asset Replacement Calculator to Replace IRS Depreciation", desc:"Replacement-cost-based depreciation for vehicles, equipment, and breeding stock."},
-    {n:21, name:"Cattle Sales Record and Net Price Calculations", desc:"Sales, transfer, and net price record-keeping."},
-    {n:22, name:"Ranch Hunting Lease Income, Costs & Net Lease Income Budgets", desc:"Income and cost budgets for hunting leases by species."},
-    {n:23, name:"Dairy Cattle Retained Ownership Economics", desc:"Dairy calf, feeder, and finishing cost and profit projections."},
-    {n:24, name:"Dairy Breeding – Economics of Alternatives", desc:"Economics of dairy and beef-dairy cross breeding alternatives."}
-  ];
-
-  var grid = document.getElementById('catGrid');
-  var html = categories.map(function(c){
-    var isLive = c.status === 'progress';
-    var pill = isLive
-      ? '<span class="status-pill progress">In progress</span>'
-      : '<span class="status-pill soon">Coming soon</span>';
-    var noteLine = c.note ? '<p style="margin-top:6px;color:var(--accent);font-weight:600;">'+c.note+'</p>' : '';
-    var goLine = isLive ? '<span class="go">Open tool &rarr;</span>' : '';
-    var num = '<span class="cat-num">'+(c.n<10?'0':'')+c.n+'</span>';
-    var body = '<div class="cat-top">'+num+pill+'</div><h3>'+c.name+'</h3><p>'+c.desc+'</p>'+noteLine+goLine;
-    if(isLive){
-      return '<a class="cat-card live" href="'+c.href+'">'+body+'</a>';
-    }
-    return '<div class="cat-card disabled">'+body+'</div>';
-  }).join('');
-  grid.innerHTML = html;
-})();
-
-(function initMyRanchPreview(){
-  var el = document.getElementById('myRanchPreview'); if(!el) return;
-  try{
-    var st = JSON.parse(localStorage.getItem('tamuDecisionAidsMyRanch.v1') || 'null');
-    var sm = st && st.summary;
-    if(sm && sm.pastures > 0){
-      el.textContent = (st.name ? st.name + ': ' : 'Saved on this device: ') + sm.pastures + ' pasture' + (sm.pastures === 1 ? '' : 's') + ' \u00b7 ' +
-        Math.round(sm.acres).toLocaleString('en-US') + ' acres' + (sm.capacityAU > 0 ? ' \u00b7 about ' + Math.round(sm.capacityAU).toLocaleString('en-US') + ' AU capacity' : '');
-      el.hidden = false;
-    }
-  }catch(e){}
-})();
 </script>
 
 <script src="jim/jim.js" defer></script>
