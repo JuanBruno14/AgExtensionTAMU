@@ -321,3 +321,53 @@ button,[role="button"],summary,select,.tab-btn,.seg-btn,.tool-btn,.phase-chip,.t
   .b40-name{font-size:21px;letter-spacing:0.12em;}
   .tool-title{font-size:19px;}
 }
+
+/* ==========================================================================
+   Home polish (from the design critique)
+   ========================================================================== */
+/* one main action in the hero; the three doors are the secondary way in */
+.hero .hero-cta{
+  display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:14px 32px;margin-top:10px;box-sizing:border-box;
+  background:#FFFFFF;color:#111111;border:2px solid #FFFFFF;text-decoration:none;
+  font-family:var(--font-head);font-weight:600;font-size:18px;letter-spacing:0.1em;text-transform:uppercase;
+}
+.hero .hero-cta::after{content:"\2192";margin-left:12px;}
+.hero .hero-cta:hover{background:var(--w-header);border-color:#FFFFFF;color:#FFFFFF;}
+.hero .hero-cta:focus-visible{outline:2px solid #FFFFFF;outline-offset:3px;}
+.hero .doors-label{margin:22px 0 0;font-family:var(--font-label);font-weight:500;font-size:13px;letter-spacing:0.2em;text-transform:uppercase;color:#E9E4E4;}
+.hero .doors{margin-top:4px;}
+.door{position:relative;}
+.door::after{content:"\2192";position:absolute;right:16px;top:16px;font-size:22px;line-height:1.2;color:#FFFFFF;opacity:.8;transition:transform .15s ease;}
+.door:hover::after{transform:translateX(4px);opacity:1;}
+.door{padding:18px 40px 18px 18px;align-items:flex-start;text-align:left;}
+.door-sub{font-size:15.5px;}
+
+/* the "check the numbers" note, right under the hero */
+.data-note{margin:0 0 40px;padding:16px 20px;border-left:6px solid var(--accent);background:var(--maroon-100);}
+.data-note p{margin:0;max-width:none;color:var(--ink);font-size:16px;line-height:1.6;}
+.data-note a{color:var(--accent);font-weight:600;}
+
+/* step titles are links into My Ranch */
+.steps h3 a{color:inherit;text-decoration:none;border-bottom:2px solid transparent;}
+.steps h3 a::after{content:" \2192";color:var(--accent);}
+.steps h3 a:hover{border-bottom-color:var(--accent);}
+.steps h3 a:focus-visible{outline:2px solid var(--focus);outline-offset:3px;}
+.get-started .gs-jim{font-size:15px;color:#F3E9E9;}
+
+/* footer lines up with the page content; no big blank gap before it */
+.hero ~ footer{
+  padding-left:max(clamp(16px,4vw,40px), calc((100vw - 1180px)/2 + clamp(16px,4vw,40px))) !important;
+  padding-right:max(clamp(16px,4vw,40px), calc((100vw - 1180px)/2 + clamp(16px,4vw,40px))) !important;
+  margin-top:56px !important;
+}
+.hero ~ main{padding-bottom:0 !important;}
+.hero ~ main > .b40-block:last-child{margin-bottom:0;}
+footer p{font-size:14.5px;line-height:1.6;}
+footer .required-links{font-size:13.5px !important;}
+
+@media (max-width:720px){
+  .hero .hero-cta{width:100%;}
+  .door{align-items:center;text-align:center;padding:18px 40px;}
+  .door::after{right:16px;}
+}
+.steps h3 a{display:inline-block;padding:10px 0;margin:-10px 0;}
