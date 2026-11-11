@@ -17,7 +17,7 @@
   <div class="intro-inner">
     <div>
       <h1>Map your ranch and see how many cattle it can carry.</h1>
-      <p>Find your place on the satellite map and draw each pasture. The tool measures the acres, looks up the USDA soil survey's forage estimate for each pasture, and turns it into a carrying capacity in animal units &mdash; then checks it against your planned herd, the current Drought Monitor, and the AgriLife 2026 cow-calf budget.</p>
+      <p>Find your place on the satellite map and draw each pasture. The tool measures the acres, looks up the USDA soil survey's forage estimate for each pasture, and turns it into a carrying capacity in animal units &mdash; then checks it against your planned herd, the current Drought Monitor, and a 2026 Rolling Plains cow-calf budget.</p>
       <p class="print-only" id="printDate"></p>
     </div>
     <div class="intro-meta">
@@ -98,7 +98,7 @@
         <span class="sep" aria-hidden="true"></span>
         <button type="button" class="tool-btn" data-zone="water" title="Draw a pond or lake inside a pasture; it's taken out of the grazing area">💧 Pond/lake</button>
         <button type="button" class="tool-btn" data-zone="brush" title="Draw heavy brush or woods inside a pasture; it grows less grass">🌳 Brush</button>
-        <button type="button" class="tool-btn" data-zone="bottom" title="Draw bottomland inside a pasture; it usually grows more grass">〰 Bottomland</button>
+        <button type="button" class="tool-btn" data-zone="bottom" title="Draw bottomland inside a pasture to mark it on the map">〰 Bottomland</button>
         <span class="sep" aria-hidden="true"></span>
         <button type="button" class="tool-btn" data-point="water">🚰 Water point</button>
         <button type="button" class="tool-btn" data-point="pen">🐄 Pens</button>
@@ -147,13 +147,13 @@
         <details class="advanced" style="margin-top:14px;">
           <summary>Land adjustments</summary>
           <div class="adv-body">
-            <p class="card-note">The soil survey's forage is for a site in top condition. Rate each rangeland pasture's condition in its row; this sets how much of that forage it grows today. Areas drawn inside a pasture replace that part of it: ponds count as no forage, brush and bottomland as a share of the pasture's forage.</p>
+            <p class="card-note">The soil survey's forage is for a site in top condition. Rate each rangeland pasture's condition in its row; this sets how much of that forage it grows today. Areas drawn inside a pasture replace that part of it: ponds count as no forage, brush as a share of the pasture's forage (bottomland counts the same as the rest unless you change it).</p>
             <div class="field-grid cols-3">
               <div class="field"><label for="la_poor">Poor condition</label><div class="input-wrap has-suffix"><input type="number" id="la_poor" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
               <div class="field"><label for="la_fair">Fair condition</label><div class="input-wrap has-suffix"><input type="number" id="la_fair" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
               <div class="field"><label for="la_excellent">Excellent condition</label><div class="input-wrap has-suffix"><input type="number" id="la_excellent" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
               <div class="field"><label for="la_brush">Brush / woods</label><div class="input-wrap has-suffix"><input type="number" id="la_brush" min="0" max="100" step="5"><span class="suffix">%</span></div><span class="hint">NRCS: grass under heavy brush ≈ 25% of open prairie</span></div>
-              <div class="field"><label for="la_bottom">Bottomland</label><div class="input-wrap has-suffix"><input type="number" id="la_bottom" min="50" max="400" step="10"><span class="suffix">%</span></div><span class="hint">NRCS: bottomland ≈ 2.5× upland (5,000 vs. 2,040 lb/ac)</span></div>
+              <div class="field"><label for="la_bottom">Bottomland</label><div class="input-wrap has-suffix"><input type="number" id="la_bottom" min="50" max="400" step="10"><span class="suffix">%</span></div><span class="hint">100% = same as the rest of the pasture. The soil survey already counts the productive soils in the outline, so raising this counts them twice.</span></div>
             </div>
             <label class="check-line" style="display:flex;gap:8px;align-items:flex-start;margin-top:10px;"><input type="checkbox" id="la_water"> <span>Count less forage far from water: ground 1–2 mi from the nearest water at half, over 2 mi not at all (Holechek 1988, in Vallentine, <em>Grazing Management</em>, 2001). Needs 💧 water points or ponds on the map.</span></label>
           </div>
@@ -244,7 +244,7 @@
             <span class="hint">From USGS elevation inside each pasture (soil survey if unavailable): 11–30% slope counts 30% less, 31–60% counts 60% less, over 60% not at all</span>
           </div>
         </div>
-        <p class="card-note" style="margin:14px 0 0;">Defaults follow AgriLife Extension's <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and with continuous grazing about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering). Rotation with rest raises that to about 30%, and intensive rotation to about 40% (University of Nebraska Extension).</p>
+        <p class="card-note" style="margin:14px 0 0;">Defaults follow <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and with continuous grazing about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering). Rotation with rest raises that to about 30%, and intensive rotation to about 40% (University of Nebraska Extension).</p>
       </div>
     </div>
 
@@ -262,7 +262,7 @@
     <div class="card-body">
       <div class="spa-load"><button type="button" class="tool-btn" id="spaBtn">📄 Fill in from my SPA worksheet (.xlsx)</button>
         <input type="file" id="spaInput" accept=".xlsx" hidden>
-        <span class="hint" id="spaNote">Texas A&amp;M Cow-Calf SPA Worksheets: fills cows, calving, weaning, calf crop, losses, replacements and costs, and shows your records next to My Ranch’s numbers.</span></div>
+        <span class="hint" id="spaNote">Cow-Calf SPA Worksheets: fills cows, calving, weaning, calf crop, losses, replacements and costs, and shows your records next to My Ranch’s numbers.</span></div>
       <div class="field-grid cols-4">
           <div class="field">
             <label for="hd_cows">Cows</label>
@@ -334,7 +334,7 @@
           </div>
           <div class="field">
             <label for="fc_fq">Native range quality</label>
-            <select id="fc_fq" data-hs="fq"><option value="typical">Typical forage values</option><option value="b6124">What cattle select (AgriLife B-6124)</option></select>
+            <select id="fc_fq" data-hs="fq"><option value="typical">Typical forage values</option><option value="b6124">What cattle select (B-6124)</option></select>
             <span class="hint">B-6124: diet protein and digestibility from fecal samples of grazing cattle in your region</span>
           </div>
         </div>
@@ -449,7 +449,7 @@
               <fieldset style="margin-top:18px;"><legend>Mineral &amp; salt</legend>
                 <div class="field-grid cols-3">
                   <div class="field"><label for="fc_mineralOz">Fed per cow and bull</label><div class="input-wrap has-suffix"><input type="number" id="fc_mineralOz" data-h="mineralOz" min="0" max="16" step="0.5"><span class="suffix">oz/day</span></div><span class="hint">Free-choice mineral usually runs 2–4 oz a day (4 oz ≈ 90 lb a year)</span></div>
-                  <div class="field"><label for="fc_mineralPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_mineralPrice" data-h="mineralPrice" min="0" max="5" step="0.01"><span class="suffix">/lb</span></div><span class="hint">AgriLife 2026 Rolling Plains budget: $0.45/lb</span></div>
+                  <div class="field"><label for="fc_mineralPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_mineralPrice" data-h="mineralPrice" min="0" max="5" step="0.01"><span class="suffix">/lb</span></div><span class="hint">2026 Rolling Plains budget: $0.45/lb</span></div>
                 </div>
               </fieldset>
               <fieldset style="margin-top:18px;">
@@ -550,7 +550,7 @@
             </div>
           </details>
           <details class="advanced" style="margin-top:12px;" id="budgetDetails">
-            <summary>Compare with the AgriLife 2026 cow-calf budget</summary>
+            <summary>Compare with a 2026 Rolling Plains cow-calf budget</summary>
             <div class="adv-body">      <div class="card-body" id="budgetBody"></div></div>
           </details>
           <details class="advanced" style="margin-top:12px;">
@@ -560,10 +560,10 @@
               <p><strong>Short grass</strong>: when the forage standing on the pastures (what cattle can still graze plus the stubble left standing) drops below about 1,030 lb/acre and there is little of it per head, cattle cannot bite off a full day's intake, so hay makes up the rest (NRC 2016 grazing intake factor, as coded in the BCNRM software). On a ranch stocked to its capacity this only happens in a deep drought.</p>
               <p><strong>Weather</strong> (when on) follows the same model: cows adapt to the previous month's temperature (needing more after cold months, less after hot ones); below the lower critical temperature — which depends on wind, hair depth (winter vs. summer coat), hide, a wet or muddy coat and body condition — they burn extra energy to stay warm. Calves get the same check, with the thin body insulation of a young calf (a calf under a month old feels cold much sooner than its mother); milk usually covers that extra energy. Panting in hot months adds 7–18%. Temperatures are the monthly normals for your region, so a single blue norther or ice storm is harder than the average shown.</p>
               <p><strong>Calves</strong> grow at the rate that reaches your average weaning weight. Their mother's milk is counted first; only the rest comes from pasture. When you wean on a date, calves born earlier are older and heavier. During the weaning period they eat like growing calves and are sold at the end of it.</p>
-              <p><strong>Pasture</strong> is each pasture's forage (soil survey × range condition, or your estimate; ponds, brush and bottomland adjusted) times your harvest efficiency, spread over the year with NRCS ecological-site growth curves: for native range, the curve of the plant community that matches the range condition (Rolling Plains and Edwards Plateau); for improved pasture, hay meadows and small grains, the NRCS pasture and small-grain curves. Harvest efficiency is the grazing-system value on native range and at least 40% on improved pasture and 50% on small grains (Holechek); hay meadows are baled, not grazed, and their hay is fed before any is bought. Forage not eaten carries into the next month, losing 5% a month to weathering while the grass is dormant (Vallentine 2001). Steep ground counts less (Holechek: 11–30% slope −30%, 31–60% −60%, over 60% none), water only counts inside a pasture or on its fence, and rock outcrop and other non-producing soils count as zero. Quality uses typical diet values by month, not a forage test, or, if you choose it, what grazing cattle in your region select (AgriLife B-6124, fecal samples). Young cows are lighter and still growing (BCNRM targets: 80% of mature weight at first calving, 92% at second, 96% at third), and first-calf cows give 88% of mature milk; their share of the herd comes from the replacement rate.</p>
+              <p><strong>Pasture</strong> is each pasture's forage (soil survey × range condition, or your estimate; ponds, brush and bottomland adjusted) times your harvest efficiency, spread over the year with NRCS ecological-site growth curves: for native range, the curve of the plant community that matches the range condition (Rolling Plains and Edwards Plateau); for improved pasture, hay meadows and small grains, the NRCS pasture and small-grain curves. Harvest efficiency is the grazing-system value on native range and at least 40% on improved pasture and 50% on small grains (Holechek); hay meadows are baled, not grazed, and their hay is fed before any is bought. Forage not eaten carries into the next month, losing 5% a month to weathering while the grass is dormant (Vallentine 2001). Steep ground counts less (Holechek: 11–30% slope −30%, 31–60% −60%, over 60% none), water only counts inside a pasture or on its fence, and rock outcrop and other non-producing soils count as zero. Quality uses typical diet values by month, not a forage test, or, if you choose it, what grazing cattle in your region select (B-6124, fecal samples). Young cows are lighter and still growing (BCNRM targets: 80% of mature weight at first calving, 92% at second, 96% at third), and first-calf cows give 88% of mature milk; their share of the herd comes from the replacement rate.</p>
               <p><strong>Intake</strong> follows Mississippi State Extension's guide (1.8–2.7% of body weight depending on forage quality). Herd intake uses the herd's average weight (young cows are lighter). When pasture runs out, hay fills the rest of the intake (bought or baled with your storage and feeding loss added, 15% by default); the supplement covers whatever protein or energy is still missing, and an energy supplement with more than 7 parts TDN per part protein replaces some grass (0.5 lb per lb). A month is flagged when degradable protein may fall under about 10% of the TDN eaten.</p>
-              <p><strong>Losses:</strong> calf death loss is split into weather-related (about 10% of all losses in USDA's NAHMS study, adjusted by how cold the nights are in the birth month for your region) and everything else. Screwworm risk rises with temperature (little fly activity below 59°F, most at 77–86°F, per AgriLife); there is no published loss rate yet, so you set it. Horn flies cut calf weaning weights 4–15% (UNL); the tool applies it to the share of nursing days in June–September.</p>
-              <p><strong>Money:</strong> calves are sold at your market price slide (half steers, half heifers), cull cows at the cull-cow price, both from the site's shared market prices. By default it uses those prices as they are, like the other tools on this site. Turn on <em>Seasonal prices</em> to move them to the month you actually sell with a seasonal price pattern (calves: Oklahoma City 500–650 lb steers and 450–500 lb heifers, USDA 2016–2025, Feb–Apr about 3–4% above the year's average, October about 6% below; cull cows: Texas A&amp;M's San Angelo pattern, 1989–98). The result is cattle sales minus the feed you buy and the cost of feeding it — not profit: land, labor, vet, bull and other costs aren't in it.</p>
+              <p><strong>Losses:</strong> calf death loss is split into weather-related (about 10% of all losses in USDA's NAHMS study, adjusted by how cold the nights are in the birth month for your region) and everything else. Screwworm risk rises with temperature (little fly activity below 59°F, most at 77–86°F); there is no published loss rate yet, so you set it. Horn flies cut calf weaning weights 4–15% (UNL); the tool applies it to the share of nursing days in June–September.</p>
+              <p><strong>Money:</strong> calves are sold at your market price slide (half steers, half heifers), cull cows at the cull-cow price, both from the site's shared market prices. By default it uses those prices as they are, like the other tools on this site. Turn on <em>Seasonal prices</em> to move them to the month you actually sell with a seasonal price pattern (calves: Oklahoma City 500–650 lb steers and 450–500 lb heifers, USDA 2016–2025, Feb–Apr about 3–4% above the year's average, October about 6% below; cull cows: San Angelo pattern, 1989–98). The result is cattle sales minus the feed you buy and the cost of feeding it — not profit: land, labor, vet, bull and other costs aren't in it.</p>
               <p><strong>Replacement heifers</strong> follow the BCNRM 2016 targets: 60% of mature weight when they settle at 15 months (65% for Brahman), 80% at first calving at 2 years, with growth and pregnancy needs from the same model. Enough heifer calves are kept to replace culls and dead cows after open heifers are sold at pregnancy check; culls are sold at weaning.</p>
               <p><strong>Body condition:</strong> if cows come off the calf thinner than your target, the energy to put it back (NRC 2016: a 1,100-lb cow needs about 207 Mcal to go from 4 to 5) is spread from weaning to a month before the next calving — the cheapest time to do it.</p>
               <p><strong>Not included:</strong> cold stress on calves, first-calf heifers, heifers you buy instead of raise. Growth curves, forage quality and weather are Texas data; outside Texas the tool uses the closest Texas region.</p>
@@ -634,7 +634,7 @@
           <details class="advanced" style="margin-top:4px;">
             <summary>Costs and interest</summary>
             <div class="adv-body"><div class="field-grid cols-3">
-              <div class="field"><label for="dr_otherCost">Other costs per cow</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_otherCost" data-dr="otherCost" min="0" max="3000" step="5"><span class="suffix">/yr</span></div><span class="hint">Besides hay, supplement and mineral (those come from your feed settings). AgriLife 2026 Rolling Plains budget: $189 (vet, fuel, repairs, marketing, labor, interest)</span></div>
+              <div class="field"><label for="dr_otherCost">Other costs per cow</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_otherCost" data-dr="otherCost" min="0" max="3000" step="5"><span class="suffix">/yr</span></div><span class="hint">Besides hay, supplement and mineral (those come from your feed settings). 2026 Rolling Plains budget: $189 (vet, fuel, repairs, marketing, labor, interest)</span></div>
               <div class="field"><label for="dr_devCost">Raising a heifer to calving</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_devCost" data-dr="devCost" min="0" max="5000" step="25"><span class="suffix">/hd</span></div><span class="hint">Feed and care from weaning to first calf, beyond the heifer’s own sale value</span></div>
               <div class="field"><label for="dr_rate">Interest rate</label><div class="input-wrap has-suffix"><input type="number" id="dr_rate" data-dr="rate" min="0" max="20" step="0.5"><span class="suffix">%/yr</span></div><span class="hint">What money is worth to you: what you pay to borrow, or earn on savings</span></div>
             </div></div>
@@ -642,7 +642,7 @@
           <div class="fc-chart" id="dec_drLongChart" style="margin-top:12px;"></div>
           <p class="fc-short" id="dec_drLongText"></p>
           <div class="table-scroll"><table class="plan fc-table" id="dec_drLongTable"></table></div>
-          <p class="card-note" style="margin:8px 0 0;">* Worth today: each year’s cash discounted at your interest rate, plus the cows you still own in year 10 valued as culls, so selling and staying smaller isn’t rewarded just for holding cash. A normal year after the drought uses your ranch’s own feed calendar and today’s prices; thin cows at breeding during the drought mean fewer calves the next year (Sprott 1985). The grass recovers over two years after the drought (your setting); a herd too big for it buys hay at your normal price. Not counted: taxes (drought sales can be deferred) and buying cows of unknown health. Idea and structure from Texas A&amp;M AgriLife’s <em>Drought Decision-Aid / Restocking Options</em> (F. Abello, Vernon).</p>
+          <p class="card-note" style="margin:8px 0 0;">* Worth today: each year’s cash discounted at your interest rate, plus the cows you still own in year 10 valued as culls, so selling and staying smaller isn’t rewarded just for holding cash. A normal year after the drought uses your ranch’s own feed calendar and today’s prices; thin cows at breeding during the drought mean fewer calves the next year (Sprott 1985). The grass recovers over two years after the drought (your setting); a herd too big for it buys hay at your normal price. Not counted: taxes (drought sales can be deferred) and buying cows of unknown health. Idea and structure from the <em>Drought Decision-Aid / Restocking Options</em> (F. Abello, Vernon).</p>
           </div>
         </div>
 
@@ -658,6 +658,6 @@
 </div>
 
 <footer>
-  Forage estimates: USDA-NRCS Soil Survey (SSURGO) through Soil Data Access, &ldquo;range production, normal year&rdquo; weighted by soil area and component share. Drought status: U.S. Drought Monitor (National Drought Mitigation Center, USDA, NOAA), current week. Stocking rate method: AgriLife Extension, <em>Stocking Rate: The Key Grazing Management Decision</em>. Budget benchmark: AgriLife Extension 2026 District 3 (Rolling Plains) cow-calf enterprise budget. Satellite imagery &copy; Esri and its partners; search &copy; OpenStreetMap contributors. These are planning estimates, not a range inspection &mdash; walk your pastures and check with your county agent or NRCS office before setting a stocking rate.
+  Forage estimates: USDA-NRCS Soil Survey (SSURGO) through Soil Data Access, &ldquo;range production, normal year&rdquo; weighted by soil area and component share. Drought status: U.S. Drought Monitor (National Drought Mitigation Center, USDA, NOAA), current week. Stocking rate method: <em>Stocking Rate: The Key Grazing Management Decision</em>. Budget benchmark: 2026 District 3 (Rolling Plains) cow-calf enterprise budget. Satellite imagery &copy; Esri and its partners; search &copy; OpenStreetMap contributors. These are planning estimates, not a range inspection &mdash; walk your pastures and check with your county agent or NRCS office before setting a stocking rate.
 </footer>
 <script src="../brand/a11y-scroll.js" defer></script>

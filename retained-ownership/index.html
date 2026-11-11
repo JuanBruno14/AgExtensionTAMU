@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-b3EKJGI9GAFSkueINEWMiC37dV+KjIYmVBxtvPNnSdY='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-v/dJBKDIqKNzF2Eumsu7qIWKeKR2Q5YyrguIcCmaOhQ='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sell or Keep to Upgrade · Back 40</title>
@@ -494,7 +494,7 @@
   <div class="intro-inner">
     <div>
       <h1>Should you sell cull cows now, or keep feeding them to upgrade?</h1>
-      <p>Enter today's cull-cow sale terms and the retained-ownership alternative (extra days on feed, target out-weight, gain, and price): the tool compares selling now against keeping the cows to add weight and grade, then shows the marketing margin, feeding margin, ROA/ROE, and the price needed to hit your target margin — just like AgriLife Extension's D1 spreadsheet, but recalculating live.</p>
+      <p>Enter today's cull-cow sale terms and the retained-ownership alternative (extra days on feed, target out-weight, gain, and price): the tool compares selling now against keeping the cows to add weight and grade, then shows the marketing margin, feeding margin, ROA/ROE, and the price needed to hit your target margin — just like the D1 spreadsheet, but recalculating live.</p>
     </div>
     <div class="intro-meta">
       <div><strong>Sell vs. retain</strong>side-by-side comparison</div>
@@ -1180,7 +1180,7 @@
 </div>
 
 <footer id="toolFooter">
-  Based on the <strong>D1 — Sell or Keep to Upgrade Cull Cows Profit Projection</strong> spreadsheet published by Texas A&amp;M AgriLife Extension. Starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a cull-cow marketing decision.
+  Based on the <strong>D1 — Sell or Keep to Upgrade Cull Cows Profit Projection</strong> spreadsheet. Starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a cull-cow marketing decision.
 <!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; data</a></li><li><a href="../data-sources.html">Where the prices come from</a></li></ul><!-- required-links:end -->
 </footer>
 
@@ -1546,7 +1546,7 @@
         if(titleEl && btn.dataset.title) titleEl.textContent = btn.dataset.title;
         var footerEl = $('toolFooter');
         if(footerEl && btn.dataset.source){
-          footerEl.innerHTML = 'Based on the <strong>' + btn.dataset.source + '</strong> spreadsheet published by Texas A&amp;M AgriLife Extension. Starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet\'s original assumptions, not a real producer\'s data. Always verify results before using them to ' + btn.dataset.use + '.';
+          footerEl.innerHTML = 'Based on the <strong>' + btn.dataset.source + '</strong> spreadsheet. Starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet\'s original assumptions, not a real producer\'s data. Always verify results before using them to ' + btn.dataset.use + '.';
         }
         if(tab === 'd1') recalcD1();
         if(tab === 'stockers') recalcStockers();

@@ -36,13 +36,17 @@
     {code:'D3', name:'Extreme drought',     color:'#e60000'},
     {code:'D4', name:'Exceptional drought', color:'#730000'}
   ];
-  /* AgriLife Extension 2026 D03 Budgets, sheet 'CowCalf' (Rolling Plains cow-calf), all per animal unit. */
+  /* 2026 District 3 (Rolling Plains) budgets, sheet 'CowCalf' (Rolling Plains cow-calf), all per animal unit. */
   var D03 = {revenue:2189.26, variable:438.35, grossMargin:1750.91, fixed:500.34, netReturn:1250.58, acresPerAU:11.25, rentPerAcre:15};
   /* Harvest efficiency by kind of pasture: native range uses the grazing-system value (harvestEff); improved pasture and small
      grains at least heType (Holechek, Range Management Ch. 8: 25% recommended on rangeland, 35% for moderate use in arid and
      semiarid areas, 50% for annual grasslands and humid areas). Hay meadows are baled: hayRecovery % of what grows reaches the bale.
      Range condition: excellent = 100% of the soil survey's normal-year production (the reference plant community). */
-  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:100}, zoneF:{brush:25, bottom:200}, waterAdj:true,
+  /* The soil survey reports production as air-dry weight (about 10% water). Every demand number here (26 lb per AU a day, NRC intake)
+     is dry matter, so soil-survey production is multiplied by 0.90 to put supply and demand on the same basis (UNL G2344: air-dried
+     forage is about 90% dry matter; SDSU S-0013-51 uses 88%). Producer estimates and clipped samples are taken as dry matter as entered. */
+  var AIRDRY_TO_DM = 0.90;
+  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:100}, zoneF:{brush:25, bottom:100}, waterAdj:true,
     slopeAdj:true, heType:{improved:40, smallgrain:50}, hayRecovery:80};
   var CONDITIONS = {poor:'Poor', fair:'Fair', excellent:'Excellent'};
   var ZONE_TYPES = {
@@ -59,7 +63,7 @@
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535, calfGrowth:'nrc',
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto', fq:'typical',
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
-    // feed prices: Texas A&M AgriLife 2026 District 3 budgets, Prices sheet (supplement $0.196/lb = $9.80 per 50-lb bag, salt & mineral $0.45/lb)
+    // feed prices: 2026 District 3 budgets, Prices sheet (supplement $0.196/lb = $9.80 per 50-lb bag, salt & mineral $0.45/lb)
     hayTdn:55, hayCp:10, hayDm:88, hayWaste:15, ownHayCost:60, hayPrice:sharedHayPrice(), mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
     dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0},
@@ -160,6 +164,7 @@
         s.settings = Object.assign({}, DEFAULT_SETTINGS, s.settings || {});
         s.settings.cond = Object.assign({}, DEFAULT_SETTINGS.cond, s.settings.cond || {});
         s.settings.zoneF = Object.assign({}, DEFAULT_SETTINGS.zoneF, s.settings.zoneF || {});
+        if(s.settings.zoneF.bottom === 200) s.settings.zoneF.bottom = 100;   // old default (2.5x upland) counted the soil survey's productive soils twice
         s.settings.heType = Object.assign({}, DEFAULT_SETTINGS.heType, s.settings.heType || {});
         s.herd.dr = Object.assign({}, DEFAULT_HERD.dr, s.herd.dr || {});
         s.herd.sell = Object.assign({}, DEFAULT_HERD.sell, s.herd.sell || {});
@@ -213,7 +218,7 @@
   /* forage per acre (lb/ac/yr) for the open part of the pasture; soil-survey numbers are scaled by range condition */
   function forageLb(p){
     if(!isGrazed(p)) return null;
-    if(p.mode === 'soil') return (p.soil && p.soil.status === 'ok') ? p.soil.normal*condFactor(p) : null;
+    if(p.mode === 'soil') return (p.soil && p.soil.status === 'ok') ? p.soil.normal*AIRDRY_TO_DM*condFactor(p) : null;
     return (typeof p.manual === 'number' && p.manual > 0) ? p.manual : null;
   }
   /* acres of each zone type inside a pasture (clipped to the pasture outline) */
@@ -308,7 +313,7 @@
   }
   function lowCapacityAU(p){
     if(p.mode !== 'soil' || !p.soil || p.soil.status !== 'ok' || p.soil.low == null) return null;
-    return forageAcres(p) * p.soil.low * condFactor(p) * (heOf(p)/100) / annualDemandLb();
+    return forageAcres(p) * p.soil.low * AIRDRY_TO_DM * condFactor(p) * (heOf(p)/100) / annualDemandLb();
   }
   function grazingDays(p, herd){
     var lb = annualLb(p);
@@ -1154,7 +1159,7 @@
     var more = s.soils.length > 5 ? '<tr><td colspan="3" style="color:var(--ink-muted);">+ ' + (s.soils.length - 5) + ' more soil' + (s.soils.length - 5 > 1 ? 's' : '') + '</td></tr>' : '';
     var cov = s.coverage < 0.95 ? '<div style="margin-top:6px;"><span class="tag warn">Partial data</span> Only ' + fmt(s.coverage*100) + '% of this pasture has a soil-survey forage estimate; the average is applied to the whole pasture.</div>' : '';
     var cf = condFactor(p);
-    return '<div class="p-soil">Soil survey: <strong>' + fmt(s.normal) + ' lb/ac</strong> in a normal year (' + fmt(s.low) + ' unfavorable · ' + fmt(s.high) + ' favorable) for the site in top condition. At ' + CONDITIONS[p.condition || 'fair'].toLowerCase() + ' condition this tool uses <strong>' + fmt(s.normal*cf) + ' lb/ac</strong>.' + cov +
+    return '<div class="p-soil">Soil survey: <strong>' + fmt(s.normal) + ' lb/ac</strong> air-dry in a normal year (' + fmt(s.low) + ' unfavorable · ' + fmt(s.high) + ' favorable) for the site in top condition. At ' + CONDITIONS[p.condition || 'fair'].toLowerCase() + ' condition this tool uses <strong>' + fmt(s.normal*AIRDRY_TO_DM*cf) + ' lb/ac</strong> of dry matter (air-dry × 0.90).' + cov +
       '<div class="table-scroll"><table><thead><tr><th>Soil</th><th class="num">Of pasture</th><th class="num">Normal year</th></tr></thead><tbody>' + rows + more + '</tbody></table></div>' + terrainLine(p) + '</div>';
   }
 
@@ -1187,7 +1192,7 @@
     return '<details class="p-measure"' + (m.lbAc > 0 ? ' open' : '') + '><summary>Measured forage' + (m.lbAc > 0 ? ': ' + fmt(m.lbAc) + ' lb/ac in ' + MONTH_NAMES[mon] : ' (optional)') + '</summary>' +
       '<div class="p-measure-body"><div class="input-wrap has-suffix"><input type="number" class="p-meas" min="0" max="15000" step="50" inputmode="decimal" placeholder="e.g. 1500" value="' + (m.lbAc > 0 ? m.lbAc : '') + '" aria-label="Measured standing forage"><span class="suffix">lb/ac</span></div>' +
       '<select class="p-measMonth" aria-label="Month measured">' + MONTH_NAMES.map(function(n, i){ return '<option value="' + i + '"' + (i === mon ? ' selected' : '') + '>' + n + '</option>'; }).join('') + '</select>' +
-      '<p class="card-note" style="margin:6px 0 0;">Clip everything inside a 9.6 sq ft frame (2.4 × 4 ft) at ground level in several typical spots, dry it and weigh it: average grams × 10 = lb per acre. The feed calendar then starts that month from what’s really standing, instead of the soil-survey estimate.</p></div></details>';
+      '<p class="card-note" style="margin:6px 0 0;">Clip everything inside a 9.6 sq ft frame (2.4 × 4 ft) at ground level in several typical spots, dry it in an oven until it stops losing weight and weigh it (dry matter): average grams × 10 = lb per acre. The feed calendar then starts that month from what’s really standing, instead of the soil-survey estimate.</p></div></details>';
   }
   function condSelect(p){
     if(!isGrazed(p) || p.mode !== 'soil') return '';
@@ -1366,9 +1371,9 @@
     var el = $('budgetBody');
     var t = totals();
     var herd = herdAU();
-    var note = '<p class="card-note" style="margin:12px 0 0;">Benchmark from AgriLife Extension’s 2026 District 3 (Rolling Plains) cow-calf budget, per animal unit: revenue $2,189, variable costs $438, <strong>gross margin $1,751</strong>, net return after fixed costs (including pasture rent) $1,251. Gross margin is money left after variable costs — it is <strong>not profit</strong>. That budget assumes about 11.25 acres per AU.</p>';
+    var note = '<p class="card-note" style="margin:12px 0 0;">Benchmark from a 2026 District 3 (Rolling Plains, Texas) cow-calf budget, per animal unit: revenue $2,189, variable costs $438, <strong>gross margin $1,751</strong>, net return after fixed costs (including pasture rent) $1,251. Gross margin is money left after variable costs — it is <strong>not profit</strong>. That budget assumes about 11.25 acres per AU.</p>';
     if(!(t.cap > 0)){
-      el.innerHTML = '<p class="narrative" style="margin:0;">Once your pastures have a forage estimate, this card compares your ranch with AgriLife’s 2026 cow-calf budget.</p>' + note;
+      el.innerHTML = '<p class="narrative" style="margin:0;">Once your pastures have a forage estimate, this card compares your ranch with a 2026 Rolling Plains (Texas) cow-calf budget.</p>' + note;
       return;
     }
     /* The D03 budget is per cow unit (one cow with her calf = 1 AU), so compare by cows, not metabolic AU */
@@ -1531,6 +1536,7 @@
         if(mr.settings.slopeAdj === false) state.settings.slopeAdj = false;
         if(mr.settings.cond) state.settings.cond = Object.assign({}, DEFAULT_SETTINGS.cond, mr.settings.cond);
         if(mr.settings.zoneF) state.settings.zoneF = Object.assign({}, DEFAULT_SETTINGS.zoneF, mr.settings.zoneF);
+        if(state.settings.zoneF.bottom === 200) state.settings.zoneF.bottom = 100;
         if(typeof mr.settings.waterAdj === 'boolean') state.settings.waterAdj = mr.settings.waterAdj;
       }
       if(typeof mr.name === 'string' && mr.name) state.name = mr.name.slice(0, 60);

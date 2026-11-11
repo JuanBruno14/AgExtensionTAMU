@@ -947,7 +947,7 @@
     el.innerHTML = 'Bull depreciation: ' + money(bullDeprPerBull()) + ' per bull a year × ' + bullCount() + ' bulls = ' + money(oc.bullTotal) + '. All other costs: <strong>' + money(oc.perCow) + ' per cow</strong> (' + money(oc.total) + ' a year). Net return in the bar at the top and in the year plan.';
   }
 
-  /* ---- Texas A&M Cow-Calf SPA Worksheets (.xlsx): read the cached values of the "Data Entry" and "SPASum" sheets with JSZip
+  /* ---- Cow-Calf SPA Worksheets (.xlsx): read the cached values of the "Data Entry" and "SPASum" sheets with JSZip
      (no spreadsheet library); find each number by its row label, the way the worksheet prints it. */
   function xlsxSheets(buf){
     return loadLib('JSZip').then(function(JSZip){ return JSZip.loadAsync(buf); }).then(function(zip){
@@ -1016,7 +1016,7 @@
         if(!k) return null; var n = (I[k] || []).filter(function(c){ return typeof c.v === 'number'; }).sort(function(a, b){ return a.col - b.col; })[0]; return n ? n.col + 2 : null; })();
       function isCC(re){ if(isCol == null) return null; var k = Object.keys(I).filter(function(r){ return (I[r] || []).some(function(c){ return typeof c.v === 'string' && re.test(c.v); }); })[0];
         if(!k) return null; var c = (I[k] || []).filter(function(x){ return x.col === isCol && typeof x.v === 'number'; })[0]; return c ? c.v : 0; }
-      if(!D) throw new Error('No “Data Entry” sheet found — is this the Texas A&M Cow-Calf SPA Worksheets file?');
+      if(!D) throw new Error('No “Data Entry” sheet found — is this the Cow-Calf SPA Worksheets file?');
       var calv = spaFind(D, /^\s*\(c\)\s*Calving\s*$/, 0, true), wean = spaFind(D, /^\s*\(d\)\s*Weaning\s*$/, 0, true);
       var tot = spaFind(D, /^\s*\(e\)\s*Total\s*$/, 0, true);
       var rough = 0, prot = 0;
@@ -1134,7 +1134,7 @@
     var nor = 0, low = 0;
     state.pastures.forEach(function(p){
       if(!isGrazed(p) || p.mode !== 'soil' || !p.soil || p.soil.status !== 'ok' || !(p.soil.normal > 0) || p.soil.low == null) return;
-      var fa = forageAcres(p); nor += fa*p.soil.normal; low += fa*p.soil.low;
+      var fa = forageAcres(p); nor += fa*p.soil.normal*AIRDRY_TO_DM; low += fa*p.soil.low*AIRDRY_TO_DM;
     });
     var unfav = nor > 0 ? Math.max(0, 1 - low/nor) : null;
     if(d.dm < 0) return {dm:-1, unfav:unfav, pct:null};

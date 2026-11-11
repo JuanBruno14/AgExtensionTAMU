@@ -44,7 +44,7 @@
     /* Seasonal price indexes, % of the annual average (ratio to a centered 12-month moving average).
        Calves: USDA ERS Livestock Prices (from USDA AMS), Oklahoma City medium & large #1 steers 500-550 and 600-650 lb and
        heifers 450-500 lb, monthly 2016-2025, averaged (src/my-ranch/data/seasonal_index.py).
-       Cull cows: Davis, Sartwelle & Mintert, Texas A&M Extension RM2-7 (San Angelo cutter cows, 1989-1998); ERS has no cow series. */
+       Cull cows: Davis, Sartwelle & Mintert, RM2-7 (San Angelo cutter cows, 1989-1998); ERS has no cow series. */
     var SEASON_CALF = [99.93,103.24,103.71,103.41,102.36,100.61,101.27,100.82,96.66,94.05,96.41,97.51];
     var SEASON_CULL = [100.69,105.71,108.32,104.58,101.74,100.98,100.57,101.43,98.91,93.03,90.47,93.56];
     /* body energy (Mcal) at a condition score, NRC 2016 / BCNRM "current committee" method: EBW changes 7.11% per score */
@@ -89,13 +89,13 @@
       smallgrain: [[72,24],[72,24],[72,24],[72,22],[62,14],[50,6],[50,6],[50,6],[50,6],[72,25],[72,25],[72,24]],
       hay:        [[45,6],[45,6],[47,7],[60,13],[60,13],[60,12],[56,10],[56,10],[55,10],[53,9],[50,8],[48,7]]
     };
-    /* Diet quality of grazing cattle by region, Texas A&M B-6124 (Lyons, Machen & Stuth 2002), Table 1: average yearly high and low
+    /* Diet quality of grazing cattle by region, B-6124 (Lyons, Machen & Stuth 2002), Table 1: average yearly high and low
        of diet crude protein and digestibility (fecal NIRS, Grazingland Animal Nutrition Lab, 10 years of samples). The monthly shape
        is the native-range pattern above, stretched to each region's average low and high; digestibility is used as TDN
        (digestible organic matter is about equal to TDN). Central & East uses the Cross Timbers row (the growth-curve site is MLRA 84B). */
     /* "typical" native range: winter (Nov-Mar) as before; April-October digestibility raised 5 points (2026-10-23), because
        grazing cattle select a better diet than the standing crop (Vallentine 2001, Ch. 2.III) and the earlier values sat
-       below Texas A&M B-6124 diet samples in every region. Crude protein unchanged, so winter supplement is the same. */
+       below B-6124 diet samples in every region. Crude protein unchanged, so winter supplement is the same. */
     var RANGE_SHAPE = [[48,4.5],[48,4.5],[50,6],[60,11],[62,12],[60,10],[56,8],[54,7],[55,7.5],[52,6],[50,5],[49,4.5]];
     var B6124 = {hp:{cp:[7,11], dig:[59,66]}, rp:{cp:[7,12], dig:[60,63]}, ep:{cp:[7,11], dig:[58,63]}, st:{cp:[9,12], dig:[60,63]}, ce:{cp:[8,13], dig:[59,65]}};
     function rangeQuality(mode, regionKey){
@@ -286,7 +286,7 @@
     }
     /* Weaned calf on pasture: the daily gain the forage allows (NRC 2016 NEm/NEg), eating its fill. When the grass is short of
        protein the calf gets protein supplement (up to 0.5% of body weight), which also adds energy and lets it eat more of a
-       low-protein forage (2.5% of body weight below 7% CP, as for cows; McCollum, AgriLife ANSC-PU-085). */
+       low-protein forage (2.5% of body weight below 7% CP, as for cows; McCollum, ANSC-PU-085). */
     function weanedGain(o, bwLb, forTdn, forCp, supTdn, supCp){
       supTdn = supTdn || 75; supCp = Math.max(forCp + 1, supCp || 38);
       var base = intakePct(forTdn, false) + 0.5;
@@ -427,7 +427,7 @@
       var t = 0, w = 0; cs.forEach(function(c){ t += c.share; w += c.share*Math.min(0.5, LOSS_DEFAULT/100*WEATHER_SHARE*weatherFactor(o.region, c.birthMonth)); });
       return t > 0 ? w/t : 0;
     }
-    /* Pregnancy rate by body condition during the breeding season (Sprott 1985, in Texas A&M AgriLife B-1526, Table 5:
+    /* Pregnancy rate by body condition during the breeding season (Sprott 1985, in B-1526, Table 5:
        BCS 4 or less 58%, 5 85%, 6 or more 95% pregnant after 150 days); straight lines between */
     function pregByBcs(b){ return b <= 4 ? 58 : b <= 5 ? 58 + (b - 4)*27 : b <= 6 ? 85 + (b - 5)*10 : 95; }
     /* Nursing calf growth predicted from what the calf takes in (no target weight). NRC 2016 has no intake equation for
@@ -715,7 +715,7 @@
           if(availTot > 0){ supply.forEach(function(g, i){ dTdn += avail[i]/availTot*g.quality[m][0]; dCp += avail[i]/availTot*g.quality[m][1]; }); }
           else { dTdn = QUALITY.range[m][0]; dCp = QUALITY.range[m][1]; }
           // Low-protein forage (<7% CP) limits intake; once a protein supplement covers the gap, cattle eat more of it
-          // (AgriLife ANSC-PU-085, McCollum: 1.6% of body weight at 5% CP vs. 2.3% at 7-8% CP; supplements raised intake 36% on average).
+          // (ANSC-PU-085, McCollum: 1.6% of body weight at 5% CP vs. 2.3% at 7-8% CP; supplements raised intake 36% on average).
           // Protein is always topped up (hay, then supplement), so every cow ends on a protein-adequate diet and eats like one:
           // on forage under 7% CP that is 2.3% of body weight dry, 2.5% nursing (McCollum, ANSC-PU-085).
           // Young cows weigh less (80-96% of mature), so herd intake uses the herd's average weight (cowWeightMix).
@@ -731,7 +731,7 @@
           var demand = (cows*(cowCap + r.calfDm + r.wcCap + r.hCap) + bulls*bullCap)*n;
           var f = demand > 0 ? Math.min(1, availTot/demand) : 1;
           // forage mass on the grazed acres, lb/ac -> kg/ha: forage the cattle can still harvest plus the stubble left standing
-          // (take half, leave half: half of a year's growth stays standing; AgriLife "Stocking Rate"). It falls below 1,150 kg/ha
+          // (take half, leave half: half of a year's growth stays standing; "Stocking Rate"). It falls below 1,150 kg/ha
           // only when a drought or overstocking leaves little grass, which is when the bite limit matters.
           var acresTot = 0, massLb = 0;
           supply.forEach(function(g, i){
@@ -854,7 +854,7 @@
       // condition while the typical cow is being bred (about 82 days after she calves, 365 - 283 days of gestation)
       var bcsBreed = bcsByMonth[monthOfDay(typC.day + 82)];
       // condition not regained by the next calving has to be bought back: about 305 lb of shelled corn per score for an
-      // 1,100-lb cow (Texas A&M AgriLife B-1526, Table 1), priced as your supplement's energy (corn 88% TDN)
+      // 1,100-lb cow (B-1526, Table 1), priced as your supplement's energy (corn 88% TDN)
       var bcsShort = Math.max(0, bcsStart - b);
       var restoreLb = bcsShort*305*o.cowLb/1100*88/Math.max(40, feeds.supTdn || 75);
       var bcsInfo = {mode:protOnly ? 'protein' : 'full', start:bcsStart, startMonth:m0, low:lowB, lowMonth:lowM, end:b, byMonth:bcsByMonth, mcalPerScore:perBcs,
@@ -869,7 +869,7 @@
         weanLbNoCreep:co.avgWeanLb - (calfStrat === 'creep' ? lbLost : 0), lbLostPerCalf:lbLost, creepLbPerCalf:creepPerCalf,
         deadWeather:o.cows*co.deadWeather, deadNws:o.cows*co.deadNws, deadOther:o.cows*co.deadOther,
         cowDeaths:o.cows*(o.cowLoss || 0)/100, bcsRestore:o.cows*restoreLb/2000*(feeds.supPrice || 0),
-        // free-choice mineral and salt for cows and bulls (AgriLife 2026 budgets price it per lb)
+        // free-choice mineral and salt for cows and bulls (2026 budgets price it per lb)
         mineralLb:(o.cows + (o.bulls || 0))*(o.mineralOz || 0)/16*365
       };
       econ.mineral = econ.mineralLb*(o.mineralPrice || 0);

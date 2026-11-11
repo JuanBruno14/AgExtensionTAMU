@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-lABNFfhREc0tZgbX/6ILoBV7aKUipg3Bz8yIXGtTWJ8='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-nI3aiyZyThGL4EP3hiKUM/C4RfDWkPnSX116nM0p94c='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Back 40</title>
@@ -488,7 +488,7 @@
   <div class="intro-inner">
     <div>
       <h1>How much can you afford to pay for a bred cow?</h1>
-      <p>Enter the bid price, the discount rate, and the financing terms: the tool projects 7 years of cash flow and calculates Net Present Value, Internal Rate of Return, and payback period — just like AgriLife Extension's A1 spreadsheet, but recalculating live.</p>
+      <p>Enter the bid price, the discount rate, and the financing terms: the tool projects 7 years of cash flow and calculates Net Present Value, Internal Rate of Return, and payback period — just like the A1 spreadsheet, but recalculating live.</p>
       <p style="margin-top:10px;font-size:13px;"><a href="../replacement-heifer/index.html" style="color:var(--accent);font-weight:700;text-decoration:none;">&rarr; Weighing this against raising your own replacement heifer instead? See Replacement Heifer Budgets (B1a)</a></p>
     </div>
     <div class="intro-meta">
@@ -718,7 +718,7 @@
   <div class="intro-inner">
     <div>
       <h1>What calf price do you need to hit your target return?</h1>
-      <p>Enter your herd's costs, investment, and your target Return on Assets: the tool works out your current Total Unit Cost and ROA, then the average — and separate steer/heifer — calf price you'd need to reach that target, just like AgriLife Extension's A2 spreadsheet, but recalculating live.</p>
+      <p>Enter your herd's costs, investment, and your target Return on Assets: the tool works out your current Total Unit Cost and ROA, then the average — and separate steer/heifer — calf price you'd need to reach that target, just like the A2 spreadsheet, but recalculating live.</p>
     </div>
     <div class="intro-meta">
       <div><strong>4 linked sheets</strong>cost, ROA, pricing &amp; equipment</div>
@@ -1123,7 +1123,7 @@
 </div>
 
 <footer id="toolFooter">
-  Based on the <strong>A1 — Cow Bid Price and Budget</strong> spreadsheet published by Texas A&amp;M AgriLife Extension. Starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a purchase decision.
+  Based on the <strong>A1 — Cow Bid Price and Budget</strong> spreadsheet. Starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a purchase decision.
 <!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; data</a></li><li><a href="../data-sources.html">Where the prices come from</a></li></ul><!-- required-links:end -->
 </footer>
 
@@ -2405,7 +2405,7 @@
         if(titleEl && btn.dataset.title) titleEl.textContent = btn.dataset.title;
         var footerEl = $('toolFooter');
         if(footerEl && btn.dataset.source){
-          footerEl.innerHTML = 'Based on the <strong>' + btn.dataset.source + '</strong> spreadsheet published by Texas A&amp;M AgriLife Extension. Starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet\'s original assumptions, not a real producer\'s data. Always verify results before using them to ' + btn.dataset.use + '.';
+          footerEl.innerHTML = 'Based on the <strong>' + btn.dataset.source + '</strong> spreadsheet. Starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet\'s original assumptions, not a real producer\'s data. Always verify results before using them to ' + btn.dataset.use + '.';
         }
         if(tab === 'a2') recalcA2();
         if(tab === 'a1') recalc();

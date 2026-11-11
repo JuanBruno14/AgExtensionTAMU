@@ -2,7 +2,7 @@ import os, datetime, tempfile
 HERE=os.path.dirname(os.path.realpath(__file__))
 __file__=os.path.join(HERE,'test_ranch.py')
 exec(open(__file__).read().split('with sync_playwright() as pw:')[0].replace('PORT=8765','PORT=8783'))
-# Synthetic Cow-Calf SPA worksheet (same labels and layout as the Texas A&M IRM-SPA Data Entry and SPASum sheets; made-up ranch)
+# Synthetic Cow-Calf SPA worksheet (same labels and layout as the IRM-SPA Data Entry and SPASum sheets; made-up ranch)
 import openpyxl
 def xl(d): return (d - datetime.date(1899,12,30)).days
 wb=openpyxl.Workbook(); D=wb.active; D.title='Data Entry'
