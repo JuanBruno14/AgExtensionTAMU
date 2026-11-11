@@ -1,0 +1,461 @@
+
+
+
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-bynoGQpmJ5muxJzC06uHWiE25858tN4IGmdc9JthM2A='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>About · Back40</title>
+<link rel="stylesheet" href="../brand/fonts/fonts.css">
+<style>
+  :root{
+    --maroon-900:#3a0000;
+    --maroon-800:#500000;
+    --maroon-700:#6b0f0f;
+    --maroon-100:#f7e9e6;
+    --wheat-500:#b8862f;
+    --wheat-100:#f4e9d6;
+    --good-700:#276749;
+    --good-100:#e3f1e9;
+    --critical-700:#9a3412;
+    --critical-100:#fbe9e1;
+    --accent:var(--maroon-800);
+    --bg:#f6f3ee;
+    --surface:#ffffff;
+    --surface-sunken:#f0ece4;
+    --border:#e2dbcf;
+    --ink:#241c19;
+    --ink-secondary:#5a4f48;
+    --ink-muted:#8a7d73;
+    --focus:#2f6fb3;
+    --shadow-card:0 1px 2px rgba(58,0,0,0.04), 0 4px 16px rgba(58,0,0,0.06);
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#4a3aa7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+      --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+      --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+      --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+      --wheat-100:#33290f; --wheat-500:#d9a44a;
+      --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+    --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+    --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+    --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+    --wheat-100:#33290f; --wheat-500:#d9a44a;
+    --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Open Sans", ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric:tabular-nums;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:"Work Sans", "Open Sans", Arial, sans-serif; text-wrap:balance; letter-spacing:-0.01em;}
+  a{color:inherit;}
+
+  .topbar{
+    background:linear-gradient(180deg, var(--maroon-800), var(--maroon-900));
+    color:#fff;
+    padding:18px clamp(16px,4vw,40px);
+    display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
+  }
+  .wordmark{display:flex; align-items:center; gap:14px;}
+  .wordmark .mark{
+    width:44px;height:44px;border-radius:9px;
+    background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.55);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Work Sans",sans-serif;font-weight:700;font-size:20px; flex:none;
+  }
+  .wordmark .text{line-height:1.15;}
+  .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
+  .wordmark .text .main{font-family:"Work Sans",sans-serif;font-size:19px;font-weight:600;}
+
+  .theme-toggle{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:100px;
+    background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.4);
+    color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0;flex:none;
+  }
+  .theme-toggle:hover{background:rgba(255,255,255,0.24);}
+  .theme-toggle:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+
+  .hero{
+    position:relative;
+    overflow:hidden;
+    background:var(--surface);
+    border-bottom:1px solid var(--border);
+  }
+  .hero-inner{
+    max-width:1180px;margin:0 auto;
+    padding:40px clamp(16px,4vw,40px) 32px;
+  }
+  .hero h1{font-size:clamp(26px,4vw,38px);margin:0 0 12px;color:var(--ink);}
+  .hero p{margin:0;max-width:70ch;color:var(--ink-secondary);font-size:15.5px;line-height:1.6;}
+  .hero-meta{display:flex;gap:24px;flex-wrap:wrap;margin-top:22px;}
+  .hero-meta div{font-size:12.5px;color:var(--ink-muted);}
+  .hero-meta strong{display:block;color:var(--ink);font-size:15px;font-weight:700;}
+  .fence-line{
+    position:absolute;left:0;right:0;bottom:0;height:10px;
+    background-image:repeating-linear-gradient(90deg, var(--wheat-500) 0 26px, transparent 26px 52px);
+    opacity:0.55;
+  }
+
+  main{max-width:1180px;margin:0 auto;padding:32px clamp(16px,4vw,40px) 64px;}
+  .section-label{
+    font-size:12px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
+    color:var(--ink-muted);margin:0 0 14px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(258px, 1fr));
+    gap:14px;
+  }
+
+  .cat-card{
+    display:block;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow-card);
+    padding:18px 18px 16px;
+    text-decoration:none;
+    color:inherit;
+    position:relative;
+    transition:transform 0.12s ease, box-shadow 0.12s ease;
+  }
+  .cat-card.live{cursor:pointer;}
+  .cat-card.live:hover{transform:translateY(-2px);box-shadow:0 4px 18px rgba(58,0,0,0.12);}
+  .cat-card.live:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .cat-card.disabled{cursor:default;border-style:dashed;box-shadow:none;}
+
+  .cat-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
+  .cat-num{
+    font-family:"Work Sans",sans-serif;font-weight:600;font-size:13px;
+    color:var(--accent);
+    background:var(--maroon-100);
+    width:28px;height:28px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .cat-card.disabled .cat-num{background:var(--surface-sunken);color:var(--ink-muted);}
+
+  .status-pill{
+    font-size:10.5px;font-weight:700;letter-spacing:0.03em;text-transform:uppercase;
+    padding:3px 9px;border-radius:100px;white-space:nowrap;
+  }
+  .status-pill.live{background:var(--good-100);color:var(--good-700);}
+  .status-pill.progress{background:var(--wheat-100);color:var(--wheat-500);}
+  .status-pill.soon{background:var(--surface-sunken);color:var(--ink-muted);}
+
+  .cat-card h3{font-size:15px;margin:0 0 6px;line-height:1.3;color:var(--ink);}
+  .cat-card.disabled h3{color:var(--ink-secondary);}
+  .cat-card p{font-size:12.5px;color:var(--ink-muted);margin:0;line-height:1.5;}
+
+  .cat-card .go{
+    display:inline-flex;align-items:center;gap:4px;
+    font-size:12.5px;font-weight:700;color:var(--accent);margin-top:12px;
+  }
+
+  footer{
+    max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 40px;
+    color:var(--ink-muted);font-size:12px;line-height:1.6;
+    border-top:1px solid var(--border);padding-top:20px;
+  }
+  footer a{text-decoration:underline;}
+  footer .eeo-statement{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
+
+  /* ---------- Shared calculator card (Cow operating cost / BCU) ---------- */
+  .shared-tool{margin-bottom:36px;}
+
+  /* Collapsed by default and styled like the category cards below it (a "sub-index"
+     rather than a form dumped on the landing page) — a producer sees the icon, a
+     one-line description, and the live total at a glance, and only opens it to edit. */
+  .bcu-card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow-card);
+    overflow:hidden;
+  }
+  .bcu-card-toggle{
+    display:block;width:100%;box-sizing:border-box;text-align:left;
+    background:none;border:none;margin:0;
+    padding:18px 18px 16px;
+    font:inherit;color:inherit;cursor:pointer;
+  }
+  .bcu-card-toggle:hover{background:var(--surface-sunken);}
+  .bcu-card-toggle:focus-visible{outline:2px solid var(--focus);outline-offset:-2px;}
+  .bcu-card-toggle .cat-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:10px;}
+  .bcu-card-toggle .cat-num{
+    font-size:16px;
+    background:var(--maroon-100);
+    width:28px;height:28px;border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    flex:none;
+  }
+  .bcu-card-toggle h3{font-family:"Work Sans",sans-serif;font-size:15px;font-weight:600;margin:0 0 6px;line-height:1.3;color:var(--ink);}
+  .bcu-card-toggle p{font-size:12.5px;color:var(--ink-muted);margin:0;line-height:1.5;max-width:64ch;}
+  .bcu-preview{display:flex;align-items:baseline;gap:6px;margin-top:14px;flex-wrap:wrap;}
+  .bcu-preview-value{font-family:"Work Sans",sans-serif;font-size:24px;font-weight:600;color:var(--accent);}
+  .bcu-preview-label{font-size:12px;color:var(--ink-muted);}
+  .bcu-card-toggle .go{
+    display:inline-flex;align-items:center;gap:5px;
+    font-size:12.5px;font-weight:700;color:var(--accent);margin-top:12px;
+  }
+  .bcu-card-toggle .go .chevron{transition:transform 0.18s ease;}
+  .bcu-card-toggle[aria-expanded="true"] .go .chevron{transform:rotate(180deg);}
+
+  .bcu-fields{padding:4px 18px 20px;border-top:1px solid var(--border);}
+  .bcu-fields[hidden]{display:none;}
+  .bcu-fields .card-note{margin-top:16px;}
+
+  .card{
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:var(--shadow-card);
+    overflow:hidden;
+  }
+  .card-head{
+    background:var(--maroon-800);
+    color:#fff;
+    padding:13px 20px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .card-head svg{flex:none;width:18px;height:18px;}
+  .card-head h2{font-size:15.5px;font-weight:600;margin:0;letter-spacing:0.01em;}
+  .card-body{padding:20px;}
+  .card-note{font-size:12.5px;color:var(--ink-muted);margin:0 0 16px;line-height:1.5;}
+
+  fieldset{border:none;padding:0;margin:0;}
+  legend{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:12px;padding:0;}
+
+  .field-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px 16px;}
+  .field-grid.cols-3{grid-template-columns:1fr 1fr 1fr;}
+  @media (max-width:520px){ .field-grid, .field-grid.cols-3{grid-template-columns:1fr 1fr;} }
+  .field{display:flex;flex-direction:column;gap:6px;min-width:0;}
+  .field label{font-size:12.5px;font-weight:600;color:var(--ink-secondary);}
+  .input-wrap{position:relative;display:flex;align-items:center;}
+  .input-wrap .prefix, .input-wrap .suffix{
+    position:absolute;font-size:12px;color:var(--ink-muted);pointer-events:none;white-space:nowrap;
+  }
+  .input-wrap .prefix{left:11px;}
+  .input-wrap .suffix{right:10px;}
+  input[type="number"]{
+    width:100%;
+    font:inherit;font-weight:600;font-size:14.5px;color:var(--ink);
+    background:var(--surface-sunken);
+    border:1.5px solid var(--border);
+    border-radius:9px;
+    padding:9px 11px;
+    font-variant-numeric:tabular-nums;
+  }
+  .input-wrap.has-prefix input{padding-left:22px;}
+  .input-wrap.has-suffix input{padding-right:40px;}
+  input[type="number"]:focus{outline:2px solid var(--focus);outline-offset:1px;border-color:var(--focus);}
+  input[type="number"]::-webkit-outer-spin-button,
+  input[type="number"]::-webkit-inner-spin-button{opacity:0.5;}
+  input[type="range"].weight-slide{display:block;width:100%;margin-top:8px;accent-color:var(--accent);}
+  .input-wrap.auto input{border-color:var(--wheat-500);background:var(--wheat-100);}
+
+  .stat-tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .stat-tile{
+    background:var(--surface-sunken);
+    border:1px solid var(--border);
+    border-radius:11px;
+    padding:14px 16px;
+    display:flex;flex-direction:column;gap:3px;
+  }
+  .stat-tile.wide{grid-column:1 / -1;}
+  .stat-tile .label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);}
+  .stat-tile .value{font-family:"Work Sans",sans-serif;font-size:28px;font-weight:600;line-height:1.1;}
+  .stat-tile .sub{font-size:12px;color:var(--ink-muted);}
+
+  .stackbar-total{font-size:12.5px;color:var(--ink-secondary);margin-bottom:8px;display:flex;justify-content:space-between;}
+  .stackbar-total strong{color:var(--ink);font-weight:700;}
+  .stackbar{display:flex;width:100%;height:26px;border-radius:6px;overflow:hidden;background:var(--surface-sunken);gap:2px;}
+  .stackbar .seg{height:100%;position:relative;cursor:pointer;outline:none;min-width:3px;transition:filter 0.12s ease;}
+  .stackbar .seg:hover,.stackbar .seg:focus-visible{filter:brightness(1.08) saturate(1.05);}
+  .stackbar .seg:first-child{border-top-left-radius:5px;border-bottom-left-radius:5px;}
+  .stackbar .seg:last-child{border-top-right-radius:5px;border-bottom-right-radius:5px;}
+  .legend-rows{margin-top:14px;display:flex;flex-direction:column;gap:7px;}
+  .legend-row{display:flex;align-items:center;gap:9px;font-size:13px;cursor:default;}
+  .legend-row .swatch{width:10px;height:10px;border-radius:2.5px;flex:none;}
+  .legend-row .lbl{color:var(--ink-secondary);flex:1;}
+  .legend-row .val{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums;}
+  .legend-row .pct{color:var(--ink-muted);font-size:11.5px;min-width:38px;text-align:right;}
+
+  .viz-tooltip{
+    position:fixed;pointer-events:none;z-index:50;
+    background:var(--ink);color:var(--surface);border-radius:8px;padding:8px 11px;
+    font-size:12px;line-height:1.5;box-shadow:0 6px 20px rgba(0,0,0,0.25);
+    opacity:0;transform:translate(-50%,-100%) translateY(-8px);transition:opacity 0.08s ease;
+    max-width:220px;
+  }
+  .viz-tooltip.show{opacity:1;}
+  .viz-tooltip .tt-val{font-weight:800;font-size:13.5px;}
+  .viz-tooltip .tt-lbl{color:rgba(255,255,255,0.7);font-size:11px;}
+
+  .btn-row{display:flex;gap:10px;flex-wrap:wrap;padding:0 20px 20px;}
+  button.btn{
+    font:inherit;font-weight:700;font-size:13px;
+    padding:10px 16px;border-radius:9px;border:1.5px solid var(--accent);
+    background:var(--accent);color:#fff;cursor:pointer;
+  }
+  button.btn.secondary{background:transparent;color:var(--accent);}
+  button.btn:hover{filter:brightness(1.08);}
+  button.btn:focus-visible{outline:2px solid var(--focus);outline-offset:2px;}
+  .bcu-ranch{margin:0 0 16px;padding:12px 14px;border-radius:10px;background:var(--wheat-100);font-size:13px;line-height:1.5;color:var(--ink);}
+  .bcu-ranch[hidden]{display:none;}
+  .bcu-ranch-toggle{display:flex;align-items:center;gap:8px;margin-top:8px;font-weight:700;cursor:pointer;}
+</style>
+<link rel="stylesheet" href="../brand/base.css">
+<link rel="stylesheet" href="../brand/western.css">
+<script src="../brand/market-store.js"></script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wordmark"><a href="../index.html" aria-label="Back40 home"><span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back40</span></span></a></div>
+  <nav class="b40-nav" aria-label="Sections"><a href="../cow-decisions/index.html">Cow decisions</a><a href="../herd-tools/index.html">Calculators</a><a href="../my-ranch/index.html">My Ranch</a><a href="../about/index.html" aria-current="page">About</a></nav>
+  <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
+</header>
+
+
+<section class="hero about-hero">
+  <div class="hero-inner">
+    <p class="eyebrow">About</p>
+    <h1>Back40</h1>
+    <p class="tagline">Turn data into decisions</p>
+    <p class="lede">A decision-support platform that helps beef cattle producers make informed management, financial and operational decisions.</p>
+  </div>
+</section>
+<main>
+  <section class="b40-block about-intro" aria-labelledby="whatH">
+    <h2 id="whatH">What Back40 is</h2>
+    <p>Back40 is a comprehensive decision-support platform designed to help beef cattle producers make informed management, financial, and operational decisions. Developed through Texas A&amp;M AgriLife Extension Service, Back40 brings together research-based tools, calculators, mapping resources, and educational content to support every stage of a cattle operation.</p>
+  </section>
+
+  <section class="b40-block" aria-labelledby="coversH">
+    <h2 id="coversH">What it covers</h2>
+    <div class="about-cards">
+      <article class="about-card">
+        <h3>Money decisions</h3>
+        <p>From evaluating replacement heifer purchases and herd bull investments to analyzing retained ownership opportunities, feeding costs, grazing leases, cattle inventories and overall ranch profitability. Explore enterprise budgets, production and financial analyses, economic projections and recordkeeping resources built for the beef industry.</p>
+      </article>
+      <article class="about-card">
+        <h3>Land and grass</h3>
+        <p>Ranch mapping, forage and rangeland resources, nutrient management information and grazing tools help producers understand and manage the land that supports their operation.</p>
+      </article>
+      <article class="about-card">
+        <h3>New opportunities</h3>
+        <p>As the platform grows, Back40 is adding resources for emerging opportunities in the cattle industry, including direct-to-consumer beef marketing, value-added enterprises and other business development strategies.</p>
+      </article>
+    </div>
+  </section>
+
+  <figure class="about-photo">
+    <img src="../brand/photos/cattle.jpg" width="900" height="600" loading="lazy" alt="Black and white-faced cows looking over a barbed-wire fence in tall grass">
+  </figure>
+
+  <blockquote class="about-quote">
+    <p>Back40 brings together the tools, data, and information producers need to make decisions from grass to genetics, budgets to beef sales, and everything in between.</p>
+  </blockquote>
+
+  <section class="b40-block" aria-labelledby="whoH">
+    <h2 id="whoH">Who it is for</h2>
+    <p class="about-text">Whether managing cow-calf, stocker, or retained ownership enterprises, evaluating capital investments, or exploring new market opportunities, Back40 provides practical, research-driven resources producers can apply to real-world decisions.</p>
+  </section>
+
+  <section class="b40-block get-started about-goal" aria-labelledby="goalH">
+    <div>
+      <h2 id="goalH">Our goal</h2>
+      <p>To help cattle producers make better decisions, improve profitability, and build more resilient operations by providing trusted tools and information in one accessible location.</p>
+    </div>
+  </section>
+
+  <section class="b40-block" id="contact" aria-labelledby="contactH">
+    <h2 id="contactH">Contact</h2>
+    <div class="contact-cards">
+      <address class="contact-card">
+        <strong>Pancho Abello</strong>
+        <span>Associate Professor &amp; Extension Specialist</span>
+        <span>Texas A&amp;M AgriLife Extension</span>
+        <span>Department of Agricultural Economics</span>
+        <span>Ag Economics on the Plains</span>
+        <span>Phone: <a href="tel:+19406473908">(940) 647-3908</a></span>
+        <span>Email: <a href="mailto:pancho.abello@ag.tamu.edu">pancho.abello@ag.tamu.edu</a></span>
+      </address>
+      <address class="contact-card">
+        <strong>Juan Bautista Bruno</strong>
+        <span>Graduate Assistant Researcher</span>
+        <span>MAB Candidate</span>
+        <span>Texas A&amp;M AgriLife Extension</span>
+        <span>Department of Agricultural Economics</span>
+        <span>Email: <a href="mailto:juanbruno@tamu.edu">juanbruno@tamu.edu</a></span>
+      </address>
+    </div>
+  </section>
+</main>
+
+<div class="viz-tooltip" id="vizTooltip"></div>
+
+<footer>
+  <p class="b40-foot-brand"><strong>Back40</strong> &middot; Decision tools for cow-calf ranchers</p>
+  <p>The cow decision tools start from the <a href="https://agecoext.tamu.edu/resources/decisionaids/beef/">Beef Cattle Decision Aids</a> spreadsheets. Starting values reproduce each spreadsheet&rsquo;s own assumptions, not real producer data &mdash; always check results before making a decision. Current prices are cited on <a href="../data-sources.html">the market data page</a>.</p>
+<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; data</a></li><li><a href="../data-sources.html">Where the prices come from</a></li></ul><!-- required-links:end -->
+</footer>
+
+<script>
+(function initThemeToggle(){
+    var STORAGE_KEY = 'tamuDecisionAidsTheme';
+    var toggle = document.getElementById('themeToggle');
+    if(!toggle) return;
+
+    var stored = null;
+    try { stored = window.localStorage.getItem(STORAGE_KEY); } catch(e){ /* private mode / blocked storage -- fall back to system preference */ }
+    if(stored === 'light' || stored === 'dark'){
+      document.documentElement.setAttribute('data-theme', stored);
+    }
+
+    function currentTheme(){
+      var attr = document.documentElement.getAttribute('data-theme');
+      if(attr === 'light' || attr === 'dark') return attr;
+      return (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+    }
+    function updateButton(){
+      var dark = currentTheme() === 'dark';
+      toggle.textContent = dark ? '☀️' : '🌙';
+      var label = dark ? 'Switch to light mode' : 'Switch to dark mode';
+      toggle.setAttribute('aria-label', label);
+      toggle.setAttribute('title', label);
+    }
+
+    updateButton();
+    toggle.addEventListener('click', function(){
+      var next = currentTheme() === 'dark' ? 'light' : 'dark';
+      document.documentElement.setAttribute('data-theme', next);
+      try { window.localStorage.setItem(STORAGE_KEY, next); } catch(e){}
+      updateButton();
+    });
+  })();
+</script>
+
+<script src="../jim/jim.js" defer></script>
+</body>
+</html>

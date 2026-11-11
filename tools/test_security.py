@@ -56,7 +56,7 @@ def route(rt):
         return rt.fulfill(status=200, body='[]', headers={'content-type': 'application/json', 'access-control-allow-origin': '*'})
     return rt.abort()
 
-PAGES = ['index.html', 'cow-decisions/index.html', 'data-sources.html', 'privacy.html', 'cow-calf/index.html', 'cow-calf/understanding-irr.html',
+PAGES = ['index.html', 'cow-decisions/index.html', 'about/index.html', 'data-sources.html', 'privacy.html', 'cow-calf/index.html', 'cow-calf/understanding-irr.html',
          'replacement-heifer/index.html', 'retained-ownership/index.html', 'herd-tools/index.html', 'my-ranch/index.html']
 
 # test files for the importer
