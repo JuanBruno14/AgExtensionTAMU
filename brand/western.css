@@ -371,3 +371,10 @@ footer .required-links{font-size:13.5px !important;}
   .door::after{right:16px;}
 }
 .steps h3 a{display:inline-block;padding:10px 0;margin:-10px 0;}
+
+/* Skip link: first thing a keyboard user reaches; invisible until focused */
+.skip-link{position:absolute;left:-9999px;top:8px;z-index:3000;padding:12px 18px;background:#FFFFFF;color:#500000;font-weight:700;text-decoration:none;border:2px solid #500000;}
+.skip-link:focus{left:8px;outline:3px solid var(--focus,#02233B);outline-offset:2px;}
+/* the page title of Cow decisions is the page's h1 (it was an h2) */
+.part-head h1{margin:2px 0 6px;font-size:clamp(28px,3.6vw,38px);text-transform:uppercase;letter-spacing:0.03em;color:var(--ink);font-family:var(--font-head);font-weight:600;}
+main:focus{outline:none;}

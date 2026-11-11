@@ -1,0 +1,14 @@
+# Back40
+
+> Free decision tools for cow-calf ranchers. Change any number and every answer updates on the spot. Nothing to install; numbers stay in your browser.
+
+Starting values come from the Beef Cattle Decision Aids spreadsheets and reproduce their assumptions, not real producer data. Check every number against your own before deciding.
+
+## Tools
+- [Cow decisions](https://back40.onrender.com/cow-decisions/): budgets for what to pay for a bred cow, what calf price you need, whether to raise a replacement heifer, and when to sell or keep.
+- [Herd calculators](https://back40.onrender.com/herd-tools/): water, ration mix, dewormer dose and withdrawal, weight gain, and herd reproduction.
+- [My Ranch](https://back40.onrender.com/my-ranch/): draw pastures on a map, get carrying capacity from USDA soil data, and match the herd to the grass.
+
+## Sources and privacy
+- [Where the prices come from](https://back40.onrender.com/data-sources.html): every price and number with its source.
+- [Privacy and your data](https://back40.onrender.com/privacy.html)

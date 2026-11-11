@@ -51,6 +51,10 @@ Automated browsers see all four steps at once so the other tests can reach every
 
 External services (soil survey, elevation, drought, map tiles, search) are mocked in the tests, so the tests run offline. Screenshots and the print PDF go to `src/*/.out/` (ignored by git).
 
+## Search and sharing
+
+`tools/secure_pages.py` also writes each page's canonical link, description, Open Graph tags, favicon link and JSON-LD, and regenerates `sitemap.xml`. Page descriptions live in the `SEO` table in that script. If the site moves to its own domain, change `SITE` there, update `robots.txt` and `llms.txt`, and run the script.
+
 ## Data sources
 
 Every number the pages use is listed with its source on `data-sources.html` and in the My Ranch user manual.
