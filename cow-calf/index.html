@@ -469,8 +469,8 @@
 <meta property="og:title" content="Cow Bid Price · Back40">
 <meta property="og:description" content="How much can you afford to pay for a bred cow? Enter the bid, discount rate and financing to see NPV, IRR and payback over 7 years.">
 <meta property="og:url" content="https://back40.onrender.com/cow-calf/">
-<meta property="og:image" content="https://back40.onrender.com/brand/photos/hero-cattle.jpg">
-<meta property="og:image:alt" content="Black-and-white close-up of cattle at a feedlot fence">
+<meta property="og:image" content="https://back40.onrender.com/brand/photos/hero-herd.jpg">
+<meta property="og:image:alt" content="Black-and-white photo of a mixed herd of cows standing in tall grass">
 <meta name="twitter:card" content="summary_large_image">
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Cow Bid Price","url":"https://back40.onrender.com/cow-calf/","description":"How much can you afford to pay for a bred cow? Enter the bid, discount rate and financing to see NPV, IRR and payback over 7 years.","applicationCategory":"BusinessApplication","operatingSystem":"Any (web browser)","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"Back40","url":"https://back40.onrender.com/"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
 <!-- seo:end -->
@@ -483,12 +483,11 @@
       <span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back40</span></span>
     </a>
   </div>
-  <nav class="b40-nav" aria-label="Sections"><a href="../cow-decisions/index.html" aria-current="page">Cow decisions</a><a href="../herd-tools/index.html">Calculators</a><a href="../my-ranch/index.html">My Ranch</a><a href="../about/index.html">About</a></nav>
+  <nav class="b40-nav" aria-label="Sections"><a href="../cow-decisions/index.html" aria-current="page">Beef Cattle Decisions</a><a href="../herd-tools/index.html">Calculators</a><a href="../my-ranch/index.html">My Ranch</a><a href="../about/index.html">About</a></nav>
   <p class="tool-title" id="toolTitle">Cow Bid Price</p>
   <div class="header-right">
     <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
     <a href="../data-sources.html" class="phase-chip" style="text-decoration:none;cursor:pointer;" title="See where every market price on this page comes from, and how current it is">Prices: Sep 2026</a>
-    <span class="phase-chip">Pilot · Phase 1</span>
   </div>
 </header>
 <main id="main">
@@ -577,7 +576,7 @@
         <h2>Year-by-year prices &amp; calf crop</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Year 1 operating cost is filled in automatically from the "Cow operating cost" card below. Steer, heifer and cull-cow prices (amber) start from this week's USDA Texas auction price at the weights set above (interpolated along the auction weight curve), then change by the yearly percentage below from year 2 on. The default &minus;5% a year assumes prices ease off today's highs over the cattle cycle; set 0% to keep today's prices every year. Type over any amber cell to lock in your own number for that year; it stops following until you reset.</p>
+        <p class="card-note">Year 1 operating cost is filled in automatically from the "Cow Operating Cost" card below. Steer, heifer and cull-cow prices (amber) start from this week's USDA Texas auction price at the weights set above (interpolated along the auction weight curve), then change by the yearly percentage below from year 2 on. The default &minus;5% a year assumes prices ease off today's highs over the cattle cycle; set 0% to keep today's prices every year. Type over any amber cell to lock in your own number for that year; it stops following until you reset.</p>
         <div class="field-grid cols-3" style="margin-bottom:14px;">
           <div class="field">
             <label for="priceTrend">Price change per year, from year 2</label>
@@ -631,10 +630,10 @@
     <div class="card">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 7h20M2 17h20"/></svg>
-        <h2>Cow operating cost (BCU)</h2>
+        <h2>Cow Operating Cost (BCU)</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">BCU = Breeding Cow Unit (≈1.6 AU; includes a share of replacement heifers and the herd bull). This feeds "Year 1 operating cost" in the grid above. It's a shared number now — entered once in the <a href="../cow-decisions/index.html#bcu-calculator" style="font-weight:600;text-decoration:underline;color:inherit;">"Cow operating cost (BCU)" calculator on the home page</a>, so every tool on this site that needs it reads the same value from there instead of asking you to re-enter it per page. Update it on the home page any time; to override just this page, type a different number directly into Year 1 in the grid below.</p>
+        <p class="card-note">BCU = Breeding Cow Unit (≈1.6 AU; includes a share of replacement heifers and the herd bull). This feeds "Year 1 operating cost" in the grid above. It's a shared number now — entered once in the <a href="../cow-decisions/index.html#bcu-calculator" style="font-weight:600;text-decoration:underline;color:inherit;">"Cow Operating Cost (BCU)" calculator on the home page</a>, so every tool on this site that needs it reads the same value from there instead of asking you to re-enter it per page. Update it on the home page any time; to override just this page, type a different number directly into Year 1 in the grid below.</p>
         <div class="stat-tile wide">
           <span class="label">Currently using</span>
           <span class="value" id="sharedOpCostValue">$0</span>

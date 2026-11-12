@@ -105,7 +105,7 @@ h3{font-weight:500;}
 
 /* ---------- Home hero: black band, white type ---------- */
 .hero{
-  background:linear-gradient(rgba(0,0,0,0.62),rgba(0,0,0,0.72)), url("photos/hero-cattle.jpg") center 35%/cover no-repeat, var(--w-band);
+  background:linear-gradient(rgba(0,0,0,0.62),rgba(0,0,0,0.72)), url("photos/hero-herd.jpg") center 45%/cover no-repeat, var(--w-band);
   border-bottom:10px solid var(--w-header);color:#FFFFFF;
 }
 .hero .hero-inner{
@@ -259,7 +259,7 @@ footer p{margin:0 0 8px;}
 .photo-credit a{color:inherit;}
 
 /* About page */
-.about-hero{background:linear-gradient(rgba(0,0,0,0.62),rgba(0,0,0,0.72)), url("photos/hawk.jpg") center/cover no-repeat, var(--w-band);}
+.about-hero{background:linear-gradient(rgba(0,0,0,0.62),rgba(0,0,0,0.72)), url("photos/calf-black.jpg") center 30%/cover no-repeat, var(--w-band);}
 .about-hero h1{font-size:clamp(56px,10vw,110px);}
 .about-intro p, .about-text{max-width:none;font-size:18px;line-height:1.7;color:var(--ink-secondary);margin:0;}
 .about-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:18px;}
@@ -378,3 +378,14 @@ footer .required-links{font-size:13.5px !important;}
 /* the page title of Cow decisions is the page's h1 (it was an h2) */
 .part-head h1{margin:2px 0 6px;font-size:clamp(28px,3.6vw,38px);text-transform:uppercase;letter-spacing:0.03em;color:var(--ink);font-family:var(--font-head);font-weight:600;}
 main:focus{outline:none;}
+
+/* page name is already in the menu: no second copy at the top right */
+.topbar .tool-title{display:none !important;}
+/* home: six doors, three not open yet */
+.doors-6{grid-template-columns:repeat(3,minmax(0,1fr));}
+@media (max-width:860px){ .doors-6{grid-template-columns:repeat(2,minmax(0,1fr));} }
+@media (max-width:520px){ .doors-6{grid-template-columns:1fr;} }
+.door.soon{opacity:0.62;border-style:dashed;cursor:default;}
+.door.soon::after{content:none !important;}
+.door.soon:hover{background:rgba(0,0,0,0.35);}
+.door.soon .door-sub{font-family:var(--font-label);letter-spacing:0.14em;text-transform:uppercase;font-size:12.5px;}

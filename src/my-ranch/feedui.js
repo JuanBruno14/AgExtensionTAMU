@@ -261,7 +261,7 @@
         (h.nws === 'yes' ? '<li>Screwworm: check newborn calves daily during warm months and report suspected cases to TAHC.</li>' : '') +
       '</ul><div class="ps-foot">Estimates from USDA-NRCS soil survey forage, NRC 2016 nutrient requirements and your inputs. Not a guarantee of results. Talk to your county Extension agent before making big changes.</div>';
   }
-  /* Share this herd's purchased-feed cost per cow with the Cow operating cost (BCU) calculator on the home page */
+  /* Share this herd's purchased-feed cost per cow with the Cow Operating Cost (BCU) calculator on the home page */
   var RANCH_FEED_KEY = 'tamuDecisionAidsRanchFeed';
   function sendFeedToBcu(){
     var h = state.herd; if(!(h.cows > 0)) return;
@@ -270,7 +270,7 @@
                    hayTons:Math.round(t.hay/2000*10)/10, supTons:Math.round(t.sup/2000*10)/10, cows:h.cows, ranch:state.name || '', savedAt:new Date().toISOString()};
     payload.total = Math.round((payload.hay + payload.supplement + payload.feeding)*100)/100;
     var ok = true; try{ localStorage.setItem(RANCH_FEED_KEY, JSON.stringify(payload)); }catch(e){ ok = false; }
-    $('fc_bcuNote').innerHTML = ok ? 'Sent: ' + money(payload.total) + ' per cow (hay ' + money(payload.hay) + ', supplement ' + money(payload.supplement) + ', feeding ' + money(payload.feeding) + '). Open <a href="../cow-decisions/index.html#bcu-calculator">Cow operating cost</a> on the home page and choose “Use My Ranch feed”.' : 'This browser is blocking storage, so the cost can’t be shared.';
+    $('fc_bcuNote').innerHTML = ok ? 'Sent: ' + money(payload.total) + ' per cow (hay ' + money(payload.hay) + ', supplement ' + money(payload.supplement) + ', feeding ' + money(payload.feeding) + '). Open <a href="../cow-decisions/index.html#bcu-calculator">Cow Operating Cost</a> on the home page and choose “Use My Ranch feed”.' : 'This browser is blocking storage, so the cost can’t be shared.';
   }
   var planBusy = false;
   function printPlan(){
@@ -1430,12 +1430,12 @@
     });
     $('oc_fromBcu').addEventListener('click', function(){
       var b = null; try{ b = JSON.parse(localStorage.getItem(BCU_KEY) || 'null'); }catch(e){}
-      if(!b || !isFinite(b.bcu_laborMgmt)){ $('oc_note').innerHTML = 'No saved numbers in the home page’s “Cow operating cost (BCU)” calculator on this browser yet — open it on the home page, or type your own here.'; return; }
+      if(!b || !isFinite(b.bcu_laborMgmt)){ $('oc_note').innerHTML = 'No saved numbers in the home page’s “Cow Operating Cost (BCU)” calculator on this browser yet — open it on the home page, or type your own here.'; return; }
       var before = Object.assign({}, state.herd.oc);
       state.herd.oc = {land:(+b.bcu_landLeaseRate || 0)*(+b.bcu_landLeaseMonths || 0), labor:+b.bcu_laborMgmt || 0, vet:+b.bcu_vetMed || 0, repairs:+b.bcu_repairMaint || 0, fuel:+b.bcu_fuelOil || 0,
                        utilities:+b.bcu_utilities || 0, admin:+b.bcu_adminGA || 0, vehicle:+b.bcu_vehicleDepr || 0, other:0};
       var same = OC_KEYS.every(function(k){ return +before[k] === +state.herd.oc[k]; });
-      bindFeedValues(); rerender(); ocFlash(same ? 'The home page’s cow-cost numbers are the same as these — nothing to change. Edit them in “Cow operating cost (BCU)” on the home page, or type your own here.' : 'Copied from the home page’s “Cow operating cost (BCU)”.');
+      bindFeedValues(); rerender(); ocFlash(same ? 'The home page’s cow-cost numbers are the same as these — nothing to change. Edit them in “Cow Operating Cost (BCU)” on the home page, or type your own here.' : 'Copied from the home page’s “Cow Operating Cost (BCU)”.');
     });
     $('oc_reset').addEventListener('click', function(){
       var before = Object.assign({}, state.herd.oc), same = OC_KEYS.every(function(k){ return +before[k] === +DEFAULT_HERD.oc[k]; });

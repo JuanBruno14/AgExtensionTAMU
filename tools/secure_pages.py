@@ -88,11 +88,11 @@ def csp_for(html):
 # Search and sharing: canonical, description, Open Graph, favicon, JSON-LD, sitemap.xml
 # ---------------------------------------------------------------------------
 SITE = 'https://back40.onrender.com'   # change here if the site moves to its own domain, then run this script
-OG_IMAGE = SITE + '/brand/photos/hero-cattle.jpg'
-OG_IMAGE_ALT = 'Black-and-white close-up of cattle at a feedlot fence'
+OG_IMAGE = SITE + '/brand/photos/hero-herd.jpg'
+OG_IMAGE_ALT = 'Black-and-white photo of a mixed herd of cows standing in tall grass'
 SEO = {  # page -> (description, kind): site / app / page
-    'index.html': ('Free decision tools for cow-calf ranchers. Price a bred cow, run quick herd calculators, and map your pastures to match your herd to your grass.', 'site'),
-    'about/index.html': ('About Back40: free beef cattle decision tools for cow-calf ranchers, who they are for, and who to contact.', 'page'),
+    'index.html': ('Free decision tools for cow-calf producers. Price a bred cow, run quick herd calculators, and map your pastures to match your herd to your grass.', 'site'),
+    'about/index.html': ('About Back40: free beef cattle decision tools for cow-calf producers, who they are for, and who to contact.', 'page'),
     'cow-decisions/index.html': ('Budgets for the big cow-calf calls: what to pay for a bred cow, what calf price you need, whether to raise a heifer, and when to sell or keep.', 'page'),
     'herd-tools/index.html': (None, 'app'),
     'my-ranch/index.html': ('Draw your pastures on a satellite map, get carrying capacity from USDA soil data, and match your herd to your grass with a feed and grazing calendar.', 'app'),

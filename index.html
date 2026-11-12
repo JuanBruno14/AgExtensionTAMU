@@ -8,7 +8,7 @@
 <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-bynoGQpmJ5muxJzC06uHWiE25858tN4IGmdc9JthM2A='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Back40 · Decision tools for cow-calf ranchers</title>
+<title>Back40 · Decision tools for cow-calf producers</title>
 <link rel="stylesheet" href="brand/fonts/fonts.css">
 <style>
   :root{
@@ -179,7 +179,7 @@
   footer a{text-decoration:underline;}
   footer .eeo-statement{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);}
 
-  /* ---------- Shared calculator card (Cow operating cost / BCU) ---------- */
+  /* ---------- Shared calculator card (Cow Operating Cost / BCU) ---------- */
   .shared-tool{margin-bottom:36px;}
 
   /* Collapsed by default and styled like the category cards below it (a "sub-index"
@@ -330,16 +330,16 @@
 <!-- seo:start (tools/secure_pages.py) -->
 <link rel="canonical" href="https://back40.onrender.com/">
 <link rel="icon" href="brand/favicon.svg" type="image/svg+xml">
-<meta name="description" content="Free decision tools for cow-calf ranchers. Price a bred cow, run quick herd calculators, and map your pastures to match your herd to your grass.">
+<meta name="description" content="Free decision tools for cow-calf producers. Price a bred cow, run quick herd calculators, and map your pastures to match your herd to your grass.">
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Back40">
-<meta property="og:title" content="Back40 · Decision tools for cow-calf ranchers">
-<meta property="og:description" content="Free decision tools for cow-calf ranchers. Price a bred cow, run quick herd calculators, and map your pastures to match your herd to your grass.">
+<meta property="og:title" content="Back40 · Decision tools for cow-calf producers">
+<meta property="og:description" content="Free decision tools for cow-calf producers. Price a bred cow, run quick herd calculators, and map your pastures to match your herd to your grass.">
 <meta property="og:url" content="https://back40.onrender.com/">
-<meta property="og:image" content="https://back40.onrender.com/brand/photos/hero-cattle.jpg">
-<meta property="og:image:alt" content="Black-and-white close-up of cattle at a feedlot fence">
+<meta property="og:image" content="https://back40.onrender.com/brand/photos/hero-herd.jpg">
+<meta property="og:image:alt" content="Black-and-white photo of a mixed herd of cows standing in tall grass">
 <meta name="twitter:card" content="summary_large_image">
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Back40","url":"https://back40.onrender.com/","description":"Free decision tools for cow-calf ranchers. Price a bred cow, run quick herd calculators, and map your pastures to match your herd to your grass.","inLanguage":"en"}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebSite","name":"Back40","url":"https://back40.onrender.com/","description":"Free decision tools for cow-calf producers. Price a bred cow, run quick herd calculators, and map your pastures to match your herd to your grass.","inLanguage":"en"}</script>
 <!-- seo:end -->
 </head>
 <body>
@@ -347,59 +347,58 @@
 
 <header class="topbar">
   <div class="wordmark"><a href="index.html" aria-label="Back40 home"><span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back40</span></span></a></div>
-  <nav class="b40-nav" aria-label="Sections"><a href="cow-decisions/index.html">Cow decisions</a><a href="herd-tools/index.html">Calculators</a><a href="my-ranch/index.html">My Ranch</a><a href="about/index.html">About</a></nav>
+  <nav class="b40-nav" aria-label="Sections"><a href="cow-decisions/index.html">Beef Cattle Decisions</a><a href="herd-tools/index.html">Calculators</a><a href="my-ranch/index.html">My Ranch</a><a href="about/index.html">About</a></nav>
   <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
 </header>
 
 <section class="hero">
   <div class="hero-inner">
-    <p class="eyebrow">Decision tools for cow-calf ranchers</p>
+    <p class="eyebrow">Decision tools for cow-calf producers</p>
     <h1>Back40</h1>
-    <p class="tagline">From the back 40 to the bottom line</p>
+    <p class="tagline">From the Back 40 to the Bottom Line</p>
     <p class="lede">Change any number and every answer updates on the spot. No formulas, no downloads.</p>
-    <a class="hero-cta" href="my-ranch/index.html">Start with My Ranch</a>
-    <p class="doors-label">Or go straight to a tool</p>
-    <nav class="doors" aria-label="Tools">
-      <a class="door" href="cow-decisions/index.html"><span class="door-name">Cow decisions</span><span class="door-sub">What to pay, what to keep, what to sell</span></a>
-      <a class="door" href="herd-tools/index.html"><span class="door-name">Calculators</span><span class="door-sub">Quick herd math: water, hay, dewormer, gain</span></a>
-      <a class="door" href="my-ranch/index.html"><span class="door-name">My Ranch</span><span class="door-sub">Map your pastures and match herd to grass</span></a>
+    <nav class="doors doors-6" id="tools" aria-label="Tools">
+      <span class="door soon" aria-disabled="true"><span class="door-name">Farm Decisions</span><span class="door-sub">Coming soon</span></span>
+      <a class="door" href="herd-tools/index.html"><span class="door-name">Calculators</span><span class="door-sub">Run the numbers, evaluate costs and returns, and see how management decisions impact your bottom line.</span></a>
+      <a class="door" href="my-ranch/index.html"><span class="door-name">My Ranch</span><span class="door-sub">Map your pastures, match your herd to your grass, and plan for your future.</span></a>
+      <span class="door soon" aria-disabled="true"><span class="door-name">New Technologies</span><span class="door-sub">Coming soon</span></span>
+      <a class="door" href="cow-decisions/index.html"><span class="door-name">Beef Cattle Decisions</span><span class="door-sub">Compare your options, evaluate the outcomes, and make more confident management decisions.</span></a>
+      <span class="door soon" aria-disabled="true"><span class="door-name">Retail Beef Sales</span><span class="door-sub">Coming soon</span></span>
     </nav>
   </div>
 </section>
 
 <main id="main">
   <aside class="data-note" aria-label="About the numbers">
-    <p><strong>Check the numbers.</strong> Starting values come from the <a href="https://agecoext.tamu.edu/resources/decisionaids/beef/">Beef Cattle Decision Aids</a> spreadsheets, not from real producer data. Replace them with your own before you decide. <a href="data-sources.html">Where the prices come from</a>.</p>
+    <p><strong>Check the numbers.</strong> Default values are based on the Beef Cattle Decision Aids spreadsheets and are provided for demonstration purposes only. Replace them with your own operation&rsquo;s information before making decisions. <a href="data-sources.html">Learn where our prices come from.</a></p>
   </aside>
 
   <section class="b40-block" id="three-steps" aria-labelledby="stepsH">
     <h2 id="stepsH">Three steps. No spreadsheet required.</h2>
     <ol class="steps">
-      <li><span class="step-num" aria-hidden="true">01</span><h3><a href="my-ranch/index.html">Map your land</a></h3><p>Draw your pastures and tell us what grows on them.</p></li>
-      <li><span class="step-num" aria-hidden="true">02</span><h3><a href="my-ranch/index.html">Enter your herd</a></h3><p>Head count, weights, calving season. That&rsquo;s it.</p></li>
-      <li><span class="step-num" aria-hidden="true">03</span><h3><a href="my-ranch/index.html">Decide with numbers</a></h3><p>Stocking rate, forage gaps and costs, laid out plainly.</p></li>
+      <li><span class="step-num" aria-hidden="true">01</span><h3><a href="my-ranch/index.html">Map Your Land</a></h3><p>Draw your pastures and identify the forage they produce.</p></li>
+      <li><span class="step-num" aria-hidden="true">02</span><h3><a href="my-ranch/index.html">Enter Your Herd</a></h3><p>Add herd size, weights, and calving season.</p></li>
+      <li><span class="step-num" aria-hidden="true">03</span><h3><a href="my-ranch/index.html">Decide with Numbers</a></h3><p>View stocking rates, forage gaps, and costs in one place.</p></li>
     </ol>
   </section>
 
   <section class="b40-block" id="on-the-land" aria-labelledby="landH">
     <h2 id="landH">On the land</h2>
     <div class="photo-strip">
-      <figure><img src="brand/photos/cattle.jpg" width="900" height="600" loading="lazy" alt="Black and white-faced cows looking over a barbed-wire fence in tall grass"></figure>
-      <figure><img src="brand/photos/deer.jpg" width="900" height="600" loading="lazy" alt="A white-tailed deer looking back across a dry winter pasture"></figure>
-      <figure><img src="brand/photos/hawk.jpg" width="900" height="600" loading="lazy" alt="A hawk perched on a fence post above golden grass"></figure>
+      <figure><img src="brand/photos/calf-fence.jpg" width="900" height="600" loading="lazy" alt="A young calf looking toward the camera beside an old wooden fence line, cows grazing behind"></figure>
+      <figure><img src="brand/photos/calf-tag.jpg" width="900" height="600" loading="lazy" alt="Close-up of a black white-faced calf with a red ear tag"></figure>
+      <figure><img src="brand/photos/calf-black.jpg" width="900" height="600" loading="lazy" alt="A black calf with a red ear tag standing in a pen"></figure>
     </div>
-    <p class="photo-credit">Photos: Bruce Barrow, Camerauthor Photos and David Thielen on <a href="https://unsplash.com/" rel="noopener">Unsplash</a>.</p>
   </section>
 
   <section class="b40-block get-started" id="get-started" aria-labelledby="gsH">
     <div>
       <h2 id="gsH">B4 you buy. B4 you build.</h2>
-      <p>Run the numbers first. It is free and nothing to install.</p>
+      <p>Run the numbers. No cost. No installation.</p>
       <p class="gs-jim">Stuck on a number? Ask Jim, the assistant in the corner of every page. He answers questions about costs and prices.</p>
     </div>
     <div class="gs-actions">
-      <a class="gs-btn" href="my-ranch/index.html">Start with My Ranch</a>
-      <a class="gs-btn ghost" href="cow-decisions/index.html">Price a cow</a>
+      <a class="gs-btn" href="#tools">Get started</a>
     </div>
   </section>
 
@@ -408,8 +407,7 @@
 <div class="viz-tooltip" id="vizTooltip"></div>
 
 <footer>
-  <p class="b40-foot-brand"><strong>Back40</strong> &middot; Decision tools for cow-calf ranchers</p>
-  <p>The cow decision tools start from the <a href="https://agecoext.tamu.edu/resources/decisionaids/beef/">Beef Cattle Decision Aids</a> spreadsheets. Starting values reproduce each spreadsheet&rsquo;s own assumptions, not real producer data &mdash; always check results before making a decision. Current prices are cited on <a href="data-sources.html">the market data page</a>.</p>
+  <p class="b40-foot-brand"><strong>Back40</strong> &middot; Decision tools for cow-calf producers</p>
 <!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="privacy.html">Privacy &amp; data</a></li><li><a href="data-sources.html">Where the prices come from</a></li></ul><!-- required-links:end -->
 </footer>
 
