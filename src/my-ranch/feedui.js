@@ -101,8 +101,8 @@
     document.querySelectorAll('.fc-season2').forEach(function(el){ el.hidden = c !== 'two'; });
     document.querySelectorAll('.fc-usonly').forEach(function(el){ el.hidden = c !== 'us'; });
     document.querySelector('.fc-usnote').hidden = c !== 'us';
-    $('fc_start1Label').textContent = c === 'two' ? 'Spring calving starts' : 'Calving starts';
-    $('fc_wean1Label').textContent = c === 'two' ? 'Spring calves weaned on' : 'Weaning date';
+    $('fc_start1Label').textContent = c === 'two' ? 'Spring Calving Starts' : 'Calving Starts';
+    $('fc_wean1Label').textContent = c === 'two' ? 'Spring Calves Weaned On' : 'Weaning Date';
     document.querySelectorAll('.fc-nws').forEach(function(el){ el.hidden = h.nws !== 'yes'; });
     var s = FEED.SOURCES[h.source];
     $('fc_perLbCp').textContent = h.supCp > 0 ? '$' + fmt(h.supPrice/2000/(h.supCp/100), 2) + ' per lb of protein' : '';
@@ -441,7 +441,7 @@
     var unused = g.P.filter(function(x){ return x.grazed + x.fed === 0; }).map(function(x){ return x.p.name; });
     return '<h3 class="gp-title">Grazing calendar</h3>' +
       '<div class="fc-legend"><span><i class="sw gp-graze"></i>Grazing</span><span><i class="sw gp-feed"></i>Herd here, feeding hay</span><span><i class="sw gp-rest"></i>Resting</span>' +
-      '<label class="gp-max">Move at least every <input type="number" id="gp_max" min="3" max="120" step="1" value="' + g.maxStay + '"> days</label></div>' +
+      '<label class="gp-max">Move at Least Every <input type="number" id="gp_max" min="3" max="120" step="1" value="' + g.maxStay + '"> days</label></div>' +
       '<div class="table-scroll">' + s + '</div>' +
       '<p class="narrative" style="margin:10px 0 0;font-size:13px;">One herd moving through your pastures in order, leaving each when its grass runs out or after ' + g.maxStay + ' days. ' +
       (g.hayDays > 0 ? 'On about <strong>' + fmt(g.hayDays) + ' days</strong> no pasture has enough, so the herd stays put and is fed hay (orange). ' : 'Pasture carries the herd every day of the year. ') +
@@ -617,7 +617,7 @@
     $('fc_weanNote').textContent = h.calving === 'us' ? '' : 'Calves will be ' + (minA === maxA ? minA : minA + '–' + maxA) + ' days old at weaning (average ' + fmt(co.avgAge) + ').';
     var predicted = co.growth === 'nrc';
     $('fc_calfShortSet').hidden = predicted;
-    $('fc_weanLbLabel').textContent = predicted ? 'Your actual weaning weight (to compare)' : 'Average weaning weight';
+    $('fc_weanLbLabel').textContent = predicted ? 'Your Actual Weaning Weight (to Compare)' : 'Average Weaning Weight';
     $('fc_calfGrowthHint').innerHTML = predicted ? 'About <strong>' + fmt(ec.avgWeanLb) + ' lb</strong> at ' + fmt(co.avgAge) + ' days (' + fmt(co.preAdg, 2) + ' lb/day): the cows’ milk (NRC 2016) and the grass calves eat beside it (Tedeschi & Fox, The Ruminant Nutrition System)' : 'Creep feed or lighter calves when milk and grass fall short';
     var gap = h.weanLb > 0 && ec.avgWeanLb > 0 ? h.weanLb/ec.avgWeanLb - 1 : 0;
     $('fc_weanLbHint').innerHTML = predicted

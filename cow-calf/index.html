@@ -528,7 +528,7 @@
         <p class="card-note">The bid price is the central variable: it's what you're willing to pay per head. Move it and watch how the result on the right reacts. Drag the steer/heifer/cull-cow weight sliders below to auto-fill the matching price from the Sept 2026 Texas auction price slide (amber fields below, in "Year-by-year prices") — you can still type over any price by hand.</p>
 
         <div class="hero-field" style="margin-bottom:18px;">
-          <label for="bidPrice">Cow bid price ($/head)</label>
+          <label for="bidPrice">Cow Bid Price ($/head)</label>
           <div class="hero-row">
             <input type="range" id="bidPriceRange" min="400" max="7000" step="10" value="1300" aria-label="Cow bid price ($/head) — drag to adjust">
             <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="3365.18" min="0" step="10" title="Pre-filled once from the shared &quot;Market Prices &amp; Factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
@@ -538,31 +538,31 @@
 
         <div class="field-grid">
           <div class="field">
-            <label for="steerWeight">Steer weight</label>
+            <label for="steerWeight">Steer Weight</label>
             <div class="input-wrap has-suffix"><input type="number" id="steerWeight" value="516.4" min="0"><span class="suffix">lb</span></div>
             <input type="range" id="steerWeightRange" class="weight-slide" min="350" max="1150" step="50" value="516.4" aria-label="Steer weight — drag to auto-fill the matching auction price">
           </div>
           <div class="field">
-            <label for="heiferWeight">Heifer weight</label>
+            <label for="heiferWeight">Heifer Weight</label>
             <div class="input-wrap has-suffix"><input type="number" id="heiferWeight" value="531.3" min="0"><span class="suffix">lb</span></div>
             <input type="range" id="heiferWeightRange" class="weight-slide" min="300" max="950" step="50" value="531.3" aria-label="Heifer weight — drag to auto-fill the matching auction price">
           </div>
           <div class="field">
-            <label for="cullWeight">Cull cow sale weight</label>
+            <label for="cullWeight">Cull Cow Sale Weight</label>
             <div class="input-wrap has-suffix"><input type="number" id="cullWeight" value="1279.4" min="0"><span class="suffix">lb</span></div>
             <input type="range" id="cullWeightRange" class="weight-slide" min="1100" max="1550" step="50" value="1279.4" aria-label="Cull cow weight — drag to auto-fill the matching auction price">
           </div>
           <div class="field">
-            <label for="discountRate">Discount rate</label>
+            <label for="discountRate">Discount Rate</label>
             <div class="input-wrap has-suffix"><input type="number" id="discountRate" value="5" min="0" step="0.1"><span class="suffix">%</span></div>
           </div>
           <div class="field">
-            <label for="calvingYears">Calving opportunities</label>
+            <label for="calvingYears">Calving Opportunities</label>
             <div class="input-wrap"><input type="number" id="calvingYears" value="7" min="1" max="7" step="1"></div>
             <span class="hint">Max 7 — the year the cull cow is sold.</span>
           </div>
           <div class="field">
-            <label for="startYear">Starting year</label>
+            <label for="startYear">Starting Year</label>
             <div class="input-wrap"><input type="number" id="startYear" value="2026" min="2000" max="2100" step="1"></div>
           </div>
         </div>
@@ -579,7 +579,7 @@
         <p class="card-note">Year 1 operating cost is filled in automatically from the "Cow Operating Cost" card below. Steer, heifer and cull-cow prices (amber) start from this week's USDA Texas auction price at the weights set above (interpolated along the auction weight curve), then change by the yearly percentage below from year 2 on. The default &minus;5% a year assumes prices ease off today's highs over the cattle cycle; set 0% to keep today's prices every year. Type over any amber cell to lock in your own number for that year; it stops following until you reset.</p>
         <div class="field-grid cols-3" style="margin-bottom:14px;">
           <div class="field">
-            <label for="priceTrend">Price change per year, from year 2</label>
+            <label for="priceTrend">Price Change per Year, from Year 2</label>
             <div class="input-wrap has-suffix"><input type="number" id="priceTrend" value="-5" min="-30" max="30" step="1"><span class="suffix">%</span></div>
           </div>
         </div>
@@ -611,15 +611,15 @@
         <p class="card-note">If you finance the purchase, the initial outlay is only the equity percentage — the rest is repaid as principal + interest over the loan term.</p>
         <div class="field-grid cols-3">
           <div class="field">
-            <label for="equityPct">Equity requirement</label>
+            <label for="equityPct">Equity Requirement</label>
             <div class="input-wrap has-suffix"><input type="number" id="equityPct" value="20" min="0" max="100" step="1"><span class="suffix">%</span></div>
           </div>
           <div class="field">
-            <label for="loanTerm">Length of note</label>
+            <label for="loanTerm">Length of Note</label>
             <div class="input-wrap has-suffix"><input type="number" id="loanTerm" value="5" min="0" max="7" step="1"><span class="suffix">yrs</span></div>
           </div>
           <div class="field">
-            <label for="interestRate">Interest rate</label>
+            <label for="interestRate">Interest Rate</label>
             <div class="input-wrap has-suffix"><input type="number" id="interestRate" value="5" min="0" step="0.1"><span class="suffix">%</span></div>
           </div>
         </div>
@@ -761,30 +761,30 @@
             <div class="input-wrap"><input type="number" id="a2_bcu" value="400" min="1"></div>
           </div>
           <div class="field">
-            <label for="a2_weanPct">Weaned calf crop</label>
+            <label for="a2_weanPct">Weaned Calf Crop</label>
             <div class="input-wrap has-suffix"><input type="number" id="a2_weanPct" value="85" min="0" max="100"><span class="suffix">%</span></div>
           </div>
           <div class="field">
-            <label for="a2_premium">Premium offered by buyer</label>
+            <label for="a2_premium">Premium Offered by Buyer</label>
             <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_premium" value="80" min="0"></div>
           </div>
           <div class="field">
-            <label for="a2_steerWt">Steer weaning weight</label>
+            <label for="a2_steerWt">Steer Weaning Weight</label>
             <div class="input-wrap has-suffix"><input type="number" id="a2_steerWt" value="516.4" min="0"><span class="suffix">lb</span></div>
             <input type="range" id="a2_steerWtRange" class="weight-slide" min="350" max="1150" step="50" value="516.4" aria-label="Steer weight — drag to auto-fill the matching auction price">
           </div>
           <div class="field">
-            <label for="a2_steerPrice">Steer price</label>
+            <label for="a2_steerPrice">Steer Price</label>
             <div class="input-wrap has-suffix auto"><input type="number" id="a2_steerPrice" value="401.22" min="0"><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field"></div>
           <div class="field">
-            <label for="a2_heiferWt">Heifer weaning weight</label>
+            <label for="a2_heiferWt">Heifer Weaning Weight</label>
             <div class="input-wrap has-suffix"><input type="number" id="a2_heiferWt" value="531.3" min="0"><span class="suffix">lb</span></div>
             <input type="range" id="a2_heiferWtRange" class="weight-slide" min="300" max="950" step="50" value="531.3" aria-label="Heifer weight — drag to auto-fill the matching auction price">
           </div>
           <div class="field">
-            <label for="a2_heiferPrice">Heifer price</label>
+            <label for="a2_heiferPrice">Heifer Price</label>
             <div class="input-wrap has-suffix auto"><input type="number" id="a2_heiferPrice" value="365.76" min="0"><span class="suffix">$/cwt</span></div>
           </div>
           <div class="field"></div>
@@ -804,14 +804,14 @@
           <legend>Leased land — cash lease</legend>
           <div class="field-grid cols-3">
             <div class="field"><label for="a2_leasedAcresPerBCU">Acres/BCU</label><div class="input-wrap"><input type="number" id="a2_leasedAcresPerBCU" value="20" min="0"></div></div>
-            <div class="field"><label for="a2_leasedRatePerAcre">Lease rate</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_leasedRatePerAcre" value="12" min="0"></div></div>
+            <div class="field"><label for="a2_leasedRatePerAcre">Lease Rate</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_leasedRatePerAcre" value="12" min="0"></div></div>
           </div>
         </fieldset>
         <fieldset>
           <legend>Land &amp; improvements — investment value</legend>
           <div class="field-grid cols-3">
             <div class="field"><label for="a2_landInvestAcresPerBCU">Acres/BCU</label><div class="input-wrap"><input type="number" id="a2_landInvestAcresPerBCU" value="12" min="0"></div></div>
-            <div class="field"><label for="a2_landMarketValuePerAcre">Market value</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_landMarketValuePerAcre" value="850" min="0"></div></div>
+            <div class="field"><label for="a2_landMarketValuePerAcre">Market Value</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_landMarketValuePerAcre" value="850" min="0"></div></div>
           </div>
         </fieldset>
       </div>
@@ -828,28 +828,28 @@
         <fieldset style="margin-bottom:16px;">
           <legend>Feed</legend>
           <div class="field-grid cols-3">
-            <div class="field"><label for="a2_hayRolls">Hay (rolls)</label><div class="input-wrap"><input type="number" id="a2_hayRolls" value="0" min="0" step="0.1"></div></div>
-            <div class="field"><label for="a2_hayPrice">Hay price/roll</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_hayPrice" value="0" min="0"></div></div>
+            <div class="field"><label for="a2_hayRolls">Hay (Rolls)</label><div class="input-wrap"><input type="number" id="a2_hayRolls" value="0" min="0" step="0.1"></div></div>
+            <div class="field"><label for="a2_hayPrice">Hay Price/roll</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_hayPrice" value="0" min="0"></div></div>
             <div class="field"></div>
-            <div class="field"><label for="a2_proteinQty">Protein supplement (cwt)</label><div class="input-wrap"><input type="number" id="a2_proteinQty" value="5" min="0" step="0.1"></div></div>
-            <div class="field"><label for="a2_proteinPrice">Protein price/cwt</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_proteinPrice" value="20" min="0"></div></div>
+            <div class="field"><label for="a2_proteinQty">Protein Supplement (cwt)</label><div class="input-wrap"><input type="number" id="a2_proteinQty" value="5" min="0" step="0.1"></div></div>
+            <div class="field"><label for="a2_proteinPrice">Protein Price/cwt</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_proteinPrice" value="20" min="0"></div></div>
             <div class="field"></div>
-            <div class="field"><label for="a2_saltLbs">Salt &amp; mineral (lb)</label><div class="input-wrap"><input type="number" id="a2_saltLbs" value="30" min="0"></div></div>
-            <div class="field"><label for="a2_saltPrice">Salt/mineral price/lb</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_saltPrice" value="0.45" min="0" step="0.01"></div></div>
+            <div class="field"><label for="a2_saltLbs">Salt &amp; Mineral (lb)</label><div class="input-wrap"><input type="number" id="a2_saltLbs" value="30" min="0"></div></div>
+            <div class="field"><label for="a2_saltPrice">Salt/Mineral Price/lb</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_saltPrice" value="0.45" min="0" step="0.01"></div></div>
             <div class="field"></div>
-            <div class="field"><label for="a2_otherFeed1Qty">Other feed (qty)</label><div class="input-wrap"><input type="number" id="a2_otherFeed1Qty" value="0" min="0"></div></div>
-            <div class="field"><label for="a2_otherFeed1Price">Price/unit</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherFeed1Price" value="0" min="0"></div></div>
+            <div class="field"><label for="a2_otherFeed1Qty">Other Feed (qty)</label><div class="input-wrap"><input type="number" id="a2_otherFeed1Qty" value="0" min="0"></div></div>
+            <div class="field"><label for="a2_otherFeed1Price">Price/Unit</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherFeed1Price" value="0" min="0"></div></div>
             <div class="field"></div>
           </div>
         </fieldset>
         <fieldset>
           <legend>Labor, veterinary &amp; other direct</legend>
           <div class="field-grid cols-3">
-            <div class="field"><label for="a2_hiredLabor">Hired labor</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_hiredLabor" value="50" min="0"></div></div>
-            <div class="field"><label for="a2_ownerLabor">Owner labor &amp; mgmt.</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_ownerLabor" value="150" min="0"></div></div>
-            <div class="field"><label for="a2_vetMed">Vet, medicine &amp; breeding</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_vetMed" value="35" min="0"></div></div>
-            <div class="field"><label for="a2_vaccination">Vaccination &amp; precondition</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_vaccination" value="40" min="0"></div></div>
-            <div class="field"><label for="a2_otherDirect">Other direct</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherDirect" value="0" min="0"></div></div>
+            <div class="field"><label for="a2_hiredLabor">Hired Labor</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_hiredLabor" value="50" min="0"></div></div>
+            <div class="field"><label for="a2_ownerLabor">Owner Labor &amp; Mgmt.</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_ownerLabor" value="150" min="0"></div></div>
+            <div class="field"><label for="a2_vetMed">Vet, Medicine &amp; Breeding</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_vetMed" value="35" min="0"></div></div>
+            <div class="field"><label for="a2_vaccination">Vaccination &amp; Precondition</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_vaccination" value="40" min="0"></div></div>
+            <div class="field"><label for="a2_otherDirect">Other Direct</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherDirect" value="0" min="0"></div></div>
           </div>
         </fieldset>
       </div>
@@ -865,15 +865,15 @@
         <p class="card-note">Repair/maintenance and equipment depreciation are filled in automatically from the "Capital assets" card below.</p>
         <div class="field-grid cols-3">
           <div class="field">
-            <label>Repair &amp; maintenance</label>
+            <label>Repair &amp; Maintenance</label>
             <div class="input-wrap has-prefix readonly-field"><span class="prefix">$</span><input type="number" id="a2_repairMaintDisplay" value="0" readonly tabindex="-1"></div>
           </div>
           <div class="field">
-            <label>Vehicle/equip. depreciation</label>
+            <label>Vehicle/Equip. Depreciation</label>
             <div class="input-wrap has-prefix readonly-field"><span class="prefix">$</span><input type="number" id="a2_vehicleDeprDisplay" value="0" readonly tabindex="-1"></div>
           </div>
           <div class="field">
-            <label for="a2_fuelLube">Fuel &amp; lube</label>
+            <label for="a2_fuelLube">Fuel &amp; Lube</label>
             <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_fuelLube" value="35" min="0"></div>
           </div>
           <div class="field">
@@ -881,15 +881,15 @@
             <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_utilities" value="10" min="0"></div>
           </div>
           <div class="field">
-            <label for="a2_adminGA">General &amp; admin.</label>
+            <label for="a2_adminGA">General &amp; Admin.</label>
             <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_adminGA" value="25" min="0"></div>
           </div>
           <div class="field">
-            <label for="a2_otherIndirect1">Other indirect</label>
+            <label for="a2_otherIndirect1">Other Indirect</label>
             <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherIndirect1" value="0" min="0"></div>
           </div>
           <div class="field">
-            <label for="a2_financeCost">Finance cost (interest paid)</label>
+            <label for="a2_financeCost">Finance Cost (Interest Paid)</label>
             <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_financeCost" value="0" min="0"></div>
           </div>
         </div>
@@ -908,10 +908,10 @@
           <legend>Breeding cows</legend>
           <div class="field-grid cols-3">
             <div class="field"><label for="a2_cowCost">Cost/head</label><span class="hint">Pre-filled from Market Prices &amp; Factors</span><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="3365.18" min="0" title="Pre-filled once from the shared &quot;Market Prices &amp; Factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div></div>
-            <div class="field"><label for="a2_cowLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowLife" value="7" min="1"><span class="suffix">yrs</span></div></div>
-            <div class="field"><label for="a2_cowDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="a2_cullCowWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1279.4" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullCowWtRange" class="weight-slide" min="1100" max="1550" step="50" value="1279.4" aria-label="Cull cow weight — drag to auto-fill the matching auction price"></div>
-            <div class="field"><label for="a2_cullCowPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullCowPrice" value="125.06" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="a2_cowLife">Productive Life</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowLife" value="7" min="1"><span class="suffix">yrs</span></div></div>
+            <div class="field"><label for="a2_cowDeathLoss">Death Loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
+            <div class="field"><label for="a2_cullCowWt">Cull Weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1279.4" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullCowWtRange" class="weight-slide" min="1100" max="1550" step="50" value="1279.4" aria-label="Cull cow weight — drag to auto-fill the matching auction price"></div>
+            <div class="field"><label for="a2_cullCowPrice">Cull Price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullCowPrice" value="125.06" min="0"><span class="suffix">$/cwt</span></div></div>
             <div class="field"></div>
           </div>
         </fieldset>
@@ -922,8 +922,8 @@
             <div class="field"><span class="hint" style="margin-top:0;">Bull cost</span><strong id="a2Bull_cost">$0</strong></div>
             <div class="field"><span class="hint" style="margin-top:0;">Productive life</span><strong id="a2Bull_life">0 yrs</strong></div>
             <div class="field"><span class="hint" style="margin-top:0;">Death loss</span><strong id="a2Bull_deathLoss">0%</strong></div>
-            <div class="field"><label for="a2_cullBullWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullWt" value="1650.7" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullBullWtRange" class="weight-slide" min="1300" max="2000" step="50" value="1650.7" aria-label="Bull weight — auto-fills the cull bull price (only one grade reported, so the price stays constant)"></div>
-            <div class="field"><label for="a2_cullBullPrice">Cull price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullBullPrice" value="162.9" min="0"><span class="suffix">$/cwt</span></div></div>
+            <div class="field"><label for="a2_cullBullWt">Cull Weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullBullWt" value="1650.7" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullBullWtRange" class="weight-slide" min="1300" max="2000" step="50" value="1650.7" aria-label="Bull weight — auto-fills the cull bull price (only one grade reported, so the price stays constant)"></div>
+            <div class="field"><label for="a2_cullBullPrice">Cull Price</label><div class="input-wrap has-suffix auto"><input type="number" id="a2_cullBullPrice" value="162.9" min="0"><span class="suffix">$/cwt</span></div></div>
             <div class="field"><span class="hint" style="margin-top:0;">Cows per bull</span><strong id="a2Bull_perBull">0</strong></div>
           </div>
         </fieldset>
@@ -944,7 +944,7 @@
       <div class="card-body">
         <p class="card-note">Just enter what your pickups, trailers, tractor, feeders and other cattle equipment are worth in total — we'll do the rest. Depreciation, repairs, and investment per BCU below are estimated automatically from that one number, using typical replacement-life, salvage-value, and repair-cost assumptions for a mixed equipment fleet. Depreciation and repairs feed "Repair &amp; maintenance" and "Vehicle/equip. depreciation" above; investment feeds the return-on-assets calculation below.</p>
         <div class="field">
-          <label for="a2_capitalTotal">Total capital — vehicles, machinery &amp; equipment</label>
+          <label for="a2_capitalTotal">Total Capital — Vehicles, Machinery &amp; Equipment</label>
           <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_capitalTotal" value="158000" min="0" step="1000"></div>
         </div>
         <div class="stat-tiles" style="margin-top:14px;">
@@ -973,7 +973,7 @@
       <div class="card-body">
         <p class="card-note">The tool above only charges you for interest actually paid on debt — same as the original spreadsheet, which notes "no economic or opportunity cost for capital is included." It doesn't charge anything for capital you already own outright (your cow herd &amp; bull, your equipment — not leased land, since that's not your money). Set the rate below to what that same money could earn somewhere else, and compare it directly against what it's actually earning in your herd — shown side by side in the Result panel, without changing any of the figures above.</p>
         <div class="field">
-          <label for="a2_oppCostRate">Alternative rate (what else could pay you)</label>
+          <label for="a2_oppCostRate">Alternative Rate (What Else Could Pay You)</label>
           <div class="input-wrap has-suffix"><input type="number" id="a2_oppCostRate" value="5" min="0" step="0.1"><span class="suffix">%</span></div>
         </div>
       </div>

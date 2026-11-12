@@ -135,7 +135,7 @@
             <div class="p-typed-grid">
               <div class="field"><label for="tp_name">Name</label><input type="text" id="tp_name" maxlength="60" placeholder="e.g. North trap"></div>
               <div class="field"><label for="tp_acres">Acres</label><div class="input-wrap has-suffix"><input type="number" id="tp_acres" min="1" step="1" inputmode="decimal" aria-describedby="tp_status"><span class="suffix">ac</span></div></div>
-              <div class="field"><label for="tp_type">Land use</label><select id="tp_type"></select></div>
+              <div class="field"><label for="tp_type">Land Use</label><select id="tp_type"></select></div>
             </div>
             <p class="card-note" style="margin:0 0 10px;">It appears on the map as a square next to your other pastures, or where the map is centered, so search for your ranch first. For rangeland, forage comes from the soils under that square; if that isn&rsquo;t your land, set the pasture&rsquo;s forage estimate to <strong>My estimate</strong>.</p>
             <button type="button" class="tool-btn primary" id="tp_add">Add pasture</button>
@@ -150,10 +150,10 @@
           <div class="adv-body">
             <p class="card-note">The soil survey's forage is for a site in top condition. Rate each rangeland pasture's condition in its row; this sets how much of that forage it grows today. Areas drawn inside a pasture replace that part of it: ponds count as no forage, brush as a share of the pasture's forage (bottomland counts the same as the rest unless you change it).</p>
             <div class="field-grid cols-3">
-              <div class="field"><label for="la_poor">Poor condition</label><div class="input-wrap has-suffix"><input type="number" id="la_poor" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
-              <div class="field"><label for="la_fair">Fair condition</label><div class="input-wrap has-suffix"><input type="number" id="la_fair" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
-              <div class="field"><label for="la_excellent">Excellent condition</label><div class="input-wrap has-suffix"><input type="number" id="la_excellent" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
-              <div class="field"><label for="la_brush">Brush / woods</label><div class="input-wrap has-suffix"><input type="number" id="la_brush" min="0" max="100" step="5"><span class="suffix">%</span></div><span class="hint">NRCS: grass under heavy brush ≈ 25% of open prairie</span></div>
+              <div class="field"><label for="la_poor">Poor Condition</label><div class="input-wrap has-suffix"><input type="number" id="la_poor" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+              <div class="field"><label for="la_fair">Fair Condition</label><div class="input-wrap has-suffix"><input type="number" id="la_fair" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+              <div class="field"><label for="la_excellent">Excellent Condition</label><div class="input-wrap has-suffix"><input type="number" id="la_excellent" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+              <div class="field"><label for="la_brush">Brush / Woods</label><div class="input-wrap has-suffix"><input type="number" id="la_brush" min="0" max="100" step="5"><span class="suffix">%</span></div><span class="hint">NRCS: grass under heavy brush ≈ 25% of open prairie</span></div>
               <div class="field"><label for="la_bottom">Bottomland</label><div class="input-wrap has-suffix"><input type="number" id="la_bottom" min="50" max="400" step="10"><span class="suffix">%</span></div><span class="hint">100% = same as the rest of the pasture. The soil survey already counts the productive soils in the outline, so raising this counts them twice.</span></div>
             </div>
             <label class="check-line" style="display:flex;gap:8px;align-items:flex-start;margin-top:10px;"><input type="checkbox" id="la_water"> <span>Count less forage far from water: ground 1–2 mi from the nearest water at half, over 2 mi not at all (Holechek 1988, in Vallentine, <em>Grazing Management</em>, 2001). Needs 💧 water points or ponds on the map.</span></label>
@@ -185,7 +185,7 @@
       </div>
       <div class="card-body">
         <div class="field" style="margin-bottom:14px;">
-          <label for="ranchName">Ranch name</label>
+          <label for="ranchName">Ranch Name</label>
           <input type="text" id="ranchName" placeholder="e.g. North place" maxlength="80">
         </div>
         <div id="summaryBody"></div>
@@ -200,12 +200,12 @@
       <div class="card-body">
         <div class="field-grid">
           <div class="field" style="grid-column:1 / -1;">
-            <label for="manualCap">Carrying capacity — your own number <span style="font-weight:500;color:var(--ink-muted);">(optional)</span></label>
+            <label for="manualCap">Carrying Capacity — Your Own Number <span style="font-weight:500;color:var(--ink-muted);">(optional)</span></label>
             <div class="input-wrap has-suffix"><input type="number" id="manualCap" min="0" step="1" inputmode="decimal" placeholder="Leave blank to use the soil survey"><span class="suffix">AU</span></div>
             <span class="hint">If you know how many animal units your place carries, enter it; the tool then uses it instead of the soil survey (and scales the feed calendar to match).</span>
           </div>
           <div class="field" style="grid-column:1 / -1;">
-            <label for="grazeSys">How you graze</label>
+            <label for="grazeSys">How You Graze</label>
             <select id="grazeSys">
               <option value="25">Continuous (25%)</option>
               <option value="30">Rotation, 4–8 pastures (30%)</option>
@@ -215,32 +215,32 @@
             <span class="hint">Continuous: one pasture, or a few moves a year. Rotation: each pasture rested between grazings. Intensive: small paddocks, moves every few days. More pastures and shorter stays waste less grass, so cattle eat a bigger share of what grows (UNL Extension EC127; Smart et al., 2010).</span>
           </div>
           <div class="field">
-            <label for="harvestEff">Harvest efficiency</label>
+            <label for="harvestEff">Harvest Efficiency</label>
             <div class="input-wrap has-suffix"><input type="number" id="harvestEff" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
             <span class="hint">Share of forage cattle actually eat (native range)</span>
           </div>
           <div class="field">
-            <label for="intakeLb">Forage per AU per day</label>
+            <label for="intakeLb">Forage per AU per Day</label>
             <div class="input-wrap has-suffix"><input type="number" id="intakeLb" min="1" step="0.5" inputmode="decimal"><span class="suffix">lb</span></div>
             <span class="hint">26 lb (Society for Range Management, NRCS) is the conservative standard; Holechek's <em>Range Management</em> uses 2% of body weight, 20 lb, which carries about 30% more</span>
           </div>
           <div class="field">
-            <label for="heImproved">Improved pasture</label>
+            <label for="heImproved">Improved Pasture</label>
             <div class="input-wrap has-suffix"><input type="number" id="heImproved" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
             <span class="hint">Harvest efficiency; never below the native-range value</span>
           </div>
           <div class="field">
-            <label for="heSmallgrain">Small grains</label>
+            <label for="heSmallgrain">Small Grains</label>
             <div class="input-wrap has-suffix"><input type="number" id="heSmallgrain" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
             <span class="hint">Annual forage: Holechek suggests about 50%</span>
           </div>
           <div class="field">
-            <label for="hayRecovery">Hay meadows: share baled</label>
+            <label for="hayRecovery">Hay Meadows: Share Baled</label>
             <div class="input-wrap has-suffix"><input type="number" id="hayRecovery" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
             <span class="hint">Of what the meadow grows, the share that ends up in the bale (mowing, raking and baling losses)</span>
           </div>
           <div class="field">
-            <label for="slopeAdj">Steep ground</label>
+            <label for="slopeAdj">Steep Ground</label>
             <select id="slopeAdj"><option value="on">Count less forage on slopes (Holechek)</option><option value="off">No slope adjustment</option></select>
             <span class="hint">From USGS elevation inside each pasture (soil survey if unavailable): 11–30% slope counts 30% less, 31–60% counts 60% less, over 60% not at all</span>
           </div>
@@ -270,7 +270,7 @@
             <div class="input-wrap has-suffix"><input type="number" id="hd_cows" min="0" step="1" inputmode="numeric"><span class="suffix">head</span></div>
           </div>
           <div class="field">
-            <label for="hd_cowLb">Mature cow weight</label>
+            <label for="hd_cowLb">Mature Cow Weight</label>
             <div class="input-wrap has-suffix"><input type="number" id="hd_cowLb" min="600" max="2000" step="25" inputmode="numeric"><span class="suffix">lb</span></div>
           </div>
           <div class="field">
@@ -279,7 +279,7 @@
             <span class="hint" id="hd_bullsHint">Auto: 1 per 25 cows</span>
           </div>
           <div class="field">
-            <label for="hd_bullLb">Bull weight</label>
+            <label for="hd_bullLb">Bull Weight</label>
             <div class="input-wrap has-suffix"><input type="number" id="hd_bullLb" min="1000" max="3000" step="50" inputmode="numeric"><span class="suffix">lb</span></div>
           </div>
           <div class="field" style="grid-column:1 / -1;">
@@ -289,7 +289,7 @@
       <h3 class="sub-h" style="margin-top:22px;">Calving &amp; Weaning</h3>
         <div class="field-grid cols-3">
           <div class="field">
-            <label for="fc_calving">Calving season</label>
+            <label for="fc_calving">Calving Season</label>
             <select id="fc_calving" data-hs="calving">
               <option value="us">Not sure (U.S. average)</option>
               <option value="one">One season</option>
@@ -297,44 +297,44 @@
             </select>
           </div>
           <div class="field fc-season1">
-            <label for="fc_start1"><span id="fc_start1Label">Calving starts</span></label>
+            <label for="fc_start1"><span id="fc_start1Label">Calving Starts</span></label>
             <div class="input-wrap"><input type="date" id="fc_start1" data-hd="start1"></div>
           </div>
           <div class="field fc-season1">
-            <label for="fc_len1">Calving season length</label>
+            <label for="fc_len1">Calving Season Length</label>
             <div class="input-wrap has-suffix"><input type="number" id="fc_len1" data-h="len1" min="10" max="180" step="5" inputmode="numeric"><span class="suffix">days</span></div>
           </div>
           <div class="field fc-season1">
-            <label for="fc_wean1"><span id="fc_wean1Label">Weaning date</span></label>
+            <label for="fc_wean1"><span id="fc_wean1Label">Weaning Date</span></label>
             <div class="input-wrap"><input type="date" id="fc_wean1" data-hd="wean1"></div>
           </div>
           <div class="field fc-season2">
-            <label for="fc_start2">Fall calving starts</label>
+            <label for="fc_start2">Fall Calving Starts</label>
             <div class="input-wrap"><input type="date" id="fc_start2" data-hd="start2"></div>
           </div>
           <div class="field fc-season2">
-            <label for="fc_len2">Fall season length</label>
+            <label for="fc_len2">Fall Season Length</label>
             <div class="input-wrap has-suffix"><input type="number" id="fc_len2" data-h="len2" min="10" max="180" step="5" inputmode="numeric"><span class="suffix">days</span></div>
           </div>
           <div class="field fc-season2">
-            <label for="fc_share2">Cows calving in the fall</label>
+            <label for="fc_share2">Cows Calving in the Fall</label>
             <div class="input-wrap has-suffix"><input type="number" id="fc_share2" data-h="share2" min="1" max="99" step="1" inputmode="numeric"><span class="suffix">%</span></div>
           </div>
           <div class="field fc-season2">
-            <label for="fc_wean2">Fall calves weaned on</label>
+            <label for="fc_wean2">Fall Calves Weaned On</label>
             <div class="input-wrap"><input type="date" id="fc_wean2" data-hd="wean2"></div>
           </div>
           <div class="field fc-usonly">
-            <label for="fc_weanAge">Calves weaned at</label>
+            <label for="fc_weanAge">Calves Weaned At</label>
             <div class="input-wrap has-suffix"><input type="number" id="fc_weanAge" data-h="weanAge" min="90" max="300" step="5" inputmode="numeric"><span class="suffix">days</span></div>
           </div>
           <div class="field">
-            <label for="fc_region">Pasture growing season</label>
+            <label for="fc_region">Pasture Growing Season</label>
             <select id="fc_region"></select>
             <span class="hint" id="fc_regionHint"></span>
           </div>
           <div class="field">
-            <label for="fc_fq">Native range quality</label>
+            <label for="fc_fq">Native Range Quality</label>
             <select id="fc_fq" data-hs="fq"><option value="typical">Typical forage values</option><option value="b6124">What cattle select (B-6124)</option></select>
             <span class="hint">B-6124: diet protein and digestibility from fecal samples of grazing cattle in your region</span>
           </div>
@@ -345,42 +345,42 @@
             <summary>Herd, Calves &amp; Losses</summary>
             <div class="adv-body">
               <div class="field-grid cols-3">
-                <div class="field"><label for="fc_breed">Breed type</label><select id="fc_breed" data-hs="breed"></select></div>
-                <div class="field"><label for="fc_milk">Milk production</label>
+                <div class="field"><label for="fc_breed">Breed Type</label><select id="fc_breed" data-hs="breed"></select></div>
+                <div class="field"><label for="fc_milk">Milk Production</label>
                   <select id="fc_milk" data-hs="milk"><option value="low">Low (11 lb at peak)</option><option value="moderate">Moderate, breed average (18 lb at peak)</option><option value="high">High (24 lb at peak)</option></select></div>
-                <div class="field"><label for="fc_bcs">Body condition at calving</label>
+                <div class="field"><label for="fc_bcs">Body Condition at Calving</label>
                   <select id="fc_bcs" data-hs="bcs" data-num="1"><option value="4">4 — thin</option><option value="5">5 — moderate</option><option value="6">6 — good</option></select></div>
-                <div class="field"><label for="fc_bcsWean">Condition at weaning</label>
+                <div class="field"><label for="fc_bcsWean">Condition at Weaning</label>
                   <select id="fc_bcsWean" data-hs="bcsWean" data-num="1"><option value="0">Same as at calving</option><option value="3">3 — very thin</option><option value="4">4 — thin</option><option value="5">5 — moderate</option></select>
                   <span class="hint" id="fc_bcsHint">Cows lose condition while nursing</span></div>
-                <div class="field"><label for="fc_activity">Terrain &amp; walking</label>
+                <div class="field"><label for="fc_activity">Terrain &amp; Walking</label>
                   <select id="fc_activity" data-hs="activity"><option value="none">No adjustment (NRC 2016 model)</option><option value="flat">Flat, plenty of grass (+10%)</option><option value="rolling">Rolling or moderate grass (+20%)</option><option value="rough">Rough or sparse range (+35%)</option><option value="extensive">Big range, long walks to water (+50%)</option></select><span class="hint">The NRC 2016 model adds nothing for walking: cows used to their range spend little extra. Pick a terrain only if your cows travel far for feed or water (CSIRO figures)</span></div>
-                <div class="field"><label for="fc_calvingRate">Calving rate</label><div class="input-wrap has-suffix"><input type="number" id="fc_calvingRate" data-h="calvingRate" min="30" max="100" step="1"><span class="suffix">%</span></div></div>
-                <div class="field"><label for="fc_calfGrowth">Weaning weight</label><select id="fc_calfGrowth" data-hs="calfGrowth"><option value="nrc">Predicted from milk and grass (NRC)</option><option value="target">I enter it</option></select><span class="hint" id="fc_calfGrowthHint"></span></div>
-                <div class="field"><label for="fc_weanLb" id="fc_weanLbLabel">Average weaning weight</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanLb" data-h="weanLb" min="250" max="900" step="5"><span class="suffix">lb</span></div><span class="hint" id="fc_weanLbHint"></span></div>
+                <div class="field"><label for="fc_calvingRate">Calving Rate</label><div class="input-wrap has-suffix"><input type="number" id="fc_calvingRate" data-h="calvingRate" min="30" max="100" step="1"><span class="suffix">%</span></div></div>
+                <div class="field"><label for="fc_calfGrowth">Weaning Weight</label><select id="fc_calfGrowth" data-hs="calfGrowth"><option value="nrc">Predicted from milk and grass (NRC)</option><option value="target">I enter it</option></select><span class="hint" id="fc_calfGrowthHint"></span></div>
+                <div class="field"><label for="fc_weanLb" id="fc_weanLbLabel">Average Weaning Weight</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanLb" data-h="weanLb" min="250" max="900" step="5"><span class="suffix">lb</span></div><span class="hint" id="fc_weanLbHint"></span></div>
               </div>
               <fieldset style="margin-top:18px;" id="fc_calfShortSet">
                 <legend>When milk and grass can’t grow the calves to that weight</legend>
                 <div class="field-grid cols-3">
-                  <div class="field" style="grid-column:span 2;"><label for="fc_calfShort">What you do</label>
+                  <div class="field" style="grid-column:span 2;"><label for="fc_calfShort">What You Do</label>
                     <select id="fc_calfShort" data-hs="calfShort"><option value="creep">Creep-feed the calves to reach the weaning weight (cost counted)</option><option value="lighter">Nothing — calves wean lighter (sales counted at the lower weight)</option></select></div>
-                  <div class="field"><label for="fc_creepPrice">Creep feed price</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_creepPrice" data-h="creepPrice" min="0" max="2000" step="5"><span class="suffix">/ton</span></div></div>
-                  <div class="field"><label for="fc_creepConv">Creep per lb of extra gain</label><div class="input-wrap has-suffix"><input type="number" id="fc_creepConv" data-h="creepConv" min="2" max="30" step="0.5"><span class="suffix">lb</span></div><span class="hint">Grain creep: 5–10 lb when grass is short or poor (NDSU); limit-fed protein creep 2–3 lb</span></div>
+                  <div class="field"><label for="fc_creepPrice">Creep Feed Price</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_creepPrice" data-h="creepPrice" min="0" max="2000" step="5"><span class="suffix">/ton</span></div></div>
+                  <div class="field"><label for="fc_creepConv">Creep per lb of Extra Gain</label><div class="input-wrap has-suffix"><input type="number" id="fc_creepConv" data-h="creepConv" min="2" max="30" step="0.5"><span class="suffix">lb</span></div><span class="hint">Grain creep: 5–10 lb when grass is short or poor (NDSU); limit-fed protein creep 2–3 lb</span></div>
                 </div>
               </fieldset>
               <fieldset style="margin-top:18px;">
                 <legend>Weaning period</legend>
                 <div class="field-grid cols-3">
-                  <div class="field"><label for="fc_weanPeriod">Calves kept after weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanPeriod" data-h="weanPeriod" min="0" max="240" step="1"><span class="suffix">days</span></div><span class="hint">0 = sold off the cow; 45 = VAC-45 preconditioning; 134 = kept to March 1 after an October weaning</span></div>
-                  <div class="field"><label for="fc_postAdg">Gain while weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_postAdg" data-h="postAdg" min="0" max="4" step="0.1"><span class="suffix">lb/day</span></div></div>
+                  <div class="field"><label for="fc_weanPeriod">Calves Kept After Weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanPeriod" data-h="weanPeriod" min="0" max="240" step="1"><span class="suffix">days</span></div><span class="hint">0 = sold off the cow; 45 = VAC-45 preconditioning; 134 = kept to March 1 after an October weaning</span></div>
+                  <div class="field"><label for="fc_postAdg">Gain While Weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_postAdg" data-h="postAdg" min="0" max="4" step="0.1"><span class="suffix">lb/day</span></div></div>
                 </div>
               </fieldset>
               <fieldset style="margin-top:18px;">
                 <legend>Replacements &amp; culls</legend>
                 <div class="field-grid cols-3">
-                  <div class="field"><label for="fc_replRate">Cows replaced each year</label><div class="input-wrap has-suffix"><input type="number" id="fc_replRate" data-h="replRate" min="0" max="40" step="1"><span class="suffix">%</span></div><span class="hint">Culls + deaths; 0 = you buy replacements</span></div>
-                  <div class="field"><label for="fc_heiferPreg">Heifers that settle</label><div class="input-wrap has-suffix"><input type="number" id="fc_heiferPreg" data-h="heiferPreg" min="40" max="100" step="1"><span class="suffix">%</span></div><span class="hint">Open heifers sold at preg check</span></div>
-                  <div class="field"><label for="fc_seasonal">Seasonal prices</label>
+                  <div class="field"><label for="fc_replRate">Cows Replaced Each Year</label><div class="input-wrap has-suffix"><input type="number" id="fc_replRate" data-h="replRate" min="0" max="40" step="1"><span class="suffix">%</span></div><span class="hint">Culls + deaths; 0 = you buy replacements</span></div>
+                  <div class="field"><label for="fc_heiferPreg">Heifers That Settle</label><div class="input-wrap has-suffix"><input type="number" id="fc_heiferPreg" data-h="heiferPreg" min="40" max="100" step="1"><span class="suffix">%</span></div><span class="hint">Open heifers sold at preg check</span></div>
+                  <div class="field"><label for="fc_seasonal">Seasonal Prices</label>
                     <select id="fc_seasonal" data-hs="seasonal"><option value="off">Off (today's price)</option><option value="on">On (seasonal pattern)</option></select></div>
                 </div>
                 <p class="card-note" id="fc_replNote" style="margin:10px 0 0;"></p>
@@ -388,13 +388,13 @@
               <fieldset style="margin-top:18px;">
                 <legend>Weather</legend>
                 <div class="field-grid cols-3">
-                  <div class="field"><label for="fc_weatherAdj">Cold &amp; heat adjustments</label>
+                  <div class="field"><label for="fc_weatherAdj">Cold &amp; Heat Adjustments</label>
                     <select id="fc_weatherAdj" data-hs="weatherAdj"><option value="on">On (NRC 2016)</option><option value="off">Off (mild weather)</option></select>
                     <span class="hint">Uses your region's monthly normals</span></div>
-                  <div class="field"><label for="fc_windMph">Typical wind</label><div class="input-wrap has-suffix"><input type="number" id="fc_windMph" data-h="windMph" min="0" max="30" step="1"><span class="suffix">mph</span></div><span class="hint">Lower it if cattle have windbreaks or brush</span></div>
-                  <div class="field"><label for="fc_coat">Hair coat in cold months</label>
+                  <div class="field"><label for="fc_windMph">Typical Wind</label><div class="input-wrap has-suffix"><input type="number" id="fc_windMph" data-h="windMph" min="0" max="30" step="1"><span class="suffix">mph</span></div><span class="hint">Lower it if cattle have windbreaks or brush</span></div>
+                  <div class="field"><label for="fc_coat">Hair Coat in Cold Months</label>
                     <select id="fc_coat" data-hs="coat" data-num="1"><option value="1">Clean and dry</option><option value="2">Some mud</option><option value="3">Wet or muddy lower body</option><option value="4">Soaked or caked with mud</option></select></div>
-                  <div class="field"><label for="fc_heat">Panting in hot months</label>
+                  <div class="field"><label for="fc_heat">Panting in Hot Months</label>
                     <select id="fc_heat" data-hs="heat" data-num="1"><option value="1">None</option><option value="2">Rapid, shallow (+7%)</option><option value="3">Open-mouth (+18%)</option></select>
                     <span class="hint">Months averaging 80°F or more</span></div>
                 </div>
@@ -402,19 +402,19 @@
               <fieldset style="margin-top:18px;">
                 <legend>Death loss</legend>
                 <div class="field-grid cols-3">
-                  <div class="field"><label for="fc_calfLoss">Calves lost, birth to weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_calfLoss" data-h="calfLoss" min="0" max="50" step="0.1"><span class="suffix">%</span></div><span class="hint">USDA NAHMS average: 6.4% (incl. born dead)</span></div>
-                  <div class="field"><label for="fc_cowLoss">Cows lost per year</label><div class="input-wrap has-suffix"><input type="number" id="fc_cowLoss" data-h="cowLoss" min="0" max="20" step="0.1"><span class="suffix">%</span></div><span class="hint">USDA NAHMS average: 1.5%</span></div>
+                  <div class="field"><label for="fc_calfLoss">Calves Lost, Birth to Weaning</label><div class="input-wrap has-suffix"><input type="number" id="fc_calfLoss" data-h="calfLoss" min="0" max="50" step="0.1"><span class="suffix">%</span></div><span class="hint">USDA NAHMS average: 6.4% (incl. born dead)</span></div>
+                  <div class="field"><label for="fc_cowLoss">Cows Lost per Year</label><div class="input-wrap has-suffix"><input type="number" id="fc_cowLoss" data-h="cowLoss" min="0" max="20" step="0.1"><span class="suffix">%</span></div><span class="hint">USDA NAHMS average: 1.5%</span></div>
                 </div>
                 <p class="card-note" id="fc_lossNote" style="margin:10px 0 0;"></p>
               </fieldset>
               <fieldset style="margin-top:18px;">
                 <legend>Flies</legend>
                 <div class="field-grid cols-3">
-                  <div class="field"><label for="fc_nws">New World screwworm</label>
+                  <div class="field"><label for="fc_nws">New World Screwworm</label>
                     <select id="fc_nws" data-hs="nws"><option value="no">Not in my area</option><option value="yes">In or near my area</option></select></div>
-                  <div class="field fc-nws"><label for="fc_nwsLoss">Extra calf loss at peak fly season</label><div class="input-wrap has-suffix"><input type="number" id="fc_nwsLoss" data-h="nwsLoss" min="0" max="50" step="0.5"><span class="suffix">%</span></div></div>
-                  <div class="field fc-nws"><label for="fc_nwsCost">Checks &amp; treatment per calf</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="fc_nwsCost" data-h="nwsCost" min="0" max="500" step="1"></div></div>
-                  <div class="field"><label for="fc_hornFly">Horn flies</label>
+                  <div class="field fc-nws"><label for="fc_nwsLoss">Extra Calf Loss at Peak Fly Season</label><div class="input-wrap has-suffix"><input type="number" id="fc_nwsLoss" data-h="nwsLoss" min="0" max="50" step="0.5"><span class="suffix">%</span></div></div>
+                  <div class="field fc-nws"><label for="fc_nwsCost">Checks &amp; Treatment per Calf</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="fc_nwsCost" data-h="nwsCost" min="0" max="500" step="1"></div></div>
+                  <div class="field"><label for="fc_hornFly">Horn Flies</label>
                     <select id="fc_hornFly" data-hs="hornFly" data-num="1"><option value="0">Controlled — no weight lost</option><option value="4">Some — calves lose up to 4%</option><option value="15">Heavy — calves lose up to 15%</option></select></div>
                 </div>
                 <p class="card-note" id="fc_flyNote" style="margin:10px 0 0;"></p>
@@ -428,40 +428,40 @@
                 <legend>Hay (fills in when pasture runs short)</legend>
                 <div class="field-grid cols-3">
                   <div class="field"><label for="fc_hayTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayTdn" data-h="hayTdn" min="30" max="80" step="1"><span class="suffix">%</span></div></div>
-                  <div class="field"><label for="fc_hayCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayCp" data-h="hayCp" min="2" max="25" step="0.5"><span class="suffix">%</span></div></div>
-                  <div class="field"><label for="fc_hayDm">Dry matter</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayDm" data-h="hayDm" min="50" max="100" step="1"><span class="suffix">%</span></div><span class="hint">TDN and protein from a forage test are on a dry-matter basis; tons and cost are as you buy it</span></div>
-                  <div class="field"><label for="fc_hayPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_hayPrice" data-h="hayPrice" min="0" max="5000" step="5"><span class="suffix">/ton</span></div><span class="hint" id="fc_hayShared"><span id="fc_haySharedTxt"></span> <button type="button" class="link-btn" id="fc_hayUseShared" hidden>Use it</button></span></div>
-                  <div class="field"><label for="fc_hayWaste">Storage &amp; feeding loss</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayWaste" data-h="hayWaste" min="0" max="60" step="1"><span class="suffix">%</span></div><span class="hint">Round bales stored outside and fed without a ring can lose a quarter or more; barn-stored hay in a good feeder, under 10% (Southern Forages, Ch. 19)</span></div>
-                  <div class="field"><label for="fc_ownHayCost">Your own hay: cost to cut &amp; bale</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_ownHayCost" data-h="ownHayCost" min="0" max="5000" step="5"><span class="suffix">/ton</span></div><span class="hint" id="fc_ownHayHint">Hay meadows on the map are baled, not grazed; their hay is fed before any is bought</span></div>
+                  <div class="field"><label for="fc_hayCp">Crude Protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayCp" data-h="hayCp" min="2" max="25" step="0.5"><span class="suffix">%</span></div></div>
+                  <div class="field"><label for="fc_hayDm">Dry Matter</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayDm" data-h="hayDm" min="50" max="100" step="1"><span class="suffix">%</span></div><span class="hint">TDN and protein from a forage test are on a dry-matter basis; tons and cost are as you buy it</span></div>
+                  <div class="field"><label for="fc_hayPrice">Price You Pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_hayPrice" data-h="hayPrice" min="0" max="5000" step="5"><span class="suffix">/ton</span></div><span class="hint" id="fc_hayShared"><span id="fc_haySharedTxt"></span> <button type="button" class="link-btn" id="fc_hayUseShared" hidden>Use it</button></span></div>
+                  <div class="field"><label for="fc_hayWaste">Storage &amp; Feeding Loss</label><div class="input-wrap has-suffix"><input type="number" id="fc_hayWaste" data-h="hayWaste" min="0" max="60" step="1"><span class="suffix">%</span></div><span class="hint">Round bales stored outside and fed without a ring can lose a quarter or more; barn-stored hay in a good feeder, under 10% (Southern Forages, Ch. 19)</span></div>
+                  <div class="field"><label for="fc_ownHayCost">Your Own Hay: Cost to Cut &amp; Bale</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_ownHayCost" data-h="ownHayCost" min="0" max="5000" step="5"><span class="suffix">/ton</span></div><span class="hint" id="fc_ownHayHint">Hay meadows on the map are baled, not grazed; their hay is fed before any is bought</span></div>
                 </div>
               </fieldset>
               <fieldset style="margin-top:18px;">
                 <legend>Protein source (covers what hay and pasture can't)</legend>
-                <div class="field" style="max-width:520px;margin-bottom:12px;"><label for="fc_supMode">How you supplement</label>
+                <div class="field" style="max-width:520px;margin-bottom:12px;"><label for="fc_supMode">How You Supplement</label>
                   <select id="fc_supMode" data-hs="supMode"><option value="protein">Protein only — cows use body reserves for the energy grass lacks (usual on dormant range)</option><option value="full">Protein and energy — feed enough that cows keep their condition</option></select>
                   <span class="hint">Applies to cows and bulls. Growing heifers and weaned calves always get what they need to keep growing.</span></div>
                 <div class="field-grid cols-3">
                   <div class="field"><label for="fc_source">Source</label><select id="fc_source"></select></div>
-                  <div class="field"><label for="fc_supCp">Crude protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_supCp" data-h="supCp" min="5" max="60" step="1"><span class="suffix">%</span></div><span class="hint">As on the feed tag (as fed)</span></div>
+                  <div class="field"><label for="fc_supCp">Crude Protein</label><div class="input-wrap has-suffix"><input type="number" id="fc_supCp" data-h="supCp" min="5" max="60" step="1"><span class="suffix">%</span></div><span class="hint">As on the feed tag (as fed)</span></div>
                   <div class="field"><label for="fc_supTdn">TDN</label><div class="input-wrap has-suffix"><input type="number" id="fc_supTdn" data-h="supTdn" min="40" max="100" step="1"><span class="suffix">%</span></div></div>
-                  <div class="field"><label for="fc_supPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_supPrice" data-h="supPrice" min="0" max="5000" step="5"><span class="suffix">/ton</span></div><span class="hint" id="fc_perLbCp"></span></div>
+                  <div class="field"><label for="fc_supPrice">Price You Pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_supPrice" data-h="supPrice" min="0" max="5000" step="5"><span class="suffix">/ton</span></div><span class="hint" id="fc_perLbCp"></span></div>
                 </div>
               </fieldset>
               <fieldset style="margin-top:18px;"><legend>Mineral &amp; salt</legend>
                 <div class="field-grid cols-3">
-                  <div class="field"><label for="fc_mineralOz">Fed per cow and bull</label><div class="input-wrap has-suffix"><input type="number" id="fc_mineralOz" data-h="mineralOz" min="0" max="16" step="0.5"><span class="suffix">oz/day</span></div><span class="hint">Free-choice mineral usually runs 2–4 oz a day (4 oz ≈ 90 lb a year)</span></div>
-                  <div class="field"><label for="fc_mineralPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_mineralPrice" data-h="mineralPrice" min="0" max="5" step="0.01"><span class="suffix">/lb</span></div><span class="hint">2026 Rolling Plains budget: $0.45/lb</span></div>
+                  <div class="field"><label for="fc_mineralOz">Fed per Cow and Bull</label><div class="input-wrap has-suffix"><input type="number" id="fc_mineralOz" data-h="mineralOz" min="0" max="16" step="0.5"><span class="suffix">oz/day</span></div><span class="hint">Free-choice mineral usually runs 2–4 oz a day (4 oz ≈ 90 lb a year)</span></div>
+                  <div class="field"><label for="fc_mineralPrice">Price You Pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_mineralPrice" data-h="mineralPrice" min="0" max="5" step="0.01"><span class="suffix">/lb</span></div><span class="hint">2026 Rolling Plains budget: $0.45/lb</span></div>
                 </div>
               </fieldset>
               <fieldset style="margin-top:18px;">
                 <legend>How often you feed</legend>
                 <div class="field-grid cols-3">
-                  <div class="field"><label for="fc_supTrips">Supplement trips</label>
+                  <div class="field"><label for="fc_supTrips">Supplement Trips</label>
                     <select id="fc_supTrips" data-hs="supTrips" data-num="1"><option value="7">Every day</option><option value="3">3 times a week</option><option value="2">2 times a week</option><option value="1">Once a week</option><option value="0.25">Once a month (self-fed)</option></select></div>
-                  <div class="field"><label for="fc_hayTrips">Hay trips</label>
+                  <div class="field"><label for="fc_hayTrips">Hay Trips</label>
                     <select id="fc_hayTrips" data-hs="hayTrips" data-num="1"><option value="7">Every day</option><option value="3">3 times a week</option><option value="2">2 times a week</option><option value="1">Once a week</option></select></div>
-                  <div class="field"><label for="fc_tripCost">Cost of one feeding trip</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="fc_tripCost" data-h="tripCost" min="0" max="1000" step="1"></div><span class="hint">Fuel + your time or labor</span></div>
-                  <div class="field"><label for="fc_distPerTon">Delivery &amp; handling</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_distPerTon" data-h="distPerTon" min="0" max="500" step="1"><span class="suffix">/ton</span></div></div>
+                  <div class="field"><label for="fc_tripCost">Cost of One Feeding Trip</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="fc_tripCost" data-h="tripCost" min="0" max="1000" step="1"></div><span class="hint">Fuel + your time or labor</span></div>
+                  <div class="field"><label for="fc_distPerTon">Delivery &amp; Handling</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_distPerTon" data-h="distPerTon" min="0" max="500" step="1"><span class="suffix">/ton</span></div></div>
                 </div>
                 <p class="card-note" id="fc_tripNote" style="margin:10px 0 0;"></p>
               </fieldset>
@@ -473,14 +473,14 @@
             <div class="adv-body">
               <p class="card-note" style="margin:0 0 12px;">Everything that isn’t feed, per cow a year. Starting values are the home page’s “Cow Operating Cost (BCU)” sheet; bull depreciation comes from “Market Prices &amp; Factors”. With them the year plan shows the net return and the calf price you need to break even.</p>
               <div class="field-grid cols-3">
-                <div class="field"><label for="oc_land">Land lease or grazing</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_land" data-oc="land" min="0" max="5000" step="1"></div><span class="hint">BCU sheet: $15 a month × 11 months</span></div>
-                <div class="field"><label for="oc_labor">Labor &amp; management</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_labor" data-oc="labor" min="0" max="5000" step="1"></div></div>
-                <div class="field"><label for="oc_vet">Veterinarian &amp; medicine</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_vet" data-oc="vet" min="0" max="2000" step="1"></div></div>
-                <div class="field"><label for="oc_repairs">Repairs &amp; maintenance</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_repairs" data-oc="repairs" min="0" max="2000" step="1"></div></div>
-                <div class="field"><label for="oc_fuel">Fuel &amp; oil</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_fuel" data-oc="fuel" min="0" max="2000" step="1"></div><span class="hint">Feeding trips are already in the feed cost</span></div>
+                <div class="field"><label for="oc_land">Land Lease or Grazing</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_land" data-oc="land" min="0" max="5000" step="1"></div><span class="hint">BCU sheet: $15 a month × 11 months</span></div>
+                <div class="field"><label for="oc_labor">Labor &amp; Management</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_labor" data-oc="labor" min="0" max="5000" step="1"></div></div>
+                <div class="field"><label for="oc_vet">Veterinarian &amp; Medicine</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_vet" data-oc="vet" min="0" max="2000" step="1"></div></div>
+                <div class="field"><label for="oc_repairs">Repairs &amp; Maintenance</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_repairs" data-oc="repairs" min="0" max="2000" step="1"></div></div>
+                <div class="field"><label for="oc_fuel">Fuel &amp; Oil</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_fuel" data-oc="fuel" min="0" max="2000" step="1"></div><span class="hint">Feeding trips are already in the feed cost</span></div>
                 <div class="field"><label for="oc_utilities">Utilities</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_utilities" data-oc="utilities" min="0" max="2000" step="1"></div></div>
-                <div class="field"><label for="oc_admin">Office, insurance &amp; overhead</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_admin" data-oc="admin" min="0" max="2000" step="1"></div></div>
-                <div class="field"><label for="oc_vehicle">Vehicle &amp; equipment depreciation</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_vehicle" data-oc="vehicle" min="0" max="2000" step="1"></div></div>
+                <div class="field"><label for="oc_admin">Office, Insurance &amp; Overhead</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_admin" data-oc="admin" min="0" max="2000" step="1"></div></div>
+                <div class="field"><label for="oc_vehicle">Vehicle &amp; Equipment Depreciation</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_vehicle" data-oc="vehicle" min="0" max="2000" step="1"></div></div>
                 <div class="field"><label for="oc_other">Other</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_other" data-oc="other" min="0" max="10000" step="1"></div></div>
               </div>
               <p class="card-note" id="oc_note" style="margin:10px 0 0;"></p>
@@ -594,7 +594,7 @@
         <div class="dec-panel" id="dec_calving">
           <p class="card-note" style="margin-top:14px;">Tries a <span id="dec_calvLen">60</span>-day calving season starting in each month, with the same herd, pastures and weaning age. It compares what your pastures grow with what the herd needs, and from that gives the best month to calve and what, if anything, you need to buy.</p>
           <p class="card-note" style="margin:0 0 8px;">Bars: the energy your pastures grow each month, by what is planted. Line: what the herd you entered needs each month (cows, bulls and replacement heifers; NRC 2016 beef cattle requirements): cows dry, in late pregnancy, nursing. Nursing cows need the most, so the best month to calve puts that peak on the months your grass grows.</p>
-          <div class="field" style="max-width:340px;margin:0 0 8px;"><label for="dec_calvShow">Show the cows’ needs calving from</label><select id="dec_calvShow"></select></div>
+          <div class="field" style="max-width:340px;margin:0 0 8px;"><label for="dec_calvShow">Show the Cows’ Needs Calving From</label><select id="dec_calvShow"></select></div>
           <div class="fc-chart" id="dec_calvChart"></div>
           <p class="fc-short" id="dec_calvText"></p>
           <p class="dec-keep-link">Thinking of keeping the calves on grass after weaning? <a class="btn-link" id="dec_keepLink" href="../retained-ownership/index.html#stockers">Run the stocker budget →</a></p>
@@ -604,17 +604,17 @@
           <p class="card-note" style="margin-top:14px;">A dry year or failed small grains cut the forage your pastures grow. It compares four ways through the dry year: keep the calves on the cows and buy feed, wean early and sell, wean early and feed the calves, or sell part of the cows.</p>
           <div class="dm-suggest" id="dec_drMonitor" hidden></div>
           <div class="field-grid cols-3">
-            <div class="field"><label for="dr_cut">Forage lost</label><div class="input-wrap has-suffix"><input type="number" id="dr_cut" data-dr="cut" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="dr_from">Starting in</label><select id="dr_from" data-drs="from" data-num="1"></select></div>
+            <div class="field"><label for="dr_cut">Forage Lost</label><div class="input-wrap has-suffix"><input type="number" id="dr_cut" data-dr="cut" min="5" max="100" step="5"><span class="suffix">%</span></div></div>
+            <div class="field"><label for="dr_from">Starting In</label><select id="dr_from" data-drs="from" data-num="1"></select></div>
             <div class="field"><label for="dr_months">For</label><div class="input-wrap has-suffix"><input type="number" id="dr_months" data-dr="months" min="1" max="12" step="1"><span class="suffix">mo</span></div></div>
-            <div class="field"><label for="dr_which">Which pastures</label>
+            <div class="field"><label for="dr_which">Which Pastures</label>
               <select id="dr_which" data-drs="which"><option value="all">All pastures</option><option value="range">Native range only</option><option value="smallgrain">Small grains (wheat, oats) only</option><option value="improved">Improved pasture only</option></select></div>
-            <div class="field"><label for="dr_earlyAge">Early weaning at</label><div class="input-wrap has-suffix"><input type="number" id="dr_earlyAge" data-dr="earlyAge" min="60" max="250" step="5"><span class="suffix">days</span></div></div>
-            <div class="field"><label for="dr_feedAdg">Gain if you feed early-weaned calves</label><div class="input-wrap has-suffix"><input type="number" id="dr_feedAdg" data-dr="feedAdg" min="0.5" max="4" step="0.1"><span class="suffix">lb/day</span></div></div>
-            <div class="field"><label for="dr_hayPrice">Hay price in the drought</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_hayPrice" data-dr="hayPrice" min="0" max="2000" step="5"><span class="suffix">/ton</span></div><span class="hint">Blank = your normal hay price</span></div>
-            <div class="field"><label for="dr_sellPct">Cows to sell</label><div class="input-wrap has-suffix"><input type="number" id="dr_sellPct" data-dr="sellPct" min="0" max="90" step="5"><span class="suffix">%</span></div></div>
-            <div class="field"><label for="dr_sellWhen">Sell them</label><select id="dr_sellWhen" data-drs="sellWhen"><option value="start">When the drought starts (with their calves)</option><option value="weaning">After weaning (feed them till then)</option></select></div>
-            <div class="field"><label for="dr_ocSaved">Costs that leave with each cow sold</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_ocSaved" data-dr="ocSaved" min="0" max="3000" step="1"><span class="suffix">/cow a year</span></div><span class="hint" id="dr_ocSavedHint">Blank = vet &amp; medicine from Other costs; land, labor and equipment usually stay</span></div>
+            <div class="field"><label for="dr_earlyAge">Early Weaning At</label><div class="input-wrap has-suffix"><input type="number" id="dr_earlyAge" data-dr="earlyAge" min="60" max="250" step="5"><span class="suffix">days</span></div></div>
+            <div class="field"><label for="dr_feedAdg">Gain If You Feed Early-Weaned Calves</label><div class="input-wrap has-suffix"><input type="number" id="dr_feedAdg" data-dr="feedAdg" min="0.5" max="4" step="0.1"><span class="suffix">lb/day</span></div></div>
+            <div class="field"><label for="dr_hayPrice">Hay Price in the Drought</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_hayPrice" data-dr="hayPrice" min="0" max="2000" step="5"><span class="suffix">/ton</span></div><span class="hint">Blank = your normal hay price</span></div>
+            <div class="field"><label for="dr_sellPct">Cows to Sell</label><div class="input-wrap has-suffix"><input type="number" id="dr_sellPct" data-dr="sellPct" min="0" max="90" step="5"><span class="suffix">%</span></div></div>
+            <div class="field"><label for="dr_sellWhen">Sell Them</label><select id="dr_sellWhen" data-drs="sellWhen"><option value="start">When the drought starts (with their calves)</option><option value="weaning">After weaning (feed them till then)</option></select></div>
+            <div class="field"><label for="dr_ocSaved">Costs That Leave with Each Cow Sold</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_ocSaved" data-dr="ocSaved" min="0" max="3000" step="1"><span class="suffix">/cow a year</span></div><span class="hint" id="dr_ocSavedHint">Blank = vet &amp; medicine from Other costs; land, labor and equipment usually stay</span></div>
           </div>
           <h4 class="dec-h4">You can’t know how long it will last: the best way through for each drought</h4>
           <p class="card-note" style="margin:0 0 8px;">Each cell is a drought starting in the month above: how much grass is lost and for how long. Click a cell to see it in detail below.</p>
@@ -627,17 +627,17 @@
           <h3 class="sub-h" style="margin-top:26px;">2. The next 10 years: keep the cows, or sell and rebuild?</h3>
           <p class="card-note" style="margin:0 0 8px;">Selling cows looks good the year you sell — the money comes in and the feed bill drops — but the herd has to be rebuilt. This compares keeping the herd with selling and then buying bred cows back, raising your own heifers, or staying smaller, using your ranch in a normal year after the drought.</p>
           <div class="field-grid cols-3">
-            <div class="field"><label for="dr_buyPrice">Bred cow price to buy back</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_buyPrice" data-dr="buyPrice" min="200" max="10000" step="25"><span class="suffix">/hd</span></div><span class="hint">Blank = the site’s market price (USDA bred cows)</span></div>
-            <div class="field"><label for="dr_buyYear">Buy them back in</label><select id="dr_buyYear" data-drs="buyYear" data-num="1"><option value="1">Year 1 (right after)</option><option value="2">Year 2 (rest the grass a year)</option><option value="3">Year 3</option></select></div>
-            <div class="field"><label for="dr_recover">Grass the year after</label><div class="input-wrap has-suffix"><input type="number" id="dr_recover" data-dr="recover" min="30" max="100" step="5"><span class="suffix">% of normal</span></div><span class="hint">Halfway back the year after that, then normal. Lower after a severe drought or heavy grazing.</span></div>
-            <div class="field"><label for="dr_later">Calf prices from year 4</label><select id="dr_later" data-drs="later" data-num="1"><option value="15">15% higher</option><option value="0">Same as today</option><option value="-15">15% lower</option><option value="-30">30% lower</option></select></div>
+            <div class="field"><label for="dr_buyPrice">Bred Cow Price to Buy Back</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_buyPrice" data-dr="buyPrice" min="200" max="10000" step="25"><span class="suffix">/hd</span></div><span class="hint">Blank = the site’s market price (USDA bred cows)</span></div>
+            <div class="field"><label for="dr_buyYear">Buy Them Back In</label><select id="dr_buyYear" data-drs="buyYear" data-num="1"><option value="1">Year 1 (right after)</option><option value="2">Year 2 (rest the grass a year)</option><option value="3">Year 3</option></select></div>
+            <div class="field"><label for="dr_recover">Grass the Year After</label><div class="input-wrap has-suffix"><input type="number" id="dr_recover" data-dr="recover" min="30" max="100" step="5"><span class="suffix">% of normal</span></div><span class="hint">Halfway back the year after that, then normal. Lower after a severe drought or heavy grazing.</span></div>
+            <div class="field"><label for="dr_later">Calf Prices from Year 4</label><select id="dr_later" data-drs="later" data-num="1"><option value="15">15% higher</option><option value="0">Same as today</option><option value="-15">15% lower</option><option value="-30">30% lower</option></select></div>
           </div>
           <details class="advanced" style="margin-top:4px;">
             <summary>Costs and interest</summary>
             <div class="adv-body"><div class="field-grid cols-3">
-              <div class="field"><label for="dr_otherCost">Other costs per cow</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_otherCost" data-dr="otherCost" min="0" max="3000" step="5"><span class="suffix">/yr</span></div><span class="hint">Besides hay, supplement and mineral (those come from your feed settings). 2026 Rolling Plains budget: $189 (vet, fuel, repairs, marketing, labor, interest)</span></div>
-              <div class="field"><label for="dr_devCost">Raising a heifer to calving</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_devCost" data-dr="devCost" min="0" max="5000" step="25"><span class="suffix">/hd</span></div><span class="hint">Feed and care from weaning to first calf, beyond the heifer’s own sale value</span></div>
-              <div class="field"><label for="dr_rate">Interest rate</label><div class="input-wrap has-suffix"><input type="number" id="dr_rate" data-dr="rate" min="0" max="20" step="0.5"><span class="suffix">%/yr</span></div><span class="hint">What money is worth to you: what you pay to borrow, or earn on savings</span></div>
+              <div class="field"><label for="dr_otherCost">Other Costs per Cow</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_otherCost" data-dr="otherCost" min="0" max="3000" step="5"><span class="suffix">/yr</span></div><span class="hint">Besides hay, supplement and mineral (those come from your feed settings). 2026 Rolling Plains budget: $189 (vet, fuel, repairs, marketing, labor, interest)</span></div>
+              <div class="field"><label for="dr_devCost">Raising a Heifer to Calving</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="dr_devCost" data-dr="devCost" min="0" max="5000" step="25"><span class="suffix">/hd</span></div><span class="hint">Feed and care from weaning to first calf, beyond the heifer’s own sale value</span></div>
+              <div class="field"><label for="dr_rate">Interest Rate</label><div class="input-wrap has-suffix"><input type="number" id="dr_rate" data-dr="rate" min="0" max="20" step="0.5"><span class="suffix">%/yr</span></div><span class="hint">What money is worth to you: what you pay to borrow, or earn on savings</span></div>
             </div></div>
           </details>
           <div class="fc-chart" id="dec_drLongChart" style="margin-top:12px;"></div>

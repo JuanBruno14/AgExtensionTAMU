@@ -420,7 +420,7 @@
       L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {maxZoom:19, pane:'labels'})
     ]);
     imagery.addTo(map); refs.addTo(map);
-    L.control.layers({'Satellite':imagery, 'Street map':streets}, {'Roads & place names':refs}, {position:'topright'}).addTo(map);
+    L.control.layers({'Satellite':imagery, 'Street Map':streets}, {'Roads & Place Names':refs}, {position:'topright'}).addTo(map);
     L.control.scale({imperial:true, metric:false}).addTo(map);
     var ColorCtl = L.Control.extend({options:{position:'bottomright'}, onAdd:function(){
       var d = L.DomUtil.create('div', 'seg map-color leaflet-bar');
@@ -1197,7 +1197,7 @@
   function condSelect(p){
     if(!isGrazed(p) || p.mode !== 'soil') return '';
     var c = state.settings.cond;
-    return '<div class="p-cond"><label>Range condition</label><select class="p-condition" aria-label="Range condition, ' + esc(p.name) + '">' + Object.keys(CONDITIONS).map(function(k){
+    return '<div class="p-cond"><label>Range Condition</label><select class="p-condition" aria-label="Range condition, ' + esc(p.name) + '">' + Object.keys(CONDITIONS).map(function(k){
       return '<option value="' + k + '"' + ((p.condition || 'fair') === k ? ' selected' : '') + '>' + CONDITIONS[k] + ' condition (' + c[k] + '%)</option>'; }).join('') + '</select></div>';
   }
 
@@ -1217,8 +1217,8 @@
           '<input type="text" class="p-name" value="' + esc(p.name) + '" maxlength="60" aria-label="Pasture name">' +
           '<span class="p-acres">' + fmt(p.acres, p.acres < 10 ? 1 : 0) + ' ac</span></div>' +
         '<div class="p-grid">' +
-          '<div><label>Land use</label><select class="p-type" aria-label="Land use, ' + esc(p.name) + '">' + typeOpts + '</select></div>' +
-          '<div><label>Forage estimate</label>' + (grazed ?
+          '<div><label>Land Use</label><select class="p-type" aria-label="Land use, ' + esc(p.name) + '">' + typeOpts + '</select></div>' +
+          '<div><label>Forage Estimate</label>' + (grazed ?
             '<select class="p-mode" aria-label="Forage estimate, ' + esc(p.name) + '"><option value="soil"' + (p.mode === 'soil' ? ' selected' : '') + '>Soil survey</option><option value="manual"' + (p.mode === 'manual' ? ' selected' : '') + '>My estimate</option></select>' +
             condSelect(p) + (p.mode === 'manual' ? '<div class="input-wrap has-suffix" style="margin-top:6px;"><input type="number" class="p-manual" min="0" step="50" inputmode="decimal" placeholder="lb per acre" value="' + (p.manual != null ? p.manual : '') + '" aria-label="Forage per acre per year"><span class="suffix">lb/ac/yr</span></div>' : '')
             : '<div class="sub" style="font-size:12.5px;color:var(--ink-muted);padding-top:8px;">—</div>') + '</div>' +
