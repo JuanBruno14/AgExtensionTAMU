@@ -389,3 +389,20 @@ main:focus{outline:none;}
 .door.soon::after{content:none !important;}
 .door.soon:hover{background:rgba(0,0,0,0.35);}
 .door.soon .door-sub{font-family:var(--font-label);letter-spacing:0.14em;text-transform:uppercase;font-size:12.5px;}
+
+/* the two lines around the big title look the same */
+.hero .eyebrow, .hero .tagline{
+  margin:0;font-family:var(--font-label);font-weight:500;font-size:clamp(15px,1.8vw,19px);
+  letter-spacing:0.18em;text-transform:uppercase;color:#FFFFFF;line-height:1.35;
+}
+/* every tool page: the front-page photo behind its title band */
+.intro{
+  background:linear-gradient(rgba(0,0,0,0.66),rgba(0,0,0,0.76)), url("photos/hero-herd.jpg") center 45%/cover no-repeat, var(--w-band) !important;
+  border-bottom:10px solid var(--w-header);color:#FFFFFF;
+}
+.intro h1, .intro p, .intro-meta div, .intro-meta strong, .intro a{color:#FFFFFF !important;}
+.intro p{color:#ECE7E7 !important;}
+.intro .fence-line{display:none;}
+.intro-inner{max-width:1180px;margin:0 auto;padding:clamp(32px,5vw,56px) clamp(16px,4vw,40px);}
+.intro h1{font-size:clamp(26px,3.4vw,38px);margin:0 0 10px;}
+.intro p{max-width:64ch;font-size:16px;}

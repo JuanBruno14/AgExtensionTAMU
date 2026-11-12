@@ -85,7 +85,7 @@
     -webkit-font-smoothing:antialiased;
   }
   h1,h2,h3,.display{
-    font-family:"Work Sans", "Open Sans", Arial, sans-serif;
+    font-family:"Oswald", "Open Sans", Arial, sans-serif;
     text-wrap:balance;
     letter-spacing:-0.01em;
   }
@@ -112,14 +112,14 @@
     background:rgba(255,255,255,0.12);
     border:1.5px solid rgba(255,255,255,0.55);
     display:flex;align-items:center;justify-content:center;
-    font-family:"Work Sans",sans-serif;font-weight:700;font-size:20px;
+    font-family:"Oswald", sans-serif;font-weight:700;font-size:20px;
     flex:none;
   }
   .wordmark .text{line-height:1.15;}
   .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
-  .wordmark .text .main{font-family:"Work Sans",sans-serif;font-size:19px;font-weight:600;}
+  .wordmark .text .main{font-family:"Oswald", sans-serif;font-size:19px;font-weight:600;}
   .tool-title{
-    font-family:"Work Sans",sans-serif;
+    font-family:"Oswald", sans-serif;
     font-size:clamp(18px,2.4vw,26px);
     font-weight:600;
     margin:0;
@@ -300,7 +300,7 @@
   }
   .stat-tile.wide{grid-column:1 / -1;}
   .stat-tile .label{font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:0.04em;color:var(--ink-muted);}
-  .stat-tile .value{font-family:"Work Sans",sans-serif;font-size:28px;font-weight:600;line-height:1.1;}
+  .stat-tile .value{font-family:"Oswald", sans-serif;font-size:28px;font-weight:600;line-height:1.1;}
   .stat-tile .sub{font-size:12px;color:var(--ink-muted);}
   .stat-tile.good{background:var(--good-100);border-color:color-mix(in srgb, var(--good-700) 30%, var(--good-100));}
   .stat-tile.good .value{color:var(--good-700);}
@@ -453,7 +453,7 @@
   @media (max-width:600px){ .p-grid{grid-template-columns:1fr 1fr;} .p-grid .p-cap{grid-column:1 / -1;} }
   .p-grid label{font-size:11.5px;font-weight:600;color:var(--ink-secondary);display:block;margin-bottom:4px;}
   .p-cap{background:var(--surface-sunken);border-radius:9px;padding:8px 10px;}
-  .p-cap .big{font-family:"Work Sans",sans-serif;font-size:20px;font-weight:600;line-height:1.1;}
+  .p-cap .big{font-family:"Oswald", sans-serif;font-size:20px;font-weight:600;line-height:1.1;}
   .p-cap .sub{font-size:11.5px;color:var(--ink-muted);}
   .p-soil{margin-top:10px;font-size:12.5px;color:var(--ink-secondary);line-height:1.5;}
   .p-soil table{width:100%;border-collapse:collapse;margin-top:6px;font-size:12px;}
@@ -606,7 +606,7 @@
   .dec-drtable{margin-top:18px;}
   table.plan.dec-drtable th{vertical-align:top;white-space:normal !important;min-width:150px;text-transform:none;letter-spacing:0;font-size:12.5px;color:var(--ink);}
   table.plan.dec-drtable th:first-child{min-width:110px;}
-  .dec-drtable .opt-title{font-family:"Work Sans",sans-serif;font-size:14px;font-weight:600;line-height:1.25;margin:4px 0;}
+  .dec-drtable .opt-title{font-family:"Oswald", sans-serif;font-size:14px;font-weight:600;line-height:1.25;margin:4px 0;}
   .dec-drtable .opt-sub{font-size:11.5px;font-weight:400;color:var(--ink-secondary);line-height:1.4;}
   .dec-drtable .best{background:color-mix(in srgb, var(--good-700) 9%, transparent);}
   .dec-drtable tfoot td{font-size:14px;border-top:1.5px solid var(--border);}
@@ -727,11 +727,11 @@
   /* ---- summary strip + steps (Ranch · Herd · Year plan · Decisions) */
   .mr-strip{position:sticky;top:0;z-index:1100;background:var(--surface);border-bottom:1px solid var(--border);box-shadow:0 2px 10px rgba(0,0,0,.05);}
   .mr-strip-in{max-width:1180px;margin:0 auto;padding:10px clamp(16px,4vw,40px);display:flex;align-items:center;gap:10px 28px;flex-wrap:wrap;}
-  .mr-rn{font-family:"Work Sans",system-ui,sans-serif;font-weight:700;font-size:16.5px;line-height:1.2;color:var(--ink);min-width:0;}
+  .mr-rn{font-family:"Oswald", system-ui,sans-serif;font-weight:700;font-size:16.5px;line-height:1.2;color:var(--ink);min-width:0;}
   .mr-rn small{display:block;font-family:"Open Sans",system-ui,sans-serif;font-weight:400;font-size:12px;color:var(--ink-muted);margin-top:2px;}
   .mr-k{display:flex;flex-direction:column;min-width:0;}
   .mr-k > span{font-family:Oswald,"Open Sans",sans-serif;text-transform:uppercase;font-size:11px;letter-spacing:.06em;color:var(--ink-muted);}
-  .mr-k b{font-family:"Work Sans",system-ui,sans-serif;font-size:18px;font-weight:700;color:var(--ink);white-space:nowrap;}
+  .mr-k b{font-family:"Oswald", system-ui,sans-serif;font-size:18px;font-weight:700;color:var(--ink);white-space:nowrap;}
   .mr-k b small{font-family:"Open Sans",sans-serif;font-size:12px;font-weight:400;color:var(--ink-muted);}
   .mr-k b.ok{color:var(--good-700);} .mr-k b.warn{color:#9a4a0b;} .mr-k b.bad{color:var(--critical-700);}
   .mr-meter{width:96px;height:6px;border-radius:3px;background:var(--surface-sunken);margin-top:4px;overflow:hidden;}
@@ -742,7 +742,7 @@
   .mr-step-btn{display:flex;align-items:center;gap:10px;text-align:left;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 14px;cursor:pointer;font:inherit;color:var(--ink);}
   .mr-step-btn:hover{border-color:var(--accent);}
   .mr-step-btn .n{flex:0 0 26px;height:26px;border-radius:50%;background:var(--surface-sunken);display:grid;place-items:center;font-weight:700;font-size:13px;}
-  .mr-step-btn b{display:block;font-family:"Work Sans",system-ui,sans-serif;font-size:15px;}
+  .mr-step-btn b{display:block;font-family:"Oswald", system-ui,sans-serif;font-size:15px;}
   .mr-step-btn small{display:block;color:var(--ink-muted);font-size:12px;}
   .mr-step-btn.done .n{background:var(--good-700);color:#fff;font-size:0;}
   .mr-step-btn.done .n::after{content:"✓";font-size:13px;}
