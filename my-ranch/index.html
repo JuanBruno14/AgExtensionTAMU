@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-UQUmoX95NDUFX+PYyAVjqQsn84d49sj5igAolYLVkKs='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XMJHwLI04aZTcpOkIafsP2bjyCW5C46tHi3irZhhgyQ='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Ranch · Back40</title>
@@ -876,7 +876,7 @@
 
 <div class="mr-strip" id="mrStrip">
   <div class="mr-strip-in">
-    <div class="mr-rn"><span id="st_name">Your ranch</span><small id="st_sub">Draw your pastures to start</small></div>
+    <div class="mr-rn"><span id="st_name">Your Ranch</span><small id="st_sub">Draw your pastures to start</small></div>
     <div class="mr-k"><span>Stocking</span><b id="st_stock">—</b><div class="mr-meter"><i id="st_stockBar"></i></div></div>
     <div class="mr-k"><span>Drought now</span><b id="st_drought">—</b></div>
     <div class="mr-k"><span>Feed to buy (year)</span><b id="st_feed">—</b></div>
@@ -941,7 +941,7 @@
         <button type="button" class="tool-btn primary" id="drawPastureBtn">✏️ Draw Pasture</button>
         <button type="button" class="tool-btn" id="drawRectBtn" title="Draw a square or rectangular pasture in one drag">▭ Rectangle</button>
         <span class="sep" aria-hidden="true"></span>
-        <button type="button" class="tool-btn" data-zone="water" title="Draw a pond or lake inside a pasture; it's taken out of the grazing area">💧 Pond/lake</button>
+        <button type="button" class="tool-btn" data-zone="water" title="Draw a pond or lake inside a pasture; it's taken out of the grazing area">💧 Pond/Lake</button>
         <button type="button" class="tool-btn" data-zone="brush" title="Draw heavy brush or woods inside a pasture; it grows less grass">🌳 Brush</button>
         <button type="button" class="tool-btn" data-zone="bottom" title="Draw bottomland inside a pasture to mark it on the map">〰 Bottomland</button>
         <span class="sep" aria-hidden="true"></span>
@@ -3191,7 +3191,7 @@
     if(!ov || ov.ac < 0.5*p.acres) return;
     var el = $('zoneOffer'); el.hidden = false;
     el.innerHTML = ('<strong>“' + esc(p.name) + '” is inside “' + esc(ov.p.name) + '”.</strong> As a pasture its acres would be counted twice. What is it? ' +
-      '<button type="button" class="tool-btn small" data-to-zone="water" data-pid="' + p.id + '">💧 Pond/lake</button> ' +
+      '<button type="button" class="tool-btn small" data-to-zone="water" data-pid="' + p.id + '">💧 Pond/Lake</button> ' +
       '<button type="button" class="tool-btn small" data-to-zone="brush" data-pid="' + p.id + '">🌳 Brush</button> ' +
       '<button type="button" class="tool-btn small" data-to-zone="bottom" data-pid="' + p.id + '">〰 Bottomland</button> ' +
       '<button type="button" class="tool-btn small" data-to-zone="keep" data-pid="' + p.id + '">Keep as pasture</button>');
@@ -5835,7 +5835,7 @@
   function updateStrip(){
     if(!$('mrStrip')) return;
     var t = totals(), herd = herdAU(), h = state.herd;
-    $('st_name').textContent = state.name || 'Your ranch';
+    $('st_name').textContent = state.name || 'Your Ranch';
     $('st_sub').textContent = t.pastures ? fmt(t.acres) + ' ac' + (h.cows > 0 ? ' · ' + fmt(h.cows) + ' cows' : ' · enter your herd') : 'Draw your pastures to start';
     var st = $('st_stock'), bar = $('st_stockBar');
     if(herd > 0 && t.cap > 0){

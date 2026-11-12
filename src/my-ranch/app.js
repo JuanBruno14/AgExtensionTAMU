@@ -767,7 +767,7 @@
     if(!ov || ov.ac < 0.5*p.acres) return;
     var el = $('zoneOffer'); el.hidden = false;
     el.innerHTML = ('<strong>“' + esc(p.name) + '” is inside “' + esc(ov.p.name) + '”.</strong> As a pasture its acres would be counted twice. What is it? ' +
-      '<button type="button" class="tool-btn small" data-to-zone="water" data-pid="' + p.id + '">💧 Pond/lake</button> ' +
+      '<button type="button" class="tool-btn small" data-to-zone="water" data-pid="' + p.id + '">💧 Pond/Lake</button> ' +
       '<button type="button" class="tool-btn small" data-to-zone="brush" data-pid="' + p.id + '">🌳 Brush</button> ' +
       '<button type="button" class="tool-btn small" data-to-zone="bottom" data-pid="' + p.id + '">〰 Bottomland</button> ' +
       '<button type="button" class="tool-btn small" data-to-zone="keep" data-pid="' + p.id + '">Keep as pasture</button>');
@@ -1923,7 +1923,7 @@
   function updateStrip(){
     if(!$('mrStrip')) return;
     var t = totals(), herd = herdAU(), h = state.herd;
-    $('st_name').textContent = state.name || 'Your ranch';
+    $('st_name').textContent = state.name || 'Your Ranch';
     $('st_sub').textContent = t.pastures ? fmt(t.acres) + ' ac' + (h.cows > 0 ? ' · ' + fmt(h.cows) + ' cows' : ' · enter your herd') : 'Draw your pastures to start';
     var st = $('st_stock'), bar = $('st_stockBar');
     if(herd > 0 && t.cap > 0){
