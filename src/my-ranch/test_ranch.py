@@ -234,7 +234,7 @@ with sync_playwright() as pw:
     check('zone exported', any(f['properties'].get('zone_type')=='brush' for f in gj2['features']))
     page.click('[data-del-zone]'); page.wait_for_timeout(200)
     check('zone deleted', page.evaluate("MyRanch.state().zones.length")==0 and abs(page.evaluate("MyRanch.totals().cap")-cap_fair)<1e-6)
-    # a pond drawn with "Draw pasture" inside a pasture: offer to convert it
+    # a pond drawn with "Draw Pasture" inside a pasture: offer to convert it
     npast=page.evaluate("MyRanch.state().pastures.length")
     page.evaluate(zone_js.replace("MyRanch.addZone(t,","MyRanch.addPastureDrawn("),'water'); page.wait_for_timeout(300)
     check('pasture inside pasture flagged', page.is_visible('#zoneOffer') and 'counted twice' in page.inner_text('#zoneOffer') and 'Overlaps' in page.inner_text('#pastureList'), page.inner_text('#zoneOffer'))
@@ -400,7 +400,7 @@ with sync_playwright() as pw:
 
     # edit mode toggles
     page.click('#editBtn'); page.wait_for_timeout(200)
-    check('edit mode on', 'Done editing' in page.inner_text('#editBtn') and page.locator('.marker-icon').count()>0)
+    check('edit mode on', 'Done Editing' in page.inner_text('#editBtn') and page.locator('.marker-icon').count()>0)
     # drag a vertex to change acres
     before=page.evaluate("MyRanch.state().pastures[0].acres")
     h=page.locator('.marker-icon:not(.marker-icon-middle)').first

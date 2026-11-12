@@ -54,7 +54,7 @@
     brush:  {label:'Brush / woods', icon:'🌳', style:{color:'#d5f0c8', weight:1.5, dashArray:'4 3', fillColor:'#2f5d27', fillOpacity:0.55}},
     bottom: {label:'Bottomland', icon:'〰', style:{color:'#e6fff5', weight:1.5, fillColor:'#35c29a', fillOpacity:0.45}}
   };
-  /* One hay price for the whole site: the home page's "Market prices & factors" store (mp_hayPrice, $/ton), default $210/ton ($105 per 1,000-lb roll, the BCU sheet) */
+  /* One hay price for the whole site: the home page's "Market Prices & Factors" store (mp_hayPrice, $/ton), default $210/ton ($105 per 1,000-lb roll, the BCU sheet) */
   function sharedHayPrice(){
     try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); var v = mp && +mp.mp_hayPrice; if(v > 0) return v; }catch(e){}
     return 210;
@@ -425,7 +425,7 @@
     var ColorCtl = L.Control.extend({options:{position:'bottomright'}, onAdd:function(){
       var d = L.DomUtil.create('div', 'seg map-color leaflet-bar');
       d.setAttribute('role', 'group'); d.setAttribute('aria-label', 'Color pastures by');
-      d.innerHTML = '<button type="button" data-mapcolor="name" aria-pressed="true">Pastures</button><button type="button" data-mapcolor="grass" aria-pressed="false" title="Where the herd is and how many days of grass each pasture has today">🌱 Grass today</button>';
+      d.innerHTML = '<button type="button" data-mapcolor="name" aria-pressed="true">Pastures</button><button type="button" data-mapcolor="grass" aria-pressed="false" title="Where the herd is and how many days of grass each pasture has today">🌱 Grass Today</button>';
       L.DomEvent.disableClickPropagation(d);
       d.querySelectorAll('button').forEach(function(b){ b.addEventListener('click', function(){ state.settings.mapColor = b.getAttribute('data-mapcolor'); updateMapGrass(); save(); }); });
       return d;
@@ -483,7 +483,7 @@
   }
 
   function colorFor(p){ return COLORS[pastureIndex(p.id) % COLORS.length]; }
-  var grassMap = null;   // pasture id -> {cls, label} when the map shows "Grass today"
+  var grassMap = null;   // pasture id -> {cls, label} when the map shows "Grass Today"
   function fillFor(p){
     if(state.settings.mapColor !== 'grass') return colorFor(p);
     var g = grassMap && grassMap[p.id];
@@ -615,9 +615,9 @@
   }
   function setHint(html){ $('mapHintText').innerHTML = html; }
   function setDefaultHint(){
-    if(editOn){ setHint('<strong>Editing:</strong> drag the white corner handles to follow your fence lines; drag the middle handles to add a corner. Press <strong>Done editing</strong> when finished.'); return; }
-    if(!state.pastures.length) setHint('<strong>Start here:</strong> search for your ranch or use <strong>My location</strong>, zoom in until you can see your fences, then press <strong>Draw pasture</strong>.');
-    else setHint('Click a pasture on the map to find it in the list. Use <strong>Edit shapes</strong> to adjust a fence line, or <strong>Draw pasture</strong> to add another.');
+    if(editOn){ setHint('<strong>Editing:</strong> drag the white corner handles to follow your fence lines; drag the middle handles to add a corner. Press <strong>Done Editing</strong> when finished.'); return; }
+    if(!state.pastures.length) setHint('<strong>Start here:</strong> search for your ranch or use <strong>My Location</strong>, zoom in until you can see your fences, then press <strong>Draw Pasture</strong>.');
+    else setHint('Click a pasture on the map to find it in the list. Use <strong>Edit Shapes</strong> to adjust a fence line, or <strong>Draw Pasture</strong> to add another.');
   }
   function toggleEdit(on){
     if(!map) return;
@@ -625,7 +625,7 @@
     if(editOn && drawMode) setDrawMode(null);
     Object.keys(pastureLayers).concat(Object.keys(zoneLayers)).forEach(function(id){ var l = pastureLayers[id] || zoneLayers[id]; if(l && l.pm){ editOn ? l.pm.enable({allowSelfIntersection:false, snappable:true}) : l.pm.disable(); } });
     $('editBtn').classList.toggle('active', editOn);
-    $('editBtn').textContent = editOn ? '✓ Done editing' : '↔ Edit shapes';
+    $('editBtn').textContent = editOn ? '✓ Done Editing' : '↔ Edit Shapes';
     setDefaultHint();
   }
 
@@ -760,7 +760,7 @@
     });
     return out;
   }
-  /* A shape drawn with "Draw pasture" inside another pasture is usually a pond, brush or a low spot:
+  /* A shape drawn with "Draw Pasture" inside another pasture is usually a pond, brush or a low spot:
      offer to turn it into one so it isn't counted as extra grass. */
   function offerZoneFor(p){
     var ov = overlaps(p).sort(function(a, b){ return b.ac - a.ac; })[0];
@@ -1204,7 +1204,7 @@
   function renderPastures(){
     var list = $('pastureList');
     if(!state.pastures.length){
-      list.innerHTML = '<p class="narrative" style="margin:0;">No pastures yet. Draw one on the map above, add one by acres just above this list, or open a Google Earth / GeoJSON / shapefile under <strong>Save, share &amp; print</strong>.</p>';
+      list.innerHTML = '<p class="narrative" style="margin:0;">No pastures yet. Draw one on the map above, add one by acres just above this list, or open a Google Earth / GeoJSON / shapefile under <strong>Save, Share &amp; Print</strong>.</p>';
       return;
     }
     list.innerHTML = state.pastures.map(function(p){
@@ -1278,7 +1278,7 @@
     var t = totals();
     if(!state.pastures.length){
       el.innerHTML = '<ol class="empty-steps">' +
-        '<li><strong>Find your ranch</strong> with the search box or <em>My location</em>.</li>' +
+        '<li><strong>Find your ranch</strong> with the search box or <em>My Location</em>.</li>' +
         '<li><strong>Draw each pasture</strong> by clicking its corners along the fence.</li>' +
         '<li><strong>Check the land use</strong> for each one — the soil survey fills in rangeland forage for you.</li>' +
         '<li><strong>Enter your cows and bulls</strong> to see if the ranch can carry them and when you’ll need hay.</li></ol>' +
@@ -1678,11 +1678,11 @@
     if(!navigator.geolocation || !map){ alert('This device can’t share its location.'); return; }
     $('locateBtn').textContent = '📍 Finding you…';
     navigator.geolocation.getCurrentPosition(function(pos){
-      $('locateBtn').textContent = '📍 My location';
+      $('locateBtn').textContent = '📍 My Location';
       map.setView([pos.coords.latitude, pos.coords.longitude], 16);
       L.circleMarker([pos.coords.latitude, pos.coords.longitude], {radius:7, color:'#fff', weight:2, fillColor:'#2f6fb3', fillOpacity:1}).addTo(map).bindTooltip('You are here').openTooltip();
     }, function(){
-      $('locateBtn').textContent = '📍 My location';
+      $('locateBtn').textContent = '📍 My Location';
       alert('Couldn’t get your location. Check that location is allowed for this site, or search for your ranch instead.');
     }, {enableHighAccuracy:true, timeout:15000, maximumAge:60000});
   }
@@ -1882,7 +1882,7 @@
   }
 
 
-  /* ---- steps (Ranch · Herd · Year plan · Decisions) and the summary strip */
+  /* ---- steps (Ranch · Herd · Year Plan · Decisions) and the summary strip */
   var STEPS = ['ranch', 'herd', 'plan', 'decide'], curStep = null, STEP_KEY = 'tamuMyRanchStep';
   function stepDone(s){
     if(s === 'ranch') return state.pastures.length > 0;

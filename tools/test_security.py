@@ -102,7 +102,7 @@ with sync_playwright() as pw:
             eeo: !!document.querySelector('.eeo-statement'),
             brand: /agrilife-extension-agecon|required-links\/compact|Texas A&amp;M AgriLife Extension Service provides/.test(document.documentElement.innerHTML)})""")
         check('CSP + referrer meta: ' + path, meta['csp'] and meta['ref'] == 'strict-origin-when-cross-origin')
-        check('site links, no A&M branding: ' + path, len(meta['links']) == 2 and 'Privacy & data' in meta['links'] and not meta['eeo'] and not meta['brand'], meta)
+        check('site links, no A&M branding: ' + path, len(meta['links']) == 2 and 'Privacy & Data' in meta['links'] and not meta['eeo'] and not meta['brand'], meta)
         p.close()
     check('only allowed hosts contacted', hosts <= ALLOWED, sorted(hosts - ALLOWED))
 

@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-qNFv54mA0nS4+ZaYsdniDkENlxSsA/d/gtw6+vzfzbY='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-eN9pLZP5AycZ9W6UOyMfMN8UkSIpxrbSVcBulMichTc='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weaned Calf to Bred Heifer Cost · Back40</title>
@@ -381,8 +381,8 @@
       <p style="margin-top:10px;font-size:13px;"><a href="../cow-calf/index.html" style="color:var(--accent);font-weight:700;text-decoration:none;">&rarr; Weighing this against buying a bred cow instead? See Cow-Calf Bid Price and Budgets (A1/A2)</a></p>
     </div>
     <div class="intro-meta">
-      <div><strong>Natural service</strong>Angus, low birth-weight bulls</div>
-      <div><strong>Cull credit</strong>pre-breeding + open heifers</div>
+      <div><strong>Natural Service</strong>Angus, low birth-weight bulls</div>
+      <div><strong>Cull Credit</strong>pre-breeding + open heifers</div>
       <div><strong>Editable</strong>every assumption</div>
     </div>
   </div>
@@ -486,8 +486,8 @@
           </div>
           <div class="field">
             <label for="rh_bredPrice">Bred heifer sale price</label>
-            <span class="hint">Pre-filled from Market prices &amp; factors</span>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="rh_bredPrice" value="3574.39" min="0" step="10" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
+            <span class="hint">Pre-filled from Market Prices &amp; Factors</span>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="rh_bredPrice" value="3574.39" min="0" step="10" title="Pre-filled once from the shared &quot;Market Prices &amp; Factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
           </div>
           <div class="field"></div>
         </div>
@@ -578,11 +578,11 @@
       </div>
     </div>
 
-    <!-- Bull investment (advanced) -->
+    <!-- Bull Investment (Advanced) -->
     <details class="advanced">
-      <summary>Bull investment (advanced)</summary>
+      <summary>Bull Investment (Advanced)</summary>
       <div class="adv-body">
-        <p class="card-note">Bull cost, useful life, death loss, salvage weight/price and heifers-per-bull come from the <strong>"Market prices &amp; factors"</strong> calculator on the home page &mdash; edit them there so BCU, A2 and this budget all stay in sync (this replaces the 2018-workbook bull price that used to live only here, never reconciled against the other tools' own bull numbers).</p>
+        <p class="card-note">Bull cost, useful life, death loss, salvage weight/price and heifers-per-bull come from the <strong>"Market Prices &amp; Factors"</strong> calculator on the home page &mdash; edit them there so BCU, A2 and this budget all stay in sync (this replaces the 2018-workbook bull price that used to live only here, never reconciled against the other tools' own bull numbers).</p>
         <div class="field-grid cols-3">
           <div class="field"><span class="hint" style="margin-top:0;">Heifers per bull</span><strong id="rhBull_perBull">0</strong></div>
           <div class="field"><label for="rh_bullsRequired">Bulls used</label><div class="input-wrap"><input type="number" id="rh_bullsRequired" value="4" min="1" step="1"></div></div>
@@ -651,7 +651,7 @@
           <div class="stat-tile"><span class="label">Open, culled</span><span class="value" id="rh_openValue" style="font-size:17px;">0</span><span class="sub">head sold as feeders</span></div>
         </div>
 
-        <button type="button" class="btn secondary" id="rh_resetBtn" style="margin-top:16px;">Reset B1a defaults</button>
+        <button type="button" class="btn secondary" id="rh_resetBtn" style="margin-top:16px;">Reset B1a Defaults</button>
       </div>
     </div>
 
@@ -695,8 +695,8 @@
     </div>
 
     <footer style="padding:0;margin:0;">
-  <p>Starting values reproduce the original B1a spreadsheet's own formulas and structure (natural service, weaned calf through bred-heifer delivery). Purchase, cull-sale, and bred-heifer sale prices were updated from the workbook's 2018 defaults to sourced September 2026 USDA AMS market data &mdash; see the project notes for exact sources. Bull purchase cost, life, death loss and salvage weight/price now come from the shared <a href="../cow-decisions/index.html#market-prices-calculator">Market prices &amp; factors</a> calculator, replacing the 2018 figures this page used to carry on its own. Always verify results before using them to make a decision.</p>
-<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; data</a></li><li><a href="../data-sources.html">Where the prices come from</a></li></ul><!-- required-links:end -->
+  <p>Starting values reproduce the original B1a spreadsheet's own formulas and structure (natural service, weaned calf through bred-heifer delivery). Purchase, cull-sale, and bred-heifer sale prices were updated from the workbook's 2018 defaults to sourced September 2026 USDA AMS market data &mdash; see the project notes for exact sources. Bull purchase cost, life, death loss and salvage weight/price now come from the shared <a href="../cow-decisions/index.html#market-prices-calculator">Market Prices &amp; Factors</a> calculator, replacing the 2018 figures this page used to carry on its own. Always verify results before using them to make a decision.</p>
+<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; Data</a></li><li><a href="../data-sources.html">Where the Prices Come From</a></li></ul><!-- required-links:end -->
 </footer>
 
   </div>
@@ -727,7 +727,7 @@
     return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
   }
 
-  /* ---------------- Shared "Market prices & factors" store (site/index.html) ----------------
+  /* ---------------- Shared "Market Prices & Factors" store (site/index.html) ----------------
      2026-09-21: purchase/cull/open heifer prices, bred-heifer sale price, and every
      bull-investment number below used to be this page's own hardcoded copies -- and
      the bull numbers were a THIRD, never-reconciled figure ($4,000/1,800 lb here vs.
@@ -826,7 +826,7 @@
      September 2026 USDA AMS / "2026 D03 Budgets" data — see the "Sourced
      defaults" note further down and the project doc for exact citations.
      Bull purchase cost, life, death loss, and salvage weight/price now
-     come from the shared "Market prices & factors" store on the home
+     come from the shared "Market Prices & Factors" store on the home
      page (site/index.html) instead of this page's own 2018 figures —
      see getMarketPrices()/readInputs() below.
      ================================================================ */
@@ -864,7 +864,7 @@
       interestRate: num('rh_interestRate'),
       freight: num('rh_freight'),
       // Bull cost/life/death-loss/salvage-weight/heifers-per-bull now come from the
-      // shared "Market prices & factors" store (site/index.html), not this page's own
+      // shared "Market Prices & Factors" store (site/index.html), not this page's own
       // inputs -- see refreshHeiferPriceSlide()/getMarketPrices() and the note above
       // the "Bull investment" card in the HTML.
       heifersPerBull: mp.mp_perBull,
@@ -1151,11 +1151,11 @@
     'rh_indirectPerDay','rh_interestRate','rh_freight',
     'rh_bullsRequired','rh_bullFeed','rh_bullOther','rh_bullVet'];
   // rh_heifersPerBull/rh_bullCost/rh_bullLife/rh_bullDeathLoss/rh_bullSalvageWt/rh_bullSalvagePrice
-  // removed 2026-09-21: these now come from the shared "Market prices & factors" store
+  // removed 2026-09-21: these now come from the shared "Market Prices & Factors" store
   // (see getMarketPrices()/readInputs() above), not their own editable copy here.
 
   /* Sourced 2026 defaults (see the on-page notes and the project doc for
-     citations) — captured here so "Reset B1a defaults" restores exactly
+     citations) — captured here so "Reset B1a Defaults" restores exactly
      what the page loads with, not the original 2018 workbook values. */
   var RH_DEFAULTS = {
     rh_head:100, rh_startDate:'2026-10-15', rh_birthDate:'2026-02-15', rh_weanWeight:500, rh_purchasePrice:473.51,

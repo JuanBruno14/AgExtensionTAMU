@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-OMjcwvtWAiJEYwIfhlqZzjaQGl4ZwgzY3nf7mJgQ9aY='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-UQUmoX95NDUFX+PYyAVjqQsn84d49sj5igAolYLVkKs='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Ranch · Back40</title>
@@ -867,8 +867,8 @@
     </div>
     <div class="intro-meta">
       <div><strong>Private</strong>saved only on this device</div>
-      <div><strong>Soil data</strong>USDA-NRCS soil survey</div>
-      <div><strong>Works on</strong>phone, tablet, computer</div>
+      <div><strong>Soil Data</strong>USDA-NRCS soil survey</div>
+      <div><strong>Works On</strong>phone, tablet, computer</div>
     </div>
   </div>
   <div class="fence-line"></div>
@@ -881,14 +881,14 @@
     <div class="mr-k"><span>Drought now</span><b id="st_drought">—</b></div>
     <div class="mr-k"><span>Feed to buy (year)</span><b id="st_feed">—</b></div>
     <div class="mr-k"><span>Net return</span><b id="st_net">—</b></div>
-    <div class="mr-strip-btns"><button type="button" class="tool-btn" id="stripSaveBtn" aria-expanded="false" aria-controls="fileCard">💾 Save / share</button><button type="button" class="tool-btn primary" id="stripPlanBtn">🗒 Print year plan</button></div>
+    <div class="mr-strip-btns"><button type="button" class="tool-btn" id="stripSaveBtn" aria-expanded="false" aria-controls="fileCard">💾 Save / Share</button><button type="button" class="tool-btn primary" id="stripPlanBtn">🗒 Print Year Plan</button></div>
   </div>
 </div>
 
 <nav class="mr-steps" id="mrSteps" aria-label="My Ranch steps">
   <button type="button" class="mr-step-btn" data-go="ranch"><span class="n">1</span><span class="t"><b>Ranch</b><small>Map, pastures, water</small></span></button>
   <button type="button" class="mr-step-btn" data-go="herd"><span class="n">2</span><span class="t"><b>Herd</b><small>Cows, calving, feed, prices</small></span></button>
-  <button type="button" class="mr-step-btn" data-go="plan"><span class="n">3</span><span class="t"><b>Year plan</b><small>Is there enough grass?</small></span></button>
+  <button type="button" class="mr-step-btn" data-go="plan"><span class="n">3</span><span class="t"><b>Year Plan</b><small>Is there enough grass?</small></span></button>
   <button type="button" class="mr-step-btn" data-go="decide"><span class="n">4</span><span class="t"><b>Decisions</b><small>Calving season, drought, what if</small></span></button>
 </nav>
 
@@ -898,7 +898,7 @@
     <div class="card" id="fileCard">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
-        <h2>Save, share &amp; print</h2>
+        <h2>Save, Share &amp; Print</h2>
       </div>
       <div class="card-body">
         <p class="card-note">Your map is saved automatically in this browser only &mdash; nothing is sent to Back40. To move it to another device or give it to your agent, download a file and open it there.</p>
@@ -935,27 +935,27 @@
           <button type="button" class="tool-btn" id="searchBtn">Search</button>
           <div class="search-results" id="searchResults" hidden></div>
         </div>
-        <button type="button" class="tool-btn" id="locateBtn" title="Center the map on where you are now">📍 My location</button>
+        <button type="button" class="tool-btn" id="locateBtn" title="Center the map on where you are now">📍 My Location</button>
       </div>
       <div class="draw-tools">
-        <button type="button" class="tool-btn primary" id="drawPastureBtn">✏️ Draw pasture</button>
+        <button type="button" class="tool-btn primary" id="drawPastureBtn">✏️ Draw Pasture</button>
         <button type="button" class="tool-btn" id="drawRectBtn" title="Draw a square or rectangular pasture in one drag">▭ Rectangle</button>
         <span class="sep" aria-hidden="true"></span>
         <button type="button" class="tool-btn" data-zone="water" title="Draw a pond or lake inside a pasture; it's taken out of the grazing area">💧 Pond/lake</button>
         <button type="button" class="tool-btn" data-zone="brush" title="Draw heavy brush or woods inside a pasture; it grows less grass">🌳 Brush</button>
         <button type="button" class="tool-btn" data-zone="bottom" title="Draw bottomland inside a pasture to mark it on the map">〰 Bottomland</button>
         <span class="sep" aria-hidden="true"></span>
-        <button type="button" class="tool-btn" data-point="water">🚰 Water point</button>
+        <button type="button" class="tool-btn" data-point="water">🚰 Water Point</button>
         <button type="button" class="tool-btn" data-point="pen">🐄 Pens</button>
         <button type="button" class="tool-btn" data-point="gate">🚪 Gate</button>
         <button type="button" class="tool-btn" data-point="feeder">🌾 Feeder</button>
         <span class="sep" aria-hidden="true"></span>
-        <button type="button" class="tool-btn" id="editBtn" title="Drag corners to adjust pasture lines, or move water points and pens">↔ Edit shapes</button>
+        <button type="button" class="tool-btn" id="editBtn" title="Drag corners to adjust pasture lines, or move water points and pens">↔ Edit Shapes</button>
       </div>
       <div id="map" role="application" aria-label="Satellite map of your ranch"></div>
       <div class="grass-legend" id="grassLegend" hidden></div>
       <div class="map-hint" id="mapHint">
-        <span id="mapHintText"><strong>Start here:</strong> search for your ranch or use <strong>My location</strong>, zoom in until you can see your fences, then press <strong>Draw pasture</strong>.</span>
+        <span id="mapHintText"><strong>Start here:</strong> search for your ranch or use <strong>My Location</strong>, zoom in until you can see your fences, then press <strong>Draw Pasture</strong>.</span>
         <span class="hint-actions" id="hintActions" hidden>
           <button type="button" class="tool-btn small" id="undoPointBtn">Undo last point</button>
           <button type="button" class="tool-btn small primary" id="finishBtn">Finish</button>
@@ -974,7 +974,7 @@
       <div class="card-body">
         <p class="card-note">For rangeland, forage comes from the USDA-NRCS soil survey: its estimate of total plant growth per acre in a normal year, weighted by the soils inside each pasture. Improved pasture, wheat and hay meadows usually have no soil-survey number &mdash; enter your own estimate (your county agent can help).</p>
         <details class="p-typed" id="typedPasture">
-          <summary>Add a pasture by acres, without the map</summary>
+          <summary>Add a Pasture by Acres, Without the Map</summary>
           <div class="p-typed-body">
             <div class="p-typed-grid">
               <div class="field"><label for="tp_name">Name</label><input type="text" id="tp_name" maxlength="60" placeholder="e.g. North trap"></div>
@@ -987,10 +987,10 @@
           </div>
         </details>
         <div class="pasture-list" id="pastureList"></div>
-        <h3 class="sub-h">Ponds, brush &amp; bottomland</h3>
+        <h3 class="sub-h">Ponds, Brush &amp; Bottomland</h3>
         <div class="point-list" id="zoneList"></div>
         <details class="advanced" style="margin-top:14px;">
-          <summary>Land adjustments</summary>
+          <summary>Land Adjustments</summary>
           <div class="adv-body">
             <p class="card-note">The soil survey's forage is for a site in top condition. Rate each rangeland pasture's condition in its row; this sets how much of that forage it grows today. Areas drawn inside a pasture replace that part of it: ponds count as no forage, brush as a share of the pasture's forage (bottomland counts the same as the rest unless you change it).</p>
             <div class="field-grid cols-3">
@@ -1013,7 +1013,7 @@
         <h2>Water, pens &amp; gates</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Use the buttons above the map to drop a water point, pens, a gate or a feeder, then click where it goes. Water points let the pasture list show how far the middle of each pasture is from the nearest water.</p>
+        <p class="card-note">Use the buttons above the map to drop a water point, pens, a gate or a feeder, then click where it goes. Water Points let the pasture list show how far the middle of each pasture is from the nearest water.</p>
         <div class="point-list" id="pointList"></div>
       </div>
     </div>
@@ -1105,7 +1105,7 @@
       <h2>Your herd</h2>
     </div>
     <div class="card-body">
-      <div class="spa-load"><button type="button" class="tool-btn" id="spaBtn">📄 Fill in from my SPA worksheet (.xlsx)</button>
+      <div class="spa-load"><button type="button" class="tool-btn" id="spaBtn">📄 Fill In from My SPA Worksheet (.xlsx)</button>
         <input type="file" id="spaInput" accept=".xlsx" hidden>
         <span class="hint" id="spaNote">Cow-Calf SPA Worksheets: fills cows, calving, weaning, calf crop, losses, replacements and costs, and shows your records next to My Ranch’s numbers.</span></div>
       <div class="field-grid cols-4">
@@ -1130,7 +1130,7 @@
             <div class="derived-note" id="hd_auNote"></div>
           </div>
       </div>
-      <h3 class="sub-h" style="margin-top:22px;">Calving &amp; weaning</h3>
+      <h3 class="sub-h" style="margin-top:22px;">Calving &amp; Weaning</h3>
         <div class="field-grid cols-3">
           <div class="field">
             <label for="fc_calving">Calving season</label>
@@ -1186,7 +1186,7 @@
         <p class="card-note fc-usnote" style="margin:10px 0 0;">U.S. average from USDA's NAHMS Beef 2017 survey: 55% of calves are born in February–April, with a smaller fall peak in September–November.</p>
         <p class="card-note" id="fc_weanNote" style="margin:10px 0 0;"></p>
           <details class="advanced" style="margin-top:12px;" id="fc_herdDetails">
-            <summary>Herd, calves &amp; losses</summary>
+            <summary>Herd, Calves &amp; Losses</summary>
             <div class="adv-body">
               <div class="field-grid cols-3">
                 <div class="field"><label for="fc_breed">Breed type</label><select id="fc_breed" data-hs="breed"></select></div>
@@ -1266,7 +1266,7 @@
             </div>
           </details>
           <details class="advanced" style="margin-top:12px;">
-            <summary>Feed, protein source &amp; feeding costs</summary>
+            <summary>Feed, Protein Source &amp; Feeding Costs</summary>
             <div class="adv-body">
               <fieldset>
                 <legend>Hay (fills in when pasture runs short)</legend>
@@ -1313,9 +1313,9 @@
             </div>
           </details>
           <details class="advanced" style="margin-top:12px;" id="ocDetails">
-            <summary>Other costs per cow (land, labor, vet, equipment)</summary>
+            <summary>Other Costs per Cow (Land, Labor, Vet, Equipment)</summary>
             <div class="adv-body">
-              <p class="card-note" style="margin:0 0 12px;">Everything that isn’t feed, per cow a year. Starting values are the home page’s “Cow Operating Cost (BCU)” sheet; bull depreciation comes from “Market prices &amp; factors”. With them the year plan shows the net return and the calf price you need to break even.</p>
+              <p class="card-note" style="margin:0 0 12px;">Everything that isn’t feed, per cow a year. Starting values are the home page’s “Cow Operating Cost (BCU)” sheet; bull depreciation comes from “Market Prices &amp; Factors”. With them the year plan shows the net return and the calf price you need to break even.</p>
               <div class="field-grid cols-3">
                 <div class="field"><label for="oc_land">Land lease or grazing</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_land" data-oc="land" min="0" max="5000" step="1"></div><span class="hint">BCU sheet: $15 a month × 11 months</span></div>
                 <div class="field"><label for="oc_labor">Labor &amp; management</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_labor" data-oc="labor" min="0" max="5000" step="1"></div></div>
@@ -1333,7 +1333,7 @@
           </details>
     </div>
   </div>
-  <div class="mr-next"><button type="button" class="tool-btn" data-go="ranch">← 1 · Ranch</button><button type="button" class="tool-btn primary" data-go="plan">3 · Year plan →</button></div>
+  <div class="mr-next"><button type="button" class="tool-btn" data-go="ranch">← 1 · Ranch</button><button type="button" class="tool-btn primary" data-go="plan">3 · Year Plan →</button></div>
 </div>
 
 <div class="mr-step" data-step="plan" id="step_plan" hidden>
@@ -1429,8 +1429,8 @@
       </div>
       <div class="card-body">
         <div class="segmented dec-tabs" role="tablist" aria-label="Decision tools">
-          <button type="button" class="seg-btn active" data-dec="calving" role="tab" aria-selected="true">Best calving season</button>
-          <button type="button" class="seg-btn" data-dec="drought" role="tab" aria-selected="false">Drought: buy feed or wean early?</button>
+          <button type="button" class="seg-btn active" data-dec="calving" role="tab" aria-selected="true">Best Calving Season</button>
+          <button type="button" class="seg-btn" data-dec="drought" role="tab" aria-selected="false">Drought: Buy Feed or Wean Early?</button>
           <button type="button" class="seg-btn" data-dec="whatif" role="tab" aria-selected="false">What if…</button>
         </div>
         <div class="fc-empty" id="dec_empty" hidden></div>
@@ -1497,7 +1497,7 @@
         </div>
       </div>
     </div>
-  <div class="mr-next"><button type="button" class="tool-btn" data-go="plan">← 3 · Year plan</button><span></span></div>
+  <div class="mr-next"><button type="button" class="tool-btn" data-go="plan">← 3 · Year Plan</button><span></span></div>
 </div>
 
 </div>
@@ -1505,7 +1505,7 @@
 </main>
 <footer>
   Forage estimates: USDA-NRCS Soil Survey (SSURGO) through Soil Data Access, &ldquo;range production, normal year&rdquo; weighted by soil area and component share. Drought status: U.S. Drought Monitor (National Drought Mitigation Center, USDA, NOAA), current week. Stocking rate method: <em>Stocking Rate: The Key Grazing Management Decision</em>. Budget benchmark: 2026 District 3 (Rolling Plains) cow-calf enterprise budget. Satellite imagery &copy; Esri and its partners; search &copy; OpenStreetMap contributors. These are planning estimates, not a range inspection &mdash; walk your pastures and check with your county agent or NRCS office before setting a stocking rate.
-<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; data</a></li><li><a href="../data-sources.html">Where the prices come from</a></li></ul><!-- required-links:end -->
+<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; Data</a></li><li><a href="../data-sources.html">Where the Prices Come From</a></li></ul><!-- required-links:end -->
 </footer>
 <script src="../brand/a11y-scroll.js" defer></script>
 
@@ -1569,7 +1569,7 @@
     brush:  {label:'Brush / woods', icon:'🌳', style:{color:'#d5f0c8', weight:1.5, dashArray:'4 3', fillColor:'#2f5d27', fillOpacity:0.55}},
     bottom: {label:'Bottomland', icon:'〰', style:{color:'#e6fff5', weight:1.5, fillColor:'#35c29a', fillOpacity:0.45}}
   };
-  /* One hay price for the whole site: the home page's "Market prices & factors" store (mp_hayPrice, $/ton), default $210/ton ($105 per 1,000-lb roll, the BCU sheet) */
+  /* One hay price for the whole site: the home page's "Market Prices & Factors" store (mp_hayPrice, $/ton), default $210/ton ($105 per 1,000-lb roll, the BCU sheet) */
   function sharedHayPrice(){
     try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); var v = mp && +mp.mp_hayPrice; if(v > 0) return v; }catch(e){}
     return 210;
@@ -2849,7 +2849,7 @@
     var ColorCtl = L.Control.extend({options:{position:'bottomright'}, onAdd:function(){
       var d = L.DomUtil.create('div', 'seg map-color leaflet-bar');
       d.setAttribute('role', 'group'); d.setAttribute('aria-label', 'Color pastures by');
-      d.innerHTML = '<button type="button" data-mapcolor="name" aria-pressed="true">Pastures</button><button type="button" data-mapcolor="grass" aria-pressed="false" title="Where the herd is and how many days of grass each pasture has today">🌱 Grass today</button>';
+      d.innerHTML = '<button type="button" data-mapcolor="name" aria-pressed="true">Pastures</button><button type="button" data-mapcolor="grass" aria-pressed="false" title="Where the herd is and how many days of grass each pasture has today">🌱 Grass Today</button>';
       L.DomEvent.disableClickPropagation(d);
       d.querySelectorAll('button').forEach(function(b){ b.addEventListener('click', function(){ state.settings.mapColor = b.getAttribute('data-mapcolor'); updateMapGrass(); save(); }); });
       return d;
@@ -2907,7 +2907,7 @@
   }
 
   function colorFor(p){ return COLORS[pastureIndex(p.id) % COLORS.length]; }
-  var grassMap = null;   // pasture id -> {cls, label} when the map shows "Grass today"
+  var grassMap = null;   // pasture id -> {cls, label} when the map shows "Grass Today"
   function fillFor(p){
     if(state.settings.mapColor !== 'grass') return colorFor(p);
     var g = grassMap && grassMap[p.id];
@@ -3039,9 +3039,9 @@
   }
   function setHint(html){ $('mapHintText').innerHTML = html; }
   function setDefaultHint(){
-    if(editOn){ setHint('<strong>Editing:</strong> drag the white corner handles to follow your fence lines; drag the middle handles to add a corner. Press <strong>Done editing</strong> when finished.'); return; }
-    if(!state.pastures.length) setHint('<strong>Start here:</strong> search for your ranch or use <strong>My location</strong>, zoom in until you can see your fences, then press <strong>Draw pasture</strong>.');
-    else setHint('Click a pasture on the map to find it in the list. Use <strong>Edit shapes</strong> to adjust a fence line, or <strong>Draw pasture</strong> to add another.');
+    if(editOn){ setHint('<strong>Editing:</strong> drag the white corner handles to follow your fence lines; drag the middle handles to add a corner. Press <strong>Done Editing</strong> when finished.'); return; }
+    if(!state.pastures.length) setHint('<strong>Start here:</strong> search for your ranch or use <strong>My Location</strong>, zoom in until you can see your fences, then press <strong>Draw Pasture</strong>.');
+    else setHint('Click a pasture on the map to find it in the list. Use <strong>Edit Shapes</strong> to adjust a fence line, or <strong>Draw Pasture</strong> to add another.');
   }
   function toggleEdit(on){
     if(!map) return;
@@ -3049,7 +3049,7 @@
     if(editOn && drawMode) setDrawMode(null);
     Object.keys(pastureLayers).concat(Object.keys(zoneLayers)).forEach(function(id){ var l = pastureLayers[id] || zoneLayers[id]; if(l && l.pm){ editOn ? l.pm.enable({allowSelfIntersection:false, snappable:true}) : l.pm.disable(); } });
     $('editBtn').classList.toggle('active', editOn);
-    $('editBtn').textContent = editOn ? '✓ Done editing' : '↔ Edit shapes';
+    $('editBtn').textContent = editOn ? '✓ Done Editing' : '↔ Edit Shapes';
     setDefaultHint();
   }
 
@@ -3184,7 +3184,7 @@
     });
     return out;
   }
-  /* A shape drawn with "Draw pasture" inside another pasture is usually a pond, brush or a low spot:
+  /* A shape drawn with "Draw Pasture" inside another pasture is usually a pond, brush or a low spot:
      offer to turn it into one so it isn't counted as extra grass. */
   function offerZoneFor(p){
     var ov = overlaps(p).sort(function(a, b){ return b.ac - a.ac; })[0];
@@ -3628,7 +3628,7 @@
   function renderPastures(){
     var list = $('pastureList');
     if(!state.pastures.length){
-      list.innerHTML = '<p class="narrative" style="margin:0;">No pastures yet. Draw one on the map above, add one by acres just above this list, or open a Google Earth / GeoJSON / shapefile under <strong>Save, share &amp; print</strong>.</p>';
+      list.innerHTML = '<p class="narrative" style="margin:0;">No pastures yet. Draw one on the map above, add one by acres just above this list, or open a Google Earth / GeoJSON / shapefile under <strong>Save, Share &amp; Print</strong>.</p>';
       return;
     }
     list.innerHTML = state.pastures.map(function(p){
@@ -3702,7 +3702,7 @@
     var t = totals();
     if(!state.pastures.length){
       el.innerHTML = '<ol class="empty-steps">' +
-        '<li><strong>Find your ranch</strong> with the search box or <em>My location</em>.</li>' +
+        '<li><strong>Find your ranch</strong> with the search box or <em>My Location</em>.</li>' +
         '<li><strong>Draw each pasture</strong> by clicking its corners along the fence.</li>' +
         '<li><strong>Check the land use</strong> for each one — the soil survey fills in rangeland forage for you.</li>' +
         '<li><strong>Enter your cows and bulls</strong> to see if the ranch can carry them and when you’ll need hay.</li></ol>' +
@@ -3892,11 +3892,11 @@
     return 'from ' + mmddText(h.start1) + ' for ' + h.len1 + ' days, weaned ' + mmddText(h.wean1);
   }
 
-  /* the site-wide hay price (home page, Market prices & factors): show it next to this ranch's own price */
+  /* the site-wide hay price (home page, Market Prices & Factors): show it next to this ranch's own price */
   function renderHayShared(){
     var el = $('fc_hayShared'); if(!el) return;
     var sp = sharedHayPrice(), mine = +state.herd.hayPrice;
-    $('fc_haySharedTxt').textContent = mine === sp ? 'Same as the site hay price (Market prices on the home page).' : 'Site hay price: ' + money(sp) + '/ton.';
+    $('fc_haySharedTxt').textContent = mine === sp ? 'Same as the site hay price (Market Prices on the home page).' : 'Site hay price: ' + money(sp) + '/ton.';
     $('fc_hayUseShared').hidden = mine === sp;
   }
   function bindFeedValues(){
@@ -4236,7 +4236,7 @@
       '<p class="narrative" id="hn_msg" style="margin:10px 0 0;font-size:13px;">' + msg + '</p>' +
       '<details class="advanced hn-details"' + (hnOpen ? ' open' : '') + ' style="margin-top:10px;"><summary>Grass in each pasture today</summary><div class="adv-body">' +
       '<div class="table-scroll"><table class="plan" id="hn_table"><thead><tr><th>Pasture</th><th>Today</th><th class="num">Standing grass</th><th class="num">Days for the herd</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-      '<p class="card-note" style="margin:8px 0 0;">Estimates from the grazing calendar: growth by month for your region, minus what the herd ate where the calendar put it. Measure a pasture under <em>Pastures → Measured forage</em> to correct it. Same colors as <em>Grass today</em> on the map: green 3+ weeks, yellow 1–3 weeks, orange under a week.</p></div></details>';
+      '<p class="card-note" style="margin:8px 0 0;">Estimates from the grazing calendar: growth by month for your region, minus what the herd ate where the calendar put it. Measure a pasture under <em>Pastures → Measured forage</em> to correct it. Same colors as <em>Grass Today</em> on the map: green 3+ weeks, yellow 1–3 weeks, orange under a week.</p></div></details>';
   }
   function grazingPlanHtml(){
     var g = grazingPlan(); if(!g) return '';
@@ -4429,7 +4429,7 @@
     var res = runFeed(), co = res.calves, ec = res.econ;
     if(!res.hasSupply){
       empty.hidden = false;
-      empty.innerHTML = 'No pasture forage estimate yet, so the chart shows only what the herd <strong>needs</strong>. Draw pastures (or enter your own forage estimate or carrying capacity) to compare it with what they supply and price the hay and supplement.';
+      empty.innerHTML = 'No pasture forage estimate yet, so the chart shows only what the herd <strong>needs</strong>. Draw Pastures (or enter your own forage estimate or carrying capacity) to compare it with what they supply and price the hay and supplement.';
     } else empty.hidden = true;
 
     var ages = co.cohorts.map(function(c){ return c.weanAge; }), minA = Math.min.apply(null, ages), maxA = Math.max.apply(null, ages);
@@ -5590,11 +5590,11 @@
     if(!navigator.geolocation || !map){ alert('This device can’t share its location.'); return; }
     $('locateBtn').textContent = '📍 Finding you…';
     navigator.geolocation.getCurrentPosition(function(pos){
-      $('locateBtn').textContent = '📍 My location';
+      $('locateBtn').textContent = '📍 My Location';
       map.setView([pos.coords.latitude, pos.coords.longitude], 16);
       L.circleMarker([pos.coords.latitude, pos.coords.longitude], {radius:7, color:'#fff', weight:2, fillColor:'#2f6fb3', fillOpacity:1}).addTo(map).bindTooltip('You are here').openTooltip();
     }, function(){
-      $('locateBtn').textContent = '📍 My location';
+      $('locateBtn').textContent = '📍 My Location';
       alert('Couldn’t get your location. Check that location is allowed for this site, or search for your ranch instead.');
     }, {enableHighAccuracy:true, timeout:15000, maximumAge:60000});
   }
@@ -5794,7 +5794,7 @@
   }
 
 
-  /* ---- steps (Ranch · Herd · Year plan · Decisions) and the summary strip */
+  /* ---- steps (Ranch · Herd · Year Plan · Decisions) and the summary strip */
   var STEPS = ['ranch', 'herd', 'plan', 'decide'], curStep = null, STEP_KEY = 'tamuMyRanchStep';
   function stepDone(s){
     if(s === 'ranch') return state.pastures.length > 0;

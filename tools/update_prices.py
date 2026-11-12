@@ -475,7 +475,7 @@ def kb_chunk(data):
     """One knowledge-base passage with today's prices, so Jim can answer "what are calves worth now"."""
     out = ['These are the cattle prices the decision aids on this website start from. They are refreshed every '
            'week from USDA AMS market reports (auction prices are the head-weighted average of the last four weekly '
-           'reports). Anyone can type their own prices on the home page, in "Market prices & factors".',
+           'reports). Anyone can type their own prices on the home page, in "Market Prices & Factors".',
            '', 'Current prices, updated %s:' % data['updated']]
     for key in KB_ORDER + [k for k in data['prices'] if k not in KB_ORDER]:
         p = data['prices'][key]

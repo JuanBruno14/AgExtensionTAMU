@@ -33,8 +33,8 @@ IMAGES = ["'self'", 'data:', 'blob:',
           'https://tile.openstreetmap.org']              # street map tiles
 
 REQUIRED_LINKS = [
-    ('Privacy &amp; data', '{root}privacy.html'),
-    ('Where the prices come from', '{root}data-sources.html'),
+    ('Privacy &amp; Data', '{root}privacy.html'),
+    ('Where the Prices Come From', '{root}data-sources.html'),
 ]
 LINKS_START, LINKS_END = '<!-- required-links:start (tools/secure_pages.py) -->', '<!-- required-links:end -->'
 CSS = ('<style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;'

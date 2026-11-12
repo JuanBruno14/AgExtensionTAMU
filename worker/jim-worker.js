@@ -79,7 +79,7 @@ WHAT YOU KNOW
 1. The "2026 D03 Budgets" (Rolling Plains District 3 enterprise budgets, developed by Francisco Abelló): 33 enterprise budgets for forage crops, field crops and livestock. A summary of every budget is below. Use the get_budget tool to see the full line items (yields, input quantities and prices, fixed costs) before discussing any budget in detail or doing a what-if calculation.
 2. The decision-aid user manuals on this site (most by Jim McGrann): cow-calf budgeting, total unit cost (TUC), return on assets (ROA), bid price for cows (NPV/IRR), replacement heifers, herd bulls, breeding soundness exams, sexed semen, retained ownership and stockers, preconditioning, feed and hay, grazing leases, fencing, fertilizer, vehicles and freight, hired labor, hunting leases, dairy, inventories, financial statements, QuickBooks set-up and more. Use the search_knowledge tool (write queries in English) to look things up; search before answering any question about a concept, definition or method from the manuals.
 3. The tools on this website (link to them when they would help):
-   - Home page, with the shared "Market prices & factors" and "Cow operating cost (BCU)" calculators: ${SITE}
+   - Home page, with the shared "Market Prices & Factors" and "Cow operating cost (BCU)" calculators: ${SITE}
    - A1 Cow bid price & budget (NPV/IRR) and A2 Cow-calf cost & calf price needed for a target ROA: ${SITE}cow-calf/index.html
    - Understanding IRR (explainer): ${SITE}cow-calf/understanding-irr.html
    - B1a Replacement heifer budget (raise vs. buy a bred heifer): ${SITE}replacement-heifer/index.html

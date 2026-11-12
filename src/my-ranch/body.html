@@ -23,8 +23,8 @@
     </div>
     <div class="intro-meta">
       <div><strong>Private</strong>saved only on this device</div>
-      <div><strong>Soil data</strong>USDA-NRCS soil survey</div>
-      <div><strong>Works on</strong>phone, tablet, computer</div>
+      <div><strong>Soil Data</strong>USDA-NRCS soil survey</div>
+      <div><strong>Works On</strong>phone, tablet, computer</div>
     </div>
   </div>
   <div class="fence-line"></div>
@@ -37,14 +37,14 @@
     <div class="mr-k"><span>Drought now</span><b id="st_drought">—</b></div>
     <div class="mr-k"><span>Feed to buy (year)</span><b id="st_feed">—</b></div>
     <div class="mr-k"><span>Net return</span><b id="st_net">—</b></div>
-    <div class="mr-strip-btns"><button type="button" class="tool-btn" id="stripSaveBtn" aria-expanded="false" aria-controls="fileCard">💾 Save / share</button><button type="button" class="tool-btn primary" id="stripPlanBtn">🗒 Print year plan</button></div>
+    <div class="mr-strip-btns"><button type="button" class="tool-btn" id="stripSaveBtn" aria-expanded="false" aria-controls="fileCard">💾 Save / Share</button><button type="button" class="tool-btn primary" id="stripPlanBtn">🗒 Print Year Plan</button></div>
   </div>
 </div>
 
 <nav class="mr-steps" id="mrSteps" aria-label="My Ranch steps">
   <button type="button" class="mr-step-btn" data-go="ranch"><span class="n">1</span><span class="t"><b>Ranch</b><small>Map, pastures, water</small></span></button>
   <button type="button" class="mr-step-btn" data-go="herd"><span class="n">2</span><span class="t"><b>Herd</b><small>Cows, calving, feed, prices</small></span></button>
-  <button type="button" class="mr-step-btn" data-go="plan"><span class="n">3</span><span class="t"><b>Year plan</b><small>Is there enough grass?</small></span></button>
+  <button type="button" class="mr-step-btn" data-go="plan"><span class="n">3</span><span class="t"><b>Year Plan</b><small>Is there enough grass?</small></span></button>
   <button type="button" class="mr-step-btn" data-go="decide"><span class="n">4</span><span class="t"><b>Decisions</b><small>Calving season, drought, what if</small></span></button>
 </nav>
 
@@ -54,7 +54,7 @@
     <div class="card" id="fileCard">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 3v4a1 1 0 0 0 1 1h4"/><path d="M17 21H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h7l5 5v11a2 2 0 0 1-2 2Z"/></svg>
-        <h2>Save, share &amp; print</h2>
+        <h2>Save, Share &amp; Print</h2>
       </div>
       <div class="card-body">
         <p class="card-note">Your map is saved automatically in this browser only &mdash; nothing is sent to Back40. To move it to another device or give it to your agent, download a file and open it there.</p>
@@ -91,27 +91,27 @@
           <button type="button" class="tool-btn" id="searchBtn">Search</button>
           <div class="search-results" id="searchResults" hidden></div>
         </div>
-        <button type="button" class="tool-btn" id="locateBtn" title="Center the map on where you are now">📍 My location</button>
+        <button type="button" class="tool-btn" id="locateBtn" title="Center the map on where you are now">📍 My Location</button>
       </div>
       <div class="draw-tools">
-        <button type="button" class="tool-btn primary" id="drawPastureBtn">✏️ Draw pasture</button>
+        <button type="button" class="tool-btn primary" id="drawPastureBtn">✏️ Draw Pasture</button>
         <button type="button" class="tool-btn" id="drawRectBtn" title="Draw a square or rectangular pasture in one drag">▭ Rectangle</button>
         <span class="sep" aria-hidden="true"></span>
         <button type="button" class="tool-btn" data-zone="water" title="Draw a pond or lake inside a pasture; it's taken out of the grazing area">💧 Pond/lake</button>
         <button type="button" class="tool-btn" data-zone="brush" title="Draw heavy brush or woods inside a pasture; it grows less grass">🌳 Brush</button>
         <button type="button" class="tool-btn" data-zone="bottom" title="Draw bottomland inside a pasture to mark it on the map">〰 Bottomland</button>
         <span class="sep" aria-hidden="true"></span>
-        <button type="button" class="tool-btn" data-point="water">🚰 Water point</button>
+        <button type="button" class="tool-btn" data-point="water">🚰 Water Point</button>
         <button type="button" class="tool-btn" data-point="pen">🐄 Pens</button>
         <button type="button" class="tool-btn" data-point="gate">🚪 Gate</button>
         <button type="button" class="tool-btn" data-point="feeder">🌾 Feeder</button>
         <span class="sep" aria-hidden="true"></span>
-        <button type="button" class="tool-btn" id="editBtn" title="Drag corners to adjust pasture lines, or move water points and pens">↔ Edit shapes</button>
+        <button type="button" class="tool-btn" id="editBtn" title="Drag corners to adjust pasture lines, or move water points and pens">↔ Edit Shapes</button>
       </div>
       <div id="map" role="application" aria-label="Satellite map of your ranch"></div>
       <div class="grass-legend" id="grassLegend" hidden></div>
       <div class="map-hint" id="mapHint">
-        <span id="mapHintText"><strong>Start here:</strong> search for your ranch or use <strong>My location</strong>, zoom in until you can see your fences, then press <strong>Draw pasture</strong>.</span>
+        <span id="mapHintText"><strong>Start here:</strong> search for your ranch or use <strong>My Location</strong>, zoom in until you can see your fences, then press <strong>Draw Pasture</strong>.</span>
         <span class="hint-actions" id="hintActions" hidden>
           <button type="button" class="tool-btn small" id="undoPointBtn">Undo last point</button>
           <button type="button" class="tool-btn small primary" id="finishBtn">Finish</button>
@@ -130,7 +130,7 @@
       <div class="card-body">
         <p class="card-note">For rangeland, forage comes from the USDA-NRCS soil survey: its estimate of total plant growth per acre in a normal year, weighted by the soils inside each pasture. Improved pasture, wheat and hay meadows usually have no soil-survey number &mdash; enter your own estimate (your county agent can help).</p>
         <details class="p-typed" id="typedPasture">
-          <summary>Add a pasture by acres, without the map</summary>
+          <summary>Add a Pasture by Acres, Without the Map</summary>
           <div class="p-typed-body">
             <div class="p-typed-grid">
               <div class="field"><label for="tp_name">Name</label><input type="text" id="tp_name" maxlength="60" placeholder="e.g. North trap"></div>
@@ -143,10 +143,10 @@
           </div>
         </details>
         <div class="pasture-list" id="pastureList"></div>
-        <h3 class="sub-h">Ponds, brush &amp; bottomland</h3>
+        <h3 class="sub-h">Ponds, Brush &amp; Bottomland</h3>
         <div class="point-list" id="zoneList"></div>
         <details class="advanced" style="margin-top:14px;">
-          <summary>Land adjustments</summary>
+          <summary>Land Adjustments</summary>
           <div class="adv-body">
             <p class="card-note">The soil survey's forage is for a site in top condition. Rate each rangeland pasture's condition in its row; this sets how much of that forage it grows today. Areas drawn inside a pasture replace that part of it: ponds count as no forage, brush as a share of the pasture's forage (bottomland counts the same as the rest unless you change it).</p>
             <div class="field-grid cols-3">
@@ -169,7 +169,7 @@
         <h2>Water, pens &amp; gates</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Use the buttons above the map to drop a water point, pens, a gate or a feeder, then click where it goes. Water points let the pasture list show how far the middle of each pasture is from the nearest water.</p>
+        <p class="card-note">Use the buttons above the map to drop a water point, pens, a gate or a feeder, then click where it goes. Water Points let the pasture list show how far the middle of each pasture is from the nearest water.</p>
         <div class="point-list" id="pointList"></div>
       </div>
     </div>
@@ -261,7 +261,7 @@
       <h2>Your herd</h2>
     </div>
     <div class="card-body">
-      <div class="spa-load"><button type="button" class="tool-btn" id="spaBtn">📄 Fill in from my SPA worksheet (.xlsx)</button>
+      <div class="spa-load"><button type="button" class="tool-btn" id="spaBtn">📄 Fill In from My SPA Worksheet (.xlsx)</button>
         <input type="file" id="spaInput" accept=".xlsx" hidden>
         <span class="hint" id="spaNote">Cow-Calf SPA Worksheets: fills cows, calving, weaning, calf crop, losses, replacements and costs, and shows your records next to My Ranch’s numbers.</span></div>
       <div class="field-grid cols-4">
@@ -286,7 +286,7 @@
             <div class="derived-note" id="hd_auNote"></div>
           </div>
       </div>
-      <h3 class="sub-h" style="margin-top:22px;">Calving &amp; weaning</h3>
+      <h3 class="sub-h" style="margin-top:22px;">Calving &amp; Weaning</h3>
         <div class="field-grid cols-3">
           <div class="field">
             <label for="fc_calving">Calving season</label>
@@ -342,7 +342,7 @@
         <p class="card-note fc-usnote" style="margin:10px 0 0;">U.S. average from USDA's NAHMS Beef 2017 survey: 55% of calves are born in February–April, with a smaller fall peak in September–November.</p>
         <p class="card-note" id="fc_weanNote" style="margin:10px 0 0;"></p>
           <details class="advanced" style="margin-top:12px;" id="fc_herdDetails">
-            <summary>Herd, calves &amp; losses</summary>
+            <summary>Herd, Calves &amp; Losses</summary>
             <div class="adv-body">
               <div class="field-grid cols-3">
                 <div class="field"><label for="fc_breed">Breed type</label><select id="fc_breed" data-hs="breed"></select></div>
@@ -422,7 +422,7 @@
             </div>
           </details>
           <details class="advanced" style="margin-top:12px;">
-            <summary>Feed, protein source &amp; feeding costs</summary>
+            <summary>Feed, Protein Source &amp; Feeding Costs</summary>
             <div class="adv-body">
               <fieldset>
                 <legend>Hay (fills in when pasture runs short)</legend>
@@ -469,9 +469,9 @@
             </div>
           </details>
           <details class="advanced" style="margin-top:12px;" id="ocDetails">
-            <summary>Other costs per cow (land, labor, vet, equipment)</summary>
+            <summary>Other Costs per Cow (Land, Labor, Vet, Equipment)</summary>
             <div class="adv-body">
-              <p class="card-note" style="margin:0 0 12px;">Everything that isn’t feed, per cow a year. Starting values are the home page’s “Cow Operating Cost (BCU)” sheet; bull depreciation comes from “Market prices &amp; factors”. With them the year plan shows the net return and the calf price you need to break even.</p>
+              <p class="card-note" style="margin:0 0 12px;">Everything that isn’t feed, per cow a year. Starting values are the home page’s “Cow Operating Cost (BCU)” sheet; bull depreciation comes from “Market Prices &amp; Factors”. With them the year plan shows the net return and the calf price you need to break even.</p>
               <div class="field-grid cols-3">
                 <div class="field"><label for="oc_land">Land lease or grazing</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_land" data-oc="land" min="0" max="5000" step="1"></div><span class="hint">BCU sheet: $15 a month × 11 months</span></div>
                 <div class="field"><label for="oc_labor">Labor &amp; management</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_labor" data-oc="labor" min="0" max="5000" step="1"></div></div>
@@ -489,7 +489,7 @@
           </details>
     </div>
   </div>
-  <div class="mr-next"><button type="button" class="tool-btn" data-go="ranch">← 1 · Ranch</button><button type="button" class="tool-btn primary" data-go="plan">3 · Year plan →</button></div>
+  <div class="mr-next"><button type="button" class="tool-btn" data-go="ranch">← 1 · Ranch</button><button type="button" class="tool-btn primary" data-go="plan">3 · Year Plan →</button></div>
 </div>
 
 <div class="mr-step" data-step="plan" id="step_plan" hidden>
@@ -585,8 +585,8 @@
       </div>
       <div class="card-body">
         <div class="segmented dec-tabs" role="tablist" aria-label="Decision tools">
-          <button type="button" class="seg-btn active" data-dec="calving" role="tab" aria-selected="true">Best calving season</button>
-          <button type="button" class="seg-btn" data-dec="drought" role="tab" aria-selected="false">Drought: buy feed or wean early?</button>
+          <button type="button" class="seg-btn active" data-dec="calving" role="tab" aria-selected="true">Best Calving Season</button>
+          <button type="button" class="seg-btn" data-dec="drought" role="tab" aria-selected="false">Drought: Buy Feed or Wean Early?</button>
           <button type="button" class="seg-btn" data-dec="whatif" role="tab" aria-selected="false">What if…</button>
         </div>
         <div class="fc-empty" id="dec_empty" hidden></div>
@@ -653,7 +653,7 @@
         </div>
       </div>
     </div>
-  <div class="mr-next"><button type="button" class="tool-btn" data-go="plan">← 3 · Year plan</button><span></span></div>
+  <div class="mr-next"><button type="button" class="tool-btn" data-go="plan">← 3 · Year Plan</button><span></span></div>
 </div>
 
 </div>

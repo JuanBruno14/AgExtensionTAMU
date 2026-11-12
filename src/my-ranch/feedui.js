@@ -73,11 +73,11 @@
     return 'from ' + mmddText(h.start1) + ' for ' + h.len1 + ' days, weaned ' + mmddText(h.wean1);
   }
 
-  /* the site-wide hay price (home page, Market prices & factors): show it next to this ranch's own price */
+  /* the site-wide hay price (home page, Market Prices & Factors): show it next to this ranch's own price */
   function renderHayShared(){
     var el = $('fc_hayShared'); if(!el) return;
     var sp = sharedHayPrice(), mine = +state.herd.hayPrice;
-    $('fc_haySharedTxt').textContent = mine === sp ? 'Same as the site hay price (Market prices on the home page).' : 'Site hay price: ' + money(sp) + '/ton.';
+    $('fc_haySharedTxt').textContent = mine === sp ? 'Same as the site hay price (Market Prices on the home page).' : 'Site hay price: ' + money(sp) + '/ton.';
     $('fc_hayUseShared').hidden = mine === sp;
   }
   function bindFeedValues(){
@@ -417,7 +417,7 @@
       '<p class="narrative" id="hn_msg" style="margin:10px 0 0;font-size:13px;">' + msg + '</p>' +
       '<details class="advanced hn-details"' + (hnOpen ? ' open' : '') + ' style="margin-top:10px;"><summary>Grass in each pasture today</summary><div class="adv-body">' +
       '<div class="table-scroll"><table class="plan" id="hn_table"><thead><tr><th>Pasture</th><th>Today</th><th class="num">Standing grass</th><th class="num">Days for the herd</th></tr></thead><tbody>' + rows + '</tbody></table></div>' +
-      '<p class="card-note" style="margin:8px 0 0;">Estimates from the grazing calendar: growth by month for your region, minus what the herd ate where the calendar put it. Measure a pasture under <em>Pastures → Measured forage</em> to correct it. Same colors as <em>Grass today</em> on the map: green 3+ weeks, yellow 1–3 weeks, orange under a week.</p></div></details>';
+      '<p class="card-note" style="margin:8px 0 0;">Estimates from the grazing calendar: growth by month for your region, minus what the herd ate where the calendar put it. Measure a pasture under <em>Pastures → Measured forage</em> to correct it. Same colors as <em>Grass Today</em> on the map: green 3+ weeks, yellow 1–3 weeks, orange under a week.</p></div></details>';
   }
   function grazingPlanHtml(){
     var g = grazingPlan(); if(!g) return '';
@@ -610,7 +610,7 @@
     var res = runFeed(), co = res.calves, ec = res.econ;
     if(!res.hasSupply){
       empty.hidden = false;
-      empty.innerHTML = 'No pasture forage estimate yet, so the chart shows only what the herd <strong>needs</strong>. Draw pastures (or enter your own forage estimate or carrying capacity) to compare it with what they supply and price the hay and supplement.';
+      empty.innerHTML = 'No pasture forage estimate yet, so the chart shows only what the herd <strong>needs</strong>. Draw Pastures (or enter your own forage estimate or carrying capacity) to compare it with what they supply and price the hay and supplement.';
     } else empty.hidden = true;
 
     var ages = co.cohorts.map(function(c){ return c.weanAge; }), minA = Math.min.apply(null, ages), maxA = Math.max.apply(null, ages);

@@ -1,7 +1,7 @@
 /* Shared market-price store (localStorage key "tamuDecisionAidsMarketPrices").
 
    Since 2026-11-04 the store holds only the numbers a visitor typed on the home page's
-   "Market prices & factors" calculator (marked v:2). Every other price falls back to each
+   "Market Prices & Factors" calculator (marked v:2). Every other price falls back to each
    page's built-in default, which the weekly USDA price job keeps current.
 
    Copies saved before that (no "v") held every value, defaults included, so returning

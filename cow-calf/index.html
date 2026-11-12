@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-nI3aiyZyThGL4EP3hiKUM/C4RfDWkPnSX116nM0p94c='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-kb7+vqJt1dVJ6m7KmfGmCxzRG19OowyhnNnztvLsocI='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Back40</title>
@@ -507,7 +507,7 @@
       <p style="margin-top:10px;font-size:13px;"><a href="../replacement-heifer/index.html" style="color:var(--accent);font-weight:700;text-decoration:none;">&rarr; Weighing this against raising your own replacement heifer instead? See Replacement Heifer Budgets (B1a)</a></p>
     </div>
     <div class="intro-meta">
-      <div><strong>7 years</strong>projection horizon</div>
+      <div><strong>7 Years</strong>projection horizon</div>
       <div><strong>NPV + IRR</strong>decision criteria</div>
       <div><strong>Editable</strong>every assumption</div>
     </div>
@@ -531,9 +531,9 @@
           <label for="bidPrice">Cow bid price ($/head)</label>
           <div class="hero-row">
             <input type="range" id="bidPriceRange" min="400" max="7000" step="10" value="1300" aria-label="Cow bid price ($/head) — drag to adjust">
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="3365.18" min="0" step="10" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="3365.18" min="0" step="10" title="Pre-filled once from the shared &quot;Market Prices &amp; Factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
           </div>
-          <span style="display:block;font-size:11px;color:var(--ink-muted);margin-top:6px;">Pre-filled from <a href="../cow-decisions/index.html#market-prices-calculator" style="color:inherit;">Market prices &amp; factors</a> — edit freely, this field won't update on its own</span>
+          <span style="display:block;font-size:11px;color:var(--ink-muted);margin-top:6px;">Pre-filled from <a href="../cow-decisions/index.html#market-prices-calculator" style="color:inherit;">Market Prices &amp; Factors</a> — edit freely, this field won't update on its own</span>
         </div>
 
         <div class="field-grid">
@@ -695,7 +695,7 @@
         <p class="card-note" style="margin-top:12px;">Differences from the A1 spreadsheet: four formula errors are fixed here. The IRR is solved on undiscounted cash flows (<a href="understanding-irr.html" style="color:inherit;">why</a>); the year-6 loan payment is no longer dropped on 6-year plans; a 1-year plan is no longer discounted twice in the NPV; and a negative year-7 cash flow is now flagged. With the spreadsheet's own inputs, NPV is unchanged and the IRR is &minus;1.7% instead of &minus;6.4%.</p>
 
         <div class="btn-row" style="padding:10px 0 0;">
-          <button class="btn secondary" id="resetBtn" type="button">Reset A1 defaults</button>
+          <button class="btn secondary" id="resetBtn" type="button">Reset A1 Defaults</button>
         </div>
       </div>
     </div>
@@ -907,7 +907,7 @@
         <fieldset style="margin-bottom:16px;">
           <legend>Breeding cows</legend>
           <div class="field-grid cols-3">
-            <div class="field"><label for="a2_cowCost">Cost/head</label><span class="hint">Pre-filled from Market prices &amp; factors</span><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="3365.18" min="0" title="Pre-filled once from the shared &quot;Market prices &amp; factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div></div>
+            <div class="field"><label for="a2_cowCost">Cost/head</label><span class="hint">Pre-filled from Market Prices &amp; Factors</span><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="3365.18" min="0" title="Pre-filled once from the shared &quot;Market Prices &amp; Factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div></div>
             <div class="field"><label for="a2_cowLife">Productive life</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowLife" value="7" min="1"><span class="suffix">yrs</span></div></div>
             <div class="field"><label for="a2_cowDeathLoss">Death loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
             <div class="field"><label for="a2_cullCowWt">Cull weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1279.4" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullCowWtRange" class="weight-slide" min="1100" max="1550" step="50" value="1279.4" aria-label="Cull cow weight — drag to auto-fill the matching auction price"></div>
@@ -917,7 +917,7 @@
         </fieldset>
         <fieldset style="margin-bottom:14px;">
           <legend>Herd bull</legend>
-          <p class="card-note">Bull cost, productive life, death loss and cows-per-bull now come from the <strong>"Market prices &amp; factors"</strong> calculator on the home page &mdash; edit them there so BCU, A2 and the Replacement Heifer budget all stay in sync. Cull weight still uses this page's own auction weight-slide.</p>
+          <p class="card-note">Bull cost, productive life, death loss and cows-per-bull now come from the <strong>"Market Prices &amp; Factors"</strong> calculator on the home page &mdash; edit them there so BCU, A2 and the Replacement Heifer budget all stay in sync. Cull weight still uses this page's own auction weight-slide.</p>
           <div class="field-grid cols-3">
             <div class="field"><span class="hint" style="margin-top:0;">Bull cost</span><strong id="a2Bull_cost">$0</strong></div>
             <div class="field"><span class="hint" style="margin-top:0;">Productive life</span><strong id="a2Bull_life">0 yrs</strong></div>
@@ -1140,7 +1140,7 @@
 </main>
 <footer id="toolFooter">
   Based on the <strong>A1 — Cow Bid Price and Budget</strong> spreadsheet. Starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a purchase decision.
-<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; data</a></li><li><a href="../data-sources.html">Where the prices come from</a></li></ul><!-- required-links:end -->
+<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; Data</a></li><li><a href="../data-sources.html">Where the Prices Come From</a></li></ul><!-- required-links:end -->
 </footer>
 
 <div class="viz-tooltip" id="vizTooltip"></div>
@@ -1534,7 +1534,7 @@
     return table[table.length-1].p;
   }
 
-  /* ---------------- Shared "Market prices & factors" store (site/index.html) ----------------
+  /* ---------------- Shared "Market Prices & Factors" store (site/index.html) ----------------
      2026-09-21: every price/factor below used to be a hardcoded flat number
      baked into this page's own price-slide tables. It's now read from the
      shared calculator on the home page (site/index.html#market-prices-calculator),
@@ -1815,7 +1815,7 @@
     };
   }
 
-  /* ---------------- What-if: ±10% price sensitivity (next to "Reset A1 defaults") ---------------- */
+  /* ---------------- What-if: ±10% price sensitivity (next to "Reset A1 Defaults") ---------------- */
   // Non-destructive: shocks steer/heifer/cull-cow sale prices (all 7 years) by `mult`
   // and reruns calcA1Financials() on the shocked arrays, leaving the actual price
   // fields/arrays untouched. Mirrors the same feature on the A2 tab.
@@ -2147,7 +2147,7 @@
     a2_cowCost:3365.18, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:125.06, // sourced bred-cow price, see DEFAULTS.bidPrice comment above
     a2_cullBullWt:1650.7, a2_cullBullPrice:162.90,
     // a2_bullCost/a2_bullLife/a2_bullDeathLoss/a2_cowsPerBull removed 2026-09-21: these now
-    // come from the shared "Market prices & factors" store (see refreshPriceSlides() /
+    // come from the shared "Market Prices & Factors" store (see refreshPriceSlides() /
     // getMarketPrices() above) instead of being their own editable copy here.
     a2_capitalTotal:158000,
     a2_oppCostRate:5,

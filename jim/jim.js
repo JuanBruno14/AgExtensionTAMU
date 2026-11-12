@@ -176,7 +176,7 @@
     '<button type="submit" class="jim-send" aria-label="Send">' + ICON_SEND + '</button></form>' +
     '<p class="jim-note">Jim is an AI assistant and can make mistakes. Budget figures are 2026 planning estimates for the Rolling Plains (District 3) — check them against your own numbers. ' +
     'Your questions go to an outside AI service to be answered; please don\'t type names, addresses, account numbers or other personal information. ' +
-    '<a href="' + esc(PRIVACY_URL) + '" target="_blank" rel="noopener">Privacy &amp; data</a></p></div>';
+    '<a href="' + esc(PRIVACY_URL) + '" target="_blank" rel="noopener">Privacy &amp; Data</a></p></div>';
 
   root.appendChild(launch);
   root.appendChild(panel);
