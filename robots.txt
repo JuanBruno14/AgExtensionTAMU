@@ -5,4 +5,4 @@ Disallow: /tools/
 Disallow: /worker/
 Disallow: /vendor/
 
-Sitemap: https://back40.onrender.com/sitemap.xml
+Sitemap: https://back40agtools.com/sitemap.xml
