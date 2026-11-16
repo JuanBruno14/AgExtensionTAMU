@@ -87,7 +87,7 @@ def csp_for(html):
 # ---------------------------------------------------------------------------
 # Search and sharing: canonical, description, Open Graph, favicon, JSON-LD, sitemap.xml
 # ---------------------------------------------------------------------------
-SITE = 'https://back40.onrender.com'   # change here if the site moves to its own domain, then run this script
+SITE = 'https://back40agtools.com'   # change here if the site moves to its own domain, then run this script
 OG_IMAGE = SITE + '/brand/photos/hero-herd.jpg'
 OG_IMAGE_ALT = 'Black-and-white photo of a mixed herd of cows standing in tall grass'
 SEO = {  # page -> (description, kind): site / app / page
