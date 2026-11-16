@@ -43,7 +43,7 @@ with sync_playwright() as pw:
     check('other costs start at the BCU sheet values', oc['land']==165 and oc['labor']==120 and oc['vet']==35 and oc['vehicle']==48, oc)
     pg.evaluate("MyRanch.go('plan')"); pg.wait_for_timeout(800)
     tl=pg.evaluate("document.getElementById('fc_tiles').textContent")
-    check('year plan shows net return after other costs and the break-even calf price', 'Net return' in tl and 'of other costs' in tl and 'break-even calf price $' in tl, tl)
+    check('year plan shows net return after other costs and the break-even calf price', 'Net return' in tl and 'of other costs' in tl and 'break-even calf price (per cwt sold) $' in tl, tl)
     pg.evaluate("MyRanch.go('herd')"); pg.wait_for_timeout(400)
     n0=pg.evaluate("document.getElementById('st_net').textContent")
     pg.evaluate("var e=document.getElementById('oc_labor'); e.value='220'; e.dispatchEvent(new Event('input'))"); pg.wait_for_timeout(500)

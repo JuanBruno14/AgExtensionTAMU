@@ -71,7 +71,7 @@ with sync_playwright() as pw:
     check('drought: 10-year table with 4 strategies', pg.locator('#dec_drLongTable tbody tr').count()==4 and 'keep the herd' in lt.lower() and 'buy back' in lt.lower(), lt[:300])
     check('drought: buying back costs cows x bred-cow price', '$130,134' in lt, lt)
     mn=pg.evaluate("MyRanch.feed().econ")
-    check('mineral: 4 oz/day for cows and bulls at $0.45/lb, in the costs', abs(mn['mineralLb'] - (154+7)*4/16*365) < 1 and abs(mn['mineral'] - mn['mineralLb']*0.45) < 0.01, (mn['mineralLb'], mn['mineral']))
+    check('mineral: 1.3 oz/day (D03 30 lb per AU a year) for cows and bulls at $0.45/lb, in the costs', abs(mn['mineralLb'] - (154+7)*1.3/16*365) < 1 and abs(mn['mineral'] - mn['mineralLb']*0.45) < 0.01, (mn['mineralLb'], mn['mineral']))
     check('drought: 10-year chart drawn', pg.locator('#dec_drLongChart polyline').count()==4)
     keep0=pg.inner_text('#dec_drLongTable tbody tr:nth-child(1)')
     pg.fill('#dr_hayPrice','400'); pg.wait_for_timeout(1500)

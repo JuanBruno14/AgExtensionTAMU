@@ -159,11 +159,11 @@
       weanMode:h.calving === 'us' ? 'age' : 'date', weanAge:h.weanAge, weanDoy1:FEED.doy(h.wean1), weanDoy2:FEED.doy(h.wean2),
       weanLb:h.weanLb, calfGrowth:h.calfGrowth === 'target' ? 'target' : 'nrc', birthLb:FEED.birthLb({breed:h.breed}), weanPeriod:h.weanPeriod, postAdg:h.postAdg,
       calvingRate:h.calvingRate, calfLoss:h.calfLoss, cowLoss:h.cowLoss, region:regionKey(),
-      replRate:+h.replRate || 0, heiferPreg:+h.heiferPreg || 85, cullPrice:cullPrice(over && over.priceMult), bcsWean:+h.bcsWean || +h.bcs,
+      replRate:+h.replRate || 0, heiferPreg:+h.heiferPreg || 85, primiF:+h.primiF || 1, cullPrice:cullPrice(over && over.priceMult), bcsWean:+h.bcsWean || +h.bcs,
       seasonal:h.seasonal !== 'off', nowMonth:new Date().getMonth(),
       weatherAdj:h.weatherAdj !== 'off', windMph:h.windMph, coat:+h.coat || 1, heat:+h.heat || 1,
       nwsPresent:h.nws === 'yes', nwsLoss:h.nwsLoss, nwsCost:h.nwsCost, hornFly:+h.hornFly,
-      supMode:h.supMode === 'full' ? 'full' : 'protein', mineralOz:h.mineralOz == null ? 4 : +h.mineralOz, mineralPrice:h.mineralPrice == null ? 0.45 : +h.mineralPrice, calfShort:h.calfShort === 'lighter' ? 'lighter' : 'creep', creepPrice:+h.creepPrice || 0, creepConv:+h.creepConv || 8,
+      supMode:h.supMode === 'full' ? 'full' : 'protein', mineralOz:h.mineralOz == null ? 1.3 : +h.mineralOz, mineralPrice:h.mineralPrice == null ? 0.45 : +h.mineralPrice, calfShort:h.calfShort === 'lighter' ? 'lighter' : 'creep', creepPrice:+h.creepPrice || 0, creepConv:+h.creepConv || 8,
       steerSlide:sl.steer, heiferSlide:sl.heifer};
     var ownCs = FEED.cohorts(o);
     o.refWeanAge = ownCs.reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
@@ -238,7 +238,7 @@
         kv('Hay to buy', tot.hay >= 100 ? fmt(tot.hay/2000, 1) + ' t · ' + money(tot.hay/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'None') +
         kv('Supplement', tot.sup >= 100 ? fmt(tot.sup/2000, 1) + ' t · ' + money(tot.sup/2000*h.supPrice) + ' · ' + monthList(supM) : 'None') +
         kv('Cattle sales', money(ec.income)) +
-        (function(){ var ea = econAll(res); return kv('Other costs', money(ea.other.total) + ' (' + money(ea.other.perCow) + '/cow)') + kv('Net return', money(ea.net) + ' (' + money(ea.net/h.cows) + '/cow) · break-even ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : '—')); })() +
+        (function(){ var ea = econAll(res); return kv('Other costs', money(ea.other.total) + ' (' + money(ea.other.perCow) + '/cow)') + kv('Cow depreciation, interest, marketing', money(ea.extra.total) + ' (' + money(ea.extra.total/Math.max(1, h.cows)) + '/cow)') + kv('Net return', money(ea.net) + ' (' + money(ea.net/h.cows) + '/cow) · break-even ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : '—')); })() +
       '</div>' : '') +
       '<table class="ps-table"><thead><tr><th>Month</th><th class="num">Pasture covers</th><th class="num">Cow needs TDN / CP</th><th class="num">Hay/cow</th><th class="num">Suppl./cow</th><th class="num">Hay, t</th><th class="num">Suppl., t</th><th class="num">Cost</th></tr></thead><tbody>' + rows + '</tbody></table>' +
       '<div class="ps-note">Needs and feed are ' + per + ' (herd-average cow); tons are for the whole herd including bulls, weaned calves and heifers.</div>' +
@@ -670,7 +670,7 @@
       '<div class="stat-tile"><span class="label">Calves sold</span><span class="value small">' + fmt(ec.calvesSold) + '</span><span class="sub">' + fmt(ec.avgSaleLb) + ' lb at $' + fmt(ec.avgPrice) + '/cwt</span></div>' +
       '<div class="stat-tile"><span class="label">Cattle sales</span><span class="value small">' + money(ec.income) + '</span><span class="sub">' + (ec.cullIncome + ec.openIncome > 0.5 ? 'calves ' + money(ec.calfIncome) + ' · culls ' + money(ec.cullIncome + ec.openIncome) : money(ec.income/h.cows) + ' per cow') + '</span></div>' +
       '<div class="stat-tile"><span class="label">Feed &amp; feeding</span><span class="value small">' + money(ec.costs) + '</span><span class="sub">' + (feedLbs >= 100 ? [t.hay >= 100 ? fmt(t.hay/2000, 1) + ' t hay' : '', t.sup >= 100 ? fmt(t.sup/2000, 1) + ' t supplement' : '', (ec.creepLb || 0) >= 100 ? fmt(ec.creepLb/2000, 1) + ' t creep' : '', (ec.mineralLb || 0) >= 100 ? fmt(ec.mineralLb/2000, 1) + ' t mineral' : ''].filter(Boolean).join(' · ') + ' + trips' : (ec.mineral > 0.5 ? 'mineral only' : 'nothing to buy')) + '</span></div>' +
-      (function(){ var ea = econAll(res); return '<div class="stat-tile ' + (ea.net >= 0 ? 'good' : 'critical') + '"><span class="label">Net return</span><span class="value small">' + money(ea.net) + '</span><span class="sub">' + money(ea.net/h.cows) + ' per cow after feed and ' + money(ea.other.perCow) + '/cow of other costs · break-even calf price ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : '—') + '</span></div>'; })()
+      (function(){ var ea = econAll(res); return '<div class="stat-tile ' + (ea.net >= 0 ? 'good' : 'critical') + '"><span class="label">Net return</span><span class="value small">' + money(ea.net) + '</span><span class="sub">' + money(ea.net/h.cows) + ' per cow after feed and ' + money(ea.other.perCow) + '/cow of other costs · break-even calf price (per cwt sold) ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : '—') + '</span></div>'; })()
       : '';
     $('fc_tiles2').innerHTML = res.hasSupply ?
       '<div class="stat-tile"><span class="label">Hay to buy</span><span class="value small">' + (t.hay >= 100 ? fmt(t.hay/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.hay >= 100 ? money(t.hay/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'standing forage lasts all year') + '</span></div>' +
@@ -924,11 +924,32 @@
     var bulls = bullCount(), bullTotal = bulls*bullDeprPerBull(), cows = Math.max(1, h.cows || 0);
     return {perCowItems:items, bullTotal:bullTotal, perCow:items + bullTotal/cows, total:items*(h.cows || 0) + bullTotal};
   }
-  /* all costs, net return, and the calf price that pays them: (all costs - cull and open-heifer sales) / cwt of calves weaned
-     (sold and kept), like the SPA unit cost of production adjusted for non-calf revenue */
+  /* the rest of the cost of ownership, counted the way the AgriLife budgets do it (D03, A2, B4d): cow depreciation (bred-cow
+     price minus cull value over her productive life, never below zero), interest at 7% on half the operating costs and on the
+     equipment investment, and marketing (commission on sales plus the beef checkoff per head sold) */
+  var INT_RATE = 0.07;
+  function ocVal(k, d){ var v = (state.herd.oc || {})[k]; return v == null || v === '' || isNaN(+v) ? d : +v; }
+  function cowDeprPerCow(){
+    var life = Math.max(0.5, ocVal('cowLife', 7)), salvage = (+state.herd.cowLb || 0)*cullPrice()/100;
+    return Math.max(0, (bredCowPrice() - salvage)/life);
+  }
+  function extraCosts(ec){
+    var cows = Math.max(1, state.herd.cows || 0), items = otherCosts().perCowItems*cows;
+    var depr = cowDeprPerCow()*cows, opInt = 0.5*INT_RATE*(ec.costs + items);
+    var eqInt = INT_RATE*Math.max(0, ocVal('equipInv', 873))*cows;
+    var checkoff = Math.max(0, ocVal('checkoff', 1))*(ec.calvesSold + ec.cullsSold + ec.opensSold);
+    var commission = ec.income*Math.max(0, ocVal('mktPct', 2))/100;
+    return {depr:depr, opInt:opInt, eqInt:eqInt, checkoff:checkoff, commission:commission, total:depr + opInt + eqInt + checkoff + commission};
+  }
+  /* all costs and the net return. Break-even calf price = the average price per cwt of calves sold at which the net return is zero.
+     The commission rises with income, so solve income x (1 - commission) = every other cost, take out cull and open-heifer sales,
+     and scale the average calf price by the ratio. Heifers kept are not sold, so they carry no income and are not in the cwt. */
   function econAll(res){
-    var ec = res.econ, oc = otherCosts(), total = ec.costs + oc.total, weanedCwt = (ec.calvesSold + ec.heifersKept)*ec.avgWeanLb/100;
-    return {other:oc, total:total, net:ec.income - total, perCow:total/Math.max(1, state.herd.cows), breakeven:weanedCwt > 0 ? (total - ec.cullIncome - ec.openIncome)/weanedCwt : null};
+    var ec = res.econ, oc = otherCosts(), x = extraCosts(ec), pct = Math.max(0, ocVal('mktPct', 2))/100;
+    var total = ec.costs + oc.total + x.total, fixed = total - x.commission;
+    var needCalfIncome = pct < 1 ? fixed/(1 - pct) - ec.cullIncome - ec.openIncome : null;
+    return {other:oc, extra:x, total:total, net:ec.income - total, perCow:total/Math.max(1, state.herd.cows),
+      breakeven:needCalfIncome != null && ec.calfIncome > 0 ? ec.avgPrice*needCalfIncome/ec.calfIncome : null};
   }
   function ocFlash(msg){ renderOcNote(); var el = $('oc_note'); if(el) el.innerHTML = '<strong>' + esc(msg) + '</strong> ' + el.innerHTML; }
   function renderOcNote(){
@@ -1074,7 +1095,7 @@
     else if(all > 0){
       withMin = !(min > 0);
       // mineral not split out: take off what the herd's mineral would cost (oz per cow a day x price), as My Ranch counts it apart
-      var h = state.herd, estMin = withMin ? (s.herdCows || s.exposed || 0)*(h.mineralOz == null ? 4 : +h.mineralOz)/16*365*(h.mineralPrice == null ? 0.45 : +h.mineralPrice) : min;
+      var h = state.herd, estMin = withMin ? (s.herdCows || s.exposed || 0)*(h.mineralOz == null ? 1.3 : +h.mineralOz)/16*365*(h.mineralPrice == null ? 0.45 : +h.mineralPrice) : min;
       d = all - estMin;
     } else return null;
     return d > 0 ? {price:d/(s.protLb/2000), withMineral:withMin} : null;

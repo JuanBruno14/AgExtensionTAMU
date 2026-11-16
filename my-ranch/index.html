@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-c+a8lAPhK7PRsKP/idCsHmhoheBjcbuET8brV2DMRMg='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-uV47RDvYvVJpfv6ub4xJUkxb+b7E+3zOmsY8CLBqDgU='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Ranch · Decision Making · Texas A&amp;M AgriLife Extension</title>
@@ -1045,7 +1045,7 @@
           </div>
           <div class="field">
             <label for="harvestEff">Harvest efficiency</label>
-            <div class="input-wrap has-suffix"><input type="number" id="harvestEff" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
+            <div class="input-wrap has-suffix"><input type="number" id="harvestEff" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div><span class="hint">Vallentine, Table 12.3: shortgrass and southern mixed prairie use 40–50% (1,560–1,950 lb of forage per AUM). The default is the low end, 40%. Continuous grazing with no rest is often set at 25% (see below).</span>
             <span class="hint">Share of forage cattle actually eat</span>
           </div>
           <div class="field">
@@ -1163,6 +1163,9 @@
                   <span class="hint" id="fc_bcsHint">Cows lose condition while nursing</span></div>
                 <div class="field"><label for="fc_activity">Terrain &amp; walking</label>
                   <select id="fc_activity" data-hs="activity"><option value="none">No adjustment (NRC 2016 model)</option><option value="flat">Flat, plenty of grass (+10%)</option><option value="rolling">Rolling or moderate grass (+20%)</option><option value="rough">Rough or sparse range (+35%)</option><option value="extensive">Big range, long walks to water (+50%)</option></select><span class="hint">The NRC 2016 model adds nothing for walking: cows used to their range spend little extra. Pick a terrain only if your cows travel far for feed or water (CSIRO figures)</span></div>
+                <div class="field"><label for="fc_primiF">First-calf cows, maintenance while nursing</label>
+                  <select id="fc_primiF" data-hs="primiF" data-num="1"><option value="1">1.00 — NRC 2016 / BCNRM default</option><option value="1.25">1.25 — Ripberger (1997): at least 25% more</option></select>
+                  <span class="hint">Applies to first-calf cows only; the book notes the 2016 value is a default that can be raised as more data arrive</span></div>
                 <div class="field"><label for="fc_calvingRate">Calving rate</label><div class="input-wrap has-suffix"><input type="number" id="fc_calvingRate" data-h="calvingRate" min="30" max="100" step="1"><span class="suffix">%</span></div></div>
                 <div class="field"><label for="fc_calfGrowth">Weaning weight</label><select id="fc_calfGrowth" data-hs="calfGrowth"><option value="nrc">Predicted from milk and grass (NRC)</option><option value="target">I enter it</option></select><span class="hint" id="fc_calfGrowthHint"></span></div>
                 <div class="field"><label for="fc_weanLb" id="fc_weanLbLabel">Average weaning weight</label><div class="input-wrap has-suffix"><input type="number" id="fc_weanLb" data-h="weanLb" min="250" max="900" step="5"><span class="suffix">lb</span></div><span class="hint" id="fc_weanLbHint"></span></div>
@@ -1255,7 +1258,7 @@
               </fieldset>
               <fieldset style="margin-top:18px;"><legend>Mineral &amp; salt</legend>
                 <div class="field-grid cols-3">
-                  <div class="field"><label for="fc_mineralOz">Fed per cow and bull</label><div class="input-wrap has-suffix"><input type="number" id="fc_mineralOz" data-h="mineralOz" min="0" max="16" step="0.5"><span class="suffix">oz/day</span></div><span class="hint">Free-choice mineral usually runs 2–4 oz a day (4 oz ≈ 90 lb a year)</span></div>
+                  <div class="field"><label for="fc_mineralOz">Fed per cow and bull</label><div class="input-wrap has-suffix"><input type="number" id="fc_mineralOz" data-h="mineralOz" min="0" max="16" step="0.5"><span class="suffix">oz/day</span></div><span class="hint">D03 budget: 30 lb a year per animal unit (1.3 oz a day). Cows on free choice often eat 2–4 oz.</span></div>
                   <div class="field"><label for="fc_mineralPrice">Price you pay</label><div class="input-wrap has-prefix has-suffix"><span class="prefix">$</span><input type="number" id="fc_mineralPrice" data-h="mineralPrice" min="0" max="5" step="0.01"><span class="suffix">/lb</span></div><span class="hint">AgriLife 2026 Rolling Plains budget: $0.45/lb</span></div>
                 </div>
               </fieldset>
@@ -1275,7 +1278,7 @@
             </div>
           </details>
           <details class="advanced" style="margin-top:12px;" id="ocDetails">
-            <summary>Other costs per cow (land, labor, vet, equipment)</summary>
+            <summary>Other costs per cow (land, labor, vet, equipment, depreciation, interest, marketing)</summary>
             <div class="adv-body">
               <p class="card-note" style="margin:0 0 12px;">Everything that isn’t feed, per cow a year. Starting values are the home page’s “Cow operating cost (BCU)” sheet; bull depreciation comes from “Market prices &amp; factors”. With them the year plan shows the net return and the calf price you need to break even.</p>
               <div class="field-grid cols-3">
@@ -1288,6 +1291,10 @@
                 <div class="field"><label for="oc_admin">Office, insurance &amp; overhead</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_admin" data-oc="admin" min="0" max="2000" step="1"></div></div>
                 <div class="field"><label for="oc_vehicle">Vehicle &amp; equipment depreciation</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_vehicle" data-oc="vehicle" min="0" max="2000" step="1"></div></div>
                 <div class="field"><label for="oc_other">Other</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_other" data-oc="other" min="0" max="10000" step="1"></div></div>
+                <div class="field"><label for="oc_cowLife">Productive cow life</label><div class="input-wrap has-suffix"><input type="number" id="oc_cowLife" data-oc="cowLife" min="1" max="15" step="1"><span class="suffix">yrs</span></div><span class="hint">Cow depreciation = bred-cow price minus cull value, over this many years (A2 page: 7)</span></div>
+                <div class="field"><label for="oc_equipInv">Equipment investment per cow</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_equipInv" data-oc="equipInv" min="0" max="5000" step="1"></div><span class="hint">Interest at 7% on it (D03 budget: $873 per cow)</span></div>
+                <div class="field"><label for="oc_mktPct">Marketing commission</label><div class="input-wrap has-suffix"><input type="number" id="oc_mktPct" data-oc="mktPct" min="0" max="10" step="0.5"><span class="suffix">%</span></div><span class="hint">Share of sales (D03 budget: 2%)</span></div>
+                <div class="field"><label for="oc_checkoff">Beef checkoff</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="oc_checkoff" data-oc="checkoff" min="0" max="10" step="0.5"></div><span class="hint">Per head sold</span></div>
               </div>
               <p class="card-note" id="oc_note" style="margin:10px 0 0;"></p>
               <div class="btn-row" style="padding:12px 0 0;gap:8px;flex-wrap:wrap;"><button type="button" class="tool-btn" id="oc_fromBcu">Use the home page’s cow-cost numbers</button><button type="button" class="tool-btn" id="oc_reset">Back to the BCU sheet’s values</button></div>
@@ -1516,7 +1523,7 @@
   ];
   /* AgriLife Extension 2026 D03 Budgets, sheet 'CowCalf' (Rolling Plains cow-calf), all per animal unit. */
   var D03 = {revenue:2189.26, variable:438.35, grossMargin:1750.91, fixed:500.34, netReturn:1250.58, acresPerAU:11.25, rentPerAcre:15};
-  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:90}, zoneF:{brush:25, bottom:200}, waterAdj:true};
+  var DEFAULT_SETTINGS = {harvestEff:40, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:90}, zoneF:{brush:25, bottom:200}, waterAdj:true};
   var CONDITIONS = {poor:'Poor', fair:'Fair', excellent:'Excellent'};
   var ZONE_TYPES = {
     water:  {label:'Pond / lake', icon:'💧', style:{color:'#bfe3ff', weight:1.5, fillColor:'#2b7fd6', fillOpacity:0.6}},
@@ -1528,17 +1535,17 @@
     try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); var v = mp && +mp.mp_hayPrice; if(v > 0) return v; }catch(e){}
     return 210;
   }
-  var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'none',
+  var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'none', primiF:1,
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535, calfGrowth:'nrc',
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto', fq:'typical',
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
     // feed prices: Texas A&M AgriLife 2026 District 3 budgets, Prices sheet (supplement $0.196/lb = $9.80 per 50-lb bag, salt & mineral $0.45/lb)
-    hayTdn:55, hayCp:10, hayDm:88, hayPrice:sharedHayPrice(), mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
+    hayTdn:55, hayCp:10, hayDm:88, hayPrice:sharedHayPrice(), mineralOz:1.3, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
     dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0},
     sell:{rate:8, death:0.5},
     // other (non-feed) costs, $ per cow a year: the home page's "Cow operating cost (BCU)" sheet defaults (land lease $15 x 11 months)
-    oc:{land:165, labor:120, vet:35, repairs:16, fuel:5, utilities:10, admin:20, vehicle:48, other:0}};
+    oc:{land:165, labor:120, vet:35, repairs:16, fuel:5, utilities:10, admin:20, vehicle:48, other:0, cowLife:7, equipInv:873, mktPct:2, checkoff:1}};
 
   /* ================================================================ FEED CALENDAR ENGINE
    * Requirements: NRC Nutrient Requirements of Beef Cattle, 8th rev. ed. (NASEM 2016) equations.
@@ -1763,7 +1770,10 @@
       }
       var comp = 0.8 + (o.bcs - 1)*0.05;
       var lact = dim > 0;
-      var nemBase = mbw*(0.077*br.be*(lact ? br.l : 1)*comp + a2Of(env));
+      /* First-calf cows in lactation: BCNRM maintenance coefficient for primiparous females is 1.00 x 77 kcal (NRC 2016 p. 205);
+         the user may raise it (Ripberger 1997 suggests at least 25% more). o.primiF is the multiplier, 1 = BCNRM default. */
+      var pf = lact && o.ageClass === 0 && o.primiF ? o.primiF : 1;
+      var nemBase = mbw*(0.077*br.be*(lact ? br.l : 1)*comp*pf + a2Of(env));
       var y = lact ? milkKg(dim, o.peakMilkLb)*(o.milkAge || 1) : 0;   // NRC 2016 Eq. 19-23 age factor (set per age class in requirements)
       var mey = 0, mpp = 0;
       if(preg > 0){
@@ -3688,11 +3698,11 @@
       weanMode:h.calving === 'us' ? 'age' : 'date', weanAge:h.weanAge, weanDoy1:FEED.doy(h.wean1), weanDoy2:FEED.doy(h.wean2),
       weanLb:h.weanLb, calfGrowth:h.calfGrowth === 'target' ? 'target' : 'nrc', birthLb:FEED.birthLb({breed:h.breed}), weanPeriod:h.weanPeriod, postAdg:h.postAdg,
       calvingRate:h.calvingRate, calfLoss:h.calfLoss, cowLoss:h.cowLoss, region:regionKey(),
-      replRate:+h.replRate || 0, heiferPreg:+h.heiferPreg || 85, cullPrice:cullPrice(over && over.priceMult), bcsWean:+h.bcsWean || +h.bcs,
+      replRate:+h.replRate || 0, heiferPreg:+h.heiferPreg || 85, primiF:+h.primiF || 1, cullPrice:cullPrice(over && over.priceMult), bcsWean:+h.bcsWean || +h.bcs,
       seasonal:h.seasonal !== 'off', nowMonth:new Date().getMonth(),
       weatherAdj:h.weatherAdj !== 'off', windMph:h.windMph, coat:+h.coat || 1, heat:+h.heat || 1,
       nwsPresent:h.nws === 'yes', nwsLoss:h.nwsLoss, nwsCost:h.nwsCost, hornFly:+h.hornFly,
-      supMode:h.supMode === 'full' ? 'full' : 'protein', mineralOz:h.mineralOz == null ? 4 : +h.mineralOz, mineralPrice:h.mineralPrice == null ? 0.45 : +h.mineralPrice, calfShort:h.calfShort === 'lighter' ? 'lighter' : 'creep', creepPrice:+h.creepPrice || 0, creepConv:+h.creepConv || 8,
+      supMode:h.supMode === 'full' ? 'full' : 'protein', mineralOz:h.mineralOz == null ? 1.3 : +h.mineralOz, mineralPrice:h.mineralPrice == null ? 0.45 : +h.mineralPrice, calfShort:h.calfShort === 'lighter' ? 'lighter' : 'creep', creepPrice:+h.creepPrice || 0, creepConv:+h.creepConv || 8,
       steerSlide:sl.steer, heiferSlide:sl.heifer};
     var ownCs = FEED.cohorts(o);
     o.refWeanAge = ownCs.reduce(function(a, c){ return a + c.share*c.weanAge; }, 0);
@@ -3767,7 +3777,7 @@
         kv('Hay to buy', tot.hay >= 100 ? fmt(tot.hay/2000, 1) + ' t · ' + money(tot.hay/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'None') +
         kv('Supplement', tot.sup >= 100 ? fmt(tot.sup/2000, 1) + ' t · ' + money(tot.sup/2000*h.supPrice) + ' · ' + monthList(supM) : 'None') +
         kv('Cattle sales', money(ec.income)) +
-        (function(){ var ea = econAll(res); return kv('Other costs', money(ea.other.total) + ' (' + money(ea.other.perCow) + '/cow)') + kv('Net return', money(ea.net) + ' (' + money(ea.net/h.cows) + '/cow) · break-even ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : '—')); })() +
+        (function(){ var ea = econAll(res); return kv('Other costs', money(ea.other.total) + ' (' + money(ea.other.perCow) + '/cow)') + kv('Cow depreciation, interest, marketing', money(ea.extra.total) + ' (' + money(ea.extra.total/Math.max(1, h.cows)) + '/cow)') + kv('Net return', money(ea.net) + ' (' + money(ea.net/h.cows) + '/cow) · break-even ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : '—')); })() +
       '</div>' : '') +
       '<table class="ps-table"><thead><tr><th>Month</th><th class="num">Pasture covers</th><th class="num">Cow needs TDN / CP</th><th class="num">Hay/cow</th><th class="num">Suppl./cow</th><th class="num">Hay, t</th><th class="num">Suppl., t</th><th class="num">Cost</th></tr></thead><tbody>' + rows + '</tbody></table>' +
       '<div class="ps-note">Needs and feed are ' + per + ' (herd-average cow); tons are for the whole herd including bulls, weaned calves and heifers.</div>' +
@@ -4199,7 +4209,7 @@
       '<div class="stat-tile"><span class="label">Calves sold</span><span class="value small">' + fmt(ec.calvesSold) + '</span><span class="sub">' + fmt(ec.avgSaleLb) + ' lb at $' + fmt(ec.avgPrice) + '/cwt</span></div>' +
       '<div class="stat-tile"><span class="label">Cattle sales</span><span class="value small">' + money(ec.income) + '</span><span class="sub">' + (ec.cullIncome + ec.openIncome > 0.5 ? 'calves ' + money(ec.calfIncome) + ' · culls ' + money(ec.cullIncome + ec.openIncome) : money(ec.income/h.cows) + ' per cow') + '</span></div>' +
       '<div class="stat-tile"><span class="label">Feed &amp; feeding</span><span class="value small">' + money(ec.costs) + '</span><span class="sub">' + (feedLbs >= 100 ? [t.hay >= 100 ? fmt(t.hay/2000, 1) + ' t hay' : '', t.sup >= 100 ? fmt(t.sup/2000, 1) + ' t supplement' : '', (ec.creepLb || 0) >= 100 ? fmt(ec.creepLb/2000, 1) + ' t creep' : '', (ec.mineralLb || 0) >= 100 ? fmt(ec.mineralLb/2000, 1) + ' t mineral' : ''].filter(Boolean).join(' · ') + ' + trips' : (ec.mineral > 0.5 ? 'mineral only' : 'nothing to buy')) + '</span></div>' +
-      (function(){ var ea = econAll(res); return '<div class="stat-tile ' + (ea.net >= 0 ? 'good' : 'critical') + '"><span class="label">Net return</span><span class="value small">' + money(ea.net) + '</span><span class="sub">' + money(ea.net/h.cows) + ' per cow after feed and ' + money(ea.other.perCow) + '/cow of other costs · break-even calf price ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : '—') + '</span></div>'; })()
+      (function(){ var ea = econAll(res); return '<div class="stat-tile ' + (ea.net >= 0 ? 'good' : 'critical') + '"><span class="label">Net return</span><span class="value small">' + money(ea.net) + '</span><span class="sub">' + money(ea.net/h.cows) + ' per cow after feed and ' + money(ea.other.perCow) + '/cow of other costs · break-even calf price (per cwt sold) ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : '—') + '</span></div>'; })()
       : '';
     $('fc_tiles2').innerHTML = res.hasSupply ?
       '<div class="stat-tile"><span class="label">Hay to buy</span><span class="value small">' + (t.hay >= 100 ? fmt(t.hay/2000, 1) + ' tons' : 'None') + '</span><span class="sub">' + (t.hay >= 100 ? money(t.hay/2000*h.hayPrice) + ' · ' + monthList(hayM) : 'standing forage lasts all year') + '</span></div>' +
@@ -4453,11 +4463,32 @@
     var bulls = bullCount(), bullTotal = bulls*bullDeprPerBull(), cows = Math.max(1, h.cows || 0);
     return {perCowItems:items, bullTotal:bullTotal, perCow:items + bullTotal/cows, total:items*(h.cows || 0) + bullTotal};
   }
-  /* all costs, net return, and the calf price that pays them: (all costs - cull and open-heifer sales) / cwt of calves weaned
-     (sold and kept), like the SPA unit cost of production adjusted for non-calf revenue */
+  /* the rest of the cost of ownership, counted the way the AgriLife budgets do it (D03, A2, B4d): cow depreciation (bred-cow
+     price minus cull value over her productive life, never below zero), interest at 7% on half the operating costs and on the
+     equipment investment, and marketing (commission on sales plus the beef checkoff per head sold) */
+  var INT_RATE = 0.07;
+  function ocVal(k, d){ var v = (state.herd.oc || {})[k]; return v == null || v === '' || isNaN(+v) ? d : +v; }
+  function cowDeprPerCow(){
+    var life = Math.max(0.5, ocVal('cowLife', 7)), salvage = (+state.herd.cowLb || 0)*cullPrice()/100;
+    return Math.max(0, (bredCowPrice() - salvage)/life);
+  }
+  function extraCosts(ec){
+    var cows = Math.max(1, state.herd.cows || 0), items = otherCosts().perCowItems*cows;
+    var depr = cowDeprPerCow()*cows, opInt = 0.5*INT_RATE*(ec.costs + items);
+    var eqInt = INT_RATE*Math.max(0, ocVal('equipInv', 873))*cows;
+    var checkoff = Math.max(0, ocVal('checkoff', 1))*(ec.calvesSold + ec.cullsSold + ec.opensSold);
+    var commission = ec.income*Math.max(0, ocVal('mktPct', 2))/100;
+    return {depr:depr, opInt:opInt, eqInt:eqInt, checkoff:checkoff, commission:commission, total:depr + opInt + eqInt + checkoff + commission};
+  }
+  /* all costs and the net return. Break-even calf price = the average price per cwt of calves sold at which the net return is zero.
+     The commission rises with income, so solve income x (1 - commission) = every other cost, take out cull and open-heifer sales,
+     and scale the average calf price by the ratio. Heifers kept are not sold, so they carry no income and are not in the cwt. */
   function econAll(res){
-    var ec = res.econ, oc = otherCosts(), total = ec.costs + oc.total, weanedCwt = (ec.calvesSold + ec.heifersKept)*ec.avgWeanLb/100;
-    return {other:oc, total:total, net:ec.income - total, perCow:total/Math.max(1, state.herd.cows), breakeven:weanedCwt > 0 ? (total - ec.cullIncome - ec.openIncome)/weanedCwt : null};
+    var ec = res.econ, oc = otherCosts(), x = extraCosts(ec), pct = Math.max(0, ocVal('mktPct', 2))/100;
+    var total = ec.costs + oc.total + x.total, fixed = total - x.commission;
+    var needCalfIncome = pct < 1 ? fixed/(1 - pct) - ec.cullIncome - ec.openIncome : null;
+    return {other:oc, extra:x, total:total, net:ec.income - total, perCow:total/Math.max(1, state.herd.cows),
+      breakeven:needCalfIncome != null && ec.calfIncome > 0 ? ec.avgPrice*needCalfIncome/ec.calfIncome : null};
   }
   function ocFlash(msg){ renderOcNote(); var el = $('oc_note'); if(el) el.innerHTML = '<strong>' + esc(msg) + '</strong> ' + el.innerHTML; }
   function renderOcNote(){
@@ -4603,7 +4634,7 @@
     else if(all > 0){
       withMin = !(min > 0);
       // mineral not split out: take off what the herd's mineral would cost (oz per cow a day x price), as My Ranch counts it apart
-      var h = state.herd, estMin = withMin ? (s.herdCows || s.exposed || 0)*(h.mineralOz == null ? 4 : +h.mineralOz)/16*365*(h.mineralPrice == null ? 0.45 : +h.mineralPrice) : min;
+      var h = state.herd, estMin = withMin ? (s.herdCows || s.exposed || 0)*(h.mineralOz == null ? 1.3 : +h.mineralOz)/16*365*(h.mineralPrice == null ? 0.45 : +h.mineralPrice) : min;
       d = all - estMin;
     } else return null;
     return d > 0 ? {price:d/(s.protLb/2000), withMineral:withMin} : null;
@@ -5031,7 +5062,7 @@
       if(shortM.length) lines.push('Grass too short for a full bite (NRC 2016 grazing intake factor) in: ' + shortM.join(', ') + '.');
       lines.push('Model settings: weather adjustments ' + (h.weatherAdj === 'off' ? 'off' : 'on') + '; walking allowance ' + (h.activity && h.activity !== 'none' ? h.activity : 'none (NRC 2016 default)') + '; supplement mode ' + (h.supMode === 'full' ? 'covers energy and protein' : 'protein only') + '; ' + (h.replRate || 0) + '% of cows replaced a year.');
       lines.push('Yearly purchased feed: ' + fmt(fb.totals.hay/2000, 1) + ' tons hay ($' + h.hayPrice + '/ton, ' + h.hayTdn + '% TDN, ' + h.hayCp + '% CP) + ' + fmt(fb.totals.sup/2000, 1) + ' tons supplement ($' + h.supPrice + '/ton, ' + h.supCp + '% CP) + feeding trips & delivery = ' + money(fb.totals.cost) + ' (' + money(fb.totals.cost/h.cows) + ' per cow).');
-      if(fb.econ && typeof econAll === 'function'){ var ea = econAll(fb); lines.push('Weaning weight ' + (fb.calves && fb.calves.growth === 'nrc' ? 'predicted from milk and grass (NRC 2016 milk, Tedeschi & Fox RNS calf forage and milk energy' + (h.milk === 'custom' && h.milkLb > 0 ? ', milk matched to the ranch weaning weight: ' + h.milkLb + ' lb at peak' : '') + '): ' : 'entered: ') + fmt(fb.econ.avgWeanLb) + ' lb. Other (non-feed) costs ' + money(ea.other.perCow) + ' per cow; net return ' + money(ea.net) + ' (' + money(ea.net/Math.max(1, h.cows)) + ' per cow); break-even calf price ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : 'n/a') + '.'); }
+      if(fb.econ && typeof econAll === 'function'){ var ea = econAll(fb); lines.push('Weaning weight ' + (fb.calves && fb.calves.growth === 'nrc' ? 'predicted from milk and grass (NRC 2016 milk, Tedeschi & Fox RNS calf forage and milk energy' + (h.milk === 'custom' && h.milkLb > 0 ? ', milk matched to the ranch weaning weight: ' + h.milkLb + ' lb at peak' : '') + '): ' : 'entered: ') + fmt(fb.econ.avgWeanLb) + ' lb. Other (non-feed) costs ' + money(ea.other.perCow) + ' per cow; net return ' + money(ea.net) + ' (' + money(ea.net/Math.max(1, h.cows)) + ' per cow, plus depreciation, interest and marketing; break-even calf price (per cwt sold) ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : 'n/a') + '.'); }
       if(state.spa){ var sp = state.spa; lines.push('SPA records loaded (fiscal year ' + (sp.year || '?') + '): ' + fmt(sp.exposed) + ' exposed females, ' + fmt(sp.weaned) + ' calves weaned at ' + fmt(sp.weanLb) + ' lb, ' + fmt((sp.protLb || 0)/Math.max(1, sp.exposed || 1)) + ' lb protein supplement per cow, total cost $' + fmt(sp.costCow) + ' per breeding cow.'); }
     }
     var d = state.drought;

@@ -38,7 +38,7 @@
   ];
   /* AgriLife Extension 2026 D03 Budgets, sheet 'CowCalf' (Rolling Plains cow-calf), all per animal unit. */
   var D03 = {revenue:2189.26, variable:438.35, grossMargin:1750.91, fixed:500.34, netReturn:1250.58, acresPerAU:11.25, rentPerAcre:15};
-  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:90}, zoneF:{brush:25, bottom:200}, waterAdj:true};
+  var DEFAULT_SETTINGS = {harvestEff:40, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:90}, zoneF:{brush:25, bottom:200}, waterAdj:true};
   var CONDITIONS = {poor:'Poor', fair:'Fair', excellent:'Excellent'};
   var ZONE_TYPES = {
     water:  {label:'Pond / lake', icon:'💧', style:{color:'#bfe3ff', weight:1.5, fillColor:'#2b7fd6', fillOpacity:0.6}},
@@ -50,17 +50,17 @@
     try{ var mp = JSON.parse(localStorage.getItem('tamuDecisionAidsMarketPrices') || 'null'); var v = mp && +mp.mp_hayPrice; if(v > 0) return v; }catch(e){}
     return 210;
   }
-  var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'none',
+  var DEFAULT_HERD = {cows:0, cowLb:1200, bulls:null, bullLb:1800, breed:'angus', milk:'moderate', bcs:5, activity:'none', primiF:1,
     calving:'us', start1:'02-15', len1:60, start2:'09-15', len2:60, share2:30, weanAge:205, wean1:'09-15', wean2:'04-15', weanLb:535, calfGrowth:'nrc',
     weanPeriod:45, postAdg:1.5, calvingRate:91, calfLoss:6.4, cowLoss:1.5, region:'auto', fq:'typical',
     nws:'no', nwsLoss:2, nwsCost:15, hornFly:0, weatherAdj:'on', windMph:10, coat:1, heat:1, replRate:15, heiferPreg:85, bcsWean:0, seasonal:'off', supMode:'protein', calfShort:'creep', creepPrice:350, creepConv:8,
     // feed prices: Texas A&M AgriLife 2026 District 3 budgets, Prices sheet (supplement $0.196/lb = $9.80 per 50-lb bag, salt & mineral $0.45/lb)
-    hayTdn:55, hayCp:10, hayDm:88, hayPrice:sharedHayPrice(), mineralOz:4, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
+    hayTdn:55, hayCp:10, hayDm:88, hayPrice:sharedHayPrice(), mineralOz:1.3, mineralPrice:0.45, source:'cube20', supCp:20, supTdn:70, supPrice:392,
     supTrips:3, hayTrips:2, tripCost:25, distPerTon:0,
     dr:{cut:50, from:5, months:6, which:'all', earlyAge:150, feedAdg:2.0, sellPct:30, sellWhen:'start', hayPrice:null, recover:75, buyPrice:null, buyYear:1, otherCost:189, devCost:900, rate:7, later:0},
     sell:{rate:8, death:0.5},
     // other (non-feed) costs, $ per cow a year: the home page's "Cow operating cost (BCU)" sheet defaults (land lease $15 x 11 months)
-    oc:{land:165, labor:120, vet:35, repairs:16, fuel:5, utilities:10, admin:20, vehicle:48, other:0}};
+    oc:{land:165, labor:120, vet:35, repairs:16, fuel:5, utilities:10, admin:20, vehicle:48, other:0, cowLife:7, equipInv:873, mktPct:2, checkoff:1}};
 
 /*@@FEED@@*/
   /* ------------------------------------------------------------------ helpers */
@@ -1216,7 +1216,7 @@
       if(shortM.length) lines.push('Grass too short for a full bite (NRC 2016 grazing intake factor) in: ' + shortM.join(', ') + '.');
       lines.push('Model settings: weather adjustments ' + (h.weatherAdj === 'off' ? 'off' : 'on') + '; walking allowance ' + (h.activity && h.activity !== 'none' ? h.activity : 'none (NRC 2016 default)') + '; supplement mode ' + (h.supMode === 'full' ? 'covers energy and protein' : 'protein only') + '; ' + (h.replRate || 0) + '% of cows replaced a year.');
       lines.push('Yearly purchased feed: ' + fmt(fb.totals.hay/2000, 1) + ' tons hay ($' + h.hayPrice + '/ton, ' + h.hayTdn + '% TDN, ' + h.hayCp + '% CP) + ' + fmt(fb.totals.sup/2000, 1) + ' tons supplement ($' + h.supPrice + '/ton, ' + h.supCp + '% CP) + feeding trips & delivery = ' + money(fb.totals.cost) + ' (' + money(fb.totals.cost/h.cows) + ' per cow).');
-      if(fb.econ && typeof econAll === 'function'){ var ea = econAll(fb); lines.push('Weaning weight ' + (fb.calves && fb.calves.growth === 'nrc' ? 'predicted from milk and grass (NRC 2016 milk, Tedeschi & Fox RNS calf forage and milk energy' + (h.milk === 'custom' && h.milkLb > 0 ? ', milk matched to the ranch weaning weight: ' + h.milkLb + ' lb at peak' : '') + '): ' : 'entered: ') + fmt(fb.econ.avgWeanLb) + ' lb. Other (non-feed) costs ' + money(ea.other.perCow) + ' per cow; net return ' + money(ea.net) + ' (' + money(ea.net/Math.max(1, h.cows)) + ' per cow); break-even calf price ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : 'n/a') + '.'); }
+      if(fb.econ && typeof econAll === 'function'){ var ea = econAll(fb); lines.push('Weaning weight ' + (fb.calves && fb.calves.growth === 'nrc' ? 'predicted from milk and grass (NRC 2016 milk, Tedeschi & Fox RNS calf forage and milk energy' + (h.milk === 'custom' && h.milkLb > 0 ? ', milk matched to the ranch weaning weight: ' + h.milkLb + ' lb at peak' : '') + '): ' : 'entered: ') + fmt(fb.econ.avgWeanLb) + ' lb. Other (non-feed) costs ' + money(ea.other.perCow) + ' per cow; net return ' + money(ea.net) + ' (' + money(ea.net/Math.max(1, h.cows)) + ' per cow, plus depreciation, interest and marketing; break-even calf price (per cwt sold) ' + (ea.breakeven != null ? '$' + fmt(ea.breakeven) + '/cwt' : 'n/a') + '.'); }
       if(state.spa){ var sp = state.spa; lines.push('SPA records loaded (fiscal year ' + (sp.year || '?') + '): ' + fmt(sp.exposed) + ' exposed females, ' + fmt(sp.weaned) + ' calves weaned at ' + fmt(sp.weanLb) + ' lb, ' + fmt((sp.protLb || 0)/Math.max(1, sp.exposed || 1)) + ' lb protein supplement per cow, total cost $' + fmt(sp.costCow) + ' per breeding cow.'); }
     }
     var d = state.drought;

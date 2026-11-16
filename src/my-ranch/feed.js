@@ -221,7 +221,10 @@
       }
       var comp = 0.8 + (o.bcs - 1)*0.05;
       var lact = dim > 0;
-      var nemBase = mbw*(0.077*br.be*(lact ? br.l : 1)*comp + a2Of(env));
+      /* First-calf cows in lactation: BCNRM maintenance coefficient for primiparous females is 1.00 x 77 kcal (NRC 2016 p. 205);
+         the user may raise it (Ripberger 1997 suggests at least 25% more). o.primiF is the multiplier, 1 = BCNRM default. */
+      var pf = lact && o.ageClass === 0 && o.primiF ? o.primiF : 1;
+      var nemBase = mbw*(0.077*br.be*(lact ? br.l : 1)*comp*pf + a2Of(env));
       var y = lact ? milkKg(dim, o.peakMilkLb)*(o.milkAge || 1) : 0;   // NRC 2016 Eq. 19-23 age factor (set per age class in requirements)
       var mey = 0, mpp = 0;
       if(preg > 0){
