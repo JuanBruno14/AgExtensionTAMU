@@ -1,39 +1,39 @@
 {
   "_about": "Prices on this site that come from public USDA AMS Market News reports. Updated weekly by .github/workflows/update-prices.yml (tools/update_prices.py). Edit by hand only if you also run `python3 tools/update_prices.py apply`.",
-  "updated": "2026-11-10",
+  "updated": "2026-11-16",
   "prices": {
     "bred_cow": {
       "label": "Bred cow purchase price",
-      "value": 3365.18,
+      "value": 3296.39,
       "unit": "$/hd",
       "report_slug": "1955",
       "report_name": "Texas Weekly Cattle Auction Summary",
       "rule": "BRED COWS, Medium & Large 1 and 1-2, young (2-4 yr), 2nd-3rd stage; head-weighted average of matching lines over the last 4 weekly reports",
-      "report_date": "2026-11-06",
-      "as_of_label": "Nov 6, 2026",
-      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"BRED COWS, Medium &amp; Large 1 and 1&ndash;2\", young (2&ndash;4&nbsp;yr), 2nd&ndash;3rd stage (12 lines, head-weighted average): 80&nbsp;hd, 905&ndash;1,385&nbsp;lb, $1,925&ndash;$4,200/hd, average $3,365.18/hd &mdash; 4 weekly reports, Oct 16, 2026 to Nov 6, 2026"
+      "report_date": "2026-11-13",
+      "as_of_label": "Nov 13, 2026",
+      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"BRED COWS, Medium &amp; Large 1 and 1&ndash;2\", young (2&ndash;4&nbsp;yr), 2nd&ndash;3rd stage (11 lines, head-weighted average): 75&nbsp;hd, 775&ndash;1,385&nbsp;lb, $1,925&ndash;$4,200/hd, average $3,296.39/hd &mdash; 4 weekly reports, Oct 23, 2026 to Nov 13, 2026"
     },
     "fed_cattle": {
       "label": "Fed/finished cattle sale price",
-      "value": 215.21,
+      "value": 214.27,
       "unit": "$/cwt",
       "report_slug": "2477",
       "report_name": "5 Area Weekly Weighted Average Direct Slaughter Cattle (LM_CT150)",
       "rule": "Live FOB steers, Over 80% Choice, weighted average",
-      "report_date": "2026-11-09",
-      "as_of_label": "report dated Nov 9, 2026",
-      "detail_html": "USDA AMS \"5&nbsp;Area Weekly Weighted Average Direct Slaughter Cattle\" (<code>ams_2477.pdf</code>) &mdash; live FOB steers, Over 80% Choice, $208&ndash;$219/cwt, 23,327&nbsp;hd, 1,450&ndash;1,740&nbsp;lb, weighted avg $215.21/cwt"
+      "report_date": "2026-11-16",
+      "as_of_label": "report dated Nov 16, 2026",
+      "detail_html": "USDA AMS \"5&nbsp;Area Weekly Weighted Average Direct Slaughter Cattle\" (<code>ams_2477.pdf</code>) &mdash; live FOB steers, Over 80% Choice, $210&ndash;$218/cwt, 12,571&nbsp;hd, 1,470&ndash;1,750&nbsp;lb, weighted avg $214.27/cwt"
     },
     "bred_heifer": {
       "label": "Bred heifer sale price",
-      "value": 3574.39,
+      "value": 3407.55,
       "unit": "$/hd",
       "report_slug": "1955",
       "report_name": "Texas Weekly Cattle Auction Summary",
       "rule": "BRED HEIFERS, Medium & Large 1 (not 1-2), any age/stage; head-weighted average of matching lines over the last 4 weekly reports",
-      "report_date": "2026-10-30",
-      "as_of_label": "Oct 30, 2026",
-      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"BRED HEIFERS, Medium &amp; Large 1\" (6 lines, head-weighted average): 89&nbsp;hd, 812&ndash;1,347&nbsp;lb, $2,350&ndash;$3,950/hd, average $3,574.39/hd &mdash; 2 weekly reports, Oct 16, 2026 to Oct 30, 2026"
+      "report_date": "2026-11-13",
+      "as_of_label": "Nov 13, 2026",
+      "detail_html": "USDA AMS \"Texas Weekly Cattle Auction Summary\" (<code>ams_1955.pdf</code>) &mdash; \"BRED HEIFERS, Medium &amp; Large 1\" (5 lines, head-weighted average): 69&nbsp;hd, 812&ndash;1,330&nbsp;lb, $2,600&ndash;$3,700/hd, average $3,407.55/hd &mdash; 2 weekly reports, Oct 30, 2026 to Nov 13, 2026"
     },
     "steer": {
       "label": "Steer price, 516.4 lb reference",
@@ -300,6 +300,24 @@
       "value": 215.21,
       "report_date": "2026-11-09",
       "applied": "2026-11-10"
+    },
+    {
+      "key": "bred_cow",
+      "value": 3296.39,
+      "report_date": "2026-11-13",
+      "applied": "2026-11-16"
+    },
+    {
+      "key": "fed_cattle",
+      "value": 214.27,
+      "report_date": "2026-11-16",
+      "applied": "2026-11-16"
+    },
+    {
+      "key": "bred_heifer",
+      "value": 3407.55,
+      "report_date": "2026-11-13",
+      "applied": "2026-11-16"
     }
   ]
 }
