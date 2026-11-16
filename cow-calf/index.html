@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-kb7+vqJt1dVJ6m7KmfGmCxzRG19OowyhnNnztvLsocI='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-8VVFOqTX6aMEk4Bqs30jccdGCkM8Cvwi3H4OI+L/rn8='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Back40</title>
@@ -692,7 +692,7 @@
           </div>
           <p class="card-note" style="margin-top:8px;">Shocks steer, heifer &amp; cull cow sale prices together across all years, ±10% from what's entered above; operating cost, bid price, and financing stay at today's values.</p>
         </div>
-        <p class="card-note" style="margin-top:12px;">Differences from the A1 spreadsheet: four formula errors are fixed here. The IRR is solved on undiscounted cash flows (<a href="understanding-irr.html" style="color:inherit;">why</a>); the year-6 loan payment is no longer dropped on 6-year plans; a 1-year plan is no longer discounted twice in the NPV; and a negative year-7 cash flow is now flagged. With the spreadsheet's own inputs, NPV is unchanged and the IRR is &minus;1.7% instead of &minus;6.4%.</p>
+        <p class="card-note" style="margin-top:12px;">Differences from the A1 spreadsheet: five formula errors are fixed here. The IRR is solved on undiscounted cash flows (<a href="understanding-irr.html" style="color:inherit;">why</a>); payback counts the actual, undiscounted cash (the spreadsheet counted discounted cash); the year-6 loan payment is no longer dropped on 6-year plans; a 1-year plan is no longer discounted twice in the NPV; and a negative year-7 cash flow is now flagged. With the spreadsheet's own inputs, NPV is unchanged and the IRR is &minus;1.7% instead of &minus;6.4%.</p>
 
         <div class="btn-row" style="padding:10px 0 0;">
           <button class="btn secondary" id="resetBtn" type="button">Reset A1 Defaults</button>
@@ -1775,21 +1775,23 @@
     // only bit on 1-year plans; it is gone here.
     var npvTotal = year0 + npvComponent.reduce(function(a,b){return a+b;},0);
 
-    // payback (based on the sheet's row51-style series: year0 + npvComponent)
-    var row51 = [year0].concat(npvComponent);
-    var cum = row51[0];
-    var paybackYear = null;
-    for(i=1;i<=7;i++){
-      cum += row51[i];
-      if(cum>0){ paybackYear=i; break; }
-    }
-
     // IRR on the cash the buyer actually puts in and gets back: year 0 (down payment, or the whole
     // bid price with no loan) and each year's net cash flow after debt service plus the cull sale,
     // NOT discounted. 2026-11-04: the spreadsheet (B64) ran IRR() on row 51, flows already
     // discounted at the discount rate, which understates the IRR; fixed.
     var irrFlows = [year0];
     for(i=0;i<7;i++){ irrFlows.push(netCashFlow[i] + cullSalvage[i]); }
+
+    // payback: first year the running total of the same undiscounted cash flows turns positive.
+    // 2026-11-15: the spreadsheet (B62) summed row 51, the flows already discounted, so it reported a
+    // discounted payback under the plain name "payback" and disagreed with the cash-position chart
+    // below. Now both use the actual cash.
+    var cum = irrFlows[0];
+    var paybackYear = null;
+    for(i=1;i<=7;i++){
+      cum += irrFlows[i];
+      if(cum>0){ paybackYear=i; break; }
+    }
     var irrGuessDenom = p.bidPrice || 1;
     var irrGuess = npvComponent.reduce(function(a,b){return a+b;},0)/irrGuessDenom;
     var irr = IRR_solve(irrFlows, irrGuess);
@@ -1935,8 +1937,8 @@
 
     drawChart(netCashFlow.slice(0,nper));
 
-    // Cumulative (undiscounted) running cash position, year 0..nper -- a simplified
-    // companion view to the official discounted payback stat above.
+    // Cumulative (undiscounted) running cash position, year 0..nper -- the same series the
+    // payback stat above is read from.
     var cumSeries = [round(year0,0)];
     var runningCum = year0;
     for(var i=0;i<nper;i++){
