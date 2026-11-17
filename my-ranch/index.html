@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-cOYfMsb3vQ/3dINhi8KqAudOy04pzqrwMvRblcCY8V8='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ZzHB8XIGxLVdpYa0U1TJOux2Mt17S81jsSzvVBwsCRY='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>My Ranch · Back40</title>
@@ -1061,7 +1061,7 @@
           <div class="field">
             <label for="harvestEff">Harvest Efficiency</label>
             <div class="input-wrap has-suffix"><input type="number" id="harvestEff" min="1" max="100" step="1" inputmode="decimal"><span class="suffix">%</span></div>
-            <span class="hint">Share of forage cattle actually eat (native range)</span>
+            <span class="hint">Share of forage cattle actually eat (native range). Default 40%, the low end of Vallentine Table 12.3 (40–50%) for shortgrass and mixed prairie. Continuous grazing is about 25%.</span>
           </div>
           <div class="field">
             <label for="intakeLb">Forage per AU per Day</label>
@@ -1089,7 +1089,7 @@
             <span class="hint">From USGS elevation inside each pasture (soil survey if unavailable): 11–30% slope counts 30% less, 31–60% counts 60% less, over 60% not at all</span>
           </div>
         </div>
-        <p class="card-note" style="margin:14px 0 0;">Defaults follow <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and with continuous grazing about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering). Rotation with rest raises that to about 30%, and intensive rotation to about 40% (University of Nebraska Extension).</p>
+        <p class="card-note" style="margin:14px 0 0;">The 40% default is intensive rotation. Sources: <em>Stocking Rate: The Key Grazing Management Decision</em>: an animal unit eats about 26 lb of forage a day, and with continuous grazing about 25% of what grows is harvested by cattle (half is left standing, a quarter is lost to trampling, insects and weathering). Rotation with rest raises that to about 30%, and intensive rotation to about 40% (University of Nebraska Extension).</p>
       </div>
     </div>
 
@@ -1561,7 +1561,7 @@
      is dry matter, so soil-survey production is multiplied by 0.90 to put supply and demand on the same basis (UNL G2344: air-dried
      forage is about 90% dry matter; SDSU S-0013-51 uses 88%). Producer estimates and clipped samples are taken as dry matter as entered. */
   var AIRDRY_TO_DM = 0.90;
-  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:100}, zoneF:{brush:25, bottom:100}, waterAdj:true,
+  var DEFAULT_SETTINGS = {harvestEff:40, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:100}, zoneF:{brush:25, bottom:100}, waterAdj:true,
     slopeAdj:true, heType:{improved:40, smallgrain:50}, hayRecovery:80};
   var CONDITIONS = {poor:'Poor', fair:'Fair', excellent:'Excellent'};
   var ZONE_TYPES = {

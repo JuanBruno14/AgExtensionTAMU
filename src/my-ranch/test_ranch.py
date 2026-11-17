@@ -87,9 +87,9 @@ with sync_playwright() as pw:
     check('soil request sent with clip macros + WKT', soil_requests and 'GetClippedMapunits' in soil_requests[0] and 'POLYGON((' in soil_requests[0])
     check('soil request is form-encoded (no preflight)', soil_ct and soil_ct[0].startswith('application/x-www-form-urlencoded'), soil_ct[:1])
     check('soil estimate weighted correctly', p['soil'] and p['soil']['status']=='ok' and abs(p['soil']['normal']-EXPECTED)<1e-6, (p['soil'] or {}).get('normal'))
-    expected_cap=p['acres']*EXPECTED*0.90*0.75*0.25/(26*365)   # 0.90: soil survey air-dry -> dry matter
+    expected_cap=p['acres']*EXPECTED*0.90*0.75*0.40/(26*365)   # 0.90: soil survey air-dry -> dry matter
     tot=page.evaluate("MyRanch.totals()")
-    check('capacity = acres*lb*0.90 (air-dry to DM)*25%/(26*365)', abs(tot['cap']-expected_cap)<1e-6, (round(tot['cap'],3), round(expected_cap,3)))
+    check('capacity = acres*lb*0.90 (air-dry to DM)*40%/(26*365)', abs(tot['cap']-expected_cap)<1e-6, (round(tot['cap'],3), round(expected_cap,3)))
     check('drought D2 shown', 'D2' in page.inner_text('#summaryBody') and 'Severe drought' in page.inner_text('#summaryBody'))
     check('pasture label on map', page.locator('.leaflet-tooltip.pasture-label').count()==1)
 
@@ -100,16 +100,16 @@ with sync_playwright() as pw:
     check('label follows rename', 'North trap' in page.inner_text('.leaflet-tooltip.pasture-label'))
     rot=page.text_content('#rotationBody')
     check('rotation days shown', 'days' in rot and 'short of a full year' in rot, rot[:120])
-    days=page.evaluate("(()=>{const s=MyRanch.state(),p=s.pastures[0];const au=MyRanch.herdAU();return p.acres*p.soil.normal*0.90*0.75*0.25/(au*26)})()")
+    days=page.evaluate("(()=>{const s=MyRanch.state(),p=s.pastures[0];const au=MyRanch.herdAU();return p.acres*p.soil.normal*0.90*0.75*0.40/(au*26)})()")
     check('grazing days math', str(round(days)) in rot.replace(',',''), round(days))
     bud=page.text_content('#budgetBody')
-    check('budget benchmark uses capacity when herd larger', 'budget gross margin' in bud.lower() and 'your estimated capacity carries (you plan' in bud, bud[:250])
+    check('budget benchmark uses capacity when herd larger', 'budget gross margin' in bud.lower() and 'acres per cow' in bud.lower(), bud[:250])
 
     # manual estimate path
     page.select_option('.pasture-row .p-mode','manual'); page.wait_for_timeout(150)
     page.fill('.pasture-row .p-manual','4000'); page.wait_for_timeout(150)
     tot2=page.evaluate("MyRanch.totals()")
-    check('manual estimate drives capacity', abs(tot2['cap']-p['acres']*4000*0.25/(26*365))<1e-6)
+    check('manual estimate drives capacity', abs(tot2['cap']-p['acres']*4000*0.40/(26*365))<1e-6)
     page.select_option('.pasture-row .p-mode','soil'); page.wait_for_timeout(300)
 
     # harvest efficiency edit

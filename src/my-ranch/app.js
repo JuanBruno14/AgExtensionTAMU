@@ -46,7 +46,7 @@
      is dry matter, so soil-survey production is multiplied by 0.90 to put supply and demand on the same basis (UNL G2344: air-dried
      forage is about 90% dry matter; SDSU S-0013-51 uses 88%). Producer estimates and clipped samples are taken as dry matter as entered. */
   var AIRDRY_TO_DM = 0.90;
-  var DEFAULT_SETTINGS = {harvestEff:25, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:100}, zoneF:{brush:25, bottom:100}, waterAdj:true,
+  var DEFAULT_SETTINGS = {harvestEff:40, intakeLb:26, manualCap:null, maxGraze:30, mapColor:'name', cond:{poor:50, fair:75, excellent:100}, zoneF:{brush:25, bottom:100}, waterAdj:true,
     slopeAdj:true, heType:{improved:40, smallgrain:50}, hayRecovery:80};
   var CONDITIONS = {poor:'Poor', fair:'Fair', excellent:'Excellent'};
   var ZONE_TYPES = {
