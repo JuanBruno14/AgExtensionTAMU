@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-8BZcuuYpAr7k5XyZEDzVxbb8wPRy9/IwLhdpKV7Nrf0='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-qMaqDc8grrOaY1Jk9roYv9HY0Nu7rN7g/zhYyWwkV4E='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weaned Calf to Bred Heifer Cost · Back40</title>
@@ -801,8 +801,8 @@
      B1a — Replacement Heifer: Weaning Through Breeding and Culling,
      Natural Service. Faithful port of "1.Weaned Calf to Bred Heif Cost"
      + "3. Bull Cost" from B1a.xlsx (version 2018-07-10). Formula-for-
-     formula, including two original-workbook quirks kept exactly as
-     found rather than "corrected" (fidelity rule — flagged here, not
+     formula, including two original-workbook quirks kept as
+     found (a third, in financing, is corrected, see 3) rather than "corrected" (fidelity rule — flagged here, not
      silently changed):
 
      1) On the bull cost sheet, "per exposed heifer" bull costs (H32,
@@ -822,6 +822,15 @@
         from F46+F50 without double-counting) — those cells are simply
         unused leftovers in the original workbook, so they're not
         reproduced here since nothing downstream reads them.
+
+     3) CORRECTED vs the workbook (Nov 2026 review): the financing cost
+        D52 and the ROI capital N51 counted the heifer purchase cost
+        1.5 times, because F46/D46 already include F6/E6. Both now
+        count it once (E6 in full + half of the other costs), and the
+        bull interest I54 is spread over starting head (G4) so
+        F52 = D52*G4 closes with I53. Effect with page defaults:
+        financing $131.26 -> $91.21/hd, TUC $2,500.77 -> $2,460.72,
+        ROI 38% -> 53.6%.
 
      Prices updated from the workbook's 2018 defaults to sourced
      September 2026 USDA AMS / "2026 D03 Budgets" data — see the "Sourced
@@ -987,8 +996,9 @@
 
     var C52 = inp.interestRate;
     var I53 = bull.O26;
-    var I54 = E15>0 ? I53/E15 : 0;
-    var D52 = (E6 + (D46+D50)*0.5)*(C52*0.01*(C29/365)) + I54;
+    var I54 = G4>0 ? I53/G4 : 0; // corrected: D52 is per starting head (F52=D52*G4); original divided by exposed E15
+    // corrected: D46 already contains the heifer cost (E6), so it is removed from the half-weighted base
+    var D52 = (E6 + (D46-E6+D50)*0.5)*(C52*0.01*(C29/365)) + I54;
     var F52 = D52*G4;
     var D54 = D46+D50+D52;
     var F54 = F46+F50+F52;
@@ -1009,7 +1019,7 @@
     var D66 = G4>0 ? F64/G4 : 0;
     var F66 = F64;
 
-    var N51 = (F6 + (F46+F50)*0.5)*(C29/365) + I55;
+    var N51 = (F6 + (F46-F6+F50)*0.5)*(C29/365) + I55; // corrected: F46 already contains F6
     var N53 = F52+F66;
     var O53 = N51>0 ? N53/N51 : 0;
 
