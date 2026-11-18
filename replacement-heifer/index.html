@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-omTDrwUHoKiAs8SyIdQrutPFqV7XhbsjCHYH8E8Tkl0='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ZKYvaEWI7z+YnaOZpcfeQSffTd67XPK6D8NSBBHsolk='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weaned Calf to Bred Heifer Cost · Back40</title>
@@ -821,10 +821,7 @@
         FULL capital -- heifer purchase + direct costs + indirect costs --
         i.e. (D46 + D50) * rate * days/365 + bull interest per exposed head
         (I53/E15). The 2018 formula added the heifer cost twice
-        (D46 already contains E6) and half-weighted the rest. The ROI capital
-        N51 is unchanged from the earlier Nov 2026 correction (heifer cost
-        once, other costs half-weighted); his revised sheet still has the
-        old N-column formula, so that is an open question for him.
+        (D46 already contains E6) and half-weighted the rest. The ROI capital N51 (N52 in his sheet) uses the same full capital: (F46+F50)*days/365 + bull investment -- proposed to Pancho; his sheet still carries the old formula with the heifer cost 1.5 times (ROI 8.50% vs 9.53% here).
 
      Prices updated from the workbook's 2018 defaults to sourced
      September 2026 USDA AMS / "2026 D03 Budgets" data — see the "Sourced
@@ -1013,7 +1010,7 @@
     var D66 = G4>0 ? F64/G4 : 0;
     var F66 = F64;
 
-    var N51 = (F6 + (F46-F6+F50)*0.5)*(C29/365) + I55; // corrected: F46 already contains F6
+    var N51 = (F46+F50)*(C29/365) + I55; // full capital (F46 already contains F6), same base as the financing D52
     var N53 = F52+F66;
     var O53 = N51>0 ? N53/N51 : 0;
 
