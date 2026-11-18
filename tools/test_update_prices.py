@@ -188,7 +188,7 @@ try:
     ro = open(os.path.join(tmp, 'retained-ownership/index.html')).read()
     check('feedyard paths updated', ro.count('skfy7_salePrice:224.50') == 1 and 'value="224.5"' in ro)
     ds = open(os.path.join(tmp, 'data-sources.html')).read()
-    check('data-sources row regenerated', '$2,975.00/hd' in ds and 'Oct 16, 2026' in ds)
+    check('data-sources row regenerated with the new report date, and no price value column', 'Oct 16, 2026' in ds and 'td class="value nowrap">$2,975' not in ds)
     check('apply is idempotent', up.apply(data, repo=tmp) == [])
     rh = open(os.path.join(tmp, 'replacement-heifer/index.html')).read()
     import re
@@ -205,7 +205,7 @@ try:
     mr = open(os.path.join(tmp, 'my-ranch/index.html')).read()
     check('My Ranch default steer price', 'mp_steerPrice:401.50' in mr and '/530*(mult' in mr)
     ds = open(os.path.join(tmp, 'data-sources.html')).read()
-    check('data-sources steer row', '$401.50/cwt' in ds)
+    check('data-sources steer row is regenerated (source and date, no price value)', '<!-- price:steer:start -->' in ds and '$401.50/cwt' not in ds)
     kb = json.load(open(os.path.join(tmp, 'jim/kb.json'), encoding='utf-8'))
     mine = [c for c in kb['chunks'] if c.get('i') == 'market-prices']
     check('Jim knowledge base has one current-prices passage', len(mine) == 1 and '$401.50/cwt' in mine[0]['x'])

@@ -452,8 +452,6 @@ USED = {
     'cull_cow': 'Cull cow price (1,279.4&nbsp;lb Boner reference) &mdash; shared store\'s <code>mp_cullCowPrice</code>, read by <a href="cow-calf/index.html">Cow Bid Price and Calf Price for Target ROA</a>, <a href="retained-ownership/index.html">Sell or Keep to Upgrade</a> and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>CULL_COW_PRICE_SLIDE</code>',
     'cull_bull': 'Cull bull price &mdash; shared store\'s <code>mp_cullBullPrice</code>, read by <a href="cow-calf/index.html">Calf Price for Target ROA</a>, <a href="replacement-heifer/index.html">Replacement Heifer Budget</a> and <a href="my-ranch/index.html">My Ranch</a> (bull salvage)',
 }
-CENTRAL = {'bred_cow': 'Bred cow purchase price', 'fed_cattle': 'Fed/finished cattle sale price'}
-
 def js_num(v):
     return '%.2f' % v
 
@@ -461,10 +459,10 @@ def input_num(v):
     return ('%.2f' % v).rstrip('0').rstrip('.')
 
 def row_html(key, p):
-    return ('<!-- price:%s:start -->\n          <tr>\n            <td class="value nowrap">%s</td>\n'
+    return ('<!-- price:%s:start -->\n          <tr>\n'
             '            <td class="used">%s</td>\n            <td>%s</td>\n'
             '            <td><span class="tag fresh">%s</span></td>\n          </tr>\n          <!-- price:%s:end -->'
-            % (key, fmt_unit(p), USED[key], p['detail_html'], p['as_of_label'], key))
+            % (key, USED[key], p['detail_html'], p['as_of_label'], key))
 
 KB = 'jim/kb.json'      # Jim's knowledge base, read live by the Worker from the published site
 KB_ID = 'market-prices'
@@ -522,11 +520,6 @@ def apply(data, repo=REPO):
                         lambda m: row_html(key, p), ds, flags=re.S)
         if n != 1:
             raise SystemExit('apply: data-sources.html: marker for %s missing' % key)
-        if key in CENTRAL:
-            ds, n = re.subn(r'(<tr><td class="value nowrap">)\$[0-9,.]+/(?:hd|cwt)(</td><td class="used">%s)' % re.escape(CENTRAL[key]),
-                            lambda m: m.group(1) + fmt_unit(p) + m.group(2), ds)
-            if n != 1:
-                raise SystemExit('apply: data-sources.html: centralized row for %s missing' % key)
     edits['data-sources.html'] = ds
     d = dt.date.fromisoformat(data['updated'])   # the "Prices: <date>" chip in the page header follows the data
     chip = '%s %d, %d' % (d.strftime('%b'), d.day, d.year)
