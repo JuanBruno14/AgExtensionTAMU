@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-+yDkTGEdth5N82bK04Akc/+f4BWnwWhpVdBI/RHtqIY='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Rqb9nSeq4gF7RUr/25OfDjjlCJ2tH1jH1U0aV21krzc='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Back40</title>
@@ -817,8 +817,25 @@
       </div>
     </div>
 
+    <!-- Shared operating cost (variable + fixed) -->
+    <div class="card" id="a2SharedCard">
+      <div class="card-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 7h20M2 17h20"/></svg>
+        <h2>Operating cost (BCU)</h2>
+      </div>
+      <div class="card-body">
+        <p class="card-note" id="a2SharedNote">Variable and fixed cost per BCU come from the <a href="../cow-decisions/index.html#bcu-calculator" style="font-weight:600;text-decoration:underline;color:inherit;">Cow Operating Cost calculator on the home page</a>, so every tool uses the same numbers.</p>
+        <div class="stat-tile wide">
+          <span class="label">Currently using</span>
+          <span class="value" id="a2SharedValue">&mdash;</span>
+          <span class="sub" id="a2SharedSub"></span>
+        </div>
+        <label class="bcu-ranch-toggle" style="display:flex;gap:8px;align-items:center;margin-top:12px;font-size:14px;"><input type="checkbox" id="a2_useOwnDetail"> Enter my own detailed costs for this tool instead</label>
+      </div>
+    </div>
+
     <!-- Feed & other direct costs -->
-    <div class="card">
+    <div class="card" id="a2FeedCard">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 7h20M2 17h20"/></svg>
         <h2>Feed &amp; other direct costs</h2>
@@ -856,7 +873,7 @@
     </div>
 
     <!-- Indirect costs -->
-    <div class="card">
+    <div class="card" id="a2IndirectCard">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/><path d="M7 15h4"/></svg>
         <h2>Indirect costs &amp; finance</h2>
@@ -1675,19 +1692,33 @@
     return SHARED_OPCOST_FALLBACK;
   }
 
+  function getSharedOpCostSplit(){
+    try {
+      var raw = window.localStorage.getItem(SHARED_OPCOST_KEY);
+      if(raw){
+        var data = JSON.parse(raw);
+        if(data && isFinite(data.variable) && isFinite(data.fixed)) return data;
+      }
+    } catch(e){ /* private mode / blocked storage */ }
+    return null;
+  }
+
   function renderSharedOpCostCard(total){
     var el = $('sharedOpCostValue'), sub = $('sharedOpCostSub');
     if(el) el.textContent = '$'+fmtMoney2.format(total)+' / BCU';
     if(sub){
       var raw = null;
       try { raw = window.localStorage.getItem(SHARED_OPCOST_KEY); } catch(e){ /* private mode / blocked storage */ }
-      sub.textContent = raw ? 'From the home page calculator' : 'Not set on the home page yet — using the original spreadsheet default';
+      var split = getSharedOpCostSplit();
+      sub.textContent = split
+        ? 'Variable $'+fmtMoney2.format(split.variable)+' · Fixed $'+fmtMoney2.format(split.fixed)+' · from the home page calculator'
+        : (raw ? 'From the home page calculator' : 'Not set on the home page yet — using the original spreadsheet default');
     }
   }
 
   // Live-refresh if the home page's calculator is updated in another open tab.
   window.addEventListener('storage', function(e){
-    if(e.key === SHARED_OPCOST_KEY) recalc();
+    if(e.key === SHARED_OPCOST_KEY){ recalc(); recalcA2(); }
     if(e.key === MP_STORAGE_KEY){ recalc(); recalcA2(); }
   });
 
@@ -2039,6 +2070,16 @@
     var utilities = inp.utilities;
     var adminGA = inp.adminGA;
     var totalIndirect = repairMaint+fuelLube+otherIndirect1+otherIndirect2+vehicleDepr+utilities+adminGA;
+    if(inp.shared){
+      // Shared variable + fixed cost replaces feed, land lease, labor, vet, equipment and other indirect.
+      // The shared fixed cost already contains the herd-bull depreciation, so that piece is removed here
+      // (this tool adds its own bull and cow depreciation in subtotalBreedingDepr).
+      subtotalFeed = inp.shared.variable;
+      subtotalOtherDirect = inp.shared.fixed - inp.shared.bullDepr;
+      repairMaint = 0; fuelLube = 0; vehicleDepr = 0;
+      totalIndirect = 0;
+      totalDirect = subtotalFeed + subtotalOtherDirect + subtotalBreedingDepr;
+    }
 
     var tucOperating = totalDirect + totalIndirect;
     var financeCost = inp.financeCost;
@@ -2179,6 +2220,29 @@
     if($('a2Bull_perBull')) $('a2Bull_perBull').textContent = mp.mp_perBull;
   }
 
+  // Shared variable + fixed operating cost (home page calculator). Used unless the producer
+  // opts to enter their own detail, or the home page has not saved a split yet.
+  function a2SharedMode(){
+    var split = getSharedOpCostSplit();
+    var own = $('a2_useOwnDetail') && $('a2_useOwnDetail').checked;
+    return (split && isFinite(split.bullDepr) && !own) ? split : null;
+  }
+  function renderA2SharedCard(sharedSplit){
+    var split = getSharedOpCostSplit();
+    var detailIds = ['a2_leasedAcresPerBCU','a2_leasedRatePerAcre','a2_fuelLube','a2_utilities','a2_adminGA','a2_otherIndirect1','a2_repairMaintDisplay','a2_vehicleDeprDisplay'];
+    detailIds.forEach(function(id){ var el=$(id); var f = el && el.closest('.field'); if(f) f.hidden = !!sharedSplit; });
+    var lease = $('a2_leasedAcresPerBCU'); var fs = lease && lease.closest('fieldset'); if(fs) fs.hidden = !!sharedSplit;
+    if($('a2FeedCard')) $('a2FeedCard').hidden = !!sharedSplit;
+    var v = $('a2SharedValue'), sub = $('a2SharedSub');
+    if(!split || !isFinite(split.bullDepr)){
+      if(v) v.textContent = 'Not set yet';
+      if(sub) sub.textContent = 'Set your cost on the home page to use it here. Until then this tool uses the detailed costs below.';
+    } else if(v){
+      v.textContent = '$'+fmtMoney2.format(split.total)+' / BCU';
+      sub.textContent = 'Variable $'+fmtMoney2.format(split.variable)+' · Fixed $'+fmtMoney2.format(split.fixed)+(sharedSplit ? ' · from the home page calculator' : ' · not used while you enter your own detail');
+    }
+  }
+
   function gatherA2Inputs(mp){
     return {
       bcu: num('a2_bcu'), weanPct: num('a2_weanPct'),
@@ -2197,6 +2261,7 @@
       fuelLube: num('a2_fuelLube'), otherIndirect1: num('a2_otherIndirect1'), otherIndirect2: 0,
       utilities: num('a2_utilities'), adminGA: num('a2_adminGA'),
       financeCost: num('a2_financeCost'),
+      shared: a2SharedMode(),
       cowCost: num('a2_cowCost'), cowLife: num('a2_cowLife'), cowDeathLoss: num('a2_cowDeathLoss'),
       cullCowWt: num('a2_cullCowWt'), cullCowPrice: num('a2_cullCowPrice'),
       // bull cost/life/death-loss/cows-per-bull now come from the shared Market Prices store, not this page's own inputs
@@ -2249,11 +2314,12 @@
     $('a2_breedingDeprTotal').textContent = fmtDollar(bs.totalBreedingDeprPerBCU, 2);
     $('a2_breedingBreak').textContent = 'Cow '+fmtDollar(bs.cowDeprPerBCU,2)+' + bull '+fmtDollar(bs.bullDeprPerBCU,2)+' /BCU · cull revenue '+fmtDollar(bs.cullRevenuePerBCU,2)+'/BCU';
 
+    renderA2SharedCard(inp.shared);
     $('a2_tucValue').textContent = fmtDollar(s1.tucTotal, 2);
 
     buildStackBar('a2_costStackbar','a2_costLegend','a2_costBarTotal', [
-      {label:'Feed & land', value:s1.subtotalFeed, color:'var(--s1)'},
-      {label:'Labor, vet & other direct', value:s1.subtotalOtherDirect, color:'var(--s2)'},
+      {label:inp.shared ? 'Variable cost (shared)' : 'Feed & land', value:s1.subtotalFeed, color:'var(--s1)'},
+      {label:inp.shared ? 'Fixed cost (shared)' : 'Labor, vet & other direct', value:s1.subtotalOtherDirect, color:'var(--s2)'},
       {label:'Breeding stock depreciation', value:s1.subtotalBreedingDepr, color:'var(--s3)'},
       {label:'Equipment (depreciation + repairs)', value:s1.repairMaint+s1.vehicleDepr, color:'var(--s4)'},
       {label:'Other indirect & finance', value:s1.totalIndirect-s1.repairMaint-s1.vehicleDepr+s1.financeCost, color:'var(--s5)'}
@@ -2333,6 +2399,7 @@
       var el = $(id);
       if(el) el.addEventListener('input', recalcA2);
     });
+    if($('a2_useOwnDetail')) $('a2_useOwnDetail').addEventListener('change', recalcA2);
 
     $('a2_steerWtRange').addEventListener('input', function(){
       $('a2_steerWt').value = this.value; recalcA2();

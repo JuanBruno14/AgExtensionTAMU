@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ewWn4zWXx49EWq/6sF73QlDJ4up6tPAiQp49Fd9nk7Y='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-PbD0AtJn42doiQHJVTZ6kfKqCrZ4TmS8+1cZhsrYJmU='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Beef Cattle Decisions · Back40</title>
@@ -376,6 +376,9 @@
           <span class="bcu-preview-value" id="bcuHeaderValue">$0</span>
           <span class="bcu-preview-label">/ BCU &middot; <span id="bcuSourceLabel">original default</span></span>
         </div>
+        <div class="bcu-preview" style="margin-top:6px;">
+          <span class="bcu-preview-label">Variable <strong id="bcuHeaderVariable">$0</strong> &middot; Fixed <strong id="bcuHeaderFixed">$0</strong></span>
+        </div>
         <span class="go">
           <span id="bcuToggleLabel">Edit My Numbers</span>
           <svg class="chevron" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.6"><path d="M6 9l6 6 6-6"/></svg>
@@ -735,7 +738,14 @@
         {label:'Equipment & other indirect', value:totalIndirect, color:'var(--s5)'}
       ], total, ' / BCU');
 
-      var payload = { total: round(total,3), savedAt: new Date().toISOString(), useRanchFeed: useRanch };
+      // Variable = feed (hay, protein, salt) + vet and medicine. Fixed = land lease, labor,
+      // bull depreciation and all indirect costs. Shown as two numbers on the tools.
+      var variableCost = hayCost + proteinCost + saltCost + num('bcu_vetMed');
+      var fixedCost = total - variableCost;
+      if($('bcuHeaderVariable')) $('bcuHeaderVariable').textContent = '$'+fmtMoney0.format(variableCost);
+      if($('bcuHeaderFixed')) $('bcuHeaderFixed').textContent = '$'+fmtMoney0.format(fixedCost);
+
+      var payload = { total: round(total,3), variable: round(variableCost,3), fixed: round(fixedCost,3), bullDepr: round(bullDeprPerBCU,3), savedAt: new Date().toISOString(), useRanchFeed: useRanch };
       Object.keys(BCU_DEFAULTS).forEach(function(id){ payload[id] = num(id); });
       try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }
       catch(e){ /* private mode / blocked storage -- this session's value just won't persist or be shared with other pages */ }
