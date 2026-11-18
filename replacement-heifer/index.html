@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ggsWw2jWmTgE30jfZ/QpVszSksdA3Tdvmjn5QHL/79I='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-omTDrwUHoKiAs8SyIdQrutPFqV7XhbsjCHYH8E8Tkl0='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weaned Calf to Bred Heifer Cost · Back40</title>
@@ -816,14 +816,15 @@
         unused leftovers in the original workbook, so they're not
         reproduced here since nothing downstream reads them.
 
-     3) CORRECTED vs the workbook (Nov 2026 review): the financing cost
-        D52 and the ROI capital N51 counted the heifer purchase cost
-        1.5 times, because F46/D46 already include F6/E6. Both now
-        count it once (E6 in full + half of the other costs), and the
-        bull interest I54 is spread over starting head (G4) so
-        F52 = D52*G4 closes with I53. Effect with page defaults:
-        financing $131.26 -> $91.21/hd, TUC $2,500.77 -> $2,460.72,
-        ROI 38% -> 53.6%.
+     3) CHANGED vs the 2018 workbook (Nov 2026, agreed with Pancho): the financing
+        cost D52 (row 53 of his revised B1a) now charges interest on the
+        FULL capital -- heifer purchase + direct costs + indirect costs --
+        i.e. (D46 + D50) * rate * days/365 + bull interest per exposed head
+        (I53/E15). The 2018 formula added the heifer cost twice
+        (D46 already contains E6) and half-weighted the rest. The ROI capital
+        N51 is unchanged from the earlier Nov 2026 correction (heifer cost
+        once, other costs half-weighted); his revised sheet still has the
+        old N-column formula, so that is an open question for him.
 
      Prices updated from the workbook's 2018 defaults to sourced
      September 2026 USDA AMS / "2026 D03 Budgets" data — see the "Sourced
@@ -989,9 +990,9 @@
 
     var C52 = inp.interestRate;
     var I53 = bull.O26;
-    var I54 = G4>0 ? I53/G4 : 0; // corrected: D52 is per starting head (F52=D52*G4); original divided by exposed E15
-    // corrected: D46 already contains the heifer cost (E6), so it is removed from the half-weighted base
-    var D52 = (E6 + (D46-E6+D50)*0.5)*(C52*0.01*(C29/365)) + I54;
+    var I54 = E15>0 ? I53/E15 : 0; // bull interest per exposed head, as in the workbook (Pancho's I55)
+    // Pancho's revised D52: interest on full capital (D46 already contains the heifer cost E6)
+    var D52 = (D46 + D50)*(C52*0.01*(C29/365)) + I54;
     var F52 = D52*G4;
     var D54 = D46+D50+D52;
     var F54 = F46+F50+F52;
