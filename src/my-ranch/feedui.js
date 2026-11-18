@@ -1430,10 +1430,11 @@
     });
     $('oc_fromBcu').addEventListener('click', function(){
       var b = null; try{ b = JSON.parse(localStorage.getItem(BCU_KEY) || 'null'); }catch(e){}
-      if(!b || !isFinite(b.bcu_laborMgmt)){ $('oc_note').innerHTML = 'No saved numbers in the home page’s “Cow Operating Cost (BCU)” calculator on this browser yet — open it on the home page, or type your own here.'; return; }
+      if(!b || !isFinite(b.fixed)){ $('oc_note').innerHTML = 'No saved numbers in the home page’s “Cow Operating Cost (BCU)” calculator on this browser yet — open it on the home page, or type your own here.'; return; }
       var before = Object.assign({}, state.herd.oc);
-      state.herd.oc = {land:(+b.bcu_landLeaseRate || 0)*(+b.bcu_landLeaseMonths || 0), labor:+b.bcu_laborMgmt || 0, vet:+b.bcu_vetMed || 0, repairs:+b.bcu_repairMaint || 0, fuel:+b.bcu_fuelOil || 0,
-                       utilities:+b.bcu_utilities || 0, admin:+b.bcu_adminGA || 0, vehicle:+b.bcu_vehicleDepr || 0, other:0};
+      // The home page now holds one fixed and one variable number. Feed comes from this tool's own feed plan,
+      // so only the fixed cost is copied (under "other"; herd bull depreciation is added separately below).
+      state.herd.oc = {land:0, labor:0, vet:0, repairs:0, fuel:0, utilities:0, admin:0, vehicle:0, other:+b.fixed || 0};
       var same = OC_KEYS.every(function(k){ return +before[k] === +state.herd.oc[k]; });
       bindFeedValues(); rerender(); ocFlash(same ? 'The home page’s cow-cost numbers are the same as these — nothing to change. Edit them in “Cow Operating Cost (BCU)” on the home page, or type your own here.' : 'Copied from the home page’s “Cow Operating Cost (BCU)”.');
     });

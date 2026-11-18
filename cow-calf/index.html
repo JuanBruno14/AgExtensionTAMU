@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-K6ebZHtFuLNtTHPrNsEe6K+sckoOtoMxETmwTNJwIB0='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XB6soMPzUuSccjPLF0Yv559pJ9TpGhc8SdClsdip7Kw='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Back40</title>
@@ -1993,10 +1993,9 @@
     var totalIndirect = repairMaint+fuelLube+otherIndirect1+otherIndirect2+vehicleDepr+utilities+adminGA;
     if(inp.shared){
       // Shared variable + fixed cost replaces feed, land lease, labor, vet, equipment and other indirect.
-      // The shared fixed cost already contains the herd-bull depreciation, so that piece is removed here
-      // (this tool adds its own bull and cow depreciation in subtotalBreedingDepr).
+      // Breeding stock (cow and bull) depreciation stays calculated here, so it is not in the shared numbers.
       subtotalFeed = inp.shared.variable;
-      subtotalOtherDirect = inp.shared.fixed - inp.shared.bullDepr;
+      subtotalOtherDirect = inp.shared.fixed;
       repairMaint = 0; fuelLube = 0; vehicleDepr = 0;
       totalIndirect = 0;
       totalDirect = subtotalFeed + subtotalOtherDirect + subtotalBreedingDepr;
@@ -2143,17 +2142,17 @@
 
   // Operating cost comes only from the shared Cow Operating Cost calculator (home page).
   // If the producer has not saved numbers there yet, the calculator's own default split is used.
-  var A2_SHARED_FALLBACK = { total:677.648, variable:275, fixed:402.648, bullDepr:18.648 };
+  var A2_SHARED_FALLBACK = { total:659, variable:275, fixed:384 };
   function a2SharedMode(){
     var split = getSharedOpCostSplit();
-    return (split && isFinite(split.bullDepr)) ? split : A2_SHARED_FALLBACK;
+    return split ? split : A2_SHARED_FALLBACK;
   }
   function renderA2SharedCard(){
     var stored = getSharedOpCostSplit();
     var split = a2SharedMode();
     var v = $('a2SharedValue'), sub = $('a2SharedSub');
     if(v) v.textContent = '$'+fmtMoney2.format(split.total)+' / BCU';
-    if(sub) sub.textContent = 'Variable $'+fmtMoney2.format(split.variable)+' · Fixed $'+fmtMoney2.format(split.fixed)+(stored && isFinite(stored.bullDepr) ? ' · from the home page calculator' : ' · default values, set your own on the home page');
+    if(sub) sub.textContent = 'Variable $'+fmtMoney2.format(split.variable)+' · Fixed $'+fmtMoney2.format(split.fixed)+(stored ? ' · from the home page calculator' : ' · default values, set your own on the home page');
   }
 
   function gatherA2Inputs(mp){
