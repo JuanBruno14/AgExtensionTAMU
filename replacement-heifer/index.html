@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-j+idON8yeTodtseNS4211UJpaOm5cOgn71U0mVVfyRE='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ggsWw2jWmTgE30jfZ/QpVszSksdA3Tdvmjn5QHL/79I='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weaned Calf to Bred Heifer Cost · Back40</title>
@@ -563,17 +563,6 @@
       </div>
     </div>
 
-    <!-- Indirect costs: taken from the Cow Operation Cost calculator -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 1v22M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
-        <h2>Indirect costs</h2>
-      </div>
-      <div class="card-body">
-        <p class="derived-note" id="rh_opCostNote">Fixed cost from <strong>Cow Operation Cost</strong>: <strong id="rh_opCostFixed">$0</strong>/BCU/yr = <strong id="rh_opCostDay">$0.00</strong>/hd-day. Edit it on the home page.</p>
-      </div>
-    </div>
-
     <!-- Bull Investment (Advanced) -->
     <details class="advanced">
       <summary>Bull Investment (Advanced)</summary>
@@ -1110,7 +1099,6 @@
 
     var bullsNeeded = inp.heifersPerBull>0 ? inp.head/inp.heifersPerBull : 0;
     $('rh_bullsNeededNote').innerHTML = 'At '+inp.heifersPerBull+' heifers/bull and '+inp.head+' head, you need about <strong>'+round(bullsNeeded,1)+' bulls</strong> (you\'ve set '+inp.bullsRequired+').';
-    if($('rh_opCostFixed')){ var fx = sharedFixedPerBcu(); $('rh_opCostFixed').textContent = fmtDollar(fx,0); $('rh_opCostDay').textContent = fmtDollar(fx/365,2); }
     $('rh_bullCostInline').textContent = fmtDollar(r.bull.G21,2)+'/hd exposed';
 
     $('rh_exposedValue').textContent = fmtMoney0.format(round(r.E15,0));
