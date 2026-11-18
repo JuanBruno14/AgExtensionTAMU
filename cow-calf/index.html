@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-QRJWMZhGDO+aFsgipZDbYxiDrFv9VqLY9ixC8Jyt4s4='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-TwaDTKhsDb0urhsYhg1MwpFLIw43C+OhSHJpt0jsWzI='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Back40</title>
@@ -493,9 +493,8 @@
 <main id="main">
 
 <nav class="roadmap" aria-label="Phase 1 tools">
-  <button type="button" class="tab-btn active" data-tab="a1" data-title="Cow Bid Price" data-source="A1 — Cow Bid Price and Budget" data-use="advise a purchase decision">A1 · Cow Bid Price</button>
-  <button type="button" class="tab-btn" data-tab="a2" data-title="Calf Price for Target ROA" data-source="A2 — Cow-Calf Cost and Necessary Calf Price for Target ROA" data-use="set a price target">A2 · Calf Price for Target ROA</button>
-  <span class="disabled">C1 · Cow-Calf Budget (400 hd)<span class="soon">Coming soon</span></span>
+  <button type="button" class="tab-btn active" data-tab="a1" data-title="Cow Bid Price" data-source="A1 — Cow Bid Price and Budget" data-use="advise a purchase decision">Cow Bid Price</button>
+  <button type="button" class="tab-btn" data-tab="a2" data-title="Calf Price for Target ROA" data-source="A2 — Cow-Calf Cost and Necessary Calf Price for Target ROA" data-use="set a price target">Calf Price for Target ROA</button>
 </nav>
 
 <div id="panel-a1" class="tool-panel">
@@ -826,22 +825,6 @@
       </div>
     </div>
 
-    <!-- Financing (operating costs live in the shared Cow Operating Cost calculator) -->
-    <div class="card" id="a2FinanceCard">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/><path d="M7 15h4"/></svg>
-        <h2>Finance</h2>
-      </div>
-      <div class="card-body">
-        <div class="field-grid cols-3">
-          <div class="field">
-            <label for="a2_financeCost">Finance Cost (Interest Paid)</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_financeCost" value="0" min="0"></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- Breeding stock investment & depreciation -->
     <div class="card">
       <div class="card-head">
@@ -909,7 +892,7 @@
         <h2>Opportunity cost of capital</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">The tool above only charges you for interest actually paid on debt — same as the original spreadsheet, which notes "no economic or opportunity cost for capital is included." It doesn't charge anything for capital you already own outright (your cow herd &amp; bull, your equipment — not leased land, since that's not your money). Set the rate below to what that same money could earn somewhere else, and compare it directly against what it's actually earning in your herd — shown side by side in the Result panel, without changing any of the figures above.</p>
+        <p class="card-note">The tool above does not charge any interest — same as the original spreadsheet, which notes "no economic or opportunity cost for capital is included." It doesn't charge anything for capital you already own outright (your cow herd &amp; bull, your equipment — not leased land, since that's not your money). Set the rate below to what that same money could earn somewhere else, and compare it directly against what it's actually earning in your herd — shown side by side in the Result panel, without changing any of the figures above.</p>
         <div class="field">
           <label for="a2_oppCostRate">Alternative Rate (What Else Could Pay You)</label>
           <div class="input-wrap has-suffix"><input type="number" id="a2_oppCostRate" value="5" min="0" step="0.1"><span class="suffix">%</span></div>
@@ -1600,7 +1583,8 @@
   // (verified in the project notes), so a visitor who lands here without ever having
   // opened the home page still sees the same Year-1 default as before this change.
   var SHARED_OPCOST_KEY = 'tamuDecisionAidsBcuOpCost';
-  var SHARED_OPCOST_FALLBACK = 673.264;
+  var SHARED_OPCOST_DEFAULT = { total:677.648, variable:275, fixed:402.648 }; // the home calculator's own defaults
+  var SHARED_OPCOST_FALLBACK = SHARED_OPCOST_DEFAULT.total;
 
   function getSharedOpCostTotal(){
     try {
@@ -1631,9 +1615,8 @@
       var raw = null;
       try { raw = window.localStorage.getItem(SHARED_OPCOST_KEY); } catch(e){ /* private mode / blocked storage */ }
       var split = getSharedOpCostSplit();
-      sub.textContent = split
-        ? 'Variable $'+fmtMoney2.format(split.variable)+' · Fixed $'+fmtMoney2.format(split.fixed)+' · from the home page calculator'
-        : (raw ? 'From the home page calculator' : 'Not set on the home page yet — using the original spreadsheet default');
+      var shown = split || SHARED_OPCOST_DEFAULT;
+      sub.textContent = 'Variable $'+fmtMoney2.format(shown.variable)+' · Fixed $'+fmtMoney2.format(shown.fixed)+(split ? ' · from the home page calculator' : ' · default values, set your own on the home page');
     }
   }
 
@@ -2107,7 +2090,7 @@
     a2_hayRolls:0, a2_hayPrice:0, a2_proteinQty:5, a2_proteinPrice:20, a2_saltLbs:30, a2_saltPrice:0.45,
     a2_otherFeed1Qty:0, a2_otherFeed1Price:0,
     a2_hiredLabor:50, a2_ownerLabor:150, a2_vetMed:35, a2_vaccination:40, a2_otherDirect:0,
-    a2_fuelLube:35, a2_utilities:10, a2_adminGA:25, a2_otherIndirect1:0, a2_financeCost:0,
+    a2_fuelLube:35, a2_utilities:10, a2_adminGA:25, a2_otherIndirect1:0,
     a2_cowCost:3296.39, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:125.06, // sourced bred-cow price, see DEFAULTS.bidPrice comment above
     a2_cullBullWt:1650.7, a2_cullBullPrice:162.90,
     // a2_bullCost/a2_bullLife/a2_bullDeathLoss/a2_cowsPerBull removed 2026-09-21: these now
@@ -2143,7 +2126,7 @@
 
   // Operating cost comes only from the shared Cow Operating Cost calculator (home page).
   // If the producer has not saved numbers there yet, the calculator's own default split is used.
-  var A2_SHARED_FALLBACK = { total:677.65, variable:275, fixed:402.65 };
+  var A2_SHARED_FALLBACK = SHARED_OPCOST_DEFAULT;
   function a2SharedMode(){
     var split = getSharedOpCostSplit();
     return split ? split : A2_SHARED_FALLBACK;
@@ -2173,7 +2156,7 @@
       vaccination: 0, otherDirect: 0,
       fuelLube: 0, otherIndirect1: 0, otherIndirect2: 0,
       utilities: 0, adminGA: 0,
-      financeCost: num('a2_financeCost'),
+      financeCost: 0,
       shared: a2SharedMode(),
       cowCost: num('a2_cowCost'), cowLife: num('a2_cowLife'), cowDeathLoss: num('a2_cowDeathLoss'),
       cullCowWt: num('a2_cullCowWt'), cullCowPrice: num('a2_cullCowPrice'),
@@ -2229,8 +2212,7 @@
     buildStackBar('a2_costStackbar','a2_costLegend','a2_costBarTotal', [
       {label:'Variable cost', value:s1.subtotalFeed, color:'var(--s1)'},
       {label:'Fixed cost', value:s1.subtotalOtherDirect, color:'var(--s2)'},
-      {label:'Cow depreciation', value:s1.subtotalBreedingDepr, color:'var(--s3)'},
-      {label:'Finance (interest paid)', value:s1.financeCost, color:'var(--s5)'}
+      {label:'Cow depreciation', value:s1.subtotalBreedingDepr, color:'var(--s3)'}
     ], s1.tucTotal, ' / BCU');
 
     var roaPct = s2.roa*100;
