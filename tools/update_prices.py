@@ -442,15 +442,15 @@ TARGETS = {
 }
 
 USED = {
-    'bred_cow': 'Bred cow purchase price &mdash; <a href="cow-calf/index.html">A1</a> "Bid price", <a href="cow-calf/index.html">A2</a> "Cost/head"',
+    'bred_cow': 'Bred cow purchase price &mdash; <a href="cow-calf/index.html">Cow Bid Price</a> "Bid price", <a href="cow-calf/index.html">Calf Price for Target ROA</a> "Cost/head"',
     'fed_cattle': 'Fed/finished cattle sale price &mdash; <a href="retained-ownership/index.html">Stockers</a> "Feedyard" paths (both sub-paths)',
-    'bred_heifer': 'Bred heifer sale price &mdash; shared store\'s <code>mp_bredHeiferPrice</code>, read by <a href="replacement-heifer/index.html">B1a</a> "Bred heifer sale price"',
-    'steer': 'Steer price (516.4&nbsp;lb reference) &mdash; shared store\'s <code>mp_steerPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a>, <a href="retained-ownership/index.html">Stockers</a>\' calf purchase price and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>STEER_PRICE_SLIDE</code>',
-    'heifer': 'Heifer price (531.3&nbsp;lb reference) &mdash; shared store\'s <code>mp_heiferPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a>, <a href="replacement-heifer/index.html">B1a</a> and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>HEIFER_PRICE_SLIDE</code>',
+    'bred_heifer': 'Bred heifer sale price &mdash; shared store\'s <code>mp_bredHeiferPrice</code>, read by <a href="replacement-heifer/index.html">Replacement Heifer Budget</a> "Bred heifer sale price"',
+    'steer': 'Steer price (516.4&nbsp;lb reference) &mdash; shared store\'s <code>mp_steerPrice</code>, read by <a href="cow-calf/index.html">Cow Bid Price and Calf Price for Target ROA</a>, <a href="retained-ownership/index.html">Stockers</a>\' calf purchase price and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>STEER_PRICE_SLIDE</code>',
+    'heifer': 'Heifer price (531.3&nbsp;lb reference) &mdash; shared store\'s <code>mp_heiferPrice</code>, read by <a href="cow-calf/index.html">Cow Bid Price and Calf Price for Target ROA</a>, <a href="replacement-heifer/index.html">Replacement Heifer Budget</a> and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>HEIFER_PRICE_SLIDE</code>',
     'stocker_700': '700&nbsp;lb path sale price &mdash; shared store\'s <code>mp_stocker700Price</code>, read by <a href="retained-ownership/index.html">Stockers</a>',
     'stocker_800': '800&nbsp;lb path sale price &mdash; shared store\'s <code>mp_stocker800Price</code>, read by <a href="retained-ownership/index.html">Stockers</a>',
-    'cull_cow': 'Cull cow price (1,279.4&nbsp;lb Boner reference) &mdash; shared store\'s <code>mp_cullCowPrice</code>, read by <a href="cow-calf/index.html">A1/A2</a>, <a href="retained-ownership/index.html">D1</a> and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>CULL_COW_PRICE_SLIDE</code>',
-    'cull_bull': 'Cull bull price &mdash; shared store\'s <code>mp_cullBullPrice</code>, read by <a href="cow-calf/index.html">A2</a>, <a href="replacement-heifer/index.html">B1a</a> and <a href="my-ranch/index.html">My Ranch</a> (bull salvage)',
+    'cull_cow': 'Cull cow price (1,279.4&nbsp;lb Boner reference) &mdash; shared store\'s <code>mp_cullCowPrice</code>, read by <a href="cow-calf/index.html">Cow Bid Price and Calf Price for Target ROA</a>, <a href="retained-ownership/index.html">Sell or Keep to Upgrade</a> and <a href="my-ranch/index.html">My Ranch</a>; rescales <code>CULL_COW_PRICE_SLIDE</code>',
+    'cull_bull': 'Cull bull price &mdash; shared store\'s <code>mp_cullBullPrice</code>, read by <a href="cow-calf/index.html">Calf Price for Target ROA</a>, <a href="replacement-heifer/index.html">Replacement Heifer Budget</a> and <a href="my-ranch/index.html">My Ranch</a> (bull salvage)',
 }
 CENTRAL = {'bred_cow': 'Bred cow purchase price', 'fed_cattle': 'Fed/finished cattle sale price'}
 

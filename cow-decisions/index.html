@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-r2J7dPpGyd6dRKe6VXlLaDZ91Muudg3qBg0r+KMoDiE='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-gRSxW7irr4ZnWFmXrklcOwKjsrTZ2jnG7nOuPEgsXTc='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Beef Cattle Decisions · Back40</title>
@@ -454,7 +454,7 @@
             <div class="field"><label for="mp_bullDeathLoss">Death Loss</label><div class="input-wrap has-suffix"><input type="number" id="mp_bullDeathLoss" value="2" min="0" max="100"><span class="suffix">%</span></div></div>
             <div class="field"><label for="mp_perBull">Females per Bull</label><div class="input-wrap"><input type="number" id="mp_perBull" value="25" min="1"></div></div>
           </div>
-          <p class="card-note" style="margin:10px 0 0;">Salvage value uses the cull bull price above. Used for the bull depreciation in Cow-Calf Cost (A2) and for Replacement Heifer Budgets' (B1a) bull investment section.</p>
+          <p class="card-note" style="margin:10px 0 0;">Salvage value uses the cull bull price above. Used for the bull depreciation in Calf Price for Target ROA and for the bull investment section of Replacement Heifer Budget.</p>
         </fieldset>
 
         <fieldset style="margin-top:18px;">
@@ -689,10 +689,10 @@
   })();
 
   var categories = [
-    {n:1,  name:"Cow-Calf Bid Price and Budgets", desc:"What to bid for a bred cow, and the operating budget behind it.", status:"progress", href:"cow-calf/index.html", note:"A1 live · A2 in progress"},
-    {n:2,  name:"Replacement Heifer Budgets", desc:"Natural service, AI, and sexed-semen heifer development budgets and closeouts.", status:"progress", href:"replacement-heifer/index.html", note:"B1a live · AI/sexed-semen planned next"},
+    {n:1,  name:"Cow-Calf Bid Price and Budgets", desc:"What to bid for a bred cow, and the operating budget behind it.", status:"progress", href:"cow-calf/index.html", note:"Cow Bid Price and Calf Price for Target ROA live"},
+    {n:2,  name:"Replacement Heifer Budgets", desc:"Natural service, AI, and sexed-semen heifer development budgets and closeouts.", status:"progress", href:"replacement-heifer/index.html", note:"Replacement Heifer Budget live · AI/sexed-semen planned next"},
     {n:3,  name:"Cow-Calf Budgeting and Herd Bull Investment", desc:"Full cow-calf enterprise budgets and bull investment analysis."},
-    {n:4,  name:"Retained Ownership", desc:"Stocker, feeder, and custom-finish profit projections and closeouts.", status:"progress", href:"retained-ownership/index.html", note:"D1 + Stockers live"},
+    {n:4,  name:"Retained Ownership", desc:"Stocker, feeder, and custom-finish profit projections and closeouts.", status:"progress", href:"retained-ownership/index.html", note:"Sell or Keep to Upgrade and Stockers live"},
     {n:5,  name:"Cattle Inventories", desc:"Monthly and annual cattle inventory and balance sheet reporting."},
     {n:6,  name:"Feed Fed & Purchases", desc:"Feed record-keeping, purchases, and reconciled inventory."},
     {n:7,  name:"Hay and Grazing", desc:"Hay production vs. purchase, grazing budgets, and fencing cost estimates."},
