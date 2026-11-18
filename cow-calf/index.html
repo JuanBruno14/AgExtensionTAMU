@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-Rqb9nSeq4gF7RUr/25OfDjjlCJ2tH1jH1U0aV21krzc='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-K6ebZHtFuLNtTHPrNsEe6K+sckoOtoMxETmwTNJwIB0='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Back40</title>
@@ -799,14 +799,7 @@
         <h2>Land</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">This tool models leased land only. The investment value below (for your asset base and ROA) still counts land's market value, since it reflects capital your operation is using regardless of who holds the title.</p>
-        <fieldset style="margin-bottom:16px;">
-          <legend>Leased land — cash lease</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="a2_leasedAcresPerBCU">Acres/BCU</label><div class="input-wrap"><input type="number" id="a2_leasedAcresPerBCU" value="20" min="0"></div></div>
-            <div class="field"><label for="a2_leasedRatePerAcre">Lease Rate</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_leasedRatePerAcre" value="12" min="0"></div></div>
-          </div>
-        </fieldset>
+        <p class="card-note">Land rent is part of the fixed cost in the Cow Operating Cost calculator. The investment value below (for your asset base and ROA) counts land's market value, since it reflects capital your operation is using regardless of who holds the title.</p>
         <fieldset>
           <legend>Land &amp; improvements — investment value</legend>
           <div class="field-grid cols-3">
@@ -824,87 +817,23 @@
         <h2>Operating cost (BCU)</h2>
       </div>
       <div class="card-body">
-        <p class="card-note" id="a2SharedNote">Variable and fixed cost per BCU come from the <a href="../cow-decisions/index.html#bcu-calculator" style="font-weight:600;text-decoration:underline;color:inherit;">Cow Operating Cost calculator on the home page</a>, so every tool uses the same numbers.</p>
+        <p class="card-note" id="a2SharedNote">All operating costs (feed, labor, health, equipment and other) are entered once in the <a href="../cow-decisions/index.html#bcu-calculator" style="font-weight:600;text-decoration:underline;color:inherit;">Cow Operating Cost calculator on the home page</a>, so every tool uses the same numbers. This tool shows the results.</p>
         <div class="stat-tile wide">
           <span class="label">Currently using</span>
           <span class="value" id="a2SharedValue">&mdash;</span>
           <span class="sub" id="a2SharedSub"></span>
         </div>
-        <label class="bcu-ranch-toggle" style="display:flex;gap:8px;align-items:center;margin-top:12px;font-size:14px;"><input type="checkbox" id="a2_useOwnDetail"> Enter my own detailed costs for this tool instead</label>
       </div>
     </div>
 
-    <!-- Feed & other direct costs -->
-    <div class="card" id="a2FeedCard">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 7h20M2 17h20"/></svg>
-        <h2>Feed &amp; other direct costs</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">All figures are $/BCU per year unless noted.</p>
-        <fieldset style="margin-bottom:16px;">
-          <legend>Feed</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="a2_hayRolls">Hay (Rolls)</label><div class="input-wrap"><input type="number" id="a2_hayRolls" value="0" min="0" step="0.1"></div></div>
-            <div class="field"><label for="a2_hayPrice">Hay Price/roll</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_hayPrice" value="0" min="0"></div></div>
-            <div class="field"></div>
-            <div class="field"><label for="a2_proteinQty">Protein Supplement (cwt)</label><div class="input-wrap"><input type="number" id="a2_proteinQty" value="5" min="0" step="0.1"></div></div>
-            <div class="field"><label for="a2_proteinPrice">Protein Price/cwt</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_proteinPrice" value="20" min="0"></div></div>
-            <div class="field"></div>
-            <div class="field"><label for="a2_saltLbs">Salt &amp; Mineral (lb)</label><div class="input-wrap"><input type="number" id="a2_saltLbs" value="30" min="0"></div></div>
-            <div class="field"><label for="a2_saltPrice">Salt/Mineral Price/lb</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_saltPrice" value="0.45" min="0" step="0.01"></div></div>
-            <div class="field"></div>
-            <div class="field"><label for="a2_otherFeed1Qty">Other Feed (qty)</label><div class="input-wrap"><input type="number" id="a2_otherFeed1Qty" value="0" min="0"></div></div>
-            <div class="field"><label for="a2_otherFeed1Price">Price/Unit</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherFeed1Price" value="0" min="0"></div></div>
-            <div class="field"></div>
-          </div>
-        </fieldset>
-        <fieldset>
-          <legend>Labor, veterinary &amp; other direct</legend>
-          <div class="field-grid cols-3">
-            <div class="field"><label for="a2_hiredLabor">Hired Labor</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_hiredLabor" value="50" min="0"></div></div>
-            <div class="field"><label for="a2_ownerLabor">Owner Labor &amp; Mgmt.</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_ownerLabor" value="150" min="0"></div></div>
-            <div class="field"><label for="a2_vetMed">Vet, Medicine &amp; Breeding</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_vetMed" value="35" min="0"></div></div>
-            <div class="field"><label for="a2_vaccination">Vaccination &amp; Precondition</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_vaccination" value="40" min="0"></div></div>
-            <div class="field"><label for="a2_otherDirect">Other Direct</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherDirect" value="0" min="0"></div></div>
-          </div>
-        </fieldset>
-      </div>
-    </div>
-
-    <!-- Indirect costs -->
-    <div class="card" id="a2IndirectCard">
+    <!-- Financing (operating costs live in the shared Cow Operating Cost calculator) -->
+    <div class="card" id="a2FinanceCard">
       <div class="card-head">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M3 11h18"/><path d="M7 15h4"/></svg>
-        <h2>Indirect costs &amp; finance</h2>
+        <h2>Finance</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Repair/maintenance and equipment depreciation are filled in automatically from the "Capital assets" card below.</p>
         <div class="field-grid cols-3">
-          <div class="field">
-            <label>Repair &amp; Maintenance</label>
-            <div class="input-wrap has-prefix readonly-field"><span class="prefix">$</span><input type="number" id="a2_repairMaintDisplay" value="0" readonly tabindex="-1"></div>
-          </div>
-          <div class="field">
-            <label>Vehicle/Equip. Depreciation</label>
-            <div class="input-wrap has-prefix readonly-field"><span class="prefix">$</span><input type="number" id="a2_vehicleDeprDisplay" value="0" readonly tabindex="-1"></div>
-          </div>
-          <div class="field">
-            <label for="a2_fuelLube">Fuel &amp; Lube</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_fuelLube" value="35" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="a2_utilities">Utilities</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_utilities" value="10" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="a2_adminGA">General &amp; Admin.</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_adminGA" value="25" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="a2_otherIndirect1">Other Indirect</label>
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_otherIndirect1" value="0" min="0"></div>
-          </div>
           <div class="field">
             <label for="a2_financeCost">Finance Cost (Interest Paid)</label>
             <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_financeCost" value="0" min="0"></div>
@@ -959,20 +888,12 @@
         <h2>Capital assets — vehicles, machinery &amp; equipment</h2>
       </div>
       <div class="card-body">
-        <p class="card-note">Just enter what your pickups, trailers, tractor, feeders and other cattle equipment are worth in total — we'll do the rest. Depreciation, repairs, and investment per BCU below are estimated automatically from that one number, using typical replacement-life, salvage-value, and repair-cost assumptions for a mixed equipment fleet. Depreciation and repairs feed "Repair &amp; maintenance" and "Vehicle/equip. depreciation" above; investment feeds the return-on-assets calculation below.</p>
+        <p class="card-note">Enter what your pickups, trailers, tractor, feeders and other cattle equipment are worth in total. It is used only as part of your asset base for the return-on-assets calculation; the running costs of that equipment (repairs, fuel, depreciation) go in the Cow Operating Cost calculator on the home page.</p>
         <div class="field">
           <label for="a2_capitalTotal">Total Capital — Vehicles, Machinery &amp; Equipment</label>
           <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_capitalTotal" value="158000" min="0" step="1000"></div>
         </div>
         <div class="stat-tiles" style="margin-top:14px;">
-          <div class="stat-tile">
-            <span class="label">Depreciation/BCU</span>
-            <span class="value" id="a2_capDeprTotal" style="font-size:18px;">$0</span>
-          </div>
-          <div class="stat-tile">
-            <span class="label">Repairs/BCU</span>
-            <span class="value" id="a2_capRepairsTotal" style="font-size:18px;">$0</span>
-          </div>
           <div class="stat-tile">
             <span class="label">Investment/BCU</span>
             <span class="value" id="a2_capInvestTotal" style="font-size:18px;">$0</span>
@@ -2220,27 +2141,19 @@
     if($('a2Bull_perBull')) $('a2Bull_perBull').textContent = mp.mp_perBull;
   }
 
-  // Shared variable + fixed operating cost (home page calculator). Used unless the producer
-  // opts to enter their own detail, or the home page has not saved a split yet.
+  // Operating cost comes only from the shared Cow Operating Cost calculator (home page).
+  // If the producer has not saved numbers there yet, the calculator's own default split is used.
+  var A2_SHARED_FALLBACK = { total:677.648, variable:275, fixed:402.648, bullDepr:18.648 };
   function a2SharedMode(){
     var split = getSharedOpCostSplit();
-    var own = $('a2_useOwnDetail') && $('a2_useOwnDetail').checked;
-    return (split && isFinite(split.bullDepr) && !own) ? split : null;
+    return (split && isFinite(split.bullDepr)) ? split : A2_SHARED_FALLBACK;
   }
-  function renderA2SharedCard(sharedSplit){
-    var split = getSharedOpCostSplit();
-    var detailIds = ['a2_leasedAcresPerBCU','a2_leasedRatePerAcre','a2_fuelLube','a2_utilities','a2_adminGA','a2_otherIndirect1','a2_repairMaintDisplay','a2_vehicleDeprDisplay'];
-    detailIds.forEach(function(id){ var el=$(id); var f = el && el.closest('.field'); if(f) f.hidden = !!sharedSplit; });
-    var lease = $('a2_leasedAcresPerBCU'); var fs = lease && lease.closest('fieldset'); if(fs) fs.hidden = !!sharedSplit;
-    if($('a2FeedCard')) $('a2FeedCard').hidden = !!sharedSplit;
+  function renderA2SharedCard(){
+    var stored = getSharedOpCostSplit();
+    var split = a2SharedMode();
     var v = $('a2SharedValue'), sub = $('a2SharedSub');
-    if(!split || !isFinite(split.bullDepr)){
-      if(v) v.textContent = 'Not set yet';
-      if(sub) sub.textContent = 'Set your cost on the home page to use it here. Until then this tool uses the detailed costs below.';
-    } else if(v){
-      v.textContent = '$'+fmtMoney2.format(split.total)+' / BCU';
-      sub.textContent = 'Variable $'+fmtMoney2.format(split.variable)+' · Fixed $'+fmtMoney2.format(split.fixed)+(sharedSplit ? ' · from the home page calculator' : ' · not used while you enter your own detail');
-    }
+    if(v) v.textContent = '$'+fmtMoney2.format(split.total)+' / BCU';
+    if(sub) sub.textContent = 'Variable $'+fmtMoney2.format(split.variable)+' · Fixed $'+fmtMoney2.format(split.fixed)+(stored && isFinite(stored.bullDepr) ? ' · from the home page calculator' : ' · default values, set your own on the home page');
   }
 
   function gatherA2Inputs(mp){
@@ -2249,17 +2162,17 @@
       steerWt: num('a2_steerWt'), steerPrice: num('a2_steerPrice'),
       heiferWt: num('a2_heiferWt'), heiferPrice: num('a2_heiferPrice'),
       premium: num('a2_premium'),
-      leasedAcresPerBCU: num('a2_leasedAcresPerBCU'), leasedRatePerAcre: num('a2_leasedRatePerAcre'),
+      leasedAcresPerBCU: 0, leasedRatePerAcre: 0,
       landInvestAcresPerBCU: num('a2_landInvestAcresPerBCU'), landMarketValuePerAcre: num('a2_landMarketValuePerAcre'),
-      hayRolls: num('a2_hayRolls'), hayPrice: num('a2_hayPrice'),
-      proteinQty: num('a2_proteinQty'), proteinPrice: num('a2_proteinPrice'),
-      saltLbs: num('a2_saltLbs'), saltPrice: num('a2_saltPrice'),
-      otherFeed1Qty: num('a2_otherFeed1Qty'), otherFeed1Price: num('a2_otherFeed1Price'),
+      hayRolls: 0, hayPrice: 0,
+      proteinQty: 0, proteinPrice: 0,
+      saltLbs: 0, saltPrice: 0,
+      otherFeed1Qty: 0, otherFeed1Price: 0,
       otherFeed2Qty: 0, otherFeed2Price: 0,
-      hiredLabor: num('a2_hiredLabor'), ownerLabor: num('a2_ownerLabor'), vetMed: num('a2_vetMed'),
-      vaccination: num('a2_vaccination'), otherDirect: num('a2_otherDirect'),
-      fuelLube: num('a2_fuelLube'), otherIndirect1: num('a2_otherIndirect1'), otherIndirect2: 0,
-      utilities: num('a2_utilities'), adminGA: num('a2_adminGA'),
+      hiredLabor: 0, ownerLabor: 0, vetMed: 0,
+      vaccination: 0, otherDirect: 0,
+      fuelLube: 0, otherIndirect1: 0, otherIndirect2: 0,
+      utilities: 0, adminGA: 0,
       financeCost: num('a2_financeCost'),
       shared: a2SharedMode(),
       cowCost: num('a2_cowCost'), cowLife: num('a2_cowLife'), cowDeathLoss: num('a2_cowDeathLoss'),
@@ -2304,25 +2217,20 @@
     var s2 = calcSheet2(inp, s1, cap, bs);
     var s3 = calcSheet3(inp, s1, s2);
 
-    $('a2_repairMaintDisplay').value = round(cap.repairsPerBCU, 2);
-    $('a2_vehicleDeprDisplay').value = round(cap.deprPerBCU, 2);
 
-    $('a2_capDeprTotal').textContent = fmtDollar(cap.deprPerBCU, 2);
-    $('a2_capRepairsTotal').textContent = fmtDollar(cap.repairsPerBCU, 2);
     $('a2_capInvestTotal').textContent = fmtDollar(cap.investPerBCU, 2);
 
     $('a2_breedingDeprTotal').textContent = fmtDollar(bs.totalBreedingDeprPerBCU, 2);
     $('a2_breedingBreak').textContent = 'Cow '+fmtDollar(bs.cowDeprPerBCU,2)+' + bull '+fmtDollar(bs.bullDeprPerBCU,2)+' /BCU · cull revenue '+fmtDollar(bs.cullRevenuePerBCU,2)+'/BCU';
 
-    renderA2SharedCard(inp.shared);
+    renderA2SharedCard();
     $('a2_tucValue').textContent = fmtDollar(s1.tucTotal, 2);
 
     buildStackBar('a2_costStackbar','a2_costLegend','a2_costBarTotal', [
-      {label:inp.shared ? 'Variable cost (shared)' : 'Feed & land', value:s1.subtotalFeed, color:'var(--s1)'},
-      {label:inp.shared ? 'Fixed cost (shared)' : 'Labor, vet & other direct', value:s1.subtotalOtherDirect, color:'var(--s2)'},
+      {label:'Variable cost', value:s1.subtotalFeed, color:'var(--s1)'},
+      {label:'Fixed cost', value:s1.subtotalOtherDirect, color:'var(--s2)'},
       {label:'Breeding stock depreciation', value:s1.subtotalBreedingDepr, color:'var(--s3)'},
-      {label:'Equipment (depreciation + repairs)', value:s1.repairMaint+s1.vehicleDepr, color:'var(--s4)'},
-      {label:'Other indirect & finance', value:s1.totalIndirect-s1.repairMaint-s1.vehicleDepr+s1.financeCost, color:'var(--s5)'}
+      {label:'Finance (interest paid)', value:s1.financeCost, color:'var(--s5)'}
     ], s1.tucTotal, ' / BCU');
 
     var roaPct = s2.roa*100;
@@ -2399,7 +2307,6 @@
       var el = $(id);
       if(el) el.addEventListener('input', recalcA2);
     });
-    if($('a2_useOwnDetail')) $('a2_useOwnDetail').addEventListener('change', recalcA2);
 
     $('a2_steerWtRange').addEventListener('input', function(){
       $('a2_steerWt').value = this.value; recalcA2();
