@@ -8,14 +8,14 @@ with sync_playwright() as pw:
     pg.goto(f'http://127.0.0.1:{PORT}/cow-decisions/index.html'); pg.wait_for_timeout(400)
     # The Cow Operating Cost calculator is now just two numbers: variable and fixed cost per BCU.
     val = lambda i: float(pg.inner_text('#'+i).replace('$','').replace(',',''))
-    check('BCU default is variable 275 + fixed 384', abs(val('bcuHeaderValue')-659) < 0.01 and val('bcuHeaderVariable')==275 and val('bcuHeaderFixed')==384, [val('bcuHeaderValue')])
+    check('BCU default is variable 275 + fixed 402.65', abs(val('bcuHeaderValue')-677.65) < 0.01 and val('bcuHeaderVariable')==275 and val('bcuHeaderFixed')==403, [val('bcuHeaderValue')])
     pg.evaluate("document.getElementById('bcuToggleBtn').click()"); pg.wait_for_timeout(150)
     pg.fill('#bcu_variable','300'); pg.fill('#bcu_fixed','400'); pg.wait_for_timeout(200)
     check('BCU follows the two numbers', abs(val('bcuHeaderValue')-700) < 0.01, val('bcuHeaderValue'))
     pg.reload(); pg.wait_for_timeout(300)
     check('numbers persist', abs(val('bcuHeaderValue')-700) < 0.01 and val('bcuHeaderVariable')==300)
     pg.evaluate("document.getElementById('bcuToggleBtn').click()"); pg.wait_for_timeout(100); pg.click('#bcu_resetBtn'); pg.wait_for_timeout(200)
-    check('reset returns to default', abs(val('bcuHeaderValue')-659) < 0.01)
+    check('reset returns to default', abs(val('bcuHeaderValue')-677.65) < 0.01)
     pg.screenshot(path=os.path.join(OUT,'portal.png'))
     # one hay price for the site: Cow decisions "Market prices" -> My Ranch default
     pg.goto(f'http://127.0.0.1:{PORT}/cow-decisions/index.html'); pg.wait_for_timeout(300)

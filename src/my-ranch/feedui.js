@@ -931,7 +931,7 @@
   function otherCosts(){
     var h = state.herd, oc = h.oc || {}, items = 0;
     OC_KEYS.forEach(function(k){ items += +oc[k] || 0; });
-    var bulls = bullCount(), bullTotal = bulls*bullDeprPerBull(), cows = Math.max(1, h.cows || 0);
+    var bulls = bullCount(), bullTotal = h.ocHome ? 0 : bulls*bullDeprPerBull(), cows = Math.max(1, h.cows || 0);
     return {perCowItems:items, bullTotal:bullTotal, perCow:items + bullTotal/cows, total:items*(h.cows || 0) + bullTotal};
   }
   /* all costs, net return, and the calf price that pays them: (all costs - cull and open-heifer sales) / cwt of calves weaned
@@ -944,6 +944,7 @@
   function renderOcNote(){
     var el = $('oc_note'); if(!el) return;
     var oc = otherCosts();
+    if(state.herd.ocHome){ el.innerHTML = 'Fixed cost from the home page (it already includes the herd bull). All other costs: <strong>' + money(oc.perCow) + ' per cow</strong> (' + money(oc.total) + ' a year). Net return in the bar at the top and in the year plan.'; return; }
     el.innerHTML = 'Bull depreciation: ' + money(bullDeprPerBull()) + ' per bull a year × ' + bullCount() + ' bulls = ' + money(oc.bullTotal) + '. All other costs: <strong>' + money(oc.perCow) + ' per cow</strong> (' + money(oc.total) + ' a year). Net return in the bar at the top and in the year plan.';
   }
 
@@ -1433,14 +1434,15 @@
       if(!b || !isFinite(b.fixed)){ $('oc_note').innerHTML = 'No saved numbers in the home page’s “Cow Operating Cost (BCU)” calculator on this browser yet — open it on the home page, or type your own here.'; return; }
       var before = Object.assign({}, state.herd.oc);
       // The home page now holds one fixed and one variable number. Feed comes from this tool's own feed plan,
-      // so only the fixed cost is copied (under "other"; herd bull depreciation is added separately below).
+      // so only the fixed cost is copied (under "other"). It already includes the herd bull, so the bull is not added again.
       state.herd.oc = {land:0, labor:0, vet:0, repairs:0, fuel:0, utilities:0, admin:0, vehicle:0, other:+b.fixed || 0};
+      state.herd.ocHome = true;
       var same = OC_KEYS.every(function(k){ return +before[k] === +state.herd.oc[k]; });
       bindFeedValues(); rerender(); ocFlash(same ? 'The home page’s cow-cost numbers are the same as these — nothing to change. Edit them in “Cow Operating Cost (BCU)” on the home page, or type your own here.' : 'Copied from the home page’s “Cow Operating Cost (BCU)”.');
     });
     $('oc_reset').addEventListener('click', function(){
       var before = Object.assign({}, state.herd.oc), same = OC_KEYS.every(function(k){ return +before[k] === +DEFAULT_HERD.oc[k]; });
-      state.herd.oc = Object.assign({}, DEFAULT_HERD.oc); bindFeedValues(); rerender();
+      state.herd.oc = Object.assign({}, DEFAULT_HERD.oc); state.herd.ocHome = false; bindFeedValues(); rerender();
       ocFlash(same ? 'These already are the BCU sheet’s values.' : 'Back to the BCU sheet’s values.');
     });
     $('spaBtn').addEventListener('click', function(){ $('spaInput').click(); });
