@@ -181,7 +181,8 @@ try:
     up.fetch(data, payloads, TODAY)
     files = up.apply(data, repo=tmp)
     check('apply edits the four tools and data-sources', sorted(files) == sorted(
-        ['cow-decisions/index.html', 'cow-calf/index.html', 'retained-ownership/index.html', 'data-sources.html', 'jim/kb.json']))
+        ['cow-decisions/index.html', 'cow-calf/index.html', 'retained-ownership/index.html', 'replacement-heifer/index.html', 'data-sources.html', 'jim/kb.json']))
+    check('"Prices:" chip follows the data date', all(('>Prices: %s<' % ('%s %d, %d' % (dt.date.fromisoformat(data['updated']).strftime('%b'), dt.date.fromisoformat(data['updated']).day, dt.date.fromisoformat(data['updated']).year))) in open(os.path.join(tmp, f)).read() for f in up.CHIP_PAGES))
     cc = open(os.path.join(tmp, 'cow-calf/index.html')).read()
     check('A1 input and default updated', 'id="bidPrice" value="2975"' in cc and 'bidPrice:2975.00' in cc and '2828.62,' not in cc)
     ro = open(os.path.join(tmp, 'retained-ownership/index.html')).read()
@@ -190,7 +191,9 @@ try:
     check('data-sources row regenerated', '$2,975.00/hd' in ds and 'Oct 16, 2026' in ds)
     check('apply is idempotent', up.apply(data, repo=tmp) == [])
     rh = open(os.path.join(tmp, 'replacement-heifer/index.html')).read()
-    check('untouched page stays identical', rh == open(os.path.join(REPO, 'replacement-heifer/index.html')).read())
+    import re
+    nochip = lambda h: re.sub(r'(class="phase-chip"[^>]*>Prices: )[^<]*', r'\1', h)   # only the date chip may differ
+    check('untouched page stays identical', nochip(rh) == nochip(open(os.path.join(REPO, 'replacement-heifer/index.html')).read()))
     data = copy.deepcopy(BASE)
     data['prices']['steer']['value'] = 401.5
     data['prices']['cull_cow']['value'] = 131.0

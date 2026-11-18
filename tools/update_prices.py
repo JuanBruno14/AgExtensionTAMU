@@ -485,6 +485,8 @@ def kb_chunk(data):
             'When someone asks what cattle are worth now, or which prices the tools use, give the prices above with their date.']
     return {'t': 'Current cattle market prices used on this website today (USDA weekly)', 'x': '\n'.join(out), 'i': KB_ID}
 
+CHIP_PAGES = ['cow-calf/index.html', 'replacement-heifer/index.html', 'retained-ownership/index.html']
+
 def apply(data, repo=REPO):
     """Returns list of files changed. Raises if an expected spot is missing."""
     changed = []
@@ -526,6 +528,13 @@ def apply(data, repo=REPO):
             if n != 1:
                 raise SystemExit('apply: data-sources.html: centralized row for %s missing' % key)
     edits['data-sources.html'] = ds
+    d = dt.date.fromisoformat(data['updated'])   # the "Prices: <date>" chip in the page header follows the data
+    chip = '%s %d, %d' % (d.strftime('%b'), d.day, d.year)
+    for f in CHIP_PAGES:
+        html, n = re.subn(r'(class="phase-chip"[^>]*>Prices: )[^<]*(<)', lambda m: m.group(1) + chip + m.group(2), load(f))
+        if n != 1:
+            raise SystemExit('apply: %s: expected one "Prices:" chip, found %d' % (f, n))
+        edits[f] = html
     kb = json.loads(load(KB))
     chunk = kb_chunk(data)
     idx = [n for n, c in enumerate(kb['chunks']) if c.get('i') == KB_ID]
