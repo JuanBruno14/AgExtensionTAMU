@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-dZbM0SboQTNjm252yFI3p0txI4PyCJXM308kUJIgcSI='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-+JqoR7iD7ambhHz9y/668jZG5tpjm3cyc/GKxw7xJLU='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Beef Cattle Decisions · Back40</title>
@@ -390,7 +390,7 @@
         <div class="field-grid cols-3">
           <div class="field"><label for="bcu_variable">Variable cost ($/BCU/yr)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_variable" value="275" min="0"></div></div>
           <div class="field"><label for="bcu_fixed">Fixed cost ($/BCU/yr)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_fixed" value="402.65" min="0"></div></div>
-          <div class="field"><label for="bcu_shortDay">Indirect cost, short-term lots ($/hd/day)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_shortDay" value="0.60" min="0" step="0.05"></div></div>
+          <div class="field"><label for="bcu_shortDay">Indirect cost, short-term lots ($/hd/day)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_shortDay" value="0.35" min="0" step="0.05"></div></div>
         </div>
         <div class="stat-tile wide" style="margin-top:14px;">
           <span class="label">Total operating cost per BCU</span>
@@ -580,7 +580,7 @@
     function num(id){ var el = $(id); var v = el ? parseFloat(el.value) : NaN; return isFinite(v) && v >= 0 ? v : 0; }
     function round(v,d){ var m=Math.pow(10,d||0); return Math.round(v*m)/m; }
 
-    var DEFAULTS = { bcu_variable:275, bcu_fixed:402.65, bcu_shortDay:0.6 };
+    var DEFAULTS = { bcu_variable:275, bcu_fixed:402.65, bcu_shortDay:0.35 };
     var customized = false; // true once the producer has their own saved numbers
 
     function calcAndPersist(){

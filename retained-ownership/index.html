@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-TIT+1KIk4chO1kBx85A1bSyXXxJlIokCy2i35WaPO3g='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-w/H3nyFDiLdDKd89c7uc6XPcadgISjXkWu/qGr29HCU='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sell or Keep to Upgrade · Back40</title>
@@ -812,23 +812,23 @@
         </div>
         <div class="field">
           <label for="sk_earlyStart">Early Grazing Phase Begins</label>
-          <div class="input-wrap"><input type="date" id="sk_earlyStart" value="2019-10-01"></div>
+          <div class="input-wrap"><input type="date" id="sk_earlyStart" value="2026-10-16"></div>
         </div>
         <div class="field">
           <label for="sk_pullOff700">Pull Off — 700&nbsp;lb Path</label>
-          <div class="input-wrap"><input type="date" id="sk_pullOff700" value="2020-03-15"></div>
+          <div class="input-wrap"><input type="date" id="sk_pullOff700" value="2027-03-01"></div>
         </div>
         <div class="field">
           <label for="sk_pullOff800">Pull Off — 800&nbsp;lb Path</label>
-          <div class="input-wrap"><input type="date" id="sk_pullOff800" value="2020-05-01"></div>
+          <div class="input-wrap"><input type="date" id="sk_pullOff800" value="2027-05-01"></div>
         </div>
         <div class="field">
           <label for="sk_earlyADG">Early-Phase ADG</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_earlyADG" value="1.3" min="0" step="0.05"><span class="suffix">lb/day</span></div>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_earlyADG" value="1.581" min="0" step="0.05"><span class="suffix">lb/day</span></div>
         </div>
         <div class="field">
           <label for="sk_lateADG">Late-Phase ADG</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_lateADG" value="2.3" min="0" step="0.05"><span class="suffix">lb/day</span></div>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_lateADG" value="1.721" min="0" step="0.05"><span class="suffix">lb/day</span></div>
         </div>
         <div class="field">
           <label for="sk_interestRate">Interest Rate</label>
@@ -844,11 +844,11 @@
         </div>
         <div class="field">
           <label for="sk_deathLoss700">Death Loss — 700&nbsp;lb Path</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_deathLoss700" value="1" min="0" step="0.1"><span class="suffix">%</span></div>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_deathLoss700" value="1.5" min="0" step="0.1"><span class="suffix">%</span></div>
         </div>
         <div class="field">
           <label for="sk_deathLoss800">Death Loss — 800&nbsp;lb Path</label>
-          <div class="input-wrap has-suffix"><input type="number" id="sk_deathLoss800" value="1" min="0" step="0.1"><span class="suffix">%</span></div>
+          <div class="input-wrap has-suffix"><input type="number" id="sk_deathLoss800" value="3" min="0" step="0.1"><span class="suffix">%</span></div>
         </div>
       </div>
       <p class="derived-note" id="sk_calendarNote">—</p>
@@ -887,6 +887,7 @@
           <div class="field"><label for="sk700_fuelRate">Fuel</label><div class="input-wrap has-suffix"><input type="number" id="sk700_fuelRate" value="8.36" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
           <div class="field"><label for="sk700_lubePct">Lube (% of Fuel)</label><div class="input-wrap has-suffix"><input type="number" id="sk700_lubePct" value="10" min="0" step="1"><span class="suffix">%</span></div></div>
           <div class="field"><label for="sk700_marketingRate">Marketing</label><div class="input-wrap has-suffix"><input type="number" id="sk700_marketingRate" value="12" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="sk700_deliveryRate">Calf Delivery (in)</label><div class="input-wrap has-suffix"><input type="number" id="sk700_deliveryRate" value="0" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
         </div>
       </div>
     </div>
@@ -947,6 +948,7 @@
           <div class="field"><label for="sk800_fuelRate">Fuel</label><div class="input-wrap has-suffix"><input type="number" id="sk800_fuelRate" value="7.50" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
           <div class="field"><label for="sk800_lubePct">Lube (% of Fuel)</label><div class="input-wrap has-suffix"><input type="number" id="sk800_lubePct" value="10" min="0" step="1"><span class="suffix">%</span></div></div>
           <div class="field"><label for="sk800_marketingRate">Marketing</label><div class="input-wrap has-suffix"><input type="number" id="sk800_marketingRate" value="23" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
+          <div class="field"><label for="sk800_deliveryRate">Calf Delivery (in)</label><div class="input-wrap has-suffix"><input type="number" id="sk800_deliveryRate" value="5" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
         </div>
       </div>
     </div>
@@ -1200,7 +1202,7 @@
       var d = JSON.parse(window.localStorage.getItem(OPCOST_KEY) || 'null');
       if(d && isFinite(d.shortDay) && d.shortDay >= 0) return +d.shortDay;
     } catch(e){ /* blocked storage -- fall back */ }
-    return 0.6;
+    return 0.35;
   }
   function getMarketPrices(){
     try {
@@ -1603,12 +1605,12 @@
      Two fidelity quirks found in the original workbook are reproduced
      here exactly, not "corrected," per this project's fidelity rule —
      both are flagged to the user:
-       1. The "Stockers 800 Lb" budget sheet's Marketing Cost row uses
-          Assumptions!C17 (the 700 lb path's death-loss %) instead of
-          its own F17 (800 lb path's death-loss %) — a copy/paste
-          cross-reference in the source sheet. Reproduced via
-          sk_deathLoss700 inside calc800() below.
-       2. The "Stockers ~800 Lb — Returns Sensitivity" grid's two axis
+       1. (Retired 2026-11-19.) The old "Stockers 800 Lb" Marketing Cost row
+          used the 700 lb death-loss %. The 2026 D03 budget (Pancho's
+          Stocker Calf Budget sheets) uses each path's own death loss, and
+          the page now follows that budget, so calc800() uses sk_deathLoss800.
+       2. (Retired 2026-11-19: the 800 lb grid centers now follow the live
+          sale and purchase prices, like the 700 lb grid.) The old "Stockers ~800 Lb — Returns Sensitivity" grid's two axis
           centers (Sale Price = $115/cwt, Purchase Price = $155/cwt on
           the 'Stockers Margins' sheet, cells L13 and I16) are typed-in
           literals, not formulas linked to the live Assumptions sheet —
@@ -1621,15 +1623,15 @@
 
   var STOCKERS_DEFAULTS = {
     sk_heads:100, sk_calfPrice:401.22, sk_calfWeight:475, sk_price700:332.75, sk_price800:338.56, sk_grazingCost:0.65,
-    sk_earlyStart:'2019-10-01', sk_pullOff700:'2020-03-15', sk_pullOff800:'2020-05-01',
-    sk_earlyADG:1.3, sk_lateADG:2.3, sk_interestRate:7,
-    sk_shrink700:0, sk_shrink800:0, sk_deathLoss700:1, sk_deathLoss800:1,
+    sk_earlyStart:'2026-10-16', sk_pullOff700:'2027-03-01', sk_pullOff800:'2027-05-01',
+    sk_earlyADG:1.581, sk_lateADG:1.721, sk_interestRate:7,
+    sk_shrink700:0, sk_shrink800:0, sk_deathLoss700:1.5, sk_deathLoss800:3,
 
     sk700_vetRate:24, sk700_hayLb:125, sk700_hayRate:0.10, sk700_saltLb:15, sk700_saltRate:0.45,
-    sk700_fuelRate:8.36, sk700_lubePct:10, sk700_marketingRate:12,
+    sk700_fuelRate:8.36, sk700_lubePct:10, sk700_marketingRate:12, sk700_deliveryRate:0,
 
     sk800_vetRate:16.2, sk800_hayLb:125, sk800_hayRate:0.10, sk800_saltLb:14, sk800_saltRate:0.45,
-    sk800_fuelRate:7.50, sk800_lubePct:10, sk800_marketingRate:23,
+    sk800_fuelRate:7.50, sk800_lubePct:10, sk800_marketingRate:23, sk800_deliveryRate:5,
 
     /* skfy7_salePrice / skfy8_salePrice (2026-09-17, twenty-third round): was
        $100/cwt, an original-workbook fed-cattle price never reconciled when
@@ -1690,11 +1692,11 @@
 
       sk700_vetRate: num('sk700_vetRate'), sk700_hayLb: num('sk700_hayLb'), sk700_hayRate: num('sk700_hayRate'),
       sk700_saltLb: num('sk700_saltLb'), sk700_saltRate: num('sk700_saltRate'),
-      sk700_fuelRate: num('sk700_fuelRate'), sk700_lubePct: num('sk700_lubePct'), sk700_marketingRate: num('sk700_marketingRate'),
+      sk700_fuelRate: num('sk700_fuelRate'), sk700_lubePct: num('sk700_lubePct'), sk700_marketingRate: num('sk700_marketingRate'), sk700_deliveryRate: num('sk700_deliveryRate'),
 
       sk800_vetRate: num('sk800_vetRate'), sk800_hayLb: num('sk800_hayLb'), sk800_hayRate: num('sk800_hayRate'),
       sk800_saltLb: num('sk800_saltLb'), sk800_saltRate: num('sk800_saltRate'),
-      sk800_fuelRate: num('sk800_fuelRate'), sk800_lubePct: num('sk800_lubePct'), sk800_marketingRate: num('sk800_marketingRate'),
+      sk800_fuelRate: num('sk800_fuelRate'), sk800_lubePct: num('sk800_lubePct'), sk800_marketingRate: num('sk800_marketingRate'), sk800_deliveryRate: num('sk800_deliveryRate'),
 
       skfy8_cog: num('skfy8_cog'), skfy8_days: num('skfy8_days'), skfy8_adg: num('skfy8_adg'),
       skfy8_salePrice: num('skfy8_salePrice'), skfy8_deathLoss: num('skfy8_deathLoss'),
@@ -1714,37 +1716,40 @@
     var E4 = (inp.sk_calfWeight + daysEarly*inp.sk_earlyADG) * (100-inp.sk_shrink700)/100;
     var G4 = inp.sk_price700;
     var H4 = D4*G4*E4/100;
-    var I4 = D4>0 ? H4/D4 : 0;
-    var I6 = I4;
 
+    // Per-head figures are per head PURCHASED, as in the 2026 D03 budget (Stocker Calf Budget - Pull off Wheat March 1).
     var D9=inp.sk_heads, E9=inp.sk_calfWeight, G9=inp.sk_calfPrice;
-    var H9=G9*E9*D9/100, I9 = D4>0 ? H9/D4 : 0;
-    var D11=E4-E9, G11=inp.sk_grazingCost;
-    var H11=G11*D11*D4, I11 = D4>0 ? H11/D4 : 0;
+    var I4 = D9>0 ? H4/D9 : 0;
+    var I6 = I4;
+    var H9=G9*E9*D9/100, I9 = D9>0 ? H9/D9 : 0;
+    var gainPerSold = D4>0 ? (D4*E4 - D9*E9)/D4 : 0; // the budget charges the gain contract on gain per head sold
+    var G11=inp.sk_grazingCost;
+    var I11 = G11*gainPerSold, H11 = I11*D9;
 
-    var H12=inp.sk700_vetRate*D9, I12=D4>0?H12/D4:0;
-    var H13=inp.sk700_hayRate*D9*inp.sk700_hayLb, I13=D4>0?H13/D4:0;
-    var H14=inp.sk700_saltRate*D9*inp.sk700_saltLb, I14=D4>0?H14/D4:0;
+    var H12=inp.sk700_vetRate*D9, I12=D9>0?H12/D9:0;
+    var H13=inp.sk700_hayRate*D9*inp.sk700_hayLb, I13=D9>0?H13/D9:0;
+    var H14=inp.sk700_saltRate*D9*inp.sk700_saltLb, I14=D9>0?H14/D9:0;
     var I15=0; // labor is part of the indirect cost below
-    var H16=inp.sk700_fuelRate*D9, I16=D4>0?H16/D4:0;
-    var H18=inp.sk700_fuelRate*D9*(inp.sk700_lubePct/100), I18=D4>0?H18/D4:0;
-    var D19=(100-inp.sk_deathLoss700)/100, I19=inp.sk700_marketingRate*D19, H19=I19*D4; // Marketing Cost
-    var D20=inp.sk_interestRate/100, H20=D20*H9/2, I20=D4>0?H20/D4:0; // 6-month interest
+    var H16=inp.sk700_fuelRate*D9, I16=D9>0?H16/D9:0;
+    var H18=inp.sk700_fuelRate*D9*(inp.sk700_lubePct/100), I18=D9>0?H18/D9:0;
+    var I17=inp.sk700_deliveryRate; // calf delivery in
+    var D19=(100-inp.sk_deathLoss700)/100, I19=inp.sk700_marketingRate*D19, H19=I19*D9; // Marketing Cost
+    var D20=inp.sk_interestRate/100, I20=(I9+I17)*D20*daysOnFeed/365, H20=I20*D9; // interest on purchase + delivery, purchase date to sale
 
-    var otherVar = I12+I13+I14+I15+I16+I18+I19;
+    var otherVar = I12+I13+I14+I15+I16+I17+I18+I19;
     var I21 = I9+I11+otherVar+I20;
     var I23 = I6-I21;
 
-    var H28=inp.fixedPerDay*daysOnFeed*D9, I28=D4>0?H28/D4:0; // indirect (labor + management): $/hd-day from Cow Operation Cost x days on feed
+    var H28=inp.fixedPerDay*daysOnFeed*D9, I28=D9>0?H28/D9:0; // indirect (labor + management): $/hd-day from Cow Operation Cost x days on feed
     var I29 = I28;
     var I31 = I21+I29;
     var I33 = I6-I31;
-    var I34 = E4>0 ? I31/E4*100 : 0;
+    var I34 = (E4>0 && D9>0) ? I31/(E4*D4/D9)*100 : 0; // breakeven $/cwt sold
     var I37 = E4-E9;
     var I36 = I37!==0 ? I33/I37 : 0;
     var I38 = I37!==0 ? (I31-I9)/I37*100 : 0;
 
-    return {D4:D4,E4:E4,I4:I4,I6:I6,I9:I9,I11:I11,otherVar:otherVar,I21:I21,I23:I23,I28:I28,I29:I29,I31:I31,I33:I33,I34:I34,I36:I36,I37:I37,I38:I38};
+    return {days:daysOnFeed,delivery:I17,D4:D4,E4:E4,I4:I4,I6:I6,I9:I9,I11:I11,otherVar:otherVar,I21:I21,I23:I23,I28:I28,I29:I29,I31:I31,I33:I33,I34:I34,I36:I36,I37:I37,I38:I38};
   }
 
   /* ---------------- 800 lb path ("Stockers 800 Lb") ---------------- */
@@ -1756,37 +1761,40 @@
     var E4 = (inp.sk_calfWeight + daysEarly*inp.sk_earlyADG + inp.sk_lateADG*daysLate) * (100-inp.sk_shrink800)/100;
     var G4 = inp.sk_price800;
     var H4 = D4*G4*E4/100;
-    var I4 = D4>0 ? H4/D4 : 0;
-    var I6 = I4;
 
+    // Per-head figures are per head PURCHASED, as in the 2026 D03 budget (Stocker Calf Budget - Grazeout).
     var D9=inp.sk_heads, E9=inp.sk_calfWeight, G9=inp.sk_calfPrice;
-    var H9=G9*E9*D9/100, I9 = D4>0 ? H9/D4 : 0;
-    var D11=E4-E9, G11=inp.sk_grazingCost;
-    var H11=G11*D11*D4, I11 = D4>0 ? H11/D4 : 0;
+    var I4 = D9>0 ? H4/D9 : 0;
+    var I6 = I4;
+    var H9=G9*E9*D9/100, I9 = D9>0 ? H9/D9 : 0;
+    var gainPerSold = D4>0 ? (D4*E4 - D9*E9)/D4 : 0; // the budget charges the gain contract on gain per head sold
+    var G11=inp.sk_grazingCost;
+    var I11 = G11*gainPerSold, H11 = I11*D9;
 
-    var H12=inp.sk800_vetRate*D9, I12=D4>0?H12/D4:0;
-    var H13=inp.sk800_hayRate*D9*inp.sk800_hayLb, I13=D4>0?H13/D4:0;
-    var H14=inp.sk800_saltRate*D9*inp.sk800_saltLb, I14=D4>0?H14/D4:0;
+    var H12=inp.sk800_vetRate*D9, I12=D9>0?H12/D9:0;
+    var H13=inp.sk800_hayRate*D9*inp.sk800_hayLb, I13=D9>0?H13/D9:0;
+    var H14=inp.sk800_saltRate*D9*inp.sk800_saltLb, I14=D9>0?H14/D9:0;
     var I15=0; // labor is part of the indirect cost below
-    var H16=inp.sk800_fuelRate*D9, I16=D4>0?H16/D4:0;
-    var H18=inp.sk800_fuelRate*D9*(inp.sk800_lubePct/100), I18=D4>0?H18/D4:0;
-    var D19=(100-inp.sk_deathLoss700)/100, I19=inp.sk800_marketingRate*D19, H19=I19*D4; // Marketing Cost — fidelity quirk #1: uses the 700lb death loss, see block comment above
-    var D20=inp.sk_interestRate/100, H20=D20*H9*8/12, I20=D4>0?H20/D4:0; // 8-month interest
+    var H16=inp.sk800_fuelRate*D9, I16=D9>0?H16/D9:0;
+    var H18=inp.sk800_fuelRate*D9*(inp.sk800_lubePct/100), I18=D9>0?H18/D9:0;
+    var I17=inp.sk800_deliveryRate; // calf delivery in
+    var D19=(100-inp.sk_deathLoss800)/100, I19=inp.sk800_marketingRate*D19, H19=I19*D9; // Marketing Cost (800 lb path's own death loss, as in the 2026 budget)
+    var D20=inp.sk_interestRate/100, I20=(I9+I17)*D20*daysOnFeed/365, H20=I20*D9; // interest on purchase + delivery, purchase date to sale
 
-    var otherVar = I12+I13+I14+I15+I16+I18+I19;
+    var otherVar = I12+I13+I14+I15+I16+I17+I18+I19;
     var I21 = I9+I11+otherVar+I20;
     var I23 = I6-I21;
 
-    var H28=inp.fixedPerDay*daysOnFeed*D9, I28=D4>0?H28/D4:0; // indirect (labor + management): $/hd-day from Cow Operation Cost x days on feed
+    var H28=inp.fixedPerDay*daysOnFeed*D9, I28=D9>0?H28/D9:0; // indirect (labor + management): $/hd-day from Cow Operation Cost x days on feed
     var I29 = I28;
     var I31 = I21+I29;
     var I33 = I6-I31;
-    var I34 = E4>0 ? I31/E4*100 : 0;
+    var I34 = (E4>0 && D9>0) ? I31/(E4*D4/D9)*100 : 0; // breakeven $/cwt sold
     var I37 = E4-E9;
     var I36 = I37!==0 ? I33/I37 : 0;
     var I38 = I37!==0 ? (I31-I9)/I37*100 : 0;
 
-    return {D4:D4,E4:E4,I4:I4,I6:I6,I9:I9,I11:I11,otherVar:otherVar,I21:I21,I23:I23,I28:I28,I29:I29,I31:I31,I33:I33,I34:I34,I36:I36,I37:I37,I38:I38};
+    return {days:daysOnFeed,delivery:I17,D4:D4,E4:E4,I4:I4,I6:I6,I9:I9,I11:I11,otherVar:otherVar,I21:I21,I23:I23,I28:I28,I29:I29,I31:I31,I33:I33,I34:I34,I36:I36,I37:I37,I38:I38};
   }
 
   /* ---------------- Returns-sensitivity grids (700 lb / 800 lb) ---------------- */
@@ -1797,7 +1805,7 @@
     var I7=inp.sk_calfPrice, rows=[I7*0.9, I7*0.95, I7, I7*1.05, I7*1.1];
     var grid = rows.map(function(rowPrice){
       return cols.map(function(salePrice){
-        return (salePrice/100)*C4*((100-deathLoss)/100)*((100-shrink)/100) - (C9+C10) - (rowPrice/100)*calfWeight - interestRate*(6/12)*(rowPrice*calfWeight/100);
+        return (salePrice/100)*C4*((100-deathLoss)/100)*((100-shrink)/100) - (C9+C10) - (rowPrice/100)*calfWeight - interestRate*(r.days/365)*(rowPrice*calfWeight/100+r.delivery);
       });
     });
     return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:2, centerCol:2};
@@ -1806,11 +1814,12 @@
   function grid800(inp, r){
     var F4=r.E4, F9=r.I11, F10=r.otherVar;
     var deathLoss=inp.sk_deathLoss800, shrink=inp.sk_shrink800, calfWeight=inp.sk_calfWeight, interestRate=inp.sk_interestRate/100;
-    var cols=[GRID800_SALE_CENTER*0.8, GRID800_SALE_CENTER*0.9, GRID800_SALE_CENTER, GRID800_SALE_CENTER*1.1, GRID800_SALE_CENTER*1.2];
-    var rows=[GRID800_PURCHASE_CENTER*0.9, GRID800_PURCHASE_CENTER*0.95, GRID800_PURCHASE_CENTER, GRID800_PURCHASE_CENTER*1.05, GRID800_PURCHASE_CENTER*1.1];
+    var SC=inp.sk_price800, PC=inp.sk_calfPrice; // centers follow the live sale and purchase prices, like the 700 lb grid
+    var cols=[SC*0.8, SC*0.9, SC, SC*1.1, SC*1.2];
+    var rows=[PC*0.9, PC*0.95, PC, PC*1.05, PC*1.1];
     var grid = rows.map(function(rowPrice){
       return cols.map(function(salePrice){
-        return (salePrice/100)*F4*((100-shrink)/100)*((100-deathLoss)/100) - (F9+F10) - (rowPrice/100)*calfWeight - interestRate*(8/12)*(rowPrice*calfWeight/100);
+        return (salePrice/100)*F4*((100-shrink)/100)*((100-deathLoss)/100) - (F9+F10) - (rowPrice/100)*calfWeight - interestRate*(r.days/365)*(rowPrice*calfWeight/100+r.delivery);
       });
     });
     return {rowHeaders:rows, colHeaders:cols, grid:grid, centerRow:2, centerCol:2};
