@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-H7hks0rc/FCWREsTghFjwfgHNWJZHZ1mKGN1DEDc7WM='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-F+NCdoAScwJcCBNkS7s09bI3J5RHZYIR2LzPx+ZstxI='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sell or Keep to Upgrade · Back40</title>
@@ -638,37 +638,8 @@
             <div class="input-wrap has-suffix"><input type="number" id="d1_costPerLbGain" value="0" min="0" step="0.01"><span class="suffix">$/lb</span></div>
           </div>
           <div class="field">
-            <label for="d1_feedFacilitiesDays">Feed Facilities &amp; Labor — Days</label>
-            <div class="input-wrap"><input type="number" id="d1_feedFacilitiesDays" value="111" min="0"></div>
-          </div>
-          <div class="field">
-            <label for="d1_feedFacilitiesRate">Feed Facilities &amp; Labor — Rate</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_feedFacilitiesRate" value="0.4" min="0" step="0.01"><span class="suffix">$/day</span></div>
-          </div>
-          <div class="field">
             <label for="d1_otherCost">Other Cost</label>
             <div class="input-wrap has-suffix"><input type="number" id="d1_otherCost" value="0" min="0"><span class="suffix">$/hd</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Overhead & management -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20V10l8-6 8 6v10M9 20v-6h6v6"/></svg>
-        <h2>Overhead &amp; management</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">General and administrative cost, and owner/hired management time, charged per head marketed.</p>
-        <div class="field-grid cols-3">
-          <div class="field">
-            <label for="d1_gaPerHd">General &amp; Administrative</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_gaPerHd" value="10" min="0"><span class="suffix">$/hd</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_managementPerHd">Management Cost</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_managementPerHd" value="40" min="0"><span class="suffix">$/hd</span></div>
           </div>
         </div>
       </div>
@@ -1227,6 +1198,14 @@
      stay plain, freely-editable fields afterward, same as before this change. */
   var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
   var MP_FALLBACK = { mp_cullCowPrice:125.06, mp_fedCattlePrice:214.27, mp_stocker700Price:332.75, mp_stocker800Price:338.56, mp_steerPrice:401.22 };
+  var OPCOST_KEY = 'tamuDecisionAidsBcuOpCost';
+  function sharedFixedPerBcu(){
+    try {
+      var d = JSON.parse(window.localStorage.getItem(OPCOST_KEY) || 'null');
+      if(d && isFinite(d.fixed) && d.fixed >= 0) return +d.fixed;
+    } catch(e){ /* blocked storage -- fall back */ }
+    return 402.648;
+  }
   function getMarketPrices(){
     try {
       var raw = window.localStorage.getItem(MP_STORAGE_KEY);
@@ -1302,13 +1281,13 @@
     var D45=inp.costPerLbGain, C45=G40, E45=C45*D45*E9;
     var D46=inp.feedGrazingRate, C46=E25, E46=C46*D46*E9;
     var D47=inp.processingHealth, C47=1, E47=C47*D47*E9;
-    var C48=inp.feedFacilitiesDays, D48=inp.feedFacilitiesRate, E48=C48*D48*E9;
     var D49=inp.otherCost, C49=1, E49=C49*D49*E9;
 
-    // --- G&A / management ---
-    var D51=inp.gaPerHd, C51=E9, E51=C51*D51;
-    var D52=inp.managementPerHd, C52=C51, E52=C52*D52;
-    var E53 = E51+E52;
+    // --- Indirect (G&A, management, facilities & labor): the fixed cost per day from Cow Operation Cost, for the days on feed ---
+    var E48 = 0;
+    var E51 = inp.fixedPerDay*E25*E9;
+    var E52 = 0;
+    var E53 = 0;
 
     var subtotal45_52 = E45+E46+E47+E48+E49+E51+E52; // SUM(E45:E52)
     var E54 = subtotal45_52 + E53 + E21; // SUM(E45:E53)+E21 -- reproduces the original's G&A double count
@@ -1434,8 +1413,7 @@
     d1_outWeight:1300, d1_adg:2.25, d1_manualDays:0, d1_shrinkOut:3, d1_priceOut:179.71,
     d1_commissionOut:3, d1_freightOut:7, d1_perHeadOut:1, d1_deathLoss:0.5,
     d1_costPerLbGain:0, d1_feedGrazingRate:2, d1_processingHealth:10,
-    d1_feedFacilitiesDays:111, d1_feedFacilitiesRate:0.4, d1_otherCost:0,
-    d1_gaPerHd:10, d1_managementPerHd:40,
+    d1_otherCost:0,
     d1_targetMarginPerHd:30, d1_pctBorrowed:30, d1_interestRate:5,
     d1_priceStep:5, d1_gainStep:4
   };
@@ -1459,9 +1437,8 @@
       commissionOut: num('d1_commissionOut'), freightOut: num('d1_freightOut'), perHeadOut: num('d1_perHeadOut'),
       deathLoss: num('d1_deathLoss'),
       costPerLbGain: num('d1_costPerLbGain'), feedGrazingRate: num('d1_feedGrazingRate'),
-      processingHealth: num('d1_processingHealth'), feedFacilitiesDays: num('d1_feedFacilitiesDays'),
-      feedFacilitiesRate: num('d1_feedFacilitiesRate'), otherCost: num('d1_otherCost'),
-      gaPerHd: num('d1_gaPerHd'), managementPerHd: num('d1_managementPerHd'),
+      processingHealth: num('d1_processingHealth'), otherCost: num('d1_otherCost'),
+      fixedPerDay: sharedFixedPerBcu()/365, // indirect cost, from Cow Operation Cost
       targetMarginPerHd: num('d1_targetMarginPerHd'), pctBorrowed: num('d1_pctBorrowed'), interestRate: num('d1_interestRate'),
       priceStep: num('d1_priceStep'), gainStep: num('d1_gainStep')
     };
