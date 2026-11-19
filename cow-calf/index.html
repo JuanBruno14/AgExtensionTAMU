@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-TwaDTKhsDb0urhsYhg1MwpFLIw43C+OhSHJpt0jsWzI='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ZGyt+ib8XLJteioOV18GP7RziTSxvRR1nmMqxKWmjV8='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Back40</title>
@@ -2052,7 +2052,9 @@
     var D28 = solveHeiferPrice(C25);
     var D27 = D28 + D13;
 
-    var cullRevPlusPremium = s1.cullRevPerBCU + inp.premium;
+    // Premium is paid per calf sold, so per BCU exposed it scales with the weaning % (the sheet-1
+    // revenue above already does this); the 2020 workbook's D39 adds the raw $/hd premium instead.
+    var cullRevPlusPremium = s1.cullRevPerBCU + inp.premium*inp.weanPct*0.01;
     var costToCover = s1.tucTotal - cullRevPlusPremium;
     var D43 = solveHeiferPrice(costToCover);
     var D42 = D43 + D13;
