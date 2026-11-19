@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ZKYvaEWI7z+YnaOZpcfeQSffTd67XPK6D8NSBBHsolk='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-l7lr7Wg1or35R1QFlAibFAvq4IaHH3TjrPh+ewEmyJY='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Weaned Calf to Bred Heifer Cost · Back40</title>
@@ -730,12 +730,12 @@
     mp_bullCost:4500, mp_bullLife:4, mp_bullSalvageWeight:1650.7, mp_bullDeathLoss:2, mp_perBull:25
   };
   var OPCOST_KEY = 'tamuDecisionAidsBcuOpCost';
-  function sharedFixedPerBcu(){
+  function sharedShortDay(){
     try {
       var d = JSON.parse(window.localStorage.getItem(OPCOST_KEY) || 'null');
-      if(d && isFinite(d.fixed) && d.fixed >= 0) return +d.fixed;
+      if(d && isFinite(d.shortDay) && d.shortDay >= 0) return +d.shortDay;
     } catch(e){ /* blocked storage -- fall back */ }
-    return 402.648;
+    return 0.6;
   }
   function getMarketPrices(){
     try {
@@ -861,7 +861,7 @@
       pregTest: num('rh_pregTest'),
       prebreedHealth: num('rh_prebreedHealth'),
       otherDirect: num('rh_otherDirect'),
-      indirectPerDay: sharedFixedPerBcu()/365, // fixed cost from Cow Operation Cost
+      indirectPerDay: sharedShortDay(), // indirect $/hd-day from Cow Operation Cost
       interestRate: 5, // financing rate, fixed (no longer an input)
       freight: 0,
       // Bull cost/life/death-loss/salvage-weight/heifers-per-bull now come from the

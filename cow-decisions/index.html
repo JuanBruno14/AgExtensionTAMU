@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-gRSxW7irr4ZnWFmXrklcOwKjsrTZ2jnG7nOuPEgsXTc='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-dZbM0SboQTNjm252yFI3p0txI4PyCJXM308kUJIgcSI='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Beef Cattle Decisions · Back40</title>
@@ -386,10 +386,11 @@
       </button>
 
       <div class="bcu-fields" id="bcuFields" hidden>
-        <p class="card-note">Enter your yearly cost per cow (BCU). Variable cost is what changes with the number of cows (feed, health, hauling). Fixed cost is what you pay either way (land, labor, equipment, herd bull). Include the herd bull; leave out cow depreciation, the tools calculate it from the cow price. Every tool on this site reads these two numbers. Saved in your browser only.</p>
+        <p class="card-note">Enter your yearly cost per cow (BCU). Variable cost is what changes with the number of cows (feed, health, hauling). Fixed cost is what you pay either way (land, labor, equipment, herd bull). Include the herd bull; leave out cow depreciation, the tools calculate it from the cow price. The third number is the daily overhead (labor, management, facilities) of one extra animal held for a few months, used by the heifer, cull-cow and stocker tools. Every tool on this site reads these two numbers. Saved in your browser only.</p>
         <div class="field-grid cols-3">
           <div class="field"><label for="bcu_variable">Variable cost ($/BCU/yr)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_variable" value="275" min="0"></div></div>
           <div class="field"><label for="bcu_fixed">Fixed cost ($/BCU/yr)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_fixed" value="402.65" min="0"></div></div>
+          <div class="field"><label for="bcu_shortDay">Indirect cost, short-term lots ($/hd/day)</label><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bcu_shortDay" value="0.60" min="0" step="0.05"></div></div>
         </div>
         <div class="stat-tile wide" style="margin-top:14px;">
           <span class="label">Total operating cost per BCU</span>
@@ -579,14 +580,14 @@
     function num(id){ var el = $(id); var v = el ? parseFloat(el.value) : NaN; return isFinite(v) && v >= 0 ? v : 0; }
     function round(v,d){ var m=Math.pow(10,d||0); return Math.round(v*m)/m; }
 
-    var DEFAULTS = { bcu_variable:275, bcu_fixed:402.65 };
+    var DEFAULTS = { bcu_variable:275, bcu_fixed:402.65, bcu_shortDay:0.6 };
     var customized = false; // true once the producer has their own saved numbers
 
     function calcAndPersist(){
-      var variableCost = num('bcu_variable'), fixedCost = num('bcu_fixed');
+      var variableCost = num('bcu_variable'), fixedCost = num('bcu_fixed'), shortDay = num('bcu_shortDay');
       var total = variableCost + fixedCost;
       $('bcu_opCostTotal').textContent = '$'+fmtMoney2.format(total);
-      var payload = { total: round(total,3), variable: round(variableCost,3), fixed: round(fixedCost,3), savedAt: new Date().toISOString() };
+      var payload = { total: round(total,3), variable: round(variableCost,3), fixed: round(fixedCost,3), shortDay: round(shortDay,3), savedAt: new Date().toISOString() };
       try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }
       catch(e){ /* private mode / blocked storage -- this session's value just won't persist or be shared with other pages */ }
       if($('bcuHeaderValue')) $('bcuHeaderValue').textContent = '$'+fmtMoney2.format(total);
@@ -600,14 +601,15 @@
       var data = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || 'null');
       if(data && isFinite(data.variable) && isFinite(data.fixed)){
         $('bcu_variable').value = data.variable; $('bcu_fixed').value = data.fixed; customized = true;
+        if(isFinite(data.shortDay)) $('bcu_shortDay').value = data.shortDay;
       }
     } catch(e){ /* unreadable stored value: keep defaults */ }
 
-    ['bcu_variable','bcu_fixed'].forEach(function(id){
+    ['bcu_variable','bcu_fixed','bcu_shortDay'].forEach(function(id){
       $(id).addEventListener('input', function(){ customized = true; calcAndPersist(); });
     });
     $('bcu_resetBtn').addEventListener('click', function(){
-      $('bcu_variable').value = DEFAULTS.bcu_variable; $('bcu_fixed').value = DEFAULTS.bcu_fixed;
+      $('bcu_variable').value = DEFAULTS.bcu_variable; $('bcu_fixed').value = DEFAULTS.bcu_fixed; $('bcu_shortDay').value = DEFAULTS.bcu_shortDay;
       customized = false; calcAndPersist();
     });
 

@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-F+NCdoAScwJcCBNkS7s09bI3J5RHZYIR2LzPx+ZstxI='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-TIT+1KIk4chO1kBx85A1bSyXXxJlIokCy2i35WaPO3g='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sell or Keep to Upgrade · Back40</title>
@@ -884,11 +884,9 @@
           <div class="field"><label for="sk700_hayRate">Hay Cost</label><div class="input-wrap has-suffix"><input type="number" id="sk700_hayRate" value="0.10" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
           <div class="field"><label for="sk700_saltLb">Salt &amp; Mineral Fed</label><div class="input-wrap has-suffix"><input type="number" id="sk700_saltLb" value="15" min="0"><span class="suffix">lb/hd</span></div></div>
           <div class="field"><label for="sk700_saltRate">Salt &amp; Mineral Cost</label><div class="input-wrap has-suffix"><input type="number" id="sk700_saltRate" value="0.45" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
-          <div class="field"><label for="sk700_laborRate">Labor</label><div class="input-wrap has-suffix"><input type="number" id="sk700_laborRate" value="8.42" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
           <div class="field"><label for="sk700_fuelRate">Fuel</label><div class="input-wrap has-suffix"><input type="number" id="sk700_fuelRate" value="8.36" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
           <div class="field"><label for="sk700_lubePct">Lube (% of Fuel)</label><div class="input-wrap has-suffix"><input type="number" id="sk700_lubePct" value="10" min="0" step="1"><span class="suffix">%</span></div></div>
           <div class="field"><label for="sk700_marketingRate">Marketing</label><div class="input-wrap has-suffix"><input type="number" id="sk700_marketingRate" value="12" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
-          <div class="field"><label for="sk700_mgmtFee">Management Fee</label><div class="input-wrap has-suffix"><input type="number" id="sk700_mgmtFee" value="23.33" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
         </div>
       </div>
     </div>
@@ -946,11 +944,9 @@
           <div class="field"><label for="sk800_hayRate">Hay Cost</label><div class="input-wrap has-suffix"><input type="number" id="sk800_hayRate" value="0.10" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
           <div class="field"><label for="sk800_saltLb">Salt &amp; Mineral Fed</label><div class="input-wrap has-suffix"><input type="number" id="sk800_saltLb" value="14" min="0"><span class="suffix">lb/hd</span></div></div>
           <div class="field"><label for="sk800_saltRate">Salt &amp; Mineral Cost</label><div class="input-wrap has-suffix"><input type="number" id="sk800_saltRate" value="0.45" min="0" step="0.01"><span class="suffix">$/lb</span></div></div>
-          <div class="field"><label for="sk800_laborRate">Labor</label><div class="input-wrap has-suffix"><input type="number" id="sk800_laborRate" value="12.56" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
           <div class="field"><label for="sk800_fuelRate">Fuel</label><div class="input-wrap has-suffix"><input type="number" id="sk800_fuelRate" value="7.50" min="0" step="0.01"><span class="suffix">$/hd</span></div></div>
           <div class="field"><label for="sk800_lubePct">Lube (% of Fuel)</label><div class="input-wrap has-suffix"><input type="number" id="sk800_lubePct" value="10" min="0" step="1"><span class="suffix">%</span></div></div>
           <div class="field"><label for="sk800_marketingRate">Marketing</label><div class="input-wrap has-suffix"><input type="number" id="sk800_marketingRate" value="23" min="0" step="0.5"><span class="suffix">$/hd</span></div></div>
-          <div class="field"><label for="sk800_mgmtFee">Management Fee</label><div class="input-wrap has-suffix"><input type="number" id="sk800_mgmtFee" value="35" min="0" step="1"><span class="suffix">$/hd</span></div></div>
         </div>
       </div>
     </div>
@@ -1199,12 +1195,12 @@
   var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
   var MP_FALLBACK = { mp_cullCowPrice:125.06, mp_fedCattlePrice:214.27, mp_stocker700Price:332.75, mp_stocker800Price:338.56, mp_steerPrice:401.22 };
   var OPCOST_KEY = 'tamuDecisionAidsBcuOpCost';
-  function sharedFixedPerBcu(){
+  function sharedShortDay(){
     try {
       var d = JSON.parse(window.localStorage.getItem(OPCOST_KEY) || 'null');
-      if(d && isFinite(d.fixed) && d.fixed >= 0) return +d.fixed;
+      if(d && isFinite(d.shortDay) && d.shortDay >= 0) return +d.shortDay;
     } catch(e){ /* blocked storage -- fall back */ }
-    return 402.648;
+    return 0.6;
   }
   function getMarketPrices(){
     try {
@@ -1438,7 +1434,7 @@
       deathLoss: num('d1_deathLoss'),
       costPerLbGain: num('d1_costPerLbGain'), feedGrazingRate: num('d1_feedGrazingRate'),
       processingHealth: num('d1_processingHealth'), otherCost: num('d1_otherCost'),
-      fixedPerDay: sharedFixedPerBcu()/365, // indirect cost, from Cow Operation Cost
+      fixedPerDay: sharedShortDay(), // indirect $/hd-day from Cow Operation Cost
       targetMarginPerHd: num('d1_targetMarginPerHd'), pctBorrowed: num('d1_pctBorrowed'), interestRate: num('d1_interestRate'),
       priceStep: num('d1_priceStep'), gainStep: num('d1_gainStep')
     };
@@ -1630,10 +1626,10 @@
     sk_shrink700:0, sk_shrink800:0, sk_deathLoss700:1, sk_deathLoss800:1,
 
     sk700_vetRate:24, sk700_hayLb:125, sk700_hayRate:0.10, sk700_saltLb:15, sk700_saltRate:0.45,
-    sk700_laborRate:8.42, sk700_fuelRate:8.36, sk700_lubePct:10, sk700_marketingRate:12, sk700_mgmtFee:23.33,
+    sk700_fuelRate:8.36, sk700_lubePct:10, sk700_marketingRate:12,
 
     sk800_vetRate:16.2, sk800_hayLb:125, sk800_hayRate:0.10, sk800_saltLb:14, sk800_saltRate:0.45,
-    sk800_laborRate:12.56, sk800_fuelRate:7.50, sk800_lubePct:10, sk800_marketingRate:23, sk800_mgmtFee:35,
+    sk800_fuelRate:7.50, sk800_lubePct:10, sk800_marketingRate:23,
 
     /* skfy7_salePrice / skfy8_salePrice (2026-09-17, twenty-third round): was
        $100/cwt, an original-workbook fed-cattle price never reconciled when
@@ -1688,16 +1684,17 @@
       sk_price700: num('sk_price700'), sk_price800: num('sk_price800'), sk_grazingCost: num('sk_grazingCost'),
       sk_earlyStart: dateVal('sk_earlyStart'), sk_pullOff700: dateVal('sk_pullOff700'), sk_pullOff800: dateVal('sk_pullOff800'),
       sk_earlyADG: num('sk_earlyADG'), sk_lateADG: num('sk_lateADG'), sk_interestRate: num('sk_interestRate'),
+      fixedPerDay: sharedShortDay(),
       sk_shrink700: num('sk_shrink700'), sk_shrink800: num('sk_shrink800'),
       sk_deathLoss700: num('sk_deathLoss700'), sk_deathLoss800: num('sk_deathLoss800'),
 
       sk700_vetRate: num('sk700_vetRate'), sk700_hayLb: num('sk700_hayLb'), sk700_hayRate: num('sk700_hayRate'),
-      sk700_saltLb: num('sk700_saltLb'), sk700_saltRate: num('sk700_saltRate'), sk700_laborRate: num('sk700_laborRate'),
-      sk700_fuelRate: num('sk700_fuelRate'), sk700_lubePct: num('sk700_lubePct'), sk700_marketingRate: num('sk700_marketingRate'), sk700_mgmtFee: num('sk700_mgmtFee'),
+      sk700_saltLb: num('sk700_saltLb'), sk700_saltRate: num('sk700_saltRate'),
+      sk700_fuelRate: num('sk700_fuelRate'), sk700_lubePct: num('sk700_lubePct'), sk700_marketingRate: num('sk700_marketingRate'),
 
       sk800_vetRate: num('sk800_vetRate'), sk800_hayLb: num('sk800_hayLb'), sk800_hayRate: num('sk800_hayRate'),
-      sk800_saltLb: num('sk800_saltLb'), sk800_saltRate: num('sk800_saltRate'), sk800_laborRate: num('sk800_laborRate'),
-      sk800_fuelRate: num('sk800_fuelRate'), sk800_lubePct: num('sk800_lubePct'), sk800_marketingRate: num('sk800_marketingRate'), sk800_mgmtFee: num('sk800_mgmtFee'),
+      sk800_saltLb: num('sk800_saltLb'), sk800_saltRate: num('sk800_saltRate'),
+      sk800_fuelRate: num('sk800_fuelRate'), sk800_lubePct: num('sk800_lubePct'), sk800_marketingRate: num('sk800_marketingRate'),
 
       skfy8_cog: num('skfy8_cog'), skfy8_days: num('skfy8_days'), skfy8_adg: num('skfy8_adg'),
       skfy8_salePrice: num('skfy8_salePrice'), skfy8_deathLoss: num('skfy8_deathLoss'),
@@ -1713,6 +1710,7 @@
   function calc700(inp){
     var D4 = inp.sk_heads*(100-inp.sk_deathLoss700)/100;
     var daysEarly = daysBetween(inp.sk_pullOff700, inp.sk_earlyStart);
+    var daysOnFeed = daysEarly;
     var E4 = (inp.sk_calfWeight + daysEarly*inp.sk_earlyADG) * (100-inp.sk_shrink700)/100;
     var G4 = inp.sk_price700;
     var H4 = D4*G4*E4/100;
@@ -1727,7 +1725,7 @@
     var H12=inp.sk700_vetRate*D9, I12=D4>0?H12/D4:0;
     var H13=inp.sk700_hayRate*D9*inp.sk700_hayLb, I13=D4>0?H13/D4:0;
     var H14=inp.sk700_saltRate*D9*inp.sk700_saltLb, I14=D4>0?H14/D4:0;
-    var H15=inp.sk700_laborRate*D9, I15=D4>0?H15/D4:0;
+    var I15=0; // labor is part of the indirect cost below
     var H16=inp.sk700_fuelRate*D9, I16=D4>0?H16/D4:0;
     var H18=inp.sk700_fuelRate*D9*(inp.sk700_lubePct/100), I18=D4>0?H18/D4:0;
     var D19=(100-inp.sk_deathLoss700)/100, I19=inp.sk700_marketingRate*D19, H19=I19*D4; // Marketing Cost
@@ -1737,7 +1735,7 @@
     var I21 = I9+I11+otherVar+I20;
     var I23 = I6-I21;
 
-    var H28=inp.sk700_mgmtFee*D9, I28=D4>0?H28/D4:0;
+    var H28=inp.fixedPerDay*daysOnFeed*D9, I28=D4>0?H28/D4:0; // indirect (labor + management): $/hd-day from Cow Operation Cost x days on feed
     var I29 = I28;
     var I31 = I21+I29;
     var I33 = I6-I31;
@@ -1754,6 +1752,7 @@
     var D4 = inp.sk_heads*(100-inp.sk_deathLoss800)/100;
     var daysEarly = daysBetween(inp.sk_pullOff700, inp.sk_earlyStart);
     var daysLate = daysBetween(inp.sk_pullOff800, inp.sk_pullOff700);
+    var daysOnFeed = daysEarly + daysLate;
     var E4 = (inp.sk_calfWeight + daysEarly*inp.sk_earlyADG + inp.sk_lateADG*daysLate) * (100-inp.sk_shrink800)/100;
     var G4 = inp.sk_price800;
     var H4 = D4*G4*E4/100;
@@ -1768,7 +1767,7 @@
     var H12=inp.sk800_vetRate*D9, I12=D4>0?H12/D4:0;
     var H13=inp.sk800_hayRate*D9*inp.sk800_hayLb, I13=D4>0?H13/D4:0;
     var H14=inp.sk800_saltRate*D9*inp.sk800_saltLb, I14=D4>0?H14/D4:0;
-    var H15=inp.sk800_laborRate*D9, I15=D4>0?H15/D4:0;
+    var I15=0; // labor is part of the indirect cost below
     var H16=inp.sk800_fuelRate*D9, I16=D4>0?H16/D4:0;
     var H18=inp.sk800_fuelRate*D9*(inp.sk800_lubePct/100), I18=D4>0?H18/D4:0;
     var D19=(100-inp.sk_deathLoss700)/100, I19=inp.sk800_marketingRate*D19, H19=I19*D4; // Marketing Cost — fidelity quirk #1: uses the 700lb death loss, see block comment above
@@ -1778,7 +1777,7 @@
     var I21 = I9+I11+otherVar+I20;
     var I23 = I6-I21;
 
-    var H28=inp.sk800_mgmtFee*D9, I28=D4>0?H28/D4:0;
+    var H28=inp.fixedPerDay*daysOnFeed*D9, I28=D4>0?H28/D4:0; // indirect (labor + management): $/hd-day from Cow Operation Cost x days on feed
     var I29 = I28;
     var I31 = I21+I29;
     var I33 = I6-I31;
