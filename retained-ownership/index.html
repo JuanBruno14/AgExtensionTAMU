@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-w/H3nyFDiLdDKd89c7uc6XPcadgISjXkWu/qGr29HCU='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XX4T0F2Y+6pJG6sht+QOOCgzUBXSyRic/GlgT+8iK0A='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sell or Keep to Upgrade · Back40</title>
@@ -500,7 +500,7 @@
 <main id="main">
 
 <nav class="roadmap" aria-label="Retained ownership tools">
-  <button type="button" class="tab-btn active" data-tab="d1" data-title="Sell or Keep to Upgrade" data-source="D1 — Sell or Keep to Upgrade Cull Cows Profit Projection" data-use="advise a cull-cow marketing decision">D1 · Cull Cow: Sell or Upgrade</button>
+  <button type="button" class="tab-btn active" data-tab="d1" data-title="Sell or Keep to Upgrade" data-source="Sell or Keep to Upgrade Cull Cows Profit Projection" data-use="advise a cull-cow marketing decision">Cull Cow: Sell or Upgrade</button>
   <button type="button" class="tab-btn" data-tab="stockers" data-title="Stockers · Retained Ownership" data-source="Stockers Retained Feeder Profitability" data-use="advise a stocker/feeder retained-ownership decision">Stockers · Retained Ownership</button>
 </nav>
 
@@ -509,7 +509,7 @@
   <div class="intro-inner">
     <div>
       <h1>Should you sell cull cows now, or keep feeding them to upgrade?</h1>
-      <p>Enter today's cull-cow sale terms and the retained-ownership alternative (extra days on feed, target out-weight, gain, and price): the tool compares selling now against keeping the cows to add weight and grade, then shows the marketing margin, feeding margin, ROA/ROE, and the price needed to hit your target margin — just like the D1 spreadsheet, but recalculating live.</p>
+      <p>Enter today's cull-cow sale terms and the retained-ownership alternative (extra days on feed, target out-weight, gain, and price): the tool compares selling now against keeping the cows to add weight and grade, then shows the marketing margin, feeding margin, ROA/ROE, and the price needed to hit your target margin — just like the spreadsheet, but recalculating live. Feed, health and other direct costs come from your variable cost in Cow Operation Cost on the home page, and overhead from its short-term indirect cost.</p>
     </div>
     <div class="intro-meta">
       <div><strong>Sell vs. Retain</strong>side-by-side comparison</div>
@@ -613,35 +613,6 @@
           </div>
         </div>
         <p class="derived-note" id="d1_daysNote">Days on feed: calculating…</p>
-      </div>
-    </div>
-
-    <!-- Feeding & direct costs -->
-    <div class="card">
-      <div class="card-head">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12h18M3 6h18M3 18h18"/></svg>
-        <h2>Feeding &amp; direct costs</h2>
-      </div>
-      <div class="card-body">
-        <p class="card-note">What it costs, per head, to hold and feed the cows through the retained-ownership period.</p>
-        <div class="field-grid cols-3">
-          <div class="field">
-            <label for="d1_feedGrazingRate">Feed/Grazing Cost</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_feedGrazingRate" value="2" min="0" step="0.05"><span class="suffix">$/day</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_processingHealth">Processing &amp; Health</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_processingHealth" value="10" min="0"><span class="suffix">$/hd</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_costPerLbGain">Extra Cost per lb Gained</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_costPerLbGain" value="0" min="0" step="0.01"><span class="suffix">$/lb</span></div>
-          </div>
-          <div class="field">
-            <label for="d1_otherCost">Other Cost</label>
-            <div class="input-wrap has-suffix"><input type="number" id="d1_otherCost" value="0" min="0"><span class="suffix">$/hd</span></div>
-          </div>
-        </div>
       </div>
     </div>
 
@@ -1165,7 +1136,7 @@
 
 </main>
 <footer id="toolFooter">
-  Based on the <strong>D1 — Sell or Keep to Upgrade Cull Cows Profit Projection</strong> spreadsheet. Starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a cull-cow marketing decision.
+  Based on the <strong>Sell or Keep to Upgrade Cull Cows Profit Projection</strong> spreadsheet. Starting cattle prices come from the weekly USDA Texas auction summary and the other starting values are the spreadsheet's original assumptions, not a real producer's data. Always verify results before using them to advise a cull-cow marketing decision.
 <!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; Data</a></li><li><a href="../data-sources.html">Where the Prices Come From</a></li></ul><!-- required-links:end -->
 </footer>
 
@@ -1203,6 +1174,13 @@
       if(d && isFinite(d.shortDay) && d.shortDay >= 0) return +d.shortDay;
     } catch(e){ /* blocked storage -- fall back */ }
     return 0.35;
+  }
+  function sharedVarDay(){
+    try {
+      var d = JSON.parse(window.localStorage.getItem(OPCOST_KEY) || 'null');
+      if(d && isFinite(d.variable) && d.variable >= 0) return +d.variable/365;
+    } catch(e){ /* blocked storage -- fall back */ }
+    return 275/365;
   }
   function getMarketPrices(){
     try {
@@ -1276,10 +1254,8 @@
     var E42 = E40-E21;
 
     // --- Direct costs ---
-    var D45=inp.costPerLbGain, C45=G40, E45=C45*D45*E9;
-    var D46=inp.feedGrazingRate, C46=E25, E46=C46*D46*E9;
-    var D47=inp.processingHealth, C47=1, E47=C47*D47*E9;
-    var D49=inp.otherCost, C49=1, E49=C49*D49*E9;
+    // Direct costs (feed, grazing, health, other): the variable cost per BCU from Cow Operation Cost, per day, for the days on feed
+    var E45 = 0, C46=E25, E46=C46*inp.directPerDay*E9, E47 = 0, E49 = 0;
 
     // --- Indirect (G&A, management, facilities & labor): the fixed cost per day from Cow Operation Cost, for the days on feed ---
     var E48 = 0;
@@ -1399,7 +1375,7 @@
      Boner price, ratio x1.20160 - see cow-calf/index.html's CULL_COW_PRICE_SLIDE)
      already carries a heavier, better-conditioned "Breaker Cows" grade point
      (1,496.1 lb -> $176.90/cwt) - exactly the grade a Boner cow upgrades into by
-     gaining weight/condition. Linearly interpolating that same slide at D1's
+     gaining weight/condition. Linearly interpolating that same slide at this tool's
      1,300 lb target out-weight (between the 1,279.4 lb Boner point at $180.00
      and the 1,496.1 lb Breaker point at $176.90) gives $179.71/cwt - the same
      figure already computed and verified live on the A1 page's cull-weight
@@ -1410,8 +1386,6 @@
     d1_commissionSold:3, d1_freightSold:7, d1_perHeadSold:1,
     d1_outWeight:1300, d1_adg:2.25, d1_manualDays:0, d1_shrinkOut:3, d1_priceOut:179.71,
     d1_commissionOut:3, d1_freightOut:7, d1_perHeadOut:1, d1_deathLoss:0.5,
-    d1_costPerLbGain:0, d1_feedGrazingRate:2, d1_processingHealth:10,
-    d1_otherCost:0,
     d1_targetMarginPerHd:30, d1_pctBorrowed:30, d1_interestRate:5,
     d1_priceStep:5, d1_gainStep:4
   };
@@ -1434,8 +1408,7 @@
       shrinkOut: num('d1_shrinkOut'), priceOut: num('d1_priceOut'),
       commissionOut: num('d1_commissionOut'), freightOut: num('d1_freightOut'), perHeadOut: num('d1_perHeadOut'),
       deathLoss: num('d1_deathLoss'),
-      costPerLbGain: num('d1_costPerLbGain'), feedGrazingRate: num('d1_feedGrazingRate'),
-      processingHealth: num('d1_processingHealth'), otherCost: num('d1_otherCost'),
+      directPerDay: sharedVarDay(), // direct $/hd-day from the variable cost in Cow Operation Cost
       fixedPerDay: sharedShortDay(), // indirect $/hd-day from Cow Operation Cost
       targetMarginPerHd: num('d1_targetMarginPerHd'), pctBorrowed: num('d1_pctBorrowed'), interestRate: num('d1_interestRate'),
       priceStep: num('d1_priceStep'), gainStep: num('d1_gainStep')
