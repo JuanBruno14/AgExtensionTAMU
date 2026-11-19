@@ -5,7 +5,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-FBEvvi4H87SSyxzFOTKGloX4wbren/HTWpJzyvh46IA='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-gRSxW7irr4ZnWFmXrklcOwKjsrTZ2jnG7nOuPEgsXTc='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Beef Cattle Decisions · Back40</title>
@@ -580,14 +580,13 @@
     function round(v,d){ var m=Math.pow(10,d||0); return Math.round(v*m)/m; }
 
     var DEFAULTS = { bcu_variable:275, bcu_fixed:402.65 };
-    var SHORT_LOT_SHARE = 0.32; // share of a cow-year's fixed cost that a short-term animal also uses (labor, management, equipment); the $403 default gives ~$0.35/hd/day
     var customized = false; // true once the producer has their own saved numbers
 
     function calcAndPersist(){
-      var variableCost = num('bcu_variable'), fixedCost = num('bcu_fixed'), shortDay = fixedCost*SHORT_LOT_SHARE/365; // per head per day, for heifers, cull cows and stockers
+      var variableCost = num('bcu_variable'), fixedCost = num('bcu_fixed');
       var total = variableCost + fixedCost;
       $('bcu_opCostTotal').textContent = '$'+fmtMoney2.format(total);
-      var payload = { total: round(total,3), variable: round(variableCost,3), fixed: round(fixedCost,3), shortDay: round(shortDay,3), savedAt: new Date().toISOString() };
+      var payload = { total: round(total,3), variable: round(variableCost,3), fixed: round(fixedCost,3), savedAt: new Date().toISOString() };
       try { window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload)); }
       catch(e){ /* private mode / blocked storage -- this session's value just won't persist or be shared with other pages */ }
       if($('bcuHeaderValue')) $('bcuHeaderValue').textContent = '$'+fmtMoney2.format(total);

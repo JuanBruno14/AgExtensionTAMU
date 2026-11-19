@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-XX4T0F2Y+6pJG6sht+QOOCgzUBXSyRic/GlgT+8iK0A='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-2uIPCRUaCW4N3RlEz/QhkOcH5rseNEmSS8coixDZZsY='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Sell or Keep to Upgrade · Back40</title>
@@ -1168,12 +1168,16 @@
   var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
   var MP_FALLBACK = { mp_cullCowPrice:125.06, mp_fedCattlePrice:214.27, mp_stocker700Price:332.75, mp_stocker800Price:338.56, mp_steerPrice:401.22 };
   var OPCOST_KEY = 'tamuDecisionAidsBcuOpCost';
-  function sharedShortDay(){
+  /* Indirect cost of a short stay ($/hd/day): the share of the yearly fixed cost per BCU (Cow Operation Cost)
+     that a short-term animal also uses (labor, management, equipment), per day. Each tool uses the share that
+     reproduces its own Pancho Abello budget at the $402.65 default fixed cost. */
+  function sharedShortDay(share){
+    var fixed = 402.65;
     try {
       var d = JSON.parse(window.localStorage.getItem(OPCOST_KEY) || 'null');
-      if(d && isFinite(d.shortDay) && d.shortDay >= 0) return +d.shortDay;
+      if(d && isFinite(d.fixed) && d.fixed >= 0) fixed = +d.fixed;
     } catch(e){ /* blocked storage -- fall back */ }
-    return 0.35;
+    return fixed*share/365;
   }
   function sharedVarDay(){
     try {
@@ -1409,7 +1413,7 @@
       commissionOut: num('d1_commissionOut'), freightOut: num('d1_freightOut'), perHeadOut: num('d1_perHeadOut'),
       deathLoss: num('d1_deathLoss'),
       directPerDay: sharedVarDay(), // direct $/hd-day from the variable cost in Cow Operation Cost
-      fixedPerDay: sharedShortDay(), // indirect $/hd-day from Cow Operation Cost
+      fixedPerDay: sharedShortDay(0.5502), // cull cow: $0.607/hd-day in the Sell or Keep to Upgrade budget
       targetMarginPerHd: num('d1_targetMarginPerHd'), pctBorrowed: num('d1_pctBorrowed'), interestRate: num('d1_interestRate'),
       priceStep: num('d1_priceStep'), gainStep: num('d1_gainStep')
     };
@@ -1659,7 +1663,8 @@
       sk_price700: num('sk_price700'), sk_price800: num('sk_price800'), sk_grazingCost: num('sk_grazingCost'),
       sk_earlyStart: dateVal('sk_earlyStart'), sk_pullOff700: dateVal('sk_pullOff700'), sk_pullOff800: dateVal('sk_pullOff800'),
       sk_earlyADG: num('sk_earlyADG'), sk_lateADG: num('sk_lateADG'), sk_interestRate: num('sk_interestRate'),
-      fixedPerDay: sharedShortDay(),
+      fixedPerDay700: sharedShortDay(0.3075), // $0.339/hd-day in the 2026 D03 March 1 budget
+      fixedPerDay800: sharedShortDay(0.2851), // $0.315/hd-day in the 2026 D03 Grazeout budget
       sk_shrink700: num('sk_shrink700'), sk_shrink800: num('sk_shrink800'),
       sk_deathLoss700: num('sk_deathLoss700'), sk_deathLoss800: num('sk_deathLoss800'),
 
@@ -1713,7 +1718,7 @@
     var I21 = I9+I11+otherVar+I20;
     var I23 = I6-I21;
 
-    var H28=inp.fixedPerDay*daysOnFeed*D9, I28=D9>0?H28/D9:0; // indirect (labor + management): $/hd-day from Cow Operation Cost x days on feed
+    var H28=inp.fixedPerDay700*daysOnFeed*D9, I28=D9>0?H28/D9:0; // indirect (labor + management): $/hd-day from Cow Operation Cost x days on feed
     var I29 = I28;
     var I31 = I21+I29;
     var I33 = I6-I31;
@@ -1758,7 +1763,7 @@
     var I21 = I9+I11+otherVar+I20;
     var I23 = I6-I21;
 
-    var H28=inp.fixedPerDay*daysOnFeed*D9, I28=D9>0?H28/D9:0; // indirect (labor + management): $/hd-day from Cow Operation Cost x days on feed
+    var H28=inp.fixedPerDay800*daysOnFeed*D9, I28=D9>0?H28/D9:0; // indirect (labor + management): $/hd-day from Cow Operation Cost x days on feed
     var I29 = I28;
     var I31 = I21+I29;
     var I33 = I6-I31;
