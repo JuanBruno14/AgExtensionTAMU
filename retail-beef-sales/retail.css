@@ -122,3 +122,4 @@
 .rbs details[open]>summary::after{content:"\2212"}
 .rbs .calc b{white-space:nowrap}
 @media (max-width:600px){.sumbar{padding:8px 76px 8px 16px}.sumbar .sb1{font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}.sumbar .sb2{display:none}.rbs{padding-bottom:64px}}
+.rbs .sec .sec{margin-bottom:0}.rbs .sec .sec>div>.sub{max-width:900px}
