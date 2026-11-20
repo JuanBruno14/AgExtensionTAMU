@@ -130,7 +130,7 @@
     tool:'water',
     w_class:'lactating', w_lb:1200, w_head:100, w_temp:95, w_tank:3000, w_tds:'', w_no3:'', w_so4:'', w_hard:'', w_as:'', w_f:'', w_ph:'', w_h2s:'', w_coli:'', w_al:'', w_b:'', w_cd:'', w_cr:'', w_co:'', w_cu:'', w_pb:'', w_mn:'', w_hg:'', w_ni:'', w_se:'', w_v:'', w_zn:'', 
     r_nut:'cp', r_target:10, r_aName:'Grass hay', r_aCp:7, r_aTdn:52, r_aDm:90, r_aPrice:120,
-    r_bName:'20% range cubes', r_bCp:22, r_bTdn:78, r_bDm:90, r_bPrice:392, r_dmi:26, r_bw:1200, r_head:100, r_days:90,
+    r_bName:'Range cubes (22% CP)', r_bCp:22, r_bTdn:78, r_bDm:90, r_bPrice:392, r_dmi:26, r_bw:1200, r_head:100, r_days:90,
     g_start:450, g_now:540, g_days:60, g_target:1.75, g_sale:750, g_shrink:3, g_head:100, g_price:300,
     h_exposed:100, h_heifers:18, h_tested:98, h_preg:90, h_weaned:84, h_wwt:540,
     h_begin:210, h_born:88, h_bought:4, h_sold:95, h_died:3, h_count:204
@@ -152,6 +152,7 @@
     if(r.flags.above90) notes.push('The published table stops at 90°F, so this is the 90°F figure — on hotter days cattle drink even more.');
     if(r.flags.below40) notes.push('Below 40°F the table’s coldest value is used.');
     if(r.flags.flat) notes.push('The table gives one figure for cows this heavy (heavier cows are fatter and do not drink more), so the tool does not scale it up with weight.');
+    if(S.w_class === 'pregnant' && S.w_lb > 900) notes.push('NASEM lists less water for heavier dry cows because they are fatter and eat less.');
     if(r.flags.scaled) notes.push('Your weight is outside the published weights, so the figure is scaled in proportion to weight.');
     if(r.flags.pregHot && r.flags.usedHot) notes.push('The table has no values above 70°F for dry pregnant cows; above 70°F this tool follows the pattern published for mature bulls.');
     if(r.flags.lactHot && S.w_temp > 80) notes.push('For nursing cows the published 90°F value is lower than the 80°F one; for planning, the tool keeps the 80°F value.');
@@ -189,7 +190,9 @@
     var supIsB = S.r_bTdn >= S.r_aTdn, supAf = supIsB ? afB : afA, supName = supIsB ? (S.r_bName || 'Feed 2') : (S.r_aName || 'Feed 1');
     var pctBw = S.r_bw > 0 ? supAf/S.r_bw*100 : 0;
     var notes = ['The mix works out to ' + fmt(other, 1) + '% ' + (cp ? 'TDN' : 'crude protein') + ' on a dry-matter basis.'];
-    if(pctBw >= 0.7) notes.push(supName + ' is ' + fmt(pctBw, 2) + '% of body weight a day. At 0.7–1% of body weight an energy feed deliberately replaces forage; step cattle up to it over several days.');
+    var supCp = supIsB ? S.r_bCp : S.r_aCp;
+    if(supCp >= 15 && pctBw > 0.3) notes.push(supName + ' is ' + fmt(pctBw, 2) + '% of body weight a day. It is a protein feed (' + fmt(supCp) + '% crude protein), so it mainly helps cattle eat and digest low-quality forage; cattle eating less forage is a concern with low-protein energy feeds such as corn.');
+    else if(pctBw >= 0.7) notes.push(supName + ' is ' + fmt(pctBw, 2) + '% of body weight a day. At 0.7–1% of body weight an energy feed deliberately replaces forage; step cattle up to it over several days.');
     else if(pctBw > 0.3) notes.push(supName + ' is ' + fmt(pctBw, 2) + '% of body weight a day. Above about 0.3% of body weight, energy feeds start to replace some of the forage cattle would eat, so hay use may drop.');
     else notes.push(supName + ' is ' + fmt(pctBw, 2) + '% of body weight a day — at under 0.3% it barely changes how much forage cattle eat.');
     if(cp && Math.min(S.r_aCp, S.r_bCp) < 7) notes.push('Forage under about 7% crude protein limits how much cattle eat; bringing the ration up in protein usually raises forage intake.');
