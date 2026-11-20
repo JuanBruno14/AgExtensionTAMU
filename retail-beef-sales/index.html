@@ -1,0 +1,193 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' ; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Retail Beef Sales · Back40</title>
+<meta name="description" content="Sell the steer at the sale barn, by the quarter, or by the cut? Enter your numbers and see what each direct-sales option earns above the sale barn, with break-even and target prices.">
+<link rel="stylesheet" href="../brand/fonts/fonts.css">
+<style>
+  :root{
+    --maroon-900:#3a0000;
+    --maroon-800:#500000;
+    --maroon-700:#6b0f0f;
+    --maroon-100:#f7e9e6;
+    --wheat-500:#b8862f;
+    --wheat-100:#f4e9d6;
+    --good-700:#276749;
+    --good-100:#e3f1e9;
+    --critical-700:#9a3412;
+    --critical-100:#fbe9e1;
+    --accent:var(--maroon-800);
+    --bg:#f6f3ee;
+    --surface:#ffffff;
+    --surface-sunken:#f0ece4;
+    --border:#e2dbcf;
+    --ink:#241c19;
+    --ink-secondary:#5a4f48;
+    --ink-muted:#8a7d73;
+    --focus:#2f6fb3;
+    --shadow-card:0 1px 2px rgba(58,0,0,0.04), 0 4px 16px rgba(58,0,0,0.06);
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#4a3aa7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+      --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+      --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+      --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+      --wheat-100:#33290f; --wheat-500:#d9a44a;
+      --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+    --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+    --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+    --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+    --wheat-100:#33290f; --wheat-500:#d9a44a;
+    --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Open Sans", ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric:tabular-nums;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:"Oswald", "Open Sans", Arial, sans-serif; text-wrap:balance; letter-spacing:-0.01em;}
+  a{color:inherit;}
+
+  .topbar{
+    background:linear-gradient(180deg, var(--maroon-800), var(--maroon-900));
+    color:#fff;
+    padding:18px clamp(16px,4vw,40px);
+    display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
+  }
+  .wordmark{display:flex; align-items:center; gap:14px;}
+  .wordmark .mark{
+    width:44px;height:44px;border-radius:9px;
+    background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.55);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Oswald", sans-serif;font-weight:700;font-size:20px; flex:none;
+  }
+  .wordmark .text{line-height:1.15;}
+  .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
+  .wordmark .text .main{font-family:"Oswald", sans-serif;font-size:19px;font-weight:600;}
+
+  .theme-toggle{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:100px;
+    background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.4);
+    color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0;flex:none;
+  }
+  .theme-toggle:hover{background:rgba(255,255,255,0.24);}
+  .theme-toggle:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+
+  footer{
+    max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 40px;
+    color:var(--ink-muted);font-size:12px;line-height:1.6;
+    border-top:1px solid var(--border);padding-top:20px;
+  }
+  footer a{text-decoration:underline;}
+</style>
+<link rel="stylesheet" href="../brand/base.css">
+<link rel="stylesheet" href="../brand/western.css">
+<link rel="stylesheet" href="retail.css">
+<!-- seo:start (tools/secure_pages.py) -->
+<link rel="canonical" href="https://back40agtools.com/retail-beef-sales/">
+<link rel="icon" href="../brand/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Back40">
+<meta property="og:title" content="Retail Beef Sales · Back40">
+<meta property="og:description" content="Sell the steer at the sale barn, by the quarter, or by the cut? Enter your numbers and see what each direct-sales option earns above the sale barn, with break-even and target prices.">
+<meta property="og:url" content="https://back40agtools.com/retail-beef-sales/">
+<meta property="og:image" content="https://back40agtools.com/brand/photos/hero-herd.jpg">
+<meta property="og:image:alt" content="Black-and-white photo of a mixed herd of cows standing in tall grass">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Retail Beef Sales","url":"https://back40agtools.com/retail-beef-sales/","description":"Sell the steer at the sale barn, by the quarter, or by the cut? Enter your numbers and see what each direct-sales option earns above the sale barn, with break-even and target prices.","applicationCategory":"BusinessApplication","operatingSystem":"Any (web browser)","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"Back40","url":"https://back40agtools.com/"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<!-- seo:end -->
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="topbar">
+  <div class="wordmark"><a href="../index.html" aria-label="Back40 home"><span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back40</span></span></a></div>
+  <nav class="b40-nav" aria-label="Sections"><a href="../cow-decisions/index.html">Beef Cattle Decisions</a><a href="../herd-tools/index.html">Calculators</a><a href="../my-ranch/index.html">My Ranch</a><a href="../retail-beef-sales/index.html" aria-current="page">Retail Beef Sales</a><a href="../about/index.html">About</a></nav>
+  <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
+</header>
+
+<section class="intro">
+  <div class="intro-inner">
+    <div>
+      <h1 id="rbsH">Retail Beef Sales</h1>
+      <p>Should you sell your steer at the sale barn, by the quarter, or by the cut? Change any number and every answer updates on the spot.</p>
+    </div>
+  </div>
+</section>
+<main id="main" class="b40-page">
+<div class="rbs">
+<section aria-labelledby="t1" class="sec">
+<div><h2 id="t1">Sale Barn vs. Direct Sales</h2><p class="sub">Enter your numbers and compare what each way of selling earns.</p>
+<ul class="how"><li><b>Net profit</b> is what you earn above selling the steer at the sale barn.</li><li><b>Break-even</b> is the lowest price that ties the sale barn. The <b>price to ask</b> adds the return you want.</li><li>Items marked <b>Assumption</b> are placeholders: replace them with your own numbers.</li></ul></div>
+<div class="cols">
+<form class="panel" id="form" onsubmit="return false" aria-label="Your numbers">
+<h2>Your numbers</h2>
+<p class="saved">Saved in this browser only. Nothing is sent anywhere.</p>
+<div class="lab">Your steer</div>
+<div id="g-steer" class="f" style="gap:18px"></div>
+<div class="calc"><span>Value at the sale barn</span><b id="valueHead"></b></div>
+<div class="lab">Selling by the quarter or half</div>
+<div id="g-q" style="display:flex;flex-direction:column;gap:18px"></div>
+<div class="f"><span style="font-size:14px;font-weight:600" id="segLab">Who pays the processor?</span>
+<div class="seg" role="group" aria-labelledby="segLab"><button type="button" id="b0" aria-pressed="true">Customer pays</button><button type="button" id="b1" aria-pressed="false">Included in my price</button></div></div>
+<div id="g-fees"></div>
+<div class="lab">Selling by the cut</div>
+<div class="calc"><span>Average price, all cuts</span><b id="avgPrice"></b></div>
+<p class="note" style="margin-top:-8px">Calculated from the price of each cut in the table below.</p>
+<div class="lab">Your goal</div>
+<div id="g-goal"></div>
+<div>
+<details><summary><span>Carcass and interest</span><span class="note">3 items</span></summary><div class="grid" id="g-fin"></div></details>
+<details><summary><span>Costs by the quarter</span><span class="note">6 items</span></summary><div class="grid" id="g-cq"></div></details>
+<details><summary><span>Costs by the cut</span><span class="note">16 items</span></summary><div class="grid" id="g-cc"></div></details>
+<details><summary><span>Add your own costs</span><span class="note" id="exCount">0 items</span></summary><div class="grid"><p class="note">Anything not listed above: a new cost goes into the budget of the option you choose.</p><div id="exList"></div><button type="button" class="reset" id="exAdd">Add a cost</button></div></details>
+<div style="border-top:1px solid var(--line)"></div></div>
+<button type="button" class="reset" id="reset">Reset to the example values</button>
+</form>
+<div class="res" aria-live="polite">
+<div class="verdict"><div><small id="vsmall">Verdict</small><div class="big" id="vbig"></div></div><div class="r"><div class="num" id="vnum"></div><span id="vsub"></span></div><div class="why" id="vwhy"></div></div>
+<div class="opts" id="opts"></div>
+<div class="card"><h2>Where the money goes</h2><div class="two"><div id="bars"></div><div class="tw table-scroll"><table id="cost"></table></div></div>
+<details><summary><span>Every cost, line by line</span></summary><div class="two"><div class="tw table-scroll"><table id="itq"></table></div><div class="tw table-scroll"><table id="itc"></table></div></div></details></div>
+</div></div>
+</section>
+<section aria-labelledby="t2" class="sec">
+<div><h2 id="t2">Price each cut</h2><p class="sub">Edit the share and the price of each cut. "Price for target ROI" keeps the price ratio between cuts and scales every price by the same factor. "Price if only this cut changes" holds every other cut at your price and asks only that cut to make up the difference. USDA columns are for comparison.</p></div>
+<button type="button" class="reset more" id="cutsMore" aria-expanded="false" aria-controls="cuts">Show USDA prices, break-even and more</button>
+<div class="tw table-scroll"><table id="cuts"><thead><tr><th>Cut</th><th>Share of beef (%)</th><th>Your price /lb</th><th>Where your price sits</th><th>Price for target ROI</th><th class="dt">Lb sold</th><th class="dt">Grocery (USDA)</th><th class="dt">Grass-fed direct (USDA)</th><th class="dt">Break-even /lb</th><th class="dt">Price if only this cut changes</th></tr></thead><tbody></tbody></table></div>
+<p class="note warn" id="shareWarn" hidden>Shares must add up to 100%.</p>
+</section>
+<section class="src sec" style="gap:0"><h2>Sources and notes</h2>
+<p class="note">Cut prices are rough grocery-store estimates for Nov. 2026; producers selling direct may charge more. Grocery reference: USDA AMS Weekly Grocery Store Beef Feature Activity. Grass-fed reference: USDA AMS National Grass Fed Beef Report, 2026 Q3. Cut shares come from Cattlemen's Beef Board and NCBA retail yield data and SDSU Extension; replace them with your processor's cut sheet. Processing, storage and yield figures follow Where's the Beef? Items marked Assumption are placeholders: replace them with your own data.</p></section>
+</div>
+</main>
+
+<footer>
+  <p class="b40-foot-brand"><strong>Back40</strong> &middot; Decision tools for cow-calf producers</p>
+  <p>This tool gives planning estimates from the numbers you enter and the starting values shown; it is not financial advice. Starting values are examples, not real producer data: check every number against your own and your processor&rsquo;s cut sheet before deciding.</p>
+<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; Data</a></li><li><a href="../data-sources.html">Where the Prices Come From</a></li></ul><!-- required-links:end -->
+</footer>
+<div class="sumbar" id="sumbar" aria-hidden="true"><span class="sb1" id="sbTxt"></span><span class="sb2" id="sbSub"></span></div>
+<script src="retail.js"></script>
+<script src="../brand/a11y-scroll.js" defer></script>
+<script src="../jim/jim.js" defer></script>
+</body>
+</html>

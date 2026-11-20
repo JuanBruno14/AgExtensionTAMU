@@ -99,6 +99,7 @@ SEO = {  # page -> (description, kind): site / app / page
     'cow-calf/index.html': ('How much can you afford to pay for a bred cow? Enter the bid, discount rate and financing to see NPV, IRR and payback over 7 years.', 'app'),
     'cow-calf/understanding-irr.html': ('A plain-language explanation of internal rate of return (IRR) and how to use it to judge what to pay for a bred cow.', 'page'),
     'replacement-heifer/index.html': ('What does a bred replacement heifer cost you? Budget from weaned calf to bred heifer with natural service, and compare it with buying one.', 'app'),
+    'retail-beef-sales/index.html': ('Sell the steer at the sale barn, by the quarter, or by the cut? Enter your numbers and see what each direct-sales option earns above the sale barn, with break-even and target prices.', 'app'),
     'retained-ownership/index.html': ('Sell or keep to upgrade cull cows: profit projection for selling now versus feeding cattle out at a feedyard or retaining them to May.', 'app'),
     'privacy.html': (None, 'page'),
     'data-sources.html': ('Every price and number on Back40 with its source and how current it is: USDA market reports, extension budgets and product labels.', 'page'),

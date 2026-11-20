@@ -33,7 +33,7 @@ def route(r):
     return r.abort()
 
 PAGES = ['index.html', 'cow-decisions/index.html', 'about/index.html', 'data-sources.html', 'privacy.html', 'cow-calf/index.html', 'cow-calf/understanding-irr.html',
-         'replacement-heifer/index.html', 'retained-ownership/index.html', 'herd-tools/index.html', 'my-ranch/index.html']
+         'replacement-heifer/index.html', 'retained-ownership/index.html', 'herd-tools/index.html', 'my-ranch/index.html', 'retail-beef-sales/index.html']
 RUN = """async () => { const r = await axe.run(document, {runOnly: {type: 'tag', values: ['wcag2a','wcag2aa','wcag21a','wcag21aa']}, resultTypes: ['violations']});
   return r.violations.map(v => ({id: v.id, impact: v.impact, help: v.help, n: v.nodes.length,
      nodes: v.nodes.slice(0, 4).map(n => ({t: n.target.join(' '), s: (n.failureSummary || '').split('\\n').slice(1, 3).join(' ')}))})); }"""
