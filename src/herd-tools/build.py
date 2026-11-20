@@ -8,7 +8,7 @@ head='''<!doctype html>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Herd Calculators · Back40</title>
-<meta name="description" content="Water, ration mix, dewormer dose and withdrawal, weight gain and herd reproduction calculators for beef cattle, from public extension sources and FDA labels.">
+<meta name="description" content="Water, ration mix, weight gain and herd reproduction calculators for beef cattle, from public extension sources and NASEM.">
 <link rel="stylesheet" href="../brand/fonts/fonts.css">
 <style>'''+css+open(os.path.join(HERE,'extra.css')).read()+'''</style>
 <link rel="stylesheet" href="../brand/base.css">

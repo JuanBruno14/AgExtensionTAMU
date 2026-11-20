@@ -18,7 +18,7 @@
   <div class="intro-inner">
     <div>
       <h1>Quick answers for everyday herd decisions.</h1>
-      <p>Five small calculators for the questions that come up every week: how much water the herd needs, how to mix hay and supplement, how much dewormer to buy and when cattle can be sold, how fast calves are gaining, and how the herd did this year. Every number comes from a public extension source or a product label, listed under each tool.</p>
+      <p>Four small calculators for the questions that come up every week: how much water the herd needs, how to mix hay and supplement, how fast calves are gaining, and how the herd did this year. Every number comes from a public extension source or the NASEM beef requirements, listed under each tool.</p>
     </div>
     <div class="intro-meta">
       <div><strong>US Units</strong>lb, gallons, &deg;F</div>
@@ -33,7 +33,6 @@
   <div class="segmented" role="tablist">
     <button type="button" class="seg-btn active" data-tool="water" role="tab" aria-selected="true">💧 Water</button>
     <button type="button" class="seg-btn" data-tool="ration" role="tab" aria-selected="false">🌾 Ration Mix</button>
-    <button type="button" class="seg-btn" data-tool="dewormer" role="tab" aria-selected="false">💉 Dewormer</button>
     <button type="button" class="seg-btn" data-tool="gain" role="tab" aria-selected="false">⚖️ Weight Gain</button>
     <button type="button" class="seg-btn" data-tool="herd" role="tab" aria-selected="false">📋 Herd Year</button>
   </div>
@@ -105,7 +104,7 @@
           <li>Total dissolved solids under <strong>1,000 ppm</strong> are safe; up to 3,000 ppm is generally safe; avoid 5,000 ppm or more for pregnant or nursing cows; never use water at <strong>7,000 ppm or more</strong>.</li>
           <li>Keep water within about <strong>650&ndash;1,000 feet</strong> of every part of the pasture for even grazing.</li>
         </ul>
-        <p class="sources"><strong>Source:</strong> Mississippi State University Extension, <a href="https://extension.msstate.edu/sites/default/files/publications/P2490_web.pdf" target="_blank" rel="noopener">Beef Cattle Water Requirements and Source Management</a> (P2490, Karisch, Parish &amp; Rhinehart), tables adapted from NRC <em>Nutrient Requirements of Beef Cattle</em> (2000); the same Winchester &amp; Morris (1956) values are Table 9-1 of NASEM <em>Nutrient Requirements of Beef Cattle</em>, 8th rev. ed. (2016). The calculator interpolates between the published temperatures and weights. Water quality limits: NASEM (2016), Chapter 9, Tables 9-2 to 9-5 and text on sulfate. Arsenic uses 0.3 ppm, the cattle limit Argentine water labs report; published guidelines range from 0.05 (NRC 2001) to 0.2 (NASEM 2021, dairy) and 0.5 ppm (ANZECC 2000, Australia).</p>
+        <p class="sources"><strong>Source:</strong> Mississippi State University Extension, <a href="https://extension.msstate.edu/sites/default/files/publications/P2490_web.pdf" target="_blank" rel="noopener">Beef Cattle Water Requirements and Source Management</a> (P2490, Karisch, Parish &amp; Rhinehart), tables adapted from NRC <em>Nutrient Requirements of Beef Cattle</em> (2000); the same Winchester &amp; Morris (1956) values are Table 9-1 of NASEM <em>Nutrient Requirements of Beef Cattle</em>, 8th rev. ed. (2016). The calculator interpolates between the published temperatures and weights. Water quality limits: NASEM (2016), Chapter 9, Tables 9-2 to 9-5 and text on sulfate. Arsenic uses the NASEM (2016) Table 9-5 upper limit of 0.05 ppm. For nursing cows and for dry pregnant cows of 1,100 lb or more, the NASEM Table 9-1 figures are used as published and are not scaled up with weight (heavier cows are fatter and do not drink more); dry pregnant cows between 900 and 1,100 lb are interpolated.</p>
       </div>
     </div>
   </div>
@@ -172,46 +171,6 @@
   </div>
 </section>
 
-<!-- ============================================================ DEWORMER -->
-<section class="tool-panel layout" id="tool-dewormer" hidden>
-  <div class="col-inputs">
-    <div class="card">
-      <div class="card-head"><h2>Dewormer: dose, bottles and sale date</h2></div>
-      <div class="card-body">
-        <div class="field-grid">
-          <div class="field" style="grid-column:1/-1;"><label for="d_prod">Product (by Active Ingredient)</label><select id="d_prod" data-k="d_prod"></select></div>
-          <div class="field custom-only"><label for="d_cDose">Label Dose</label><div class="input-wrap has-suffix"><input type="number" id="d_cDose" data-k="d_cDose" min="0.1" max="100" step="0.1"><span class="suffix">mL</span></div></div>
-          <div class="field custom-only"><label for="d_cPer">for every</label><div class="input-wrap has-suffix"><input type="number" id="d_cPer" data-k="d_cPer" min="1" max="1000" step="1"><span class="suffix">lb</span></div></div>
-          <div class="field custom-only"><label for="d_cWd">Slaughter Withdrawal</label><div class="input-wrap has-suffix"><input type="number" id="d_cWd" data-k="d_cWd" min="0" max="365" step="1"><span class="suffix">days</span></div></div>
-          <div class="field"><label for="d_lb">Weight to Dose By</label><div class="input-wrap has-suffix"><input type="number" id="d_lb" data-k="d_lb" min="50" max="3000" step="10"><span class="suffix">lb</span></div><span class="hint">Weigh, or use the heavy end of the group &mdash; underdosing breeds resistance</span></div>
-          <div class="field"><label for="d_head">Head to Treat</label><div class="input-wrap has-suffix"><input type="number" id="d_head" data-k="d_head" min="1" max="100000" step="1"><span class="suffix">head</span></div></div>
-          <div class="field"><label for="d_bottle">Bottle / Jug Size</label><div class="input-wrap has-suffix"><input type="number" id="d_bottle" data-k="d_bottle" min="10" max="20000" step="10"><span class="suffix">mL</span></div></div>
-          <div class="field"><label for="d_date">Treatment Date</label><input type="date" id="d_date" data-k="d_date"></div>
-          <div class="field"><label for="d_sale">Planned Sale Date</label><input type="date" id="d_sale" data-k="d_sale"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-results">
-    <div class="card">
-      <div class="card-head"><h2>Result</h2></div>
-      <div class="card-body">
-        <div class="verdict-pill" id="d_pill"><span class="dot"></span><span id="d_pillText">&mdash;</span></div>
-        <div class="stat-tiles">
-          <div class="stat-tile"><span class="label">Dose per head</span><span class="value" id="d_dose">&mdash;</span><span class="sub" id="d_doseSub">mL</span></div>
-          <div class="stat-tile"><span class="label">Bottles to buy</span><span class="value" id="d_bottles">&mdash;</span><span class="sub" id="d_total">&mdash;</span></div>
-          <div class="stat-tile"><span class="label">Withdrawal</span><span class="value small" id="d_wd">&mdash;</span><span class="sub">days before slaughter</span></div>
-          <div class="stat-tile"><span class="label">Earliest sale for slaughter</span><span class="value small" id="d_earliest">&mdash;</span><span class="sub" id="d_earliestSub"></span></div>
-        </div>
-        <p class="narrative" id="d_note"></p>
-        <p class="restrict" id="d_restrict"></p>
-        <p class="sources" id="d_source"></p>
-        <p class="card-note">Always read and follow the label on the product you buy &mdash; formulations and withdrawal times differ between brands and can change. Extra-label use needs a veterinarian.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
 <!-- ============================================================ GAIN -->
 <section class="tool-panel layout" id="tool-gain" hidden>
   <div class="col-inputs">
@@ -246,9 +205,9 @@
         <ul class="tips">
           <li>Behind pace on grass? An ionophore in the supplement or mineral (monensin, lasalocid) raised gain about <strong>10&ndash;12%</strong> in growing cattle on forage without changing how much they ate.</li>
           <li>A growth implant adds about <strong>12%</strong> more gain on pasture; implant plus monensin together added about <strong>22%</strong> (steers on wheat pasture). Check the label for the animal class.</li>
-          <li>Calves that were held back and then get good feed usually gain faster for about <strong>60&ndash;90 days</strong> (compensatory gain).</li>
+          <li>Calves that were held back and then get good feed often gain faster than normal for a while (compensatory gain), but how much they catch up depends on how long and how hard they were held back. Don&rsquo;t count on all of it.</li>
         </ul>
-        <p class="sources"><strong>Source (gain):</strong> NASEM <em>Nutrient Requirements of Beef Cattle</em>, 8th rev. ed. (2016), Chapter 14 (Bretschneider et al., 2008; Beck et al., 2014) and Chapter 11 (compensatory gain).<br><strong>Source (shrink):</strong> Oklahoma State University Extension, <a href="https://extension.okstate.edu/fact-sheets/managing-shrink-and-weighing-conditions-in-beef-cattle.html" target="_blank" rel="noopener">Managing Shrink and Weighing Conditions in Beef Cattle</a> (AFS-3257): 2&ndash;3% from gathering and sorting, about 3% from loading and a short haul, roughly 1% an hour for the first 3&ndash;4 hours on a truck.</p>
+        <p class="sources"><strong>Source (gain):</strong> NASEM <em>Nutrient Requirements of Beef Cattle</em>, 8th rev. ed. (2016), Chapter 14 (Bretschneider et al., 2008; Beck et al., 2014) and University of Nebraska&ndash;Lincoln, <a href="https://digitalcommons.unl.edu/animalscinbcr/412/" target="_blank" rel="noopener">Predicting Amount of Compensatory Gain</a> (Klopfenstein et al., 1999 Nebraska Beef Cattle Report): with season-long grazing, cattle made up 19&ndash;88% (mean 53%) of what they had lost, and the share made up is related to how many days they were held back.<br><strong>Source (shrink):</strong> Oklahoma State University Extension, <a href="https://extension.okstate.edu/fact-sheets/managing-shrink-and-weighing-conditions-in-beef-cattle.html" target="_blank" rel="noopener">Managing Shrink and Weighing Conditions in Beef Cattle</a> (AFS-3257): 2&ndash;3% from gathering and sorting, about 3% from loading and a short haul, roughly 1% an hour for the first 3&ndash;4 hours on a truck.</p>
       </div>
     </div>
   </div>

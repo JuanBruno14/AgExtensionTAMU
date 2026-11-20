@@ -12,18 +12,22 @@
   /* Water: NRC (2000) table as published in MSU Extension P2490. Gallons per head per day at 40..90 °F. */
   var W_TEMPS = [40, 50, 60, 70, 80, 90];
   var W_TABLE = {
-    growing:   {label:'growing calves, heifers and steers', rows:[[400,[4.0,4.3,5.0,5.8,6.7,9.5]],[600,[5.3,5.8,6.5,7.8,8.9,12.7]],[800,[6.3,6.8,7.9,9.2,10.6,15.0]]]},
+    growing:   {label:'growing calves, heifers and steers', rows:[[400,[4.0,4.3,5.0,5.8,6.7,9.5]],[600,[5.3,5.8,6.5,7.8,8.9,12.7]],[800,[6.1,6.8,7.9,9.2,10.6,15.0]]]},
     finishing: {label:'finishing cattle', rows:[[600,[6.0,6.5,7.4,8.7,10.0,14.3]],[800,[7.3,7.9,9.1,10.7,12.3,17.4]],[1000,[8.7,9.4,10.8,12.6,14.5,20.6]]]},
-    pregnant:  {label:'dry pregnant cows', rows:[[900,[6.7,7.2,8.3,9.7,null,null]]]},
-    lactating: {label:'cows nursing calves', rows:[[900,[11.4,12.6,14.5,16.9,17.9,16.2]]]},
+    pregnant:  {label:'dry pregnant cows', flatAbove:true, rows:[[900,[6.7,7.2,8.3,9.7,null,null]],[1100,[6.0,6.5,7.4,8.7,null,null]]]},
+    lactating: {label:'cows nursing calves', flatAbove:true, rows:[[900,[11.4,12.6,14.5,16.9,17.9,16.2]]]},
     bulls:     {label:'mature bulls', rows:[[1400,[8.0,8.6,9.9,11.7,13.4,19.0]],[1600,[8.7,9.4,10.8,12.6,14.5,20.6]]]}
   };
   // Dry pregnant cows have no published values above 70 °F: extend with the mature-bull pattern (70→80, 70→90).
   var BULL_RATIO = [13.4/11.7, 19.0/11.7];
   function waterRow(cls, lb){
     var t = W_TABLE[cls] || W_TABLE.lactating, rows = t.rows, flags = {};
-    var row;
-    if(rows.length === 1 || lb <= rows[0][0]){
+    var row, last = rows[rows.length - 1];
+    // NASEM Table 9-1 gives one figure for the heaviest cows (they are fatter and drink no more), so do not scale it up with weight.
+    if(t.flatAbove && lb >= last[0]){
+      row = last[1].slice();
+      if(lb - last[0] > 1) flags.flat = true;
+    } else if(rows.length === 1 || lb <= rows[0][0]){
       var r0 = rows[0]; row = r0[1].map(function(v){ return v == null ? null : v*lb/r0[0]; });
       if(Math.abs(lb - r0[0]) > 1) flags.scaled = true;
     } else if(lb >= rows[rows.length - 1][0]){
@@ -76,9 +80,9 @@
          : 'High: diarrhea at first, risk of polio (polioencephalomalacia) and lower feed and water intake. Cattle tolerate up to about 2,500 ppm only for short periods.'});
     // Table 9-5: upper-limit guidelines (mg/L) for potentially toxic elements
     var as = v(o.as), fl = v(o.f);
-    // Arsenic: 0.3 ppm, the cattle limit used by Argentine water labs (published guides range 0.05 NRC 2001, 0.2 NASEM 2021 dairy, 0.5 ANZECC)
-    if(as != null) out.push({item:'Arsenic', val:as, dec:3, level:as <= 0.3 ? 0 : as <= 0.5 ? 2 : 3,
-      text:as <= 0.3 ? 'At or under the 0.3 ppm upper limit for cattle.' : 'Over the 0.3 ppm upper limit for cattle. Arsenic builds up over time: find another water source or blend with cleaner water, and talk to your veterinarian.'});
+    // Arsenic: 0.05 mg/L upper limit, NASEM (2016) Table 9-5. Natural arsenic is common in some Texas well water, so this one matters.
+    if(as != null) out.push({item:'Arsenic', val:as, dec:3, level:as <= 0.05 ? 0 : as <= 0.1 ? 1 : 2,
+      text:as <= 0.05 ? 'At or under the 0.05 ppm upper limit for cattle.' : 'Over the 0.05 ppm upper limit for cattle. Arsenic builds up over time: find another water source or blend with cleaner water, and talk to your veterinarian.'});
     if(fl != null) out.push({item:'Fluoride', val:fl, dec:1, level:fl <= 2 ? 0 : fl <= 4 ? 1 : 2,
       text:fl <= 2 ? 'At or under the 2 ppm upper limit for cattle.' : 'Over the 2 ppm upper limit. Years of high fluoride mottle and wear young cattle’s teeth (fluorosis); count fluoride in mineral and feed phosphate too.'});
     var ph = v(o.ph), h2s = v(o.h2s), coli = v(o.coli);
@@ -105,40 +109,6 @@
     return {fa:partsA/tot, fb:partsB/tot, partsA:partsA, partsB:partsB};
   }
 
-  /* Dewormers: FDA-approved label directions (DailyMed). mlPerLb = label mL / label lb. */
-  var DM = 'https://dailymed.nlm.nih.gov/dailymed/drugInfo.cfm?setid=';
-  var DEWORMERS = {
-    ivm_inj: {label:'Ivermectin 1% injectable', route:'injection under the skin', dose:1, per:110, maxSite:10, wd:35, bottle:500,
-      restrict:'Not for female dairy cattle of breeding age or calves to be processed for veal.', ex:'Ivomec® Injection', url:DM + '84fe39b2-0423-479a-b81f-198e2fb4e826'},
-    ivm_po: {label:'Ivermectin pour-on (0.5%)', route:'pour-on along the back', dose:1, per:22, wd:48, bottle:2500,
-      restrict:'Not for female dairy cattle of breeding age or calves to be processed for veal.', ex:'Ivomec® Pour-On', url:DM + 'a3ee24dc-527f-4880-a55e-acd33b833192'},
-    dor_inj: {label:'Doramectin 1% injectable', route:'injection under the skin or in the muscle', dose:1, per:110, wd:35, bottle:500,
-      restrict:'Not for female dairy cattle 20 months of age or older, or veal calves.', ex:'Dectomax® Injectable', url:DM + '44b8a743-4f00-457a-8b7e-5f3a557c04f1'},
-    dor_po: {label:'Doramectin pour-on (0.5%)', route:'pour-on along the back', dose:1, per:22, wd:45, bottle:2500,
-      restrict:'Not for female dairy cattle 20 months of age or older, or veal calves.', ex:'Dectomax® Pour-On', url:DM + 'ec6ff537-4773-432d-86db-7ba767769c80'},
-    epr_er: {label:'Eprinomectin 5% extended-release injectable', route:'injection under the skin in front of the shoulder', dose:1, per:110, maxSite:10, wd:48, bottle:500,
-      restrict:'Not for female dairy cattle 20 months or older (including dry cows), veal calves, breeding bulls, or calves under 3 months.', ex:'LongRange®', url:DM + '040cd8ea-5c01-4eda-b36a-5427e5a7bdef'},
-    epr_po: {label:'Eprinomectin pour-on (0.5%)', route:'pour-on along the back', dose:1, per:22, wd:0, bottle:2500,
-      restrict:'No slaughter withdrawal and no milk discard. Not for calves to be processed for veal.', ex:'Eprinex® Pour-On', url:DM + '7cf8669c-c000-4645-962e-891946c0e54b'},
-    mox_po: {label:'Moxidectin pour-on (0.5%)', route:'pour-on along the back', dose:1, per:22, wd:0, bottle:2500,
-      restrict:'No slaughter withdrawal and no milk discard. Not for veal calves.', ex:'Cydectin® Pour-On', url:DM + 'b9b31948-0fad-4666-bba3-d31e1c38779e'},
-    fbz: {label:'Fenbendazole 10% oral suspension', route:'by mouth (drench)', dose:2.3, per:100, wd:8, bottle:1000,
-      restrict:'Milk: discard during treatment and for 48 hours after. Not for beef calves under 2 months, dairy calves or veal calves.', ex:'Safe-Guard® 10% Suspension', url:DM + '9188886a-54bc-4c68-9f1d-37a20e031076'},
-    alb: {label:'Albendazole 11.36% oral suspension', route:'by mouth (drench)', dose:4, per:100, wd:27, bottle:1000,
-      restrict:'Not for female dairy cattle of breeding age.', ex:'Valbazen®', url:DM + '94cf5818-f27d-4374-87ad-54a2d9ce6ef1'},
-    custom: {label:'Other product (enter from its label)', route:'', dose:null, per:null, wd:null, bottle:500, restrict:'', ex:'', url:''}
-  };
-  function dewormer(key, lb, head, bottle, custom){
-    var p = DEWORMERS[key] || DEWORMERS.ivm_inj;
-    var dose = key === 'custom' ? custom.dose : p.dose, per = key === 'custom' ? custom.per : p.per, wd = key === 'custom' ? custom.wd : p.wd;
-    if(!(dose > 0) || !(per > 0)) return null;
-    var ml = lb*dose/per, total = ml*head;
-    return {ml:ml, total:total, bottles:bottle > 0 ? Math.ceil(total/bottle - 1e-9) : null, wd:wd, sites:p.maxSite ? Math.ceil(ml/p.maxSite - 1e-9) : 1, product:p};
-  }
-  function addDays(iso, d){ var t = new Date(iso + 'T12:00:00'); if(isNaN(t)) return null; t.setDate(t.getDate() + d); return t; }
-  function isoOf(t){ return t.getFullYear() + '-' + String(t.getMonth() + 1).padStart(2, '0') + '-' + String(t.getDate()).padStart(2, '0'); }
-  function niceDate(t){ return t.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'}); }
-
   /* Weight gain */
   function gain(o){
     var adg = (o.now - o.start)/o.days;
@@ -161,7 +131,6 @@
     w_class:'lactating', w_lb:1200, w_head:100, w_temp:95, w_tank:3000, w_tds:'', w_no3:'', w_so4:'', w_hard:'', w_as:'', w_f:'', w_ph:'', w_h2s:'', w_coli:'', w_al:'', w_b:'', w_cd:'', w_cr:'', w_co:'', w_cu:'', w_pb:'', w_mn:'', w_hg:'', w_ni:'', w_se:'', w_v:'', w_zn:'', 
     r_nut:'cp', r_target:10, r_aName:'Grass hay', r_aCp:7, r_aTdn:52, r_aDm:90, r_aPrice:120,
     r_bName:'20% range cubes', r_bCp:22, r_bTdn:78, r_bDm:90, r_bPrice:392, r_dmi:26, r_bw:1200, r_head:100, r_days:90,
-    d_prod:'ivm_inj', d_cDose:1, d_cPer:110, d_cWd:35, d_lb:600, d_head:100, d_bottle:500, d_date:'', d_sale:'',
     g_start:450, g_now:540, g_days:60, g_target:1.75, g_sale:750, g_shrink:3, g_head:100, g_price:300,
     h_exposed:100, h_heifers:18, h_tested:98, h_preg:90, h_weaned:84, h_wwt:540,
     h_begin:210, h_born:88, h_bought:4, h_sold:95, h_died:3, h_count:204
@@ -169,9 +138,6 @@
   var S = Object.assign({}, DEF);
   try{ var saved = JSON.parse(localStorage.getItem(STORE) || 'null'); if(saved && typeof saved === 'object') Object.keys(DEF).forEach(function(k){ if(saved[k] != null) S[k] = saved[k]; }); }catch(e){}
   function save(){ try{ localStorage.setItem(STORE, JSON.stringify(S)); }catch(e){} }
-  var today = isoOf(new Date());
-  if(!S.d_date) S.d_date = today;
-  if(!S.d_sale){ var t60 = addDays(today, 60); S.d_sale = t60 ? isoOf(t60) : today; }
 
   /* ================================================================ RENDER */
   function pill(el, kind, text){ el.className = 'verdict-pill ' + kind; el.querySelector('span:last-child').textContent = text; }
@@ -185,6 +151,7 @@
     var notes = [];
     if(r.flags.above90) notes.push('The published table stops at 90°F, so this is the 90°F figure — on hotter days cattle drink even more.');
     if(r.flags.below40) notes.push('Below 40°F the table’s coldest value is used.');
+    if(r.flags.flat) notes.push('The table gives one figure for cows this heavy (heavier cows are fatter and do not drink more), so the tool does not scale it up with weight.');
     if(r.flags.scaled) notes.push('Your weight is outside the published weights, so the figure is scaled in proportion to weight.');
     if(r.flags.pregHot && r.flags.usedHot) notes.push('The table has no values above 70°F for dry pregnant cows; above 70°F this tool follows the pattern published for mature bulls.');
     if(r.flags.lactHot && S.w_temp > 80) notes.push('For nursing cows the published 90°F value is lower than the 80°F one; for planning, the tool keeps the 80°F value.');
@@ -229,32 +196,6 @@
     $('r_note').textContent = notes.join(' ');
   }
 
-  function renderDewormer(){
-    var key = S.d_prod, p = DEWORMERS[key] || DEWORMERS.ivm_inj;
-    document.querySelectorAll('#tool-dewormer .custom-only').forEach(function(el){ el.hidden = key !== 'custom'; });
-    var r = dewormer(key, S.d_lb, S.d_head, S.d_bottle, {dose:S.d_cDose, per:S.d_cPer, wd:S.d_cWd});
-    if(!r){ pill($('d_pill'), 'critical', 'Enter the label dose'); return; }
-    $('d_dose').textContent = fmt(r.ml, 1);
-    $('d_doseSub').textContent = 'mL · ' + (key === 'custom' ? fmt(S.d_cDose, 1) + ' mL per ' + fmt(S.d_cPer) + ' lb' : fmt(p.dose, 1) + ' mL per ' + fmt(p.per) + ' lb') + (p.route ? ' · ' + p.route : '');
-    $('d_bottles').textContent = r.bottles == null ? '—' : fmt(r.bottles);
-    $('d_total').textContent = fmt(r.total) + ' mL for ' + fmt(S.d_head) + ' head';
-    $('d_wd').textContent = r.wd == null ? '—' : r.wd === 0 ? 'None' : fmt(r.wd) + ' days';
-    var earliest = r.wd != null ? addDays(S.d_date, r.wd) : null, sale = S.d_sale ? new Date(S.d_sale + 'T12:00:00') : null;
-    $('d_earliest').textContent = earliest ? niceDate(earliest) : '—';
-    if(earliest && sale && !isNaN(sale)){
-      var diff = Math.round((sale - earliest)/86400000);
-      $('d_earliestSub').textContent = diff >= 0 ? fmt(diff) + ' days to spare before your sale' : fmt(-diff) + ' days too late for your sale';
-      pill($('d_pill'), diff >= 0 ? 'good' : 'critical', diff >= 0 ? 'Cattle clear withdrawal before your planned sale' : 'Withdrawal runs past your planned sale — sell later or pick another product');
-    } else { $('d_earliestSub').textContent = ''; pill($('d_pill'), 'good', 'Enter a sale date to check withdrawal'); }
-    var notes = [];
-    if(p.maxSite && r.sites > 1) notes.push('The label allows at most ' + p.maxSite + ' mL per injection site: split each dose into ' + r.sites + ' sites.');
-    if(r.bottles != null) notes.push('Buy whole containers: ' + fmt(r.total) + ' mL needs ' + fmt(r.bottles) + ' × ' + fmt(S.d_bottle) + ' mL.');
-    notes.push('Withdrawal counts from the treatment date to slaughter; cattle sold as feeders carry the date with them — tell the buyer.');
-    $('d_note').textContent = notes.join(' ');
-    $('d_restrict').innerHTML = p.restrict ? '<strong>Label restrictions:</strong> ' + esc(p.restrict) : '';
-    $('d_source').innerHTML = p.url ? '<strong>Source:</strong> FDA-approved label for ' + esc(p.ex) + ' on <a href="' + p.url + '" target="_blank" rel="noopener">DailyMed (U.S. National Library of Medicine)</a>. Other brands with the same active ingredient can have different doses or withdrawal times.' : '<strong>Source:</strong> the label of the product you use.';
-  }
-
   function renderGain(){
     var r = gain({start:S.g_start, now:S.g_now, days:S.g_days, target:S.g_target, sale:S.g_sale, shrink:S.g_shrink});
     $('g_adg').textContent = fmt(r.adg, 2);
@@ -292,7 +233,7 @@
     $('h_note').textContent = n.join(' ');
   }
 
-  var RENDER = {water:renderWater, ration:renderRation, dewormer:renderDewormer, gain:renderGain, herd:renderHerd};
+  var RENDER = {water:renderWater, ration:renderRation, gain:renderGain, herd:renderHerd};
   function renderAll(){ Object.keys(RENDER).forEach(function(k){ try{ RENDER[k](); }catch(e){ if(window.console) console.error(e); } }); }
 
   /* ================================================================ WIRING */
@@ -314,7 +255,6 @@
   }
   function init(){
     initTheme();
-    $('d_prod').innerHTML = Object.keys(DEWORMERS).map(function(k){ return '<option value="' + k + '">' + esc(DEWORMERS[k].label) + '</option>'; }).join('');
     document.querySelectorAll('[data-k]').forEach(function(el){
       var k = el.getAttribute('data-k');
       el.value = S[k];
@@ -324,7 +264,6 @@
         if(isNum && optional && el.value.trim() === '') S[k] = '';
         else if(isNum){ var v = num(el.value); if(v == null || v < +el.min || v > +el.max) return; S[k] = v; }
         else S[k] = el.value;
-        if(k === 'd_prod'){ S.d_bottle = (DEWORMERS[S.d_prod] || {}).bottle || S.d_bottle; $('d_bottle').value = S.d_bottle; }
         if(k === 'r_nut'){ S.r_target = S.r_nut === 'cp' ? 10 : 55; $('r_target').value = S.r_target; }
         save(); renderAll();
       });
@@ -336,6 +275,6 @@
     window.addEventListener('hashchange', function(){ var t = (location.hash || '').replace('#', ''); if(RENDER[t]) showTool(t, false); });
     renderAll();
   }
-  window.HerdTools = {water:water, waterQuality:waterQuality, pearson:pearson, dewormer:dewormer, gain:gain, spa:spa, DEWORMERS:DEWORMERS, state:function(){ return S; }};
+  window.HerdTools = {water:water, waterQuality:waterQuality, pearson:pearson, gain:gain, spa:spa, state:function(){ return S; }};
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
 })();

@@ -1,6 +1,6 @@
 import os
 HERE=os.path.dirname(os.path.realpath(__file__)); REPO=os.path.abspath(os.path.join(HERE,'..','..')); OUT=os.path.join(HERE,'.out'); os.makedirs(OUT, exist_ok=True)
-import threading, http.server, socketserver, functools, sys, datetime
+import threading, http.server, socketserver, functools, sys
 from playwright.sync_api import sync_playwright
 
 ROOT=REPO; PORT=8766
@@ -26,14 +26,20 @@ with sync_playwright() as pw:
     check('water table point: nursing 900 lb 70F = 16.9', abs(pg.evaluate(H+".water('lactating',900,70).gal")-16.9)<1e-9)
     check('water table point: growing 600 lb 90F = 12.7', abs(pg.evaluate(H+".water('growing',600,90).gal")-12.7)<1e-9)
     check('water interpolates 700 lb growing at 65F', abs(pg.evaluate(H+".water('growing',700,65).gal")-((6.5+7.9)/2+((7.8+9.2)/2-(6.5+7.9)/2)*0.5))<1e-9)
-    check('water scales above table weight', abs(pg.evaluate(H+".water('lactating',1200,60).gal")-14.5*1200/900)<1e-9)
+    check('nursing cows above 900 lb are not scaled up (NASEM Table 9-1, 409 kg and over)', abs(pg.evaluate(H+".water('lactating',1200,60).gal")-14.5)<1e-9)
+    check('nursing cows default case 1,200 lb at 95F = 17.9', abs(pg.evaluate(H+".water('lactating',1200,95).gal")-17.9)<1e-9)
+    check('dry pregnant 1,100 lb row at 70F = 8.7', abs(pg.evaluate(H+".water('pregnant',1100,70).gal")-8.7)<1e-9)
+    check('dry pregnant above 1,100 lb not scaled', abs(pg.evaluate(H+".water('pregnant',1200,70).gal")-8.7)<1e-9)
+    check('dry pregnant 1,000 lb interpolates 900 and 1,100', abs(pg.evaluate(H+".water('pregnant',1000,70).gal")-(9.7+8.7)/2)<1e-9)
+    check('growing 800 lb at 40F = 6.1', abs(pg.evaluate(H+".water('growing',800,40).gal")-6.1)<1e-9)
     check('nursing cows never less water when hotter', pg.evaluate(H+".water('lactating',900,90).gal")>=pg.evaluate(H+".water('lactating',900,80).gal"))
     q=pg.evaluate(H+".waterQuality({tds:4000,no3:150,so4:'',hard:200})")
     check('water quality: NASEM Tables 9-2 and 9-4 bands, blank skipped', len(q)==3 and q[0]['level']==1 and q[1]['level']==2 and 'Very hard' in q[2]['text'], q)
     q2=pg.evaluate(H+".waterQuality({as:0.53,f:1.5})")
-    q2b=pg.evaluate(H+".waterQuality({as:0.25})")
-    check('water quality: arsenic 0.25 ppm ok', q2b[0]['level']==0, q2b)
-    check('water quality: arsenic over 0.3 ppm flagged, fluoride under 2 ppm ok (Table 9-5)', q2[0]['level']>=2 and q2[1]['level']==0, q2)
+    q2b=pg.evaluate(H+".waterQuality({as:0.04})")
+    q2c=pg.evaluate(H+".waterQuality({as:0.08})")
+    check('water quality: arsenic 0.04 ppm ok, 0.08 caution (limit 0.05, Table 9-5)', q2b[0]['level']==0 and q2c[0]['level']==1, [q2b, q2c])
+    check('water quality: arsenic 0.53 ppm flagged, fluoride under 2 ppm ok (Table 9-5)', q2[0]['level']>=2 and q2[1]['level']==0, q2)
     q3=pg.evaluate(H+".waterQuality({ph:9.2,h2s:0.2,coli:12,se:0.03,pb:0.05})")
     check('water quality: pH, H2S, coliforms and Table 9-5 metals', [x['level'] for x in q3]==[2,2,2,2,0], [(x['item'],x['level']) for x in q3])
     check('water quality: 7,000 ppm TDS = do not use', pg.evaluate(H+".waterQuality({tds:7000})[0].level")==3)
@@ -42,14 +48,6 @@ with sync_playwright() as pw:
     p=pg.evaluate(H+".pearson(7,22,10)")
     check('pearson fractions', abs(p['fa']-12/15)<1e-9 and abs(p['fb']-3/15)<1e-9 and abs(p['fa']*7+p['fb']*22-10)<1e-9)
     check('pearson rejects target outside', pg.evaluate(H+".pearson(7,22,25)") is None)
-    # --- dewormer
-    d=pg.evaluate(H+".dewormer('ivm_inj',1100,10,500,{})")
-    check('ivermectin injectable 1 mL/110 lb: 1100 lb = 10 mL, 100 mL, 1 bottle, 35 d', abs(d['ml']-10)<1e-9 and abs(d['total']-100)<1e-9 and d['bottles']==1 and d['wd']==35)
-    d2=pg.evaluate(H+".dewormer('epr_er',1320,1,500,{})")
-    check('extended-release eprinomectin over 10 mL splits into 2 sites', d2['sites']==2 and d2['wd']==48)
-    d3=pg.evaluate(H+".dewormer('fbz',600,1,1000,{})")
-    check('fenbendazole 2.3 mL/100 lb', abs(d3['ml']-13.8)<1e-9 and d3['wd']==8)
-    check('custom dose', abs(pg.evaluate(H+".dewormer('custom',500,1,500,{dose:2,per:100,wd:10}).ml")-10)<1e-9)
     # --- gain & spa
     g=pg.evaluate(H+".gain({start:450,now:540,days:60,target:1.75,sale:750,shrink:3})")
     check('gain ADG and days', abs(g['adg']-1.5)<1e-9 and abs(g['daysReal']-140)<1e-9 and abs(g['pay']-727.5)<1e-9)
@@ -68,16 +66,6 @@ with sync_playwright() as pw:
     pg.fill('#r_target','30'); pg.wait_for_timeout(100)
     check('ration target outside feeds warns', 'must be between' in pg.inner_text('#r_pill') and not pg.is_visible('#r_out'))
     pg.fill('#r_target','10'); pg.wait_for_timeout(100)
-    pg.click('[data-tool="dewormer"]'); pg.wait_for_timeout(100)
-    check('dewormer dose 600 lb ivermectin = 5.5 mL', pg.inner_text('#d_dose')=='5.5')
-    check('dewormer label restrictions and source link', 'dairy' in pg.inner_text('#d_restrict') and pg.locator('#d_source a[href*="dailymed"]').count()==1)
-    sale=(datetime.date.today()+datetime.timedelta(days=20)).isoformat()
-    pg.fill('#d_sale', sale); pg.dispatch_event('#d_sale','change'); pg.wait_for_timeout(100)
-    check('withdrawal past sale flagged', 'too late' in pg.inner_text('#d_earliestSub') and 'critical' in pg.get_attribute('#d_pill','class'))
-    pg.select_option('#d_prod','custom'); pg.wait_for_timeout(100)
-    check('custom fields appear', pg.is_visible('#d_cDose'))
-    pg.select_option('#d_prod','mox_po'); pg.wait_for_timeout(100)
-    check('zero-withdrawal product OK', pg.inner_text('#d_wd')=='None' and 'good' in pg.get_attribute('#d_pill','class') and not pg.is_visible('#d_cDose'))
     pg.click('[data-tool="gain"]'); pg.wait_for_timeout(100)
     check('gain behind target', 'Behind target' in pg.inner_text('#g_pill') and pg.inner_text('#g_adg')=='1.50')
     pg.click('[data-tool="herd"]'); pg.wait_for_timeout(100)
@@ -87,10 +75,10 @@ with sync_playwright() as pw:
     pg.screenshot(path=O+'ht-herd.png')
     pg.reload(); pg.wait_for_timeout(300)
     check('inputs and tab persist', pg.is_visible('#tool-herd') and pg.input_value('#h_count')=='200')
-    for t in ['water','ration','dewormer','gain']:
+    for t in ['water','ration','gain']:
         pg.click(f'[data-tool="{t}"]'); pg.wait_for_timeout(150); pg.screenshot(path=O+f'ht-{t}.png')
     pg.click('#themeToggle'); pg.wait_for_timeout(200); pg.click('[data-tool="ration"]'); pg.wait_for_timeout(150); pg.screenshot(path=O+'ht-ration-dark.png'); pg.click('#themeToggle')
-    m=ctx.new_page(); m.set_viewport_size({'width':390,'height':844}); m.goto(f'http://127.0.0.1:{PORT}/herd-tools/index.html#dewormer'); m.wait_for_timeout(400)
+    m=ctx.new_page(); m.set_viewport_size({'width':390,'height':844}); m.goto(f'http://127.0.0.1:{PORT}/herd-tools/index.html#gain'); m.wait_for_timeout(400)
     m.screenshot(path=O+'ht-mobile.png', full_page=True)
     check('no horizontal scroll on phone', m.evaluate('document.documentElement.scrollWidth')<=390, m.evaluate('document.documentElement.scrollWidth'))
     # portal card
