@@ -4,7 +4,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-ZGyt+ib8XLJteioOV18GP7RziTSxvRR1nmMqxKWmjV8='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'sha256-/hCBTA1G7UHuGLhMNsJ5F6piDYN/+qJruwC39Vr7fmE='; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Cow Bid Price · Back40</title>
@@ -487,7 +487,7 @@
   <p class="tool-title" id="toolTitle">Cow Bid Price</p>
   <div class="header-right">
     <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">🌙</button>
-    <a href="../data-sources.html" class="phase-chip" style="text-decoration:none;cursor:pointer;" title="See where every market price on this page comes from, and how current it is">Prices: Nov 16, 2026</a>
+    <a href="../data-sources.html" class="phase-chip" style="text-decoration:none;cursor:pointer;" title="See where every market price on this page comes from, and how current it is">Prices: Nov 24, 2026</a>
   </div>
 </header>
 <main id="main">
@@ -530,7 +530,7 @@
           <label for="bidPrice">Cow Bid Price ($/head)</label>
           <div class="hero-row">
             <input type="range" id="bidPriceRange" min="400" max="7000" step="10" value="1300" aria-label="Cow bid price ($/head) — drag to adjust">
-            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="3296.39" min="0" step="10" title="Pre-filled once from the shared &quot;Market Prices &amp; Factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
+            <div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="bidPrice" value="3334.76" min="0" step="10" title="Pre-filled once from the shared &quot;Market Prices &amp; Factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div>
           </div>
           <span style="display:block;font-size:11px;color:var(--ink-muted);margin-top:6px;">Pre-filled from <a href="../cow-decisions/index.html#market-prices-calculator" style="color:inherit;">Market Prices &amp; Factors</a> — edit freely, this field won't update on its own</span>
         </div>
@@ -836,7 +836,7 @@
         <fieldset style="margin-bottom:16px;">
           <legend>Breeding cows</legend>
           <div class="field-grid cols-3">
-            <div class="field"><label for="a2_cowCost">Cost/head</label><span class="hint">Pre-filled from Market Prices &amp; Factors</span><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="3296.39" min="0" title="Pre-filled once from the shared &quot;Market Prices &amp; Factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div></div>
+            <div class="field"><label for="a2_cowCost">Cost/head</label><span class="hint">Pre-filled from Market Prices &amp; Factors</span><div class="input-wrap has-prefix"><span class="prefix">$</span><input type="number" id="a2_cowCost" value="3334.76" min="0" title="Pre-filled once from the shared &quot;Market Prices &amp; Factors&quot; calculator on the home page. Edit freely — it won't change on its own after that."></div></div>
             <div class="field"><label for="a2_cowLife">Productive Life</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowLife" value="7" min="1"><span class="suffix">yrs</span></div></div>
             <div class="field"><label for="a2_cowDeathLoss">Death Loss</label><div class="input-wrap has-suffix"><input type="number" id="a2_cowDeathLoss" value="1" min="0" max="100"><span class="suffix">%</span></div></div>
             <div class="field"><label for="a2_cullCowWt">Cull Weight</label><div class="input-wrap has-suffix"><input type="number" id="a2_cullCowWt" value="1279.4" min="0"><span class="suffix">lb</span></div><input type="range" id="a2_cullCowWtRange" class="weight-slide" min="1100" max="1550" step="50" value="1279.4" aria-label="Cull cow weight — drag to auto-fill the matching auction price"></div>
@@ -1363,7 +1363,7 @@
      average $2,828.62/hd, week of 2026-09-03. Not fabricated - sourced and
      disclosed; a2_cowCost below uses the same figure. */
   var DEFAULTS = {
-    bidPrice:3296.39, steerWeight:516.4, heiferWeight:531.3, cullWeight:1279.4,
+    bidPrice:3334.76, steerWeight:516.4, heiferWeight:531.3, cullWeight:1279.4,
     discountRate:5, calvingYears:7, startYear:2026,
     equityPct:20, loanTerm:5, interestRate:5,
     priceTrend:-5
@@ -1471,7 +1471,7 @@
   var MP_STORAGE_KEY = 'tamuDecisionAidsMarketPrices';
   var MP_FALLBACK = {
     mp_steerPrice:401.22, mp_heiferPrice:365.76, mp_cullCowPrice:125.06, mp_cullBullPrice:162.90,
-    mp_bredCowPrice:3296.39, mp_bullCost:4500, mp_bullLife:4, mp_bullDeathLoss:2, mp_perBull:25
+    mp_bredCowPrice:3334.76, mp_bullCost:4500, mp_bullLife:4, mp_bullDeathLoss:2, mp_perBull:25
   };
   function getMarketPrices(){
     try {
@@ -2093,7 +2093,7 @@
     a2_otherFeed1Qty:0, a2_otherFeed1Price:0,
     a2_hiredLabor:50, a2_ownerLabor:150, a2_vetMed:35, a2_vaccination:40, a2_otherDirect:0,
     a2_fuelLube:35, a2_utilities:10, a2_adminGA:25, a2_otherIndirect1:0,
-    a2_cowCost:3296.39, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:125.06, // sourced bred-cow price, see DEFAULTS.bidPrice comment above
+    a2_cowCost:3334.76, a2_cowLife:7, a2_cowDeathLoss:1, a2_cullCowWt:1279.4, a2_cullCowPrice:125.06, // sourced bred-cow price, see DEFAULTS.bidPrice comment above
     a2_cullBullWt:1650.7, a2_cullBullPrice:162.90,
     // a2_bullCost/a2_bullLife/a2_bullDeathLoss/a2_cowsPerBull removed 2026-09-21: these now
     // come from the shared "Market Prices & Factors" store (see refreshPriceSlides() /
