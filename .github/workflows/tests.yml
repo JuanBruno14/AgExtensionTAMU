@@ -51,6 +51,9 @@ jobs:
       - name: Jim Worker
         run: node worker/test_worker.mjs
 
+      - name: Virtual fence collars vs. the collars workbook
+        run: node tools/test_collars.js
+
       - name: Nutrition engine vs. BCNRM spreadsheet
         run: cd src/my-ranch && node valbc.js
 

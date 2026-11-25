@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' ; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: blob: https://server.arcgisonline.com https://tile.openstreetmap.org; connect-src 'self' https://jim.j-bautista-bruno.workers.dev https://sdmdataaccess.sc.egov.usda.gov https://elevation.nationalmap.gov https://services9.arcgis.com https://nominatim.openstreetmap.org; worker-src 'self' blob:; object-src 'none'; frame-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Virtual Fence Collars &middot; New Technologies &middot; Back40</title>
+<meta name="description" content="Do virtual fence collars pay on your ranch? Enter your herd, acres, vendor and savings, then see the yearly cost, savings and break-even fee.">
+<link rel="stylesheet" href="../brand/fonts/fonts.css">
+<style>
+  :root{
+    --maroon-900:#3a0000;
+    --maroon-800:#500000;
+    --maroon-700:#6b0f0f;
+    --maroon-100:#f7e9e6;
+    --wheat-500:#b8862f;
+    --wheat-100:#f4e9d6;
+    --good-700:#276749;
+    --good-100:#e3f1e9;
+    --critical-700:#9a3412;
+    --critical-100:#fbe9e1;
+    --accent:var(--maroon-800);
+    --bg:#f6f3ee;
+    --surface:#ffffff;
+    --surface-sunken:#f0ece4;
+    --border:#e2dbcf;
+    --ink:#241c19;
+    --ink-secondary:#5a4f48;
+    --ink-muted:#8a7d73;
+    --focus:#2f6fb3;
+    --shadow-card:0 1px 2px rgba(58,0,0,0.04), 0 4px 16px rgba(58,0,0,0.06);
+    --s1:#2a78d6; --s2:#eb6834; --s3:#1baf7a; --s4:#eda100; --s5:#4a3aa7;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+      --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+      --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+      --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+      --wheat-100:#33290f; --wheat-500:#d9a44a;
+      --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+      --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1b1512; --surface:#241c19; --surface-sunken:#2c221e; --border:#3a2d27;
+    --ink:#f3ece5; --ink-secondary:#cabdb3; --ink-muted:#96877c;
+    --maroon-100:#3a1f1f; --good-100:#193225; --good-700:#5fbf8e;
+    --critical-100:#3a2013; --critical-700:#e2895f; --accent:#e2897c;
+    --wheat-100:#33290f; --wheat-500:#d9a44a;
+    --shadow-card:0 1px 2px rgba(0,0,0,0.3), 0 4px 20px rgba(0,0,0,0.35);
+    --s1:#3987e5; --s2:#d95926; --s3:#199e70; --s4:#c98500; --s5:#9085e9;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:"Open Sans", ui-sans-serif, system-ui, sans-serif;
+    font-variant-numeric:tabular-nums;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:"Oswald", "Open Sans", Arial, sans-serif; text-wrap:balance; letter-spacing:-0.01em;}
+  a{color:inherit;}
+
+  .topbar{
+    background:linear-gradient(180deg, var(--maroon-800), var(--maroon-900));
+    color:#fff;
+    padding:18px clamp(16px,4vw,40px);
+    display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap;
+  }
+  .wordmark{display:flex; align-items:center; gap:14px;}
+  .wordmark .mark{
+    width:44px;height:44px;border-radius:9px;
+    background:rgba(255,255,255,0.12); border:1.5px solid rgba(255,255,255,0.55);
+    display:flex;align-items:center;justify-content:center;
+    font-family:"Oswald", sans-serif;font-weight:700;font-size:20px; flex:none;
+  }
+  .wordmark .text{line-height:1.15;}
+  .wordmark .text .top{font-size:11px;letter-spacing:0.14em;text-transform:uppercase;opacity:0.82;font-weight:600;}
+  .wordmark .text .main{font-family:"Oswald", sans-serif;font-size:19px;font-weight:600;}
+
+  .theme-toggle{
+    display:inline-flex;align-items:center;justify-content:center;
+    width:30px;height:30px;border-radius:100px;
+    background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.4);
+    color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0;flex:none;
+  }
+  .theme-toggle:hover{background:rgba(255,255,255,0.24);}
+  .theme-toggle:focus-visible{outline:2px solid #fff;outline-offset:2px;}
+
+  footer{
+    max-width:1180px;margin:0 auto;padding:0 clamp(16px,4vw,40px) 40px;
+    color:var(--ink-muted);font-size:12px;line-height:1.6;
+    border-top:1px solid var(--border);padding-top:20px;
+  }
+  footer a{text-decoration:underline;}
+</style>
+<link rel="stylesheet" href="../brand/base.css">
+<link rel="stylesheet" href="../brand/western.css">
+<link rel="stylesheet" href="collars.css">
+<!-- seo:start (tools/secure_pages.py) -->
+<link rel="canonical" href="https://back40agtools.com/new-technologies/">
+<link rel="icon" href="../brand/favicon.svg" type="image/svg+xml">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Back40">
+<meta property="og:title" content="Virtual Fence Collars &middot; New Technologies &middot; Back40">
+<meta property="og:description" content="Do virtual fence collars pay on your ranch? Enter your herd, acres, vendor and savings, then see the yearly cost, savings and break-even fee.">
+<meta property="og:url" content="https://back40agtools.com/new-technologies/">
+<meta property="og:image" content="https://back40agtools.com/brand/photos/hero-herd.jpg">
+<meta property="og:image:alt" content="Black-and-white photo of a mixed herd of cows standing in tall grass">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Virtual Fence Collars","url":"https://back40agtools.com/new-technologies/","description":"Do virtual fence collars pay on your ranch? Enter your herd, acres, vendor and savings, then see the yearly cost, savings and break-even fee.","applicationCategory":"BusinessApplication","operatingSystem":"Any (web browser)","inLanguage":"en","isPartOf":{"@type":"WebSite","name":"Back40","url":"https://back40agtools.com/"},"offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<!-- seo:end -->
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<header class="topbar">
+  <div class="wordmark"><a href="../index.html" aria-label="Back40 home"><span class="b40-logo"><svg class="b40-star" aria-hidden="true" viewBox="0 0 24 24"><path d="M12 2l2.9 6.6 7.1.6-5.4 4.7 1.6 7-6.2-3.7-6.2 3.7 1.6-7L2 9.2l7.1-.6z"/></svg><span class="b40-name">Back40</span></span></a></div>
+  <nav class="b40-nav" aria-label="Sections"><a href="../cow-decisions/index.html">Beef Cattle Decisions</a><a href="../herd-tools/index.html">Calculators</a><a href="../my-ranch/index.html">My Ranch</a><a href="../new-technologies/index.html" aria-current="page">New Technologies</a><a href="../retail-beef-sales/index.html">Retail Beef Sales</a><a href="../about/index.html">About</a></nav>
+  <button type="button" class="theme-toggle" id="themeToggle" aria-label="Switch to dark mode" title="Switch to dark mode">&#127769;</button>
+</header>
+
+<section class="intro">
+  <div class="intro-inner">
+    <div>
+      <h1>Do virtual fence collars pay on your ranch?</h1>
+      <p>Enter your herd and acres, pick a vendor, and tell us what collars would save you. The results tab shows what they cost and save in a year, and the yearly fee and calf weight you would need to break even.</p>
+    </div>
+    <div class="intro-meta">
+      <div><strong>One Year</strong>cost and savings per year</div>
+      <div><strong>US Units</strong>lb, $/cwt, $/year</div>
+      <div><strong>Private</strong>your numbers stay in this browser</div>
+    </div>
+  </div>
+</section>
+<main id="main" class="b40-page">
+<div class="vf">
+<section aria-labelledby="t1" class="sec">
+<div><h2 id="t1">Virtual Fence Collars</h2><p class="sub">GPS collars keep cattle inside a boundary you draw on a phone, with no wire. They save labor and fence, but they charge a yearly fee for every collar.</p>
+<ul class="how"><li><b>Step 1:</b> pick a vendor and fill in your numbers. <b>Step 2:</b> open the results tab to see the answer.</li><li><b>Net per year</b> is what collars save minus what they cost. <b>Break-even</b> is the highest yearly fee, or the extra calf weight, that ties it.</li><li>Items marked <b>Assumption</b> are placeholders: replace them with your own numbers.</li></ul></div>
+<div class="tabs" role="tablist" aria-label="Virtual fence collars steps"><button type="button" role="tab" id="tab1" aria-selected="true" aria-controls="p1"><span class="tn">1</span> Your numbers</button><button type="button" role="tab" id="tab2" aria-selected="false" aria-controls="p2" tabindex="-1"><span class="tn">2</span> Results</button></div>
+<div role="tabpanel" id="p1" aria-labelledby="tab1">
+<form class="panel" id="form" onsubmit="return false" aria-label="Your numbers">
+<h2>Your numbers</h2>
+<p class="saved">Saved in this browser only. Nothing is sent anywhere.</p>
+<div class="lab">Your ranch</div>
+<div id="g-ranch" class="fgrid"></div>
+<div class="lab">The collars</div>
+<div class="f"><label for="vendor">Vendor</label><select id="vendor"></select><div class="vprice" id="vprice"></div></div>
+<div id="g-tech" class="fgrid"></div>
+<div class="lab">What you save in a year</div>
+<div id="g-sav" class="fgrid"></div>
+<div>
+<details><summary><span>Fence assumptions</span><span class="note">3 items</span></summary><div class="fgrid" id="g-fence"></div></details>
+<details><summary><span>Spares and equipment life</span><span class="note">3 items</span></summary><div class="fgrid" id="g-life"></div></details>
+<details><summary><span>Extra income (optional)</span><span class="note">3 items</span></summary><div class="fgrid" id="g-extra"></div></details>
+<div style="border-top:1px solid var(--border)"></div></div>
+<button type="button" class="go" id="toRes">See the results &rarr;</button>
+<button type="button" class="reset" id="reset">Reset to the example values</button>
+</form>
+</div>
+<div role="tabpanel" id="p2" aria-labelledby="tab2" hidden>
+<button type="button" class="reset back" id="toNums">&larr; Change your numbers</button>
+<p class="summary" id="summary"></p>
+<div class="res" aria-live="polite">
+<div class="verdict"><div><small id="vsmall">Verdict</small><div class="big" id="vbig"></div></div><div class="r"><div class="num" id="vnum"></div><span id="vsub"></span></div><div class="why" id="vwhy"></div></div>
+<div class="opts" id="opts"></div>
+<div class="card"><h2>Where the money goes</h2><div class="two"><div id="bars"></div><div class="tw table-scroll"><table id="lines"></table></div></div></div>
+</div>
+<div class="blk"><h2 id="t2">Compare vendors</h2><p class="sub">Every vendor at its published price, for your herd and your acres, with the same savings you entered. Your own edits to prices are not included here.</p>
+<div class="tw table-scroll"><table id="vendors"></table></div>
+<p class="note">Towers are set at about 1 per 1,500 acres for every vendor that needs them. Coverage differs by vendor, so ask for a written quote with the tower count before you decide.</p></div>
+<div class="blk"><h2 id="t3">What the research says</h2>
+<ul class="evid"><li><b>Heavier calves are not proven.</b> One 2025 study found 9% less weight gain with collars, so extra weaning weight starts at zero here.</li><li><b>Labor saved varies a lot.</b> The example starts at 240 hours a year, about 5 hours a week. The University of Arizona Extension counted only 80. Try both.</li><li><b>Count only fence you would really build.</b> Fence you stop maintaining saves about 2% of its build cost each year.</li><li><b>Prices change.</b> These are published 2025&ndash;2026 list prices. Collar, tower and fee quotes depend on herd size and terrain.</li></ul></div>
+<button type="button" class="reset" id="toNums2">&larr; Change your numbers</button>
+</div>
+</section>
+<section class="src sec" style="gap:0"><h2>Sources and notes</h2>
+<p class="note">Halter prices: Farm Progress (2025) and Colorado Sun (May 2026). Other vendors: Arizona Extension and Rangelands Gateway vendor comparison (June 2026), rangelandsgateway.org. Fence and labor saved: NMSU B-133 and University of Arizona az2117 (2025). Calf price: USDA AMS, Tulia Livestock Auction, Oct. 1, 2026. Labor: US Dept. of Labor job order for a cattle ranch hand, Agua Dulce, TX, June 2026. Weight effect: Frontiers in Veterinary Science (2025). Yearly cost counts collars, fees and towers only; replacement collars, batteries and upkeep are not included.</p></section>
+</div>
+</main>
+
+<footer>
+  <p class="b40-foot-brand"><strong>Back40</strong> &middot; Decision tools for cow-calf producers</p>
+  <p>This tool gives planning estimates from the numbers you enter and the starting values shown; it is not financial advice. Starting values are examples, not real producer data: check every number against your own and get a written quote before deciding.</p>
+<!-- required-links:start (tools/secure_pages.py) --><style>.required-links{display:flex;flex-wrap:wrap;gap:4px 14px;margin:14px 0 0;padding:12px 0 0;border-top:1px solid var(--border,#d1d1d1);list-style:none;font-size:12px;line-height:1.6}.required-links a{color:inherit;text-decoration:underline}</style><ul class="required-links" aria-label="Site links"><li><a href="../privacy.html">Privacy &amp; Data</a></li><li><a href="../data-sources.html">Where the Prices Come From</a></li></ul><!-- required-links:end -->
+</footer>
+<div class="sumbar" id="sumbar" aria-hidden="true"><span class="sb1" id="sbTxt"></span><span class="sb2" id="sbSub"></span></div>
+<script src="collars.js"></script>
+<script src="page.js"></script>
+<script src="../brand/a11y-scroll.js" defer></script>
+<script src="../jim/jim.js" defer></script>
+</body>
+</html>

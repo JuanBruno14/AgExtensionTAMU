@@ -57,7 +57,7 @@ def route(rt):
     return rt.abort()
 
 PAGES = ['index.html', 'cow-decisions/index.html', 'about/index.html', 'data-sources.html', 'privacy.html', 'cow-calf/index.html', 'cow-calf/understanding-irr.html',
-         'replacement-heifer/index.html', 'retained-ownership/index.html', 'herd-tools/index.html', 'my-ranch/index.html', 'retail-beef-sales/index.html']
+         'replacement-heifer/index.html', 'retained-ownership/index.html', 'herd-tools/index.html', 'my-ranch/index.html', 'retail-beef-sales/index.html', 'new-technologies/index.html']
 
 # test files for the importer
 KML = ('<?xml version="1.0"?><kml xmlns="http://www.opengis.net/kml/2.2"><Document><Placemark><name>North</name><Polygon><outerBoundaryIs><LinearRing>'

@@ -8,6 +8,7 @@ Starting values come from the Beef Cattle Decision Aids spreadsheets and reprodu
 - [Cow decisions](https://back40agtools.com/cow-decisions/): budgets for what to pay for a bred cow, what calf price you need, whether to raise a replacement heifer, and when to sell or keep.
 - [Herd calculators](https://back40agtools.com/herd-tools/): water, ration mix, weight gain, and herd reproduction.
 - [Retail beef sales](https://back40agtools.com/retail-beef-sales/): compare selling a fed steer at the sale barn, by the quarter or half, or by the cut, with break-even and target prices.
+- [New technologies](https://back40agtools.com/new-technologies/): do virtual fence collars pay? Compare vendors for your herd and acres, with yearly cost, savings and the break-even fee.
 - [My Ranch](https://back40agtools.com/my-ranch/): draw pastures on a map, get carrying capacity from USDA soil data, and match the herd to the grass.
 
 ## Sources and privacy
