@@ -141,14 +141,15 @@
 <div class="rbs">
 <section aria-labelledby="t1" class="sec">
 <div><h2 id="t1">Sale Barn vs. Direct Sales</h2><p class="sub">Enter your numbers and compare what each way of selling earns.</p>
-<ul class="how"><li><b>Start with the table of cuts:</b> enter the price you would charge for each one, then fill in your numbers.</li><li><b>Net profit</b> is what you earn above selling the steer at the sale barn.</li><li><b>Break-even</b> is the lowest price that ties the sale barn. The <b>price to ask</b> adds the return you want.</li><li>Items marked <b>Assumption</b> are placeholders: replace them with your own numbers.</li></ul></div>
+<ul class="how"><li><b>Step 1:</b> enter the price you would charge for each cut and fill in your numbers. <b>Step 2:</b> open the results tab to see the comparison.</li><li><b>Net profit</b> is what you earn above selling the steer at the sale barn.</li><li><b>Break-even</b> is the lowest price that ties the sale barn. The <b>price to ask</b> adds the return you want.</li><li>Items marked <b>Assumption</b> are placeholders: replace them with your own numbers.</li></ul></div>
+<div class="tabs" role="tablist" aria-label="Retail Beef Sales steps"><button type="button" role="tab" id="tab1" aria-selected="true" aria-controls="p1"><span class="tn">1</span> Your numbers and prices</button><button type="button" role="tab" id="tab2" aria-selected="false" aria-controls="p2" tabindex="-1"><span class="tn">2</span> Results</button></div>
+<div role="tabpanel" id="p1" aria-labelledby="tab1">
 <section aria-labelledby="t2" class="sec">
 <div><h2 id="t2">Price each cut</h2><p class="sub"><b>Start here.</b> Set the share and the price of each cut. The by-the-cut option and the average price are built from this table, so the comparison below changes as you edit it. "Price for target ROI" keeps the price ratio between cuts and scales every price by the same factor. "Price if only this cut changes" holds every other cut at your price and asks only that cut to make up the difference. USDA columns are for comparison.</p></div>
 <button type="button" class="reset more" id="cutsMore" aria-expanded="false" aria-controls="cuts">Show USDA prices, break-even and more</button>
 <div class="tw table-scroll"><table id="cuts"><thead><tr><th>Cut</th><th>Share of beef (%)</th><th>Estimated pounds</th><th>Your price /lb</th><th>Where your price sits</th><th>Price for target ROI</th><th class="dt">Grocery (USDA)</th><th class="dt">Grass-fed direct (USDA)</th><th class="dt">Break-even /lb</th><th class="dt">Price if only this cut changes</th></tr></thead><tbody></tbody></table></div>
 <p class="note warn" id="shareWarn" hidden>Shares must add up to 100%.</p>
 </section>
-<div class="cols">
 <form class="panel" id="form" onsubmit="return false" aria-label="Your numbers">
 <h2>Your numbers</h2>
 <p class="saved">Saved in this browser only. Nothing is sent anywhere.</p>
@@ -171,14 +172,19 @@
 <details><summary><span>Costs by the cut</span><span class="note">16 items</span></summary><div class="grid" id="g-cc"></div></details>
 <details><summary><span>Add your own costs</span><span class="note" id="exCount">0 items</span></summary><div class="grid"><p class="note">Anything not listed above: a new cost goes into the budget of the option you choose.</p><div id="exList"></div><button type="button" class="reset" id="exAdd">Add a cost</button></div></details>
 <div style="border-top:1px solid var(--line)"></div></div>
+<button type="button" class="go" id="toRes">See the results &rarr;</button>
 <button type="button" class="reset" id="reset">Reset to the example values</button>
 </form>
+</div>
+<div role="tabpanel" id="p2" aria-labelledby="tab2" hidden>
+<button type="button" class="reset back" id="toNums">&larr; Change your numbers</button>
 <div class="res" aria-live="polite">
 <div class="verdict"><div><small id="vsmall">Verdict</small><div class="big" id="vbig"></div></div><div class="r"><div class="num" id="vnum"></div><span id="vsub"></span></div><div class="why" id="vwhy"></div></div>
 <div class="opts" id="opts"></div>
 <div class="card"><h2>Where the money goes</h2><div class="two"><div id="bars"></div><div class="tw table-scroll"><table id="cost"></table></div></div>
 <details><summary><span>Every cost, line by line</span></summary><div class="two"><div class="tw table-scroll"><table id="itq"></table></div><div class="tw table-scroll"><table id="itc"></table></div></div></details></div>
-</div></div>
+</div>
+</div>
 </section>
 <section class="src sec" style="gap:0"><h2>Sources and notes</h2>
 <p class="note">Cut prices are rough grocery-store estimates for Nov. 2026; producers selling direct may charge more. Grocery reference: USDA AMS Weekly Grocery Store Beef Feature Activity. Grass-fed reference: USDA AMS National Grass Fed Beef Report, 2026 Q3. Cut shares come from Cattlemen's Beef Board and NCBA retail yield data and SDSU Extension; replace them with your processor's cut sheet. Processing, storage and yield figures follow Where's the Beef? Items marked Assumption are placeholders: replace them with your own data.</p></section>
